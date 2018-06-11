@@ -1,4 +1,4 @@
-;;; doom-modeline.el --- modeline from DOOM emacs.  -*- lexical-binding: t; -*-
+;;; doom-modeline.el --- modeline from DOOM Emacs.  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2018 Vincent Zhang
 
@@ -6,7 +6,7 @@
 ;; URL: https://github.com/seagle0128/doom-modeline
 ;; Package-Version: 20180611.1130
 ;; Version: 0.1.0
-;; Package-Requires: ((emacs "24.4") (all-the-icons "1.0.0") (projectile "0.10.0") (shrink-path "0.3.0") (eldoc-eval "0.1")
+;; Package-Requires: ((emacs "24.4") (all-the-icons "1.0.0") (projectile "0.10.0") (shrink-path "0.3.0") (eldoc-eval "0.1"))
 ;; Keywords: modeline, mode-line, doom
 
 ;; This file is not part of GNU Emacs.

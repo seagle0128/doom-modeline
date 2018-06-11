@@ -3,6 +3,8 @@
 The modeline package extracted from [DOOM
 emacs](https://github.com/hlissner/doom-emacs/tree/master/modules/ui/doom-modeline).
 
+It's also the part of [Centaur Emacs](https://github.com/seagle0128/.emacs.d).
+
 ## Feature
 
 The DOOM modeline was designed for minimalism, and offers:
