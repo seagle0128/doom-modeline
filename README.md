@@ -1,7 +1,6 @@
 # doom-modeline
 
-The modeline package extracted from [DOOM
-emacs](https://github.com/hlissner/doom-emacs/tree/master/modules/ui/doom-modeline).
+The modeline package extracted from [DOOM Emacs](https://github.com/hlissner/doom-emacs/tree/master/modules/ui/doom-modeline).
 
 It's also the part of [Centaur Emacs](https://github.com/seagle0128/.emacs.d).
 
