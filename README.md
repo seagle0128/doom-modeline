@@ -32,6 +32,7 @@ In `init.el`,
 ``` emacs-lisp
 (use-package doom-modeline
       :ensure t
+      :defer t
       :init (add-hook 'after-init-hook #'+doom-modeline|init))
 ```
 
