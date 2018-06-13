@@ -47,7 +47,6 @@
 (require 'projectile)
 (require 'all-the-icons)
 (require 'dash)
-(require 'memoize)
 (require 'shrink-path)
 (require 'eldoc-eval)
 
@@ -491,17 +490,6 @@ If TRUNCATE-TAIL is t also truncate the parent directory of the file."
 (defun doom-modeline-maybe-icon-material (&rest args)
   (when (and (display-graphic-p) (not (eq system-type 'windows-nt)))
     (apply 'all-the-icons-material args)))
-
-(defmemoize doom-modeline-file-relative-name (filename directory)
-  (file-relative-name filename directory))
-
-(defmemoize doom-modeline-abbreviate-file-name (file-name)
-  (abbreviate-file-name file-name))
-
-(defmemoize doom-modeline-shrink-path-file-mixed (project-root file-name)
-  (shrink-path-file-mixed project-root
-                          (file-name-directory file-name)
-                          file-name))
 
 (defun doom-modeline--buffer-file-name-relative (&optional include-project)
   "Propertized `buffer-file-name' showing directories relative to project's root only."
