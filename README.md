@@ -24,7 +24,7 @@ In `init.el`,
 
 ``` emacs-lisp
 (require 'doom-modeline)
-(+doom-modeline|init)
+(doom-modeline-init)
 ```
 
 ### Use-package
