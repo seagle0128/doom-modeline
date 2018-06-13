@@ -250,7 +250,6 @@ If STRICT-P, return nil if no project was found, otherwise return
 ;; Show eldoc in the mode-line with `eval-expression'
 (defun doom-modeline--show-eldoc (input)
   "Display string STR in the mode-line next to minibuffer."
-  (eldoc-in-minibuffer-mode +1)
   (with-current-buffer (eldoc-current-buffer)
     (let* ((str              (and (stringp input) input))
            (mode-line-format (or (and str (or (doom-modeline-eldoc str) str))
@@ -260,7 +259,7 @@ If STRICT-P, return nil if no project was found, otherwise return
       (sit-for eldoc-show-in-mode-line-delay))))
 (setq eldoc-in-minibuffer-show-fn #'doom-modeline--show-eldoc)
 
-;; (eldoc-in-minibuffer-mode +1)
+(eldoc-in-minibuffer-mode +1)
 
 
 ;; anzu and evil-anzu expose current/total state that can be displayed in the
