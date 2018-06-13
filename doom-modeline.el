@@ -356,7 +356,7 @@ file-name => comint.el")
 
 ;; Bar
 (defface doom-modeline-bar '((t (:inherit highlight)))
-  "The face used for the left-most bar on the mode-line of an doom-modeline--active window."
+  "The face used for the left-most bar on the mode-line of an active window."
   :group 'doom-modeline)
 
 (defface doom-modeline-eldoc-bar '((t (:inherit shadow)))
@@ -458,14 +458,14 @@ active."
   "Propertized `buffer-file-name' that truncates every dir along path.
 If TRUNCATE-TAIL is t also truncate the parent directory of the file."
   (let ((dirs (shrink-path-prompt (file-name-directory buffer-file-truename)))
-        (doom-modeline--active (doom-modeline--active)))
+        (active (doom-modeline--active)))
     (if (null dirs)
-        (propertize "%b" 'face (if doom-modeline--active 'doom-modeline-buffer-file))
+        (propertize "%b" 'face (if active 'doom-modeline-buffer-file))
       (let ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified)))
         (let ((dirname (car dirs))
               (basename (cdr dirs))
-              (dir-faces (or modified-faces (if doom-modeline--active 'doom-modeline-project-root-dir)))
-              (file-faces (or modified-faces (if doom-modeline--active 'doom-modeline-buffer-file))))
+              (dir-faces (or modified-faces (if active 'doom-modeline-project-root-dir)))
+              (file-faces (or modified-faces (if active 'doom-modeline-buffer-file))))
           (concat (propertize (concat dirname
                                       (if truncate-tail (substring basename 0 1) basename)
                                       "/")
@@ -479,14 +479,14 @@ If TRUNCATE-TAIL is t also truncate the parent directory of the file."
 (defun doom-modeline--buffer-file-name-relative (&optional include-project)
   "Propertized `buffer-file-name' showing directories relative to project's root only."
   (let ((root (doom-modeline-project-root))
-        (doom-modeline--active (doom-modeline--active)))
+        (active (doom-modeline--active)))
     (if (null root)
-        (propertize "%b" 'face (if doom-modeline--active 'doom-modeline-buffer-file))
+        (propertize "%b" 'face (if active 'doom-modeline-buffer-file))
       (let* ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified))
              (relative-dirs (file-relative-name (file-name-directory buffer-file-truename)
                                                 (if include-project (concat root "../") root)))
-             (relative-faces (or modified-faces (if doom-modeline--active 'doom-modeline-buffer-path)))
-             (file-faces (or modified-faces (if doom-modeline--active 'doom-modeline-buffer-file))))
+             (relative-faces (or modified-faces (if active 'doom-modeline-buffer-path)))
+             (file-faces (or modified-faces (if active 'doom-modeline-buffer-file))))
         (if (equal "./" relative-dirs) (setq relative-dirs ""))
         (concat (propertize relative-dirs 'face (if relative-faces `(:inherit ,relative-faces)))
                 (propertize (file-name-nondirectory buffer-file-truename)
@@ -510,17 +510,17 @@ Example:
          (file-name-split (shrink-path-file-mixed project-root
                                                   (file-name-directory buffer-file-truename)
                                                   buffer-file-truename))
-         (doom-modeline--active (doom-modeline--active)))
+         (active (doom-modeline--active)))
     (if (null file-name-split)
-        (propertize "%b" 'face (if doom-modeline--active 'doom-modeline-buffer-file))
+        (propertize "%b" 'face (if active 'doom-modeline-buffer-file))
       (pcase-let ((`(,root-path-parent ,project ,relative-path ,filename) file-name-split))
         (let ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified)))
-          (let ((sp-faces       (or modified-faces (if doom-modeline--active 'font-lock-comment-face)))
-                (project-faces  (or modified-faces (if doom-modeline--active 'font-lock-string-face)))
-                (relative-faces (or modified-faces (if doom-modeline--active 'doom-modeline-buffer-path)))
-                (file-faces     (or modified-faces (if doom-modeline--active 'doom-modeline-buffer-file))))
-            (let ((sp-props       `(,@(if sp-faces       `(:inherit ,sp-faces))      ,@(if doom-modeline--active '(:weight bold))))
-                  (project-props  `(,@(if project-faces  `(:inherit ,project-faces)) ,@(if doom-modeline--active '(:weight bold))))
+          (let ((sp-faces       (or modified-faces (if active 'font-lock-comment-face)))
+                (project-faces  (or modified-faces (if active 'font-lock-string-face)))
+                (relative-faces (or modified-faces (if active 'doom-modeline-buffer-path)))
+                (file-faces     (or modified-faces (if active 'doom-modeline-buffer-file))))
+            (let ((sp-props       `(,@(if sp-faces       `(:inherit ,sp-faces))      ,@(if active '(:weight bold))))
+                  (project-props  `(,@(if project-faces  `(:inherit ,project-faces)) ,@(if active '(:weight bold))))
                   (relative-props `(,@(if relative-faces `(:inherit ,relative-faces))))
                   (file-props     `(,@(if file-faces     `(:inherit ,file-faces)))))
               (concat (propertize (if truncate-project-root-parent
@@ -538,52 +538,52 @@ Example:
 
 
 (doom-modeline-def-segment! buffer-default-directory
-                            "Displays `default-directory'. This is for special buffers like the scratch
+  "Displays `default-directory'. This is for special buffers like the scratch
 buffer where knowing the current project directory is important."
-                            (let ((face (if (doom-modeline--active) 'doom-modeline-buffer-path)))
-                              (concat (if (display-graphic-p) " ")
-                                      (doom-modeline-maybe-icon-octicon
-                                       "file-directory"
-                                       :face face
-                                       :v-adjust -0.05
-                                       :height 1.25)
-                                      (propertize (concat " " (abbreviate-file-name default-directory))
-                                                  'face face))))
+  (let ((face (if (doom-modeline--active) 'doom-modeline-buffer-path)))
+    (concat (if (display-graphic-p) " ")
+            (doom-modeline-maybe-icon-octicon
+             "file-directory"
+             :face face
+             :v-adjust -0.05
+             :height 1.25)
+            (propertize (concat " " (abbreviate-file-name default-directory))
+                        'face face))))
 
 
 ;;
 (doom-modeline-def-segment! buffer-info
-                            "Combined information about the current buffer, including the current working
+  "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
-                            (concat
-                             (cond (buffer-read-only
-                                    (concat (doom-modeline-maybe-icon-octicon
-                                             "lock"
-                                             :face 'doom-modeline-warning
-                                             :v-adjust -0.05)
-                                            " "))
-                                   ((buffer-modified-p)
-                                    (concat (doom-modeline-maybe-icon-faicon
-                                             "floppy-o"
-                                             :face 'doom-modeline-buffer-modified
-                                             :v-adjust -0.0575)
-                                            " "))
-                                   ((and buffer-file-name
-                                         (not (file-exists-p buffer-file-name)))
-                                    (concat (doom-modeline-maybe-icon-octicon
-                                             "circle-slash"
-                                             :face 'doom-modeline-urgent
-                                             :v-adjust -0.05)
-                                            " "))
-                                   ((buffer-narrowed-p)
-                                    (concat (doom-modeline-maybe-icon-octicon
-                                             "fold"
-                                             :face 'doom-modeline-warning
-                                             :v-adjust -0.05)
-                                            " ")))
-                             (if buffer-file-name
-                                 (doom-modeline-buffer-file-name)
-                               "%b")))
+  (concat
+   (cond (buffer-read-only
+          (concat (doom-modeline-maybe-icon-octicon
+                   "lock"
+                   :face 'doom-modeline-warning
+                   :v-adjust -0.05)
+                  " "))
+         ((buffer-modified-p)
+          (concat (doom-modeline-maybe-icon-faicon
+                   "floppy-o"
+                   :face 'doom-modeline-buffer-modified
+                   :v-adjust -0.0575)
+                  " "))
+         ((and buffer-file-name
+               (not (file-exists-p buffer-file-name)))
+          (concat (doom-modeline-maybe-icon-octicon
+                   "circle-slash"
+                   :face 'doom-modeline-urgent
+                   :v-adjust -0.05)
+                  " "))
+         ((buffer-narrowed-p)
+          (concat (doom-modeline-maybe-icon-octicon
+                   "fold"
+                   :face 'doom-modeline-warning
+                   :v-adjust -0.05)
+                  " ")))
+   (if buffer-file-name
+       (doom-modeline-buffer-file-name)
+     "%b")))
 
 ;;
 (doom-modeline-def-segment! buffer-info-simple
@@ -596,16 +596,16 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 ;;
 (doom-modeline-def-segment! buffer-encoding
-                            "Displays the encoding and eol style of the buffer the same way Atom does."
-                            (concat (pcase (coding-system-eol-type buffer-file-coding-system)
-                                      (0 "LF  ")
-                                      (1 "CRLF  ")
-                                      (2 "CR  "))
-                                    (let ((sys (coding-system-plist buffer-file-coding-system)))
-                                      (cond ((memq (plist-get sys :category) '(coding-category-undecided coding-category-utf-8))
-                                             "UTF-8")
-                                            (t (upcase (symbol-name (plist-get sys :name))))))
-                                    "  "))
+  "Displays the encoding and eol style of the buffer the same way Atom does."
+  (concat (pcase (coding-system-eol-type buffer-file-coding-system)
+            (0 "LF  ")
+            (1 "CRLF  ")
+            (2 "CR  "))
+          (let ((sys (coding-system-plist buffer-file-coding-system)))
+            (cond ((memq (plist-get sys :category) '(coding-category-undecided coding-category-utf-8))
+                   "UTF-8")
+                  (t (upcase (symbol-name (plist-get sys :name))))))
+          "  "))
 
 ;;
 (doom-modeline-def-segment! major-mode
@@ -636,39 +636,39 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 ;;
 (doom-modeline-def-segment! vcs
-                            "Displays the current branch, colored based on its state."
-                            (when (and vc-mode buffer-file-name)
-                              (let* ((backend (vc-backend buffer-file-name))
-                                     (state   (vc-state buffer-file-name backend)))
-                                (let ((face    'mode-line-inactive)
-                                      (doom-modeline--active  (doom-modeline--active))
-                                      (all-the-icons-default-adjust -0.1))
-                                  (concat (if (display-graphic-p) "  ")
-                                          (cond ((memq state '(edited added))
-                                                 (if doom-modeline--active (setq face 'doom-modeline-info))
-                                                 (doom-modeline-maybe-icon-octicon
-                                                  "git-compare"
-                                                  :face face
-                                                  :v-adjust -0.05))
-                                                ((eq state 'needs-merge)
-                                                 (if doom-modeline--active (setq face 'doom-modeline-info))
-                                                 (doom-modeline-maybe-icon-octicon "git-merge" :face face))
-                                                ((eq state 'needs-update)
-                                                 (if doom-modeline--active (setq face 'doom-modeline-warning))
-                                                 (doom-modeline-maybe-icon-octicon "arrow-down" :face face))
-                                                ((memq state '(removed conflict unregistered))
-                                                 (if doom-modeline--active (setq face 'doom-modeline-urgent))
-                                                 (doom-modeline-maybe-icon-octicon "alert" :face face))
-                                                (t
-                                                 (if doom-modeline--active (setq face 'font-lock-doc-face))
-                                                 (doom-modeline-maybe-icon-octicon
-                                                  "git-branch"
-                                                  :face face
-                                                  :v-adjust -0.05)))
-                                          " "
-                                          (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
-                                                      'face (if doom-modeline--active face))
-                                          " ")))))
+  "Displays the current branch, colored based on its state."
+  (when (and vc-mode buffer-file-name)
+    (let* ((backend (vc-backend buffer-file-name))
+           (state   (vc-state buffer-file-name backend)))
+      (let ((face    'mode-line-inactive)
+            (active  (doom-modeline--active))
+            (all-the-icons-default-adjust -0.1))
+        (concat (if (display-graphic-p) "  ")
+                (cond ((memq state '(edited added))
+                       (if active (setq face 'doom-modeline-info))
+                       (doom-modeline-maybe-icon-octicon
+                        "git-compare"
+                        :face face
+                        :v-adjust -0.05))
+                      ((eq state 'needs-merge)
+                       (if active (setq face 'doom-modeline-info))
+                       (doom-modeline-maybe-icon-octicon "git-merge" :face face))
+                      ((eq state 'needs-update)
+                       (if active (setq face 'doom-modeline-warning))
+                       (doom-modeline-maybe-icon-octicon "arrow-down" :face face))
+                      ((memq state '(removed conflict unregistered))
+                       (if active (setq face 'doom-modeline-urgent))
+                       (doom-modeline-maybe-icon-octicon "alert" :face face))
+                      (t
+                       (if active (setq face 'font-lock-doc-face))
+                       (doom-modeline-maybe-icon-octicon
+                        "git-branch"
+                        :face face
+                        :v-adjust -0.05)))
+                " "
+                (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
+                            'face (if active face))
+                " ")))))
 
 
 ;;
@@ -807,7 +807,7 @@ lines are selected, or the NxM dimensions of a block selection."
 (doom-modeline-def-segment! matches
   "Displays: 1. the currently recording macro, 2. A current/total for the
 current search term (with anzu), 3. The number of substitutions being conducted
-with `evil-ex-substitute', and/or 4. The number of doom-modeline--active `iedit' regions."
+with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
   (let ((meta (concat (doom-modeline--macro-recording)
                       (doom-modeline--anzu)
                       (doom-modeline--evil-substitute)
@@ -913,12 +913,12 @@ enabled."
                              (buffer-encoding major-mode flycheck))
 
 (doom-modeline-def-modeline! project
-  (bar buffer-default-directory)
-  (major-mode))
+                             (bar buffer-default-directory)
+                             (major-mode))
 
 (doom-modeline-def-modeline! media
-  (bar " %b  ")
-  (media-info major-mode))
+                             (bar " %b  ")
+                             (media-info major-mode))
 
 ;;
 ;; Bootstrap
