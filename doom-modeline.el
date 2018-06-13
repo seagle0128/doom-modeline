@@ -4,7 +4,7 @@
 
 ;; Author: Vincent Zhang <seagle0128@gmail.com>
 ;; URL: https://github.com/seagle0128/doom-modeline
-;; Version: 0.1.0
+;; Version: 0.1.1
 ;; Package-Requires: ((emacs "24.4") (dash "2.11.0") (all-the-icons "1.0.0") (projectile "0.10.0") (shrink-path "0.2.0") (eldoc-eval "0.1"))
 ;; Keywords: modeline mode-line doom
 
@@ -678,8 +678,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
   (concat (if vc-mode " " "  ")
           (when icon
             (concat
-             (when (display-graphic-p)
-               (all-the-icons-material icon :face face :height 1.1 :v-adjust (or voffset -0.2)))
+             (doom-modeline-maybe-icon-material icon :face face :height 1.1 :v-adjust (or voffset -0.2))
              (if text doom-modeline-vspc)))
           (when text
             (propertize text 'face face))
