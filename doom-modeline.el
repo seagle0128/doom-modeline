@@ -623,15 +623,15 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 
 (defun doom-modeline-maybe-icon-octicon (&rest args)
-  (when (display-graphic-p)
+  (when (and (display-graphic-p) (not (eq system-type 'windows-nt)))
     (apply 'all-the-icons-octicon args)))
 
 (defun doom-modeline-maybe-icon-faicon (&rest args)
-  (when (display-graphic-p)
+  (when (and (display-graphic-p) (not (eq system-type 'windows-nt)))
     (apply 'all-the-icons-faicon args)))
 
 (defun doom-modeline-maybe-icon-material (&rest args)
-  (when (display-graphic-p)
+  (when (and (display-graphic-p) (not (eq system-type 'windows-nt)))
     (apply 'all-the-icons-material args)))
 
 ;;
