@@ -241,10 +241,9 @@ If STRICT-P, return nil if no project was found, otherwise return
 
 (defun doom-modeline-eldoc (text)
   (concat (when (display-graphic-p)
-            (doom-modeline--make-xpm
-             (face-background 'doom-modeline-eldoc-bar nil t)
-             doom-modeline-height
-             doom-modeline-bar-width))
+            (doom-modeline--make-xpm 'doom-modeline-eldoc-bar
+                                     doom-modeline-height
+                                     doom-modeline-bar-width))
           text))
 
 ;; Show eldoc in the mode-line with `eval-expression'
@@ -444,7 +443,9 @@ active."
   (propertize
    " " 'display
    (let ((data (make-list height (make-list width 1)))
-         (color (or (when face (face-background face nil t)) "None")))
+         (color (or (when face
+                      (face-background face nil t))
+                    "None")))
      (ignore-errors
        (create-image
         (concat
