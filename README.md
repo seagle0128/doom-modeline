@@ -33,7 +33,7 @@ In `init.el`,
 (use-package doom-modeline
       :ensure t
       :defer t
-      :init (add-hook 'after-init-hook #'+doom-modeline|init))
+      :init (add-hook 'after-init-hook #'doom-modeline-init))
 ```
 
 This package requires the fonts included with `all-the-icons` to be installed.
