@@ -73,7 +73,7 @@
   (defvar doom-modeline--transient-counter 0))
 
 (defmacro doom-modeline-add-transient-hook! (hook &rest forms)
-  "Attaches transient forms to a HOOK.
+  "Attache transient FORMS to a HOOK.
 HOOK can be a quoted hook or a sharp-quoted function (which will be advised).
 These forms will be evaluated once when that function/hook is first invoked,
 then it detaches itself."
