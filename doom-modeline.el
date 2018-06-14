@@ -703,7 +703,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 (defun doom-modeline-update-flycheck-segment (&optional status)
   (setq doom-modeline--flycheck
         (pcase status
-          ('finished (if flycheck-current-errors
+          (`finished (if flycheck-current-errors
                          (let-alist (flycheck-count-errors flycheck-current-errors)
                            (let ((sum (+ (or .error 0) (or .warning 0))))
                              (doom-modeline-icon "do_not_disturb_alt"
@@ -711,10 +711,10 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                                                  (if .error 'doom-modeline-urgent 'doom-modeline-warning)
                                                  -0.25)))
                        (doom-modeline-icon "check" nil 'doom-modeline-info)))
-          ('running     (doom-modeline-icon "access_time" nil 'font-lock-doc-face -0.25))
-          ('no-checker  (doom-modeline-icon "sim_card_alert" "-" 'font-lock-doc-face))
-          ('errored     (doom-modeline-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
-          ('interrupted (doom-modeline-icon "pause" "Interrupted" 'font-lock-doc-face)))))
+          (`running     (doom-modeline-icon "access_time" nil 'font-lock-doc-face -0.25))
+          (`no-checker  (doom-modeline-icon "sim_card_alert" "-" 'font-lock-doc-face))
+          (`errored     (doom-modeline-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
+          (`interrupted (doom-modeline-icon "pause" "Interrupted" 'font-lock-doc-face)))))
 
 (doom-modeline-def-segment! flycheck
   "Displays color-coded flycheck error status in the current buffer with pretty
