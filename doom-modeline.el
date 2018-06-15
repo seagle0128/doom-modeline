@@ -5,7 +5,7 @@
 ;; Author: Vincent Zhang <seagle0128@gmail.com>
 ;; URL: https://github.com/seagle0128/doom-modeline
 ;; Version: 0.2.0
-;; Package-Requires: ((emacs "25.1") (dash "2.11.0") (all-the-icons "1.0.0") (projectile "0.10.0") (shrink-path "0.2.0") (eldoc-eval "0.1"))
+;; Package-Requires: ((emacs "25.1") (all-the-icons "1.0.0") (projectile "0.10.0") (shrink-path "0.2.0") (eldoc-eval "0.1"))
 ;; Keywords: modeline mode-line doom
 
 ;; This file is not part of GNU Emacs.
@@ -45,11 +45,13 @@
 ;;; Code:
 
 (require 'all-the-icons)
-(require 'dash)
 (require 'eldoc-eval)
 (require 'map)
 (require 'projectile)
 (require 'shrink-path)
+
+(when (>= emacs-major-version 26)
+  (defalias 'when-let 'when-let*))
 
 (eval-and-compile
   (defun doom-modeline--resolve-hook-forms (hooks)
@@ -223,7 +225,7 @@ Example:
 
 (defun doom-modeline-set (key &optional default)
   "Set the modeline format. Does nothing if the modeline KEY doesn't exist. If DEFAULT is non-nil, set the default mode-line for all buffers."
-  (-when-let* ((modeline (doom-modeline key)))
+  (when-let ((modeline (doom-modeline key)))
     (setf (if default
               (default-value 'mode-line-format)
             (buffer-local-value 'mode-line-format (current-buffer)))
@@ -295,7 +297,7 @@ If STRICT-P, return nil if no project was found, otherwise return
 (defvar doom-modeline-current-window (frame-selected-window))
 (defun doom-modeline-set-selected-window (&rest _)
   "Set `doom-modeline-current-window' appropriately."
-  (-when-let* ((win (frame-selected-window)))
+  (when-let ((win (frame-selected-window)))
     (unless (minibuffer-window-active-p win)
       (setq doom-modeline-current-window win)
       (force-mode-line-update))))
