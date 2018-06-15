@@ -33,11 +33,22 @@ In `init.el`,
 (use-package doom-modeline
       :ensure t
       :defer t
-      :init (add-hook 'after-init-hook #'doom-modeline-init))
+      :requires (shrink-path eldoc-eval)
+      :hook (after-init . doom-modeline-init))
 ```
+
+
 
 This package requires the fonts included with `all-the-icons` to be installed.
 Run `M-x all-the-icons-install-fonts` to do so.
+
+If you do not have them already installed, here are the dependencies:
+
+``` emacs-lisp
+(use-package shrink-path)
+(use-package all-the-icons)
+(use-package eldoc-eval)
+```
 
 ## Screenshots
 
