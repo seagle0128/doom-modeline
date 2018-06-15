@@ -145,8 +145,9 @@ Body forms can access the hook's arguments through the let-bound variable
 ;; Modeline library
 ;;
 
-(defvar doom-modeline-fn-alist ())
-(defvar doom-modeline-var-alist ())
+(eval-and-compile
+  (defvar doom-modeline-fn-alist ())
+  (defvar doom-modeline-var-alist ()))
 
 (defmacro def-modeline-segment! (name &rest body)
   "Defines a modeline segment and byte compiles it."
