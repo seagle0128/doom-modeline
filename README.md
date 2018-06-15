@@ -37,8 +37,6 @@ In `init.el`,
       :hook (after-init . doom-modeline-init))
 ```
 
-
-
 This package requires the fonts included with `all-the-icons` to be installed.
 Run `M-x all-the-icons-install-fonts` to do so.
 
