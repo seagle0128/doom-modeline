@@ -51,6 +51,7 @@
 (require 'shrink-path)
 
 (when (>= emacs-major-version 26)
+  (require 'subr-x)
   (defalias 'when-let 'when-let*))
 
 (eval-and-compile
