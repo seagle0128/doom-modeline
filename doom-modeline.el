@@ -151,7 +151,7 @@ Body forms can access the hook's arguments through the let-bound variable
   (defvar doom-modeline-fn-alist ())
   (defvar doom-modeline-var-alist ()))
 
-(defmacro def-modeline-segment! (name &rest body)
+(defmacro doom-modeline-def-segment! (name &rest body)
   "Defines a modeline segment and byte compiles it."
   (declare (indent defun) (doc-string 2))
   (let ((sym (intern (format "doom-modeline-segment--%s" name)))
@@ -185,12 +185,12 @@ Body forms can access the hook's arguments through the let-bound variable
             ((error "%s is not a valid segment" seg))))
     (nreverse forms)))
 
-(defmacro def-modeline! (name lhs &optional rhs)
+(defmacro doom-modeline-def-modeline! (name lhs &optional rhs)
   "Defines a modeline format and byte-compiles it. NAME is a symbol to identify
 it (used by `doom-modeline' for retrieval). LHS and RHS are lists of symbols of
-modeline segments defined with `def-modeline-segment!'.
+modeline segments defined with `doom-modeline-def-segment!'.
 Example:
-  (def-modeline! minimal
+  (doom-modeline-def-modeline! minimal
     (bar matches \" \" buffer-info)
     (media-info major-mode))
   (doom-set-modeline 'minimal t)"
@@ -575,53 +575,53 @@ Example:
 ;; buffer information
 ;;
 
-(def-modeline-segment! buffer-default-directory
-  "Displays `default-directory'. This is for special buffers like the scratch
+(doom-modeline-def-segment! buffer-default-directory
+                            "Displays `default-directory'. This is for special buffers like the scratch
 buffer where knowing the current project directory is important."
-  (let ((face (if (doom-modeline--active) 'doom-modeline-buffer-path)))
-    (concat (if (display-graphic-p) " ")
-            (doom-modeline-maybe-icon-octicon
-             "file-directory"
-             :face face
-             :v-adjust -0.05
-             :height 1.25)
-            (propertize (concat " " (abbreviate-file-name default-directory))
-                        'face face))))
+                            (let ((face (if (doom-modeline--active) 'doom-modeline-buffer-path)))
+                              (concat (if (display-graphic-p) " ")
+                                      (doom-modeline-maybe-icon-octicon
+                                       "file-directory"
+                                       :face face
+                                       :v-adjust -0.05
+                                       :height 1.25)
+                                      (propertize (concat " " (abbreviate-file-name default-directory))
+                                                  'face face))))
 
 ;;
-(def-modeline-segment! buffer-info
-  "Combined information about the current buffer, including the current working
+(doom-modeline-def-segment! buffer-info
+                            "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
-  (concat (cond (buffer-read-only
-                 (concat (doom-modeline-maybe-icon-octicon
-                          "lock"
-                          :face 'doom-modeline-warning
-                          :v-adjust -0.05)
-                         " "))
-                ((buffer-modified-p)
-                 (concat (doom-modeline-maybe-icon-faicon
-                          "floppy-o"
-                          :face 'doom-modeline-buffer-modified
-                          :v-adjust -0.0575)
-                         " "))
-                ((and buffer-file-name
-                      (not (file-exists-p buffer-file-name)))
-                 (concat (doom-modeline-maybe-icon-octicon
-                          "circle-slash"
-                          :face 'doom-modeline-urgent
-                          :v-adjust -0.05)
-                         " "))
-                ((buffer-narrowed-p)
-                 (concat (doom-modeline-maybe-icon-octicon
-                          "fold"
-                          :face 'doom-modeline-warning
-                          :v-adjust -0.05)
-                         " ")))
-          (if buffer-file-name
-              (doom-modeline-buffer-file-name)
-            "%b")))
+                            (concat (cond (buffer-read-only
+                                           (concat (doom-modeline-maybe-icon-octicon
+                                                    "lock"
+                                                    :face 'doom-modeline-warning
+                                                    :v-adjust -0.05)
+                                                   " "))
+                                          ((buffer-modified-p)
+                                           (concat (doom-modeline-maybe-icon-faicon
+                                                    "floppy-o"
+                                                    :face 'doom-modeline-buffer-modified
+                                                    :v-adjust -0.0575)
+                                                   " "))
+                                          ((and buffer-file-name
+                                                (not (file-exists-p buffer-file-name)))
+                                           (concat (doom-modeline-maybe-icon-octicon
+                                                    "circle-slash"
+                                                    :face 'doom-modeline-urgent
+                                                    :v-adjust -0.05)
+                                                   " "))
+                                          ((buffer-narrowed-p)
+                                           (concat (doom-modeline-maybe-icon-octicon
+                                                    "fold"
+                                                    :face 'doom-modeline-warning
+                                                    :v-adjust -0.05)
+                                                   " ")))
+                                    (if buffer-file-name
+                                        (doom-modeline-buffer-file-name)
+                                      "%b")))
 
-(def-modeline-segment! buffer-info-simple
+(doom-modeline-def-segment! buffer-info-simple
   "Display only the current buffer's name, but with fontification."
   (propertize
    "%b"
@@ -630,7 +630,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                ((doom-modeline--active) 'doom-modeline-buffer-file))))
 
 ;;
-(def-modeline-segment! buffer-encoding
+(doom-modeline-def-segment! buffer-encoding
   "Displays the encoding and eol style of the buffer the same way Atom does."
   (concat (pcase (coding-system-eol-type buffer-file-coding-system)
             (0 "LF  ")
@@ -646,7 +646,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 ;; major-mode
 ;;
 
-(def-modeline-segment! major-mode
+(doom-modeline-def-segment! major-mode
   "The major mode, including process, environment and text-scale info."
   (propertize
    (concat (format-mode-line mode-name)
@@ -702,7 +702,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 (add-hook 'after-save-hook #'doom-modeline--update-vcs)
 (add-hook 'find-file-hook #'doom-modeline--update-vcs t)
 
-(def-modeline-segment! vcs
+(doom-modeline-def-segment! vcs
   "Displays the current branch, colored based on its state."
   doom-modeline--vcs)
 
@@ -746,7 +746,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
           (`errored     (doom-modeline-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
           (`interrupted (doom-modeline-icon "pause" "Interrupted" 'font-lock-doc-face)))))
 
-(def-modeline-segment! flycheck
+(doom-modeline-def-segment! flycheck
   "Displays color-coded flycheck error status in the current buffer with pretty
 icons."
   doom-modeline--flycheck)
@@ -764,7 +764,7 @@ icons."
   "If non-nil, a word count will be added to the selection-info modeline
 segment.")
 
-(def-modeline-segment! selection-info
+(doom-modeline-def-segment! selection-info
   "Information about the current selection, such as how many characters and
 lines are selected, or the NxM dimensions of a block selection."
   (when (and mark-active (doom-modeline--active))
@@ -862,7 +862,7 @@ lines are selected, or the NxM dimensions of a block selection."
                length))
      'face (if (doom-modeline--active) 'doom-modeline-panel))))
 
-(def-modeline-segment! matches
+(doom-modeline-def-segment! matches
   "Displays: 1. the currently recording macro, 2. A current/total for the
 current search term (with anzu), 3. The number of substitutions being conducted
 with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
@@ -877,7 +877,7 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 ;; media-info
 ;;
 
-(def-modeline-segment! media-info
+(doom-modeline-def-segment! media-info
   "Metadata regarding the current file, such as dimensions for images."
   ;; TODO Include other information
   (cond ((eq major-mode 'image-mode)
@@ -891,7 +891,7 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 
 (defvar doom-modeline--bar-active nil)
 (defvar doom-modeline--bar-inactive nil)
-(def-modeline-segment! bar
+(doom-modeline-def-segment! bar
   "The bar regulates the height of the mode-line in GUI Emacs.
 Returns \"\" to not break --no-window-system."
   (if window-system
@@ -921,7 +921,7 @@ Returns \"\" to not break --no-window-system."
 (advice-add #'window-numbering-install-mode-line :override #'ignore)
 (advice-add #'window-numbering-clear-mode-line :override #'ignore)
 
-(def-modeline-segment! window-number
+(doom-modeline-def-segment! window-number
   (if (bound-and-true-p window-numbering-mode)
       (propertize (format " %s " (window-numbering-get-number-string))
                   'face (if (doom-modeline--active)
@@ -934,7 +934,7 @@ Returns \"\" to not break --no-window-system."
 ;;
 
 (declare-function eyebrowse--get 'eyebrowse)
-(def-modeline-segment! workspace-number
+(doom-modeline-def-segment! workspace-number
   "The current workspace name or number. Requires `eyebrowse-mode' to be
 enabled."
   (if (and (bound-and-true-p eyebrowse-mode)
@@ -951,23 +951,23 @@ enabled."
 ;; Mode lines
 ;;
 
-(def-modeline! main
-  (workspace-number bar matches " " buffer-info "  %l:%c %p  " selection-info)
-  (buffer-encoding major-mode vcs flycheck))
+(doom-modeline-def-modeline! main
+                             (workspace-number bar matches " " buffer-info "  %l:%c %p  " selection-info)
+                             (buffer-encoding major-mode vcs flycheck))
 
-(def-modeline! minimal
-  (bar matches " " buffer-info)
-  (media-info major-mode))
+(doom-modeline-def-modeline! minimal
+                             (bar matches " " buffer-info)
+                             (media-info major-mode))
 
-(def-modeline! special
-  (bar matches " " buffer-info-simple "  %l:%c %p  " selection-info)
-  (buffer-encoding major-mode flycheck))
+(doom-modeline-def-modeline! special
+                             (bar matches " " buffer-info-simple "  %l:%c %p  " selection-info)
+                             (buffer-encoding major-mode flycheck))
 
-(def-modeline! project
+(doom-modeline-def-modeline! project
   (bar buffer-default-directory)
   (major-mode))
 
-(def-modeline! media
+(doom-modeline-def-modeline! media
   (bar " %b  ")
   (media-info major-mode))
 
