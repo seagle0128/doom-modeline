@@ -577,50 +577,50 @@ Example:
 ;;
 
 (doom-modeline-def-segment! buffer-default-directory
-                            "Displays `default-directory'. This is for special buffers like the scratch
+  "Displays `default-directory'. This is for special buffers like the scratch
 buffer where knowing the current project directory is important."
-                            (let ((face (if (doom-modeline--active) 'doom-modeline-buffer-path)))
-                              (concat (if (display-graphic-p) " ")
-                                      (doom-modeline-maybe-icon-octicon
-                                       "file-directory"
-                                       :face face
-                                       :v-adjust -0.05
-                                       :height 1.25)
-                                      (propertize (concat " " (abbreviate-file-name default-directory))
-                                                  'face face))))
+  (let ((face (if (doom-modeline--active) 'doom-modeline-buffer-path)))
+    (concat (if (display-graphic-p) " ")
+            (doom-modeline-maybe-icon-octicon
+             "file-directory"
+             :face face
+             :v-adjust -0.05
+             :height 1.25)
+            (propertize (concat " " (abbreviate-file-name default-directory))
+                        'face face))))
 
 ;;
 (doom-modeline-def-segment! buffer-info
-                            "Combined information about the current buffer, including the current working
+  "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
-                            (concat (cond (buffer-read-only
-                                           (concat (doom-modeline-maybe-icon-octicon
-                                                    "lock"
-                                                    :face 'doom-modeline-warning
-                                                    :v-adjust -0.05)
-                                                   " "))
-                                          ((buffer-modified-p)
-                                           (concat (doom-modeline-maybe-icon-faicon
-                                                    "floppy-o"
-                                                    :face 'doom-modeline-buffer-modified
-                                                    :v-adjust -0.0575)
-                                                   " "))
-                                          ((and buffer-file-name
-                                                (not (file-exists-p buffer-file-name)))
-                                           (concat (doom-modeline-maybe-icon-octicon
-                                                    "circle-slash"
-                                                    :face 'doom-modeline-urgent
-                                                    :v-adjust -0.05)
-                                                   " "))
-                                          ((buffer-narrowed-p)
-                                           (concat (doom-modeline-maybe-icon-octicon
-                                                    "fold"
-                                                    :face 'doom-modeline-warning
-                                                    :v-adjust -0.05)
-                                                   " ")))
-                                    (if buffer-file-name
-                                        (doom-modeline-buffer-file-name)
-                                      "%b")))
+  (concat (cond (buffer-read-only
+                 (concat (doom-modeline-maybe-icon-octicon
+                          "lock"
+                          :face 'doom-modeline-warning
+                          :v-adjust -0.05)
+                         " "))
+                ((buffer-modified-p)
+                 (concat (doom-modeline-maybe-icon-faicon
+                          "floppy-o"
+                          :face 'doom-modeline-buffer-modified
+                          :v-adjust -0.0575)
+                         " "))
+                ((and buffer-file-name
+                      (not (file-exists-p buffer-file-name)))
+                 (concat (doom-modeline-maybe-icon-octicon
+                          "circle-slash"
+                          :face 'doom-modeline-urgent
+                          :v-adjust -0.05)
+                         " "))
+                ((buffer-narrowed-p)
+                 (concat (doom-modeline-maybe-icon-octicon
+                          "fold"
+                          :face 'doom-modeline-warning
+                          :v-adjust -0.05)
+                         " ")))
+          (if buffer-file-name
+              (doom-modeline-buffer-file-name)
+            "%b")))
 
 (doom-modeline-def-segment! buffer-info-simple
   "Display only the current buffer's name, but with fontification."
@@ -965,12 +965,12 @@ enabled."
                              (buffer-encoding major-mode flycheck))
 
 (doom-modeline-def-modeline! project
-  (bar buffer-default-directory)
-  (major-mode))
+                             (bar buffer-default-directory)
+                             (major-mode))
 
 (doom-modeline-def-modeline! media
-  (bar " %b  ")
-  (media-info major-mode))
+                             (bar " %b  ")
+                             (media-info major-mode))
 
 ;;
 ;; Hooks
