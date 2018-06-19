@@ -635,8 +635,8 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 ;;
 
 (defvar doom-modeline-vspc
-  "Text style with icons in mode-line."
-  (propertize " " 'face 'variable-pitch))
+  (propertize " " 'face 'variable-pitch)
+  "Text style with icons in mode-line.")
 
 (defun doom-modeline-icon (icon &optional text face voffset)
   "Displays an ICON with FACE, followed by TEXT.
