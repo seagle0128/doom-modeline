@@ -90,16 +90,16 @@
            else
            collect (list (intern (format "doom-modeline-segment--%s" (symbol-name seg))))))
 
-(defmacro doom-modeline-def (name lhs &optional rhs)
+(defmacro doom-modeline-def-modeline (name lhs &optional rhs)
   "Define a modeline format and byte-compiles it.
 NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
 LHS and RHS are lists of symbols of modeline segments defined
  with `doom-modeline-def-segment'.
 Example:
-  (doom-modeline-def minimal
+  (doom-modeline-def-modeline minimal
     (bar matches \" \" buffer-info)
     (media-info major-mode))
-  (doom-modeline-set 'minimal t)"
+  (doom-modeline-set-modeline 'minimal t)"
   (let ((sym (intern (format "doom-modeline-format--%s" name)))
         (lhs-forms (doom-modeline--prepare-segments lhs))
         (rhs-forms (doom-modeline--prepare-segments rhs)))
@@ -125,7 +125,7 @@ Throws an error if it doesn't exist."
     (when (functionp fn)
       `(:eval (,fn)))))
 
-(defun doom-modeline-set (key &optional default)
+(defun doom-modeline-set-modeline (key &optional default)
   "Set the modeline format. Does nothing if the modeline KEY doesn't exist.
 If DEFAULT is non-nil, set the default mode-line for all buffers."
   (-when-let* ((modeline (doom-modeline key)))
@@ -313,24 +313,6 @@ active."
 (advice-add #'select-window :after #'doom-modeline-set-selected-window)
 
 
-;;
-;; Bootstrap
-;;
-
-;; Show version string for multi-version managers like rvm, rbenv, pyenv, etc.
-(defvar-local doom-modeline-env-version nil)
-(defvar-local doom-modeline-env-command nil)
-(add-hook 'focus-in-hook #'doom-modeline-update-env)
-(add-hook 'find-file-hook #'doom-modeline-update-env)
-(defun doom-modeline-update-env ()
-  "Update environment for mode-line."
-  (when doom-modeline-env-command
-    (let* ((default-directory (doom-modeline-project-root))
-           (s (shell-command-to-string doom-modeline-env-command)))
-      (setq doom-modeline-env-version (if (string-match "[ \t\n\r]+\\'" s)
-                                          (replace-match "" t t s)
-                                        s)))))
-
 ;; Only support python and ruby for now
 
 ;; TODO torgeir
@@ -516,12 +498,12 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 ;;
 (doom-modeline-def-segment buffer-info-simple
-                            "Display only the current buffer's name, but with fontification."
-                            (propertize
-                             "%b"
-                             'face (cond ((and buffer-file-name (buffer-modified-p))
-                                          'doom-modeline-buffer-modified)
-                                         ((doom-modeline--active) 'doom-modeline-buffer-file))))
+  "Display only the current buffer's name, but with fontification."
+  (propertize
+   "%b"
+   'face (cond ((and buffer-file-name (buffer-modified-p))
+                'doom-modeline-buffer-modified)
+               ((doom-modeline--active) 'doom-modeline-buffer-file))))
 
 ;;
 (doom-modeline-def-segment buffer-encoding
@@ -616,22 +598,22 @@ directory, the file name, and its state (modified, read-only or non-existent)."
           (if vc-mode "  " " ")))
 
 (doom-modeline-def-segment flycheck
-                            "Displays color-coded flycheck error status in the current buffer with pretty
+  "Displays color-coded flycheck error status in the current buffer with pretty
 icons."
-                            (when (boundp 'flycheck-last-status-change)
-                              (pcase flycheck-last-status-change
-                                (`finished (if flycheck-current-errors
-                                               (let-alist (flycheck-count-errors flycheck-current-errors)
-                                                 (let ((sum (+ (or .error 0) (or .warning 0))))
-                                                   (doom-modeline-icon "do_not_disturb_alt"
-                                                                       (number-to-string sum)
-                                                                       (if .error 'doom-modeline-urgent 'doom-modeline-warning)
-                                                                       -0.25)))
-                                             (doom-modeline-icon "check" nil 'doom-modeline-info)))
-                                (`running     (doom-modeline-icon "access_time" nil 'font-lock-doc-face -0.25))
-                                (`no-checker  (doom-modeline-icon "sim_card_alert" "-" 'font-lock-doc-face))
-                                (`errored     (doom-modeline-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
-                                (`interrupted (doom-modeline-icon "pause" "Interrupted" 'font-lock-doc-face)))))
+  (when (boundp 'flycheck-last-status-change)
+    (pcase flycheck-last-status-change
+      (`finished (if flycheck-current-errors
+                     (let-alist (flycheck-count-errors flycheck-current-errors)
+                       (let ((sum (+ (or .error 0) (or .warning 0))))
+                         (doom-modeline-icon "do_not_disturb_alt"
+                                             (number-to-string sum)
+                                             (if .error 'doom-modeline-urgent 'doom-modeline-warning)
+                                             -0.25)))
+                   (doom-modeline-icon "check" nil 'doom-modeline-info)))
+      (`running     (doom-modeline-icon "access_time" nil 'font-lock-doc-face -0.25))
+      (`no-checker  (doom-modeline-icon "sim_card_alert" "-" 'font-lock-doc-face))
+      (`errored     (doom-modeline-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
+      (`interrupted (doom-modeline-icon "pause" "Interrupted" 'font-lock-doc-face)))))
 ;; ('interrupted (doom-modeline-icon "x" "Interrupted" 'font-lock-doc-face)))))
 
 
@@ -737,36 +719,36 @@ Require `anzu', also `evil-anzu' if using `evil-mode'
      'face (if (doom-modeline--active) 'doom-modeline-panel))))
 
 (doom-modeline-def-segment matches
-                            "Displays: 1. the currently recording macro, 2. A current/total for the
+  "Displays: 1. the currently recording macro, 2. A current/total for the
 current search term (with anzu), 3. The number of substitutions being conducted
 with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
-                            (let ((meta (concat (doom-modeline--macro-recording)
-                                                (doom-modeline--anzu)
-                                                (doom-modeline--evil-substitute)
-                                                (doom-modeline--iedit))))
-                              (or (and (not (equal meta "")) meta)
-                                  (if buffer-file-name " %I "))))
+  (let ((meta (concat (doom-modeline--macro-recording)
+                      (doom-modeline--anzu)
+                      (doom-modeline--evil-substitute)
+                      (doom-modeline--iedit))))
+    (or (and (not (equal meta "")) meta)
+        (if buffer-file-name " %I "))))
 
 ;; TODO Include other information
 (doom-modeline-def-segment media-info
-                            "Metadata regarding the current file, such as dimensions for images."
-                            (cond ((eq major-mode 'image-mode)
-                                   (cl-destructuring-bind (width . height)
-                                       (image-size (image-get-display-property) :pixels)
-                                     (format "  %dx%d  " width height)))))
+  "Metadata regarding the current file, such as dimensions for images."
+  (cond ((eq major-mode 'image-mode)
+         (cl-destructuring-bind (width . height)
+             (image-size (image-get-display-property) :pixels)
+           (format "  %dx%d  " width height)))))
 
 (doom-modeline-def-segment bar
-                            "The bar regulates the height of the mode-line in GUI Emacs.
+  "The bar regulates the height of the mode-line in GUI Emacs.
 Returns \"\" to not break --no-window-system."
-                            (if (display-graphic-p)
-                                (doom-modeline--make-xpm
-                                 (face-background (if (doom-modeline--active)
-                                                      'doom-modeline-bar
-                                                    'doom-modeline-inactive-bar)
-                                                  nil t)
-                                 doom-modeline-height
-                                 doom-modeline-bar-width)
-                              ""))
+  (if (display-graphic-p)
+      (doom-modeline--make-xpm
+       (face-background (if (doom-modeline--active)
+                            'doom-modeline-bar
+                          'doom-modeline-inactive-bar)
+                        nil t)
+       doom-modeline-height
+       doom-modeline-bar-width)
+    ""))
 
 (defun doom-modeline-eyebrowse-number ()
   "The eyebrowse number."
@@ -818,41 +800,41 @@ Returns \"\" to not break --no-window-system."
 
 (declare-function eyebrowse--get 'eyebrowse)
 (doom-modeline-def-segment workspace-number
-                            "The current workspace name or number. Requires `eyebrowse-mode' to be
+  "The current workspace name or number. Requires `eyebrowse-mode' to be
 enabled."
-                            (if (and (bound-and-true-p eyebrowse-mode)
-                                     (< 1 (length (eyebrowse--get 'window-configs))))
-                                (let* ((num (eyebrowse--get 'current-slot))
-                                       (tag (when num (nth 2 (assoc num (eyebrowse--get 'window-configs)))))
-                                       (str (if (and tag (< 0 (length tag)))
-                                                tag
-                                              (when num (int-to-string num)))))
-                                  (propertize (format "%s " str) 'face 'doom-modeline-eyebrowse))
-                              ""))
+  (if (and (bound-and-true-p eyebrowse-mode)
+           (< 1 (length (eyebrowse--get 'window-configs))))
+      (let* ((num (eyebrowse--get 'current-slot))
+             (tag (when num (nth 2 (assoc num (eyebrowse--get 'window-configs)))))
+             (str (if (and tag (< 0 (length tag)))
+                      tag
+                    (when num (int-to-string num)))))
+        (propertize (format "%s " str) 'face 'doom-modeline-eyebrowse))
+    ""))
 
 ;;
 ;; Mode lines
 ;;
 
-(doom-modeline-def main
-                   (workspace-number bar matches " " buffer-info "  %l:%c %p  " selection-info)
-                   (buffer-encoding major-mode vcs flycheck))
+(doom-modeline-def-modeline main
+                            (workspace-number bar matches " " buffer-info "  %l:%c %p  " selection-info)
+                            (buffer-encoding major-mode vcs flycheck))
 
-(doom-modeline-def minimal
-                   (bar matches " " buffer-info)
-                   (media-info major-mode))
+(doom-modeline-def-modeline minimal
+                            (bar matches " " buffer-info)
+                            (media-info major-mode))
 
-(doom-modeline-def special
-                   (bar matches " " buffer-info-simple "  %l:%c %p  " selection-info)
-                   (buffer-encoding major-mode flycheck))
+(doom-modeline-def-modeline special
+                            (bar matches " " buffer-info-simple "  %l:%c %p  " selection-info)
+                            (buffer-encoding major-mode flycheck))
 
-(doom-modeline-def project
-                   (bar buffer-default-directory)
-                   (major-mode))
+(doom-modeline-def-modeline project
+                            (bar buffer-default-directory)
+                            (major-mode))
 
-(doom-modeline-def media
-                   (bar " %b  ")
-                   (media-info major-mode))
+(doom-modeline-def-modeline media
+                            (bar " %b  ")
+                            (media-info major-mode))
 
 ;;
 ;; Bootstrap
@@ -861,26 +843,40 @@ enabled."
 ;;;###autoload
 (defun doom-modeline-init ()
   "Set the default modeline."
-  (doom-modeline-set 'main t)
+  (doom-modeline-set-modeline 'main t)
 
   ;; This scratch and messages buffer is already created and doesn't get a
   ;; modeline.
   (with-current-buffer "*Messages*"
-    (doom-modeline-set 'main))
+    (doom-modeline-set-modeline 'main))
   (with-current-buffer "*scratch*"
-    (doom-modeline-set 'main)))
+    (doom-modeline-set-modeline 'main)))
 
 (defun doom-modeline-set-special-modeline ()
   "Set the special modeline."
-  (doom-modeline-set 'special))
+  (doom-modeline-set-modeline 'special))
 
 (defun doom-modeline-set-media-modeline ()
   "Set the media modeline."
-  (doom-modeline-set 'media))
+  (doom-modeline-set-modeline 'media))
 
 (add-hook 'image-mode-hook   #'doom-modeline-set-media-modeline)
 (add-hook 'org-src-mode-hook #'doom-modeline-set-special-modeline)
 (add-hook 'circe-mode-hook   #'doom-modeline-set-special-modeline)
+
+;; Show version string for multi-version managers like rvm, rbenv, pyenv, etc.
+(defvar-local doom-modeline-env-version nil)
+(defvar-local doom-modeline-env-command nil)
+(add-hook 'focus-in-hook #'doom-modeline-update-env)
+(add-hook 'find-file-hook #'doom-modeline-update-env)
+(defun doom-modeline-update-env ()
+  "Update environment for mode-line."
+  (when doom-modeline-env-command
+    (let* ((default-directory (doom-modeline-project-root))
+           (s (shell-command-to-string doom-modeline-env-command)))
+      (setq doom-modeline-env-version (if (string-match "[ \t\n\r]+\\'" s)
+                                          (replace-match "" t t s)
+                                        s)))))
 
 (provide 'doom-modeline)
 
