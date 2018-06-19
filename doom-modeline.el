@@ -76,25 +76,6 @@
 
   (defvar doom-modeline--transient-counter 0))
 
-(defmacro doom-modeline-add-transient-hook! (hook &rest forms)
-  "Attaches transient forms to a HOOK.
-HOOK can be a quoted hook or a sharp-quoted function (which will be advised).
-These forms will be evaluated once when that function/hook is first invoked,
-then it detaches itself."
-  (declare (indent 1))
-  (let ((append (eq (car forms) :after))
-        (fn (intern (format "doom-transient-hook-%s" (cl-incf doom-modeline--transient-counter)))))
-    `(when ,hook
-       (fset ',fn
-             (lambda (&rest _)
-               ,@forms
-               (cond ((functionp ,hook) (advice-remove ,hook #',fn))
-                     ((symbolp ,hook)   (remove-hook ,hook #',fn)))
-               (unintern ',fn nil)))
-       (cond ((functionp ,hook)
-              (advice-add ,hook ,(if append :after :before) #',fn))
-             ((symbolp ,hook)
-              (add-hook ,hook #',fn ,append))))))
 
 ;;
 ;; Modeline library
@@ -235,19 +216,15 @@ If STRICT-P, return nil if no project was found, otherwise return
            finally return 0))
 (advice-add #'anzu--where-is-here :override #'doom-modeline-fix-anzu-count)
 
-(when (featurep 'evil-anzu)
-  (doom-modeline-add-transient-hook! #'evil-ex-start-search (require 'evil-anzu))
+;; Avoid anzu conflicts across buffers
+(mapc #'make-variable-buffer-local
+      '(anzu--total-matched anzu--current-position anzu--state
+                            anzu--cached-count anzu--cached-positions anzu--last-command
+                            anzu--last-isearch-string anzu--overflow-p))
 
-  ;; Avoid anzu conflicts across buffers
-  (mapc #'make-variable-buffer-local
-        '(anzu--total-matched anzu--current-position anzu--state
-                              anzu--cached-count anzu--cached-positions anzu--last-command
-                              anzu--last-isearch-string anzu--overflow-p))
-
-  ;; Ensure anzu state is cleared when searches & iedit are done
-  (add-hook 'isearch-mode-end-hook #'anzu--reset-status t)
-  ;; (add-hook '+evil-esc-hook #'anzu--reset-status t)
-  (add-hook 'iedit-mode-end-hook #'anzu--reset-status))
+;; Ensure anzu state is cleared when searches & iedit are done
+(add-hook 'isearch-mode-end-hook #'anzu--reset-status t)
+(add-hook 'iedit-mode-end-hook #'anzu--reset-status)
 
 
 ;; Keep `doom-modeline-current-window' up-to-date
