@@ -282,20 +282,21 @@ active."
 
 ;; anzu and evil-anzu expose current/total state that can be displayed in the
 ;; mode-line.
-(setq anzu-cons-mode-line-p nil
-      anzu-minimum-input-length 1
-      anzu-search-threshold 250)
+(when (featurep 'evil-anzu)
+  (setq anzu-cons-mode-line-p nil
+        anzu-minimum-input-length 1
+        anzu-search-threshold 250)
 
-;; Avoid anzu conflicts across buffers
-(mapc #'make-variable-buffer-local
-      '(anzu--total-matched anzu--current-position anzu--state
-                            anzu--cached-count anzu--cached-positions anzu--last-command
-                            anzu--last-isearch-string anzu--overflow-p))
+  ;; Avoid anzu conflicts across buffers
+  (mapc #'make-variable-buffer-local
+        '(anzu--total-matched anzu--current-position anzu--state
+                              anzu--cached-count anzu--cached-positions anzu--last-command
+                              anzu--last-isearch-string anzu--overflow-p))
 
-;; Ensure anzu state is cleared when searches & iedit are done
-(add-hook 'isearch-mode-end-hook #'anzu--reset-status t)
-;; (add-hook '+evil-esc-hook #'anzu--reset-status t)
-(add-hook 'iedit-mode-end-hook #'anzu--reset-status)
+  ;; Ensure anzu state is cleared when searches & iedit are done
+  (add-hook 'isearch-mode-end-hook #'anzu--reset-status t)
+  ;; (add-hook '+evil-esc-hook #'anzu--reset-status t)
+  (add-hook 'iedit-mode-end-hook #'anzu--reset-status))
 
 
 ;; Keep `doom-modeline-current-window' up-to-date
