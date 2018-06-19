@@ -163,7 +163,7 @@ Throws an error if it doesn't exist."
 (defun doom-modeline-set (key &optional default)
   "Set the modeline format. Does nothing if the modeline KEY doesn't exist.
 If DEFAULT is non-nil, set the default mode-line for all buffers."
-  (when-let (m (doom-modeline key))
+  (when-let ((modeline (doom-modeline key)))
     (setf (if default
               (default-value 'mode-line-format)
             (buffer-local-value 'mode-line-format (current-buffer)))
