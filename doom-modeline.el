@@ -93,7 +93,8 @@ then it detaches itself."
               (add-hook ,hook #',fn ,append))))))
 
 (defmacro doom-modeline-add-hook! (&rest args)
-  "A convenience macro for `add-hook'. Takes, in order:
+  "A convenience macro for `add-hook'.
+Takes, in order:
   1. Optional properties :local and/or :append, which will make the hook
      buffer-local or append to the list of hooks (respectively),
   2. The hooks: either an unquoted major mode, an unquoted list of major-modes,
@@ -110,7 +111,7 @@ Examples:
     (doom-modeline-add-hook! (one-mode second-mode) (setq v 5) (setq a 2))
     (doom-modeline-add-hook! :append :local (one-mode second-mode) (setq v 5) (setq a 2))
 Body forms can access the hook's arguments through the let-bound variable
-`args'."
+`ARGS'."
   (declare (indent defun) (debug t))
   (let ((hook-fn 'add-hook)
         append-p local-p)
@@ -141,7 +142,7 @@ Body forms can access the hook's arguments through the let-bound variable
       `(progn ,@(nreverse forms)))))
 
 (defmacro doom-modeline-def-segment! (name &rest forms)
-  "Define a modeline segment and byte compiles it."
+  "Define a modeline segment NAME by FORMS and byte compiles it."
   (declare (indent defun) (doc-string 2))
   (let ((sym (intern (format "doom-modeline-segment--%s" name))))
     `(progn
@@ -150,7 +151,8 @@ Body forms can access the hook's arguments through the let-bound variable
           `(let (byte-compile-warnings)
              (byte-compile #',sym))))))
 
-(defsubst doom-modeline--prepare-modeline-segments (segments)
+(defsubst doom-modeline--prepare-segments (segments)
+  "Prepare modeline segments `SEGMENTS'."
   (cl-loop for seg in segments
            if (stringp seg)
            collect seg
@@ -168,8 +170,8 @@ Example:
     (media-info major-mode))
   (doom-modeline-set-modeline 'minimal t)"
   (let ((sym (intern (format "doom-modeline-format--%s" name)))
-        (lhs-forms (doom-modeline--prepare-modeline-segments lhs))
-        (rhs-forms (doom-modeline--prepare-modeline-segments rhs)))
+        (lhs-forms (doom-modeline--prepare-segments lhs))
+        (rhs-forms (doom-modeline--prepare-segments rhs)))
     `(progn
        (defun ,sym ()
          (let ((lhs (list ,@lhs-forms))
@@ -219,8 +221,8 @@ If STRICT-P, return nil if no project was found, otherwise return
   "How wide the mode-line bar should be (only respected in GUI).")
 
 (defvar doom-modeline-vspc
-  (propertize " " 'face 'variable-pitch)
-  "TODO")
+  "Text style with icons in mode-line."
+  (propertize " " 'face 'variable-pitch))
 
 (defvar doom-modeline-buffer-file-name-style 'truncate-upto-project
   "Determines the style used by `doom-modeline-buffer-file-name'.
@@ -324,6 +326,7 @@ active."
 ;;
 
 (defun doom-modeline-eldoc (text)
+  "Display string TEXT in the mode-line."
   (concat (when (display-graphic-p)
             (doom-modeline--make-xpm
              (face-background 'doom-modeline-eldoc-bar nil t)
@@ -333,7 +336,7 @@ active."
 
 ;; Show eldoc in the mode-line with `eval-expression'
 (defun doom-modeline--show-eldoc (input)
-  "Display string STR in the mode-line next to minibuffer."
+  "Display string INPUT in the mode-line next to minibuffer."
   (with-current-buffer (eldoc-current-buffer)
     (let* ((str              (and (stringp input) input))
            (mode-line-format (or (and str (or (doom-modeline-eldoc str) str))
@@ -390,6 +393,7 @@ active."
 (defvar-local doom-modeline-env-command nil)
 (doom-modeline-add-hook! '(focus-in-hook find-file-hook) #'doom-modeline-update-env)
 (defun doom-modeline-update-env ()
+  "Update environment for mode-line."
   (when doom-modeline-env-command
     (let* ((default-directory (doom-modeline-project-root))
            (s (shell-command-to-string doom-modeline-env-command)))
@@ -408,11 +412,12 @@ active."
 ;;
 
 (defsubst doom-modeline--active ()
+  "If modeline is active."
   (eq (selected-window) doom-modeline-current-window))
 
 ;; Inspired from `powerline's `pl/make-xpm'.
 (defun doom-modeline--make-xpm (color height width)
-  "Create an XPM bitmap."
+  "Create an XPM bitmap iva `COLOR', `HEIGHT' and `WIDTH'."
   (propertize
    " " 'display
    (let ((data (make-list height (make-list width 1)))
@@ -438,7 +443,7 @@ active."
       'xpm t :ascent 'center))))
 
 (defun doom-modeline-buffer-file-name ()
-  "Propertized `buffer-file-name' based on `doom-modeline-buffer-file-name-style'."
+  "Propertized variable `buffer-file-name' based on `doom-modeline-buffer-file-name-style'."
   (propertize
    (pcase doom-modeline-buffer-file-name-style
      (`truncate-upto-project (doom-modeline--buffer-file-name 'shrink))
@@ -456,7 +461,7 @@ active."
    'help-echo buffer-file-truename))
 
 (defun doom-modeline--buffer-file-name-truncate (&optional truncate-tail)
-  "Propertized `buffer-file-name' that truncates every dir along path.
+  "Propertized variable `buffer-file-name' that truncates every dir along path.
 If TRUNCATE-TAIL is t also truncate the parent directory of the file."
   (let ((dirs (shrink-path-prompt (file-name-directory buffer-file-truename)))
         (active (doom-modeline--active)))
@@ -475,7 +480,7 @@ If TRUNCATE-TAIL is t also truncate the parent directory of the file."
                               'face (if file-faces `(:inherit ,file-faces)))))))))
 
 (defun doom-modeline--buffer-file-name-relative (&optional include-project)
-  "Propertized `buffer-file-name' showing directories relative to project's root only."
+  "Propertized variable `buffer-file-name' showing directories relative to project's root only."
   (let ((root (doom-modeline-project-root))
         (active (doom-modeline--active)))
     (if (null root)
@@ -491,7 +496,7 @@ If TRUNCATE-TAIL is t also truncate the parent directory of the file."
                             'face (if file-faces `(:inherit ,file-faces))))))))
 
 (defun doom-modeline--buffer-file-name (truncate-project-root-parent)
-  "Propertized `buffer-file-name'.
+  "Propertized variable `buffer-file-name'.
 If TRUNCATE-PROJECT-ROOT-PARENT is t space will be saved by truncating it down
 fish-shell style.
 Example:
@@ -613,14 +618,17 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 
 (defun doom-modeline-maybe-icon-octicon (&rest args)
+  "Display octicon ARGS."
   (when (and (display-graphic-p) (not (eq system-type 'windows-nt)))
     (apply 'all-the-icons-octicon args)))
 
 (defun doom-modeline-maybe-icon-faicon (&rest args)
+  "Display fontawesome icon ARGS."
   (when (and (display-graphic-p) (not (eq system-type 'windows-nt)))
     (apply 'all-the-icons-faicon args)))
 
 (defun doom-modeline-maybe-icon-material (&rest args)
+  "Display material icon ARGS."
   (when (and (display-graphic-p) (not (eq system-type 'windows-nt)))
     (apply 'all-the-icons-material args)))
 
@@ -663,8 +671,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 ;;
 (defun doom-modeline-icon (icon &optional text face voffset)
-  "Displays an ICON with FACE, followed by TEXT. Uses
-`all-the-icons-material' to fetch the icon."
+  "Display an ICON with FACE, followed by TEXT. Use `all-the-icons-material' to fetch the icon."
   (concat (if vc-mode " " "  ")
           (when icon
             (concat
@@ -696,6 +703,7 @@ icons."
 
 ;;
 (defsubst doom-modeline-column (pos)
+  "Get column of the position `POS'."
   (save-excursion (goto-char pos)
                   (current-column)))
 
@@ -734,12 +742,13 @@ lines are selected, or the NxM dimensions of a block selection."
               sep
               (doom-modeline-maybe-icon-octicon "triangle-right"
                                                 :face 'doom-modeline-panel
-                                                :v-adjust -0.05))
-      sep)))
+                                                :v-adjust -0.05)
+              sep))))
 
 (defsubst doom-modeline--anzu ()
-  "Show the match index and total number thereof. Requires `anzu', also
-`evil-anzu' if using `evil-mode' for compatibility with `evil-search'."
+  "Show the match index and total number thereof.
+Require `anzu', also `evil-anzu' if using `evil-mode'
+ for compatibility with `evil-search'."
   (setq anzu-cons-mode-line-p nil)
   (when (and anzu--state (not iedit-mode))
     (propertize
@@ -826,6 +835,7 @@ Returns \"\" to not break --no-window-system."
     ""))
 
 (defun doom-modeline-eyebrowse-number ()
+  "The eyebrowse number."
   (when (and (bound-and-true-p eyebrowse-mode)
              (< 1 (length (eyebrowse--get 'window-configs))))
     (let* ((num (eyebrowse--get 'current-slot))
@@ -836,6 +846,7 @@ Returns \"\" to not break --no-window-system."
       str)))
 
 (defun doom-modeline-window-bottom-left-p ()
+  "If it's botom left of the window."
   (let* ((edges (window-edges))
          (minibuffer-edges (window-edges (minibuffer-window))))
     (and (eq 0 (car edges))
