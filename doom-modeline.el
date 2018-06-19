@@ -217,10 +217,10 @@ If STRICT-P, return nil if no project was found, otherwise return
 (advice-add #'anzu--where-is-here :override #'doom-modeline-fix-anzu-count)
 
 ;; Avoid anzu conflicts across buffers
-(mapc #'make-variable-buffer-local
-      '(anzu--total-matched anzu--current-position anzu--state
-                            anzu--cached-count anzu--cached-positions anzu--last-command
-                            anzu--last-isearch-string anzu--overflow-p))
+;; (mapc #'make-variable-buffer-local
+;;       '(anzu--total-matched anzu--current-position anzu--state
+;;                             anzu--cached-count anzu--cached-positions anzu--last-command
+;;                             anzu--last-isearch-string anzu--overflow-p))
 
 ;; Ensure anzu state is cleared when searches & iedit are done
 (add-hook 'isearch-mode-end-hook #'anzu--reset-status t)
