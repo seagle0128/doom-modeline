@@ -120,16 +120,16 @@
             ((error "%s is not a valid segment" seg))))
     (nreverse forms)))
 
-(defmacro doom-modeline-def (name lhs &optional rhs)
+(defmacro doom-modeline-def-modeline (name lhs &optional rhs)
   "Defines a modeline format and byte-compiles it.
 NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
 LHS and RHS are lists of symbols of modeline segments defined with
  `doom-modeline-def-segment'.
 Example:
-  (doom-modeline-def minimal
+  (doom-modeline-def-modeline minimal
     (bar matches \" \" buffer-info)
     (media-info major-mode))
-  (doom-modeline-set 'minimal t)"
+  (doom-modeline-set-modeline 'minimal t)"
   (let ((sym (intern (format "doom-modeline-format--%s" name)))
         (lhs-forms (doom-modeline--prepare-segments lhs))
         (rhs-forms (doom-modeline--prepare-segments rhs)))
@@ -160,7 +160,7 @@ Throws an error if it doesn't exist."
     (when (functionp fn)
       `(:eval (,fn)))))
 
-(defun doom-modeline-set (key &optional default)
+(defun doom-modeline-set-modeline (key &optional default)
   "Set the modeline format. Does nothing if the modeline KEY doesn't exist.
 If DEFAULT is non-nil, set the default mode-line for all buffers."
   (when-let ((modeline (doom-modeline key)))
@@ -876,25 +876,25 @@ enabled."
 ;; Mode lines
 ;;
 
-(doom-modeline-def main
-                   (workspace-number bar matches " " buffer-info "  %l:%c %p  " selection-info)
-                   (buffer-encoding major-mode vcs flycheck))
+(doom-modeline-def-modeline main
+                            (workspace-number bar matches " " buffer-info "  %l:%c %p  " selection-info)
+                            (buffer-encoding major-mode vcs flycheck))
 
-(doom-modeline-def minimal
-                   (bar matches " " buffer-info)
-                   (media-info major-mode))
+(doom-modeline-def-modeline minimal
+                            (bar matches " " buffer-info)
+                            (media-info major-mode))
 
-(doom-modeline-def special
-                   (bar matches " " buffer-info-simple "  %l:%c %p  " selection-info)
-                   (buffer-encoding major-mode flycheck))
+(doom-modeline-def-modeline special
+                            (bar matches " " buffer-info-simple "  %l:%c %p  " selection-info)
+                            (buffer-encoding major-mode flycheck))
 
-(doom-modeline-def project
-                   (bar buffer-default-directory)
-                   (major-mode))
+(doom-modeline-def-modeline project
+                            (bar buffer-default-directory)
+                            (major-mode))
 
-(doom-modeline-def media
-                   (bar " %b  ")
-                   (media-info major-mode))
+(doom-modeline-def-modeline media
+                            (bar " %b  ")
+                            (media-info major-mode))
 
 ;;
 ;; Hooks
@@ -921,25 +921,25 @@ enabled."
     ;; of Emacs, someone give the man a modeline!
     (dolist (bname '("*scratch*" "*Messages*"))
       (with-current-buffer bname
-        (doom-modeline-set 'main)))))
+        (doom-modeline-set-modeline 'main)))))
 
 (defun doom-modeline-set-special-modeline ()
   "Set sepcial mode-line."
-  (doom-modeline-set 'special))
+  (doom-modeline-set-modeline 'special))
 
 (defun doom-modeline-set-media-modeline ()
   "Set media mode-line."
-  (doom-modeline-set 'media))
+  (doom-modeline-set-modeline 'media))
 
 (defun doom-modeline-set-project-modeline ()
   "Set project mode-line."
-  (doom-modeline-set 'project))
+  (doom-modeline-set-modeline 'project))
 
 ;;
 ;; Bootstrap
 ;;
 
-(doom-modeline-set 'main t) ; set default modeline
+(doom-modeline-set-modeline 'main t) ; set default modeline
 
 ;; (add-hook 'doom-load-theme-hook #'doom-modeline-init)
 ;; (add-hook 'doom-scratch-buffer-hook #'doom-modeline-set-special-modeline)
