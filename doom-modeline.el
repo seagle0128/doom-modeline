@@ -308,10 +308,19 @@ If STRICT-P, return nil if no project was found, otherwise return
   (force-mode-line-update))
 
 (add-hook 'window-configuration-change-hook #'doom-modeline-set-selected-window)
-(add-hook 'focus-in-hook  #'doom-modeline-set-selected-window)
-(add-hook 'focus-out-hook #'doom-modeline-unset-selected-window)
 (add-hook 'doom-after-switch-window-hook #'doom-modeline-set-selected-window)
-(add-hook 'doom-after-switch-frame-hook  #'doom-modeline-set-selected-window)
+(with-no-warnings
+  (if (not (boundp 'after-focus-change-function))
+      (progn
+        (add-hook 'focus-in-hook  #'doom-modeline-set-selected-window)
+        (add-hook 'focus-out-hook #'doom-modeline-unset-selected-window))
+    (defun doom-modeline-refresh-frame ()
+      (setq +doom-modeline-current-window nil)
+      (cl-loop for frame in (frame-list)
+               if (eq (frame-focus-state frame) t)
+               return (setq +doom-modeline-current-window (frame-selected-window frame)))
+      (force-mode-line-update))
+    (add-function :after after-focus-change-function #'doom-modeline-refresh-frame)))
 
 ;;
 ;; Variables
@@ -414,30 +423,23 @@ active."
   :group 'doom-modeline)
 
 ;;
-;; Bootstrap
-;;
-
-;; Show version string for multi-version managers like rvm, rbenv, pyenv, etc.
-(defvar-local doom-modeline-env-version nil)
-(defvar-local doom-modeline-env-command nil)
-(doom-modeline-add-hook! '(focus-in-hook find-file-hook) #'doom-modeline-update-env)
-(defun doom-modeline-update-env ()
-  (when doom-modeline-env-command
-    (let* ((default-directory (doom-modeline-project-root))
-           (s (shell-command-to-string doom-modeline-env-command)))
-      (setq doom-modeline-env-version (if (string-match "[ \t\n\r]+\\'" s)
-                                          (replace-match "" t t s)
-                                        s)))))
-
-;; Only support python and ruby for now
-
-;; TODO torgeir
-(doom-modeline-add-hook! 'python-mode-hook (setq doom-modeline-env-command "python --version 2>&1 | cut -d' ' -f2"))
-(doom-modeline-add-hook! 'ruby-mode-hook   (setq doom-modeline-env-command "ruby   --version 2>&1 | cut -d' ' -f2"))
-
-;;
 ;; Modeline helpers
 ;;
+
+(defun doom-modeline-maybe-icon-octicon (&rest args)
+  "Display octicon via `ARGS'."
+  (when (and (featurep 'all-the-icons) (display-graphic-p) (not (eq system-type 'windows-nt)))
+    (apply 'all-the-icons-octicon args)))
+
+(defun doom-modeline-maybe-icon-faicon (&rest args)
+  "Display font awesome icon via `ARGS'."
+  (when (and (featurep 'all-the-icons) (display-graphic-p) (not (eq system-type 'windows-nt)))
+    (apply 'all-the-icons-faicon args)))
+
+(defun doom-modeline-maybe-icon-material (&rest args)
+  "Display material icon via `ARGS'."
+  (when (and (featurep 'all-the-icons) (display-graphic-p) (not (eq system-type 'windows-nt)))
+    (apply 'all-the-icons-material args)))
 
 (defsubst doom-modeline--active ()
   (eq (selected-window) doom-modeline-current-window))
@@ -447,9 +449,7 @@ active."
   (propertize
    " " 'display
    (let ((data (make-list height (make-list width 1)))
-         (color (or (when face
-                      (face-background face nil t))
-                    "None")))
+         (color (or (face-background face nil t) "None")))
      (ignore-errors
        (create-image
         (concat
@@ -472,7 +472,7 @@ active."
         'xpm t :ascent 'center)))))
 
 (defun doom-modeline-buffer-file-name ()
-  "Propertized `buffer-file-name' based on `doom-modeline-buffer-file-name-style'."
+  "Propertized variable `buffer-file-name' based on `+doom-modeline-buffer-file-name-style'."
   (let ((buffer-file-name (or buffer-file-name ""))
         (buffer-file-truename (or buffer-file-truename "")))
     (propertize
@@ -495,32 +495,20 @@ active."
   "Propertized `buffer-file-name' that truncates every dir along path.
 If TRUNCATE-TAIL is t also truncate the parent directory of the file."
   (let ((dirs (shrink-path-prompt (file-name-directory buffer-file-truename)))
-        (doom-modeline--active (doom-modeline--active)))
+        (active (doom-modeline--active)))
     (if (null dirs)
-        (propertize "%b" 'face (if doom-modeline--active 'doom-modeline-buffer-file))
+        (propertize "%b" 'face (if active 'doom-modeline-buffer-file))
       (let ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified)))
         (let ((dirname (car dirs))
               (basename (cdr dirs))
-              (dir-faces (or modified-faces (if doom-modeline--active 'doom-modeline-project-root-dir)))
-              (file-faces (or modified-faces (if doom-modeline--active 'doom-modeline-buffer-file))))
+              (dir-faces (or modified-faces (if active 'doom-modeline-project-root-dir)))
+              (file-faces (or modified-faces (if active 'doom-modeline-buffer-file))))
           (concat (propertize (concat dirname
                                       (if truncate-tail (substring basename 0 1) basename)
                                       "/")
                               'face (if dir-faces `(:inherit ,dir-faces)))
                   (propertize (file-name-nondirectory buffer-file-name)
                               'face (if file-faces `(:inherit ,file-faces)))))))))
-
-(defun doom-modeline-maybe-icon-octicon (&rest args)
-  (when (and (featurep 'all-the-icons) (display-graphic-p) (not (eq system-type 'windows-nt)))
-    (apply 'all-the-icons-octicon args)))
-
-(defun doom-modeline-maybe-icon-faicon (&rest args)
-  (when (and (featurep 'all-the-icons) (display-graphic-p) (not (eq system-type 'windows-nt)))
-    (apply 'all-the-icons-faicon args)))
-
-(defun doom-modeline-maybe-icon-material (&rest args)
-  (when (and (featurep 'all-the-icons) (display-graphic-p) (not (eq system-type 'windows-nt)))
-    (apply 'all-the-icons-material args)))
 
 (defun doom-modeline--buffer-file-name-relative (&optional include-project)
   "Propertized `buffer-file-name' showing directories relative to project's root only."
@@ -667,6 +655,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 (defvar-local doom-modeline--vcs nil)
 (defun doom-modeline--update-vcs ()
+  "Update vsc status in mode-line."
   (setq doom-modeline--vcs
         (when (and vc-mode buffer-file-name)
           (let* ((backend (vc-backend buffer-file-name))
@@ -713,12 +702,12 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 ;;
 
 (defvar doom-modeline-vspc
-  (propertize " " 'face 'variable-pitch)
-  "TODO")
+  "Text style with icons in mode-line."
+  (propertize " " 'face 'variable-pitch))
 
 (defun doom-modeline-icon (icon &optional text face voffset)
-  "Displays an ICON with FACE, followed by TEXT. Uses
-`all-the-icons-material' to fetch the icon."
+  "Displays an ICON with FACE, followed by TEXT.
+Uses `all-the-icons-material' to fetch the icon."
   (concat (if vc-mode " " "  ")
           (when icon
             (concat
@@ -895,7 +884,7 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 (doom-modeline-def-segment! bar
   "The bar regulates the height of the mode-line in GUI Emacs.
 Returns \"\" to not break --no-window-system."
-  (if window-system
+  (if (display-graphic-p)
       (if (doom-modeline--active)
           doom-modeline--bar-active
         doom-modeline--bar-inactive)
@@ -977,6 +966,7 @@ enabled."
 ;;
 
 (defun doom-modeline-refresh-bars (&optional width height)
+  "Refreash mode-line bars with `WIDTH' and `HEIGHT'."
   (setq doom-modeline--bar-active
         (doom-modeline--make-xpm 'doom-modeline-bar
                                  (or width doom-modeline-bar-width)
@@ -988,6 +978,7 @@ enabled."
 
 ;;;###autoload
 (defun doom-modeline-init ()
+  "Initialize doom mode-line."
   ;; Create bars
   (doom-modeline-refresh-bars)
   (unless after-init-time
@@ -998,12 +989,15 @@ enabled."
         (doom-modeline-set 'main)))))
 
 (defun doom-modeline-set-special-modeline ()
+  "Set sepcial mode-line."
   (doom-modeline-set 'special))
 
 (defun doom-modeline-set-media-modeline ()
+  "Set media mode-line."
   (doom-modeline-set 'media))
 
 (defun doom-modeline-set-project-modeline ()
+  "Set project mode-line."
   (doom-modeline-set 'project))
 
 ;;
@@ -1019,13 +1013,33 @@ enabled."
 (add-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
 (add-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
 
+;; Show version string for multi-version managers like rvm, rbenv, pyenv, etc.
+(defvar-local doom-modeline-env-version nil)
+(defvar-local doom-modeline-env-command nil)
+(doom-modeline-add-hook! '(focus-in-hook find-file-hook) #'doom-modeline-update-env)
+(defun doom-modeline-update-env ()
+  (when doom-modeline-env-command
+    (let* ((default-directory (doom-modeline-project-root))
+           (s (shell-command-to-string doom-modeline-env-command)))
+      (setq doom-modeline-env-version (if (string-match "[ \t\n\r]+\\'" s)
+                                          (replace-match "" t t s)
+                                        s)))))
+
+;; Only support python and ruby for now
+
+;; TODO torgeir
+(doom-modeline-add-hook! 'python-mode-hook (setq doom-modeline-env-command "python --version 2>&1 | cut -d' ' -f2"))
+(doom-modeline-add-hook! 'ruby-mode-hook   (setq doom-modeline-env-command "ruby   --version 2>&1 | cut -d' ' -f2"))
+
 ;; Ensure modeline is inactive when Emacs is unfocused (and active otherwise)
 (defvar doom-modeline-remap-face-cookie nil)
 (defun doom-modeline-focus ()
+  "Focus mode-line."
   (when doom-modeline-remap-face-cookie
     (require 'face-remap)
     (face-remap-remove-relative doom-modeline-remap-face-cookie)))
 (defun doom-modeline-unfocus ()
+  "Unfocus mode-line."
   (setq doom-modeline-remap-face-cookie (face-remap-add-relative 'mode-line 'mode-line-inactive)))
 
 (add-hook 'focus-in-hook #'doom-modeline-focus)
