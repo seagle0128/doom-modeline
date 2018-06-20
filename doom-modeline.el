@@ -279,11 +279,11 @@ relative-to-project => lisp/comint.el
 file-name => comint.el")
 
 ;; externs
-(setq anzu--state nil)
-(setq evil-mode nil)
-(setq evil-state nil)
-(setq evil-visual-selection nil)
-(setq iedit-mode nil)
+(defvar anzu--state nil)
+(defvar evil-mode nil)
+(defvar evil-state nil)
+(defvar evil-visual-selection nil)
+(defvar iedit-mode nil)
 
 ;;
 ;; Custom faces
