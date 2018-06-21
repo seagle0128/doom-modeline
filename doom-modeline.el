@@ -364,17 +364,17 @@ active."
 
 (defun doom-modeline-maybe-icon-octicon (&rest args)
   "Display octicon via `ARGS'."
-  (when (and (featurep 'all-the-icons) (display-graphic-p) (not (eq system-type 'windows-nt)))
+  (when (display-graphic-p)
     (apply 'all-the-icons-octicon args)))
 
 (defun doom-modeline-maybe-icon-faicon (&rest args)
   "Display font awesome icon via `ARGS'."
-  (when (and (featurep 'all-the-icons) (display-graphic-p) (not (eq system-type 'windows-nt)))
+  (when (display-graphic-p)
     (apply 'all-the-icons-faicon args)))
 
 (defun doom-modeline-maybe-icon-material (&rest args)
   "Display material icon via `ARGS'."
-  (when (and (featurep 'all-the-icons) (display-graphic-p) (not (eq system-type 'windows-nt)))
+  (when (display-graphic-p)
     (apply 'all-the-icons-material args)))
 
 (defsubst doom-modeline--active ()
