@@ -204,7 +204,7 @@ If STRICT-P, return nil if no project was found, otherwise return
 
 ;; anzu and evil-anzu expose current/total state that can be displayed in the
 ;; mode-line.
-(when (feature 'evil-anzu)
+(when (featurep 'evil-anzu)
   (setq anzu-cons-mode-line-p nil
         anzu-minimum-input-length 1
         anzu-search-threshold 250)
