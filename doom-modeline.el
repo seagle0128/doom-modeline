@@ -243,7 +243,8 @@ If STRICT-P, return nil if no project was found, otherwise return
   (force-mode-line-update))
 
 (add-hook 'window-configuration-change-hook #'doom-modeline-set-selected-window)
-(add-hook 'switch-window-finish-hook #'doom-modeline-set-selected-window)
+(advice-add #'handle-switch-frame :after #'doom-modeline-set-selected-window)
+(advice-add #'select-window :after #'doom-modeline-set-selected-window)
 (with-no-warnings
   (if (not (boundp 'after-focus-change-function))
       (progn
