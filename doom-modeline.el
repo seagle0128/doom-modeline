@@ -735,6 +735,7 @@ lines are selected, or the NxM dimensions of a block selection."
 (defsubst doom-modeline--anzu ()
   "Show the match index and total number thereof. Requires `anzu', also
 `evil-anzu' if using `evil-mode' for compatibility with `evil-search'."
+  (setq anzu-cons-mode-line-p nil)
   (when (and anzu--state (not iedit-mode))
     (propertize
      (let ((here anzu--current-position)
