@@ -204,7 +204,7 @@ If STRICT-P, return nil if no project was found, otherwise return
 
 ;; anzu and evil-anzu expose current/total state that can be displayed in the
 ;; mode-line.
-(when (feature 'evil-anzu)
+(when (featurep 'evil-anzu)
   (setq anzu-cons-mode-line-p nil
         anzu-minimum-input-length 1
         anzu-search-threshold 250)
@@ -243,17 +243,18 @@ If STRICT-P, return nil if no project was found, otherwise return
   (force-mode-line-update))
 
 (add-hook 'window-configuration-change-hook #'doom-modeline-set-selected-window)
-(add-hook 'doom-after-switch-window-hook #'doom-modeline-set-selected-window)
+(advice-add #'handle-switch-frame :after #'doom-modeline-set-selected-window)
+(advice-add #'select-window :after #'doom-modeline-set-selected-window)
 (with-no-warnings
   (if (not (boundp 'after-focus-change-function))
       (progn
         (add-hook 'focus-in-hook  #'doom-modeline-set-selected-window)
         (add-hook 'focus-out-hook #'doom-modeline-unset-selected-window))
     (defun doom-modeline-refresh-frame ()
-      (setq +doom-modeline-current-window nil)
+      (setq doom-modeline-current-window nil)
       (cl-loop for frame in (frame-list)
                if (eq (frame-focus-state frame) t)
-               return (setq +doom-modeline-current-window (frame-selected-window frame)))
+               return (setq doom-modeline-current-window (frame-selected-window frame)))
       (force-mode-line-update))
     (add-function :after after-focus-change-function #'doom-modeline-refresh-frame)))
 
@@ -376,17 +377,17 @@ active."
 
 (defun doom-modeline-maybe-icon-octicon (&rest args)
   "Display octicon via `ARGS'."
-  (when (and (featurep 'all-the-icons) (display-graphic-p) (not (eq system-type 'windows-nt)))
+  (when (display-graphic-p)
     (apply 'all-the-icons-octicon args)))
 
 (defun doom-modeline-maybe-icon-faicon (&rest args)
   "Display font awesome icon via `ARGS'."
-  (when (and (featurep 'all-the-icons) (display-graphic-p) (not (eq system-type 'windows-nt)))
+  (when (display-graphic-p)
     (apply 'all-the-icons-faicon args)))
 
 (defun doom-modeline-maybe-icon-material (&rest args)
   "Display material icon via `ARGS'."
-  (when (and (featurep 'all-the-icons) (display-graphic-p) (not (eq system-type 'windows-nt)))
+  (when (display-graphic-p)
     (apply 'all-the-icons-material args)))
 
 (defsubst doom-modeline--active ()
@@ -748,6 +749,7 @@ lines are selected, or the NxM dimensions of a block selection."
 (defsubst doom-modeline--anzu ()
   "Show the match index and total number thereof. Requires `anzu', also
 `evil-anzu' if using `evil-mode' for compatibility with `evil-search'."
+  (setq anzu-cons-mode-line-p nil)
   (when (and anzu--state (not iedit-mode))
     (propertize
      (let ((here anzu--current-position)
