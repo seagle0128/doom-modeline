@@ -257,6 +257,19 @@ If STRICT-P, return nil if no project was found, otherwise return
       (force-mode-line-update))
     (add-function :after after-focus-change-function #'doom-modeline-refresh-frame)))
 
+;; Show version string for multi-version managers like rvm, rbenv, pyenv, etc.
+(defvar-local doom-modeline-env-version nil)
+(defvar-local doom-modeline-env-command nil)
+(add-hook 'focus-in-hook #'doom-modeline-update-env)
+(add-hook 'find-file-hook #'doom-modeline-update-env)
+(defun doom-modeline-update-env ()
+  (when doom-modeline-env-command
+    (let* ((default-directory (doom-modeline-project-root))
+           (s (shell-command-to-string doom-modeline-env-command)))
+      (setq doom-modeline-env-version (if (string-match "[ \t\n\r]+\\'" s)
+                                          (replace-match "" t t s)
+                                        s)))))
+
 ;;
 ;; Variables
 ;;
@@ -948,27 +961,17 @@ enabled."
 (add-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
 (add-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
 
-;; Show version string for multi-version managers like rvm, rbenv, pyenv, etc.
-(defvar-local doom-modeline-env-version nil)
-(defvar-local doom-modeline-env-command nil)
-(add-hook 'focus-in-hook #'doom-modeline-update-env)
-(add-hook 'find-file-hook #'doom-modeline-update-env)
-(defun doom-modeline-update-env ()
-  (when doom-modeline-env-command
-    (let* ((default-directory (doom-modeline-project-root))
-           (s (shell-command-to-string doom-modeline-env-command)))
-      (setq doom-modeline-env-version (if (string-match "[ \t\n\r]+\\'" s)
-                                          (replace-match "" t t s)
-                                        s)))))
-
-;; Only support python and ruby for now
-
-;; TODO torgeir
+;; Versions, support Python, Ruby and Golang
 (add-hook 'python-mode-hook
           (lambda ()
             (setq doom-modeline-env-command "python --version 2>&1 | cut -d' ' -f2")))
 (add-hook 'ruby-mode-hook
-          (lambda () (setq doom-modeline-env-command "ruby   --version 2>&1 | cut -d' ' -f2")))
+          (lambda ()
+            (setq doom-modeline-env-command "ruby --version 2>&1 | cut -d' ' -f2")))
+(add-hook 'go-mode-hook
+          (lambda ()
+            (setq doom-modeline-env-command "go version 2>&1 | cut -d' ' -f3 | tr -d 'go'")))
+
 
 ;; Ensure modeline is inactive when Emacs is unfocused (and active otherwise)
 (defvar doom-modeline-remap-face-cookie nil)
