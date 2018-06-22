@@ -312,16 +312,19 @@ active."
 (advice-add #'handle-switch-frame :after #'doom-modeline-set-selected-window)
 (advice-add #'select-window :after #'doom-modeline-set-selected-window)
 
-
-;; Only support python and ruby for now
-
-;; TODO torgeir
-(add-hook 'python-mode-hook
-          (lambda ()
-            (setq doom-modeline-env-command "python --version 2>&1 | cut -d' ' -f2")))
-(add-hook 'ruby-mode-hook
-          (lambda ()
-            (setq doom-modeline-env-command "ruby   --version 2>&1 | cut -d' ' -f2")))
+;; Show version string for multi-version managers like rvm, rbenv, pyenv, etc.
+(defvar-local doom-modeline-env-version nil)
+(defvar-local doom-modeline-env-command nil)
+(add-hook 'focus-in-hook #'doom-modeline-update-env)
+(add-hook 'find-file-hook #'doom-modeline-update-env)
+(defun doom-modeline-update-env ()
+  "Update environment for mode-line."
+  (when doom-modeline-env-command
+    (let* ((default-directory (doom-modeline-project-root))
+           (s (shell-command-to-string doom-modeline-env-command)))
+      (setq doom-modeline-env-version (if (string-match "[ \t\n\r]+\\'" s)
+                                          (replace-match "" t t s)
+                                        s)))))
 
 ;;
 ;; Modeline helpers
@@ -864,19 +867,16 @@ enabled."
 (add-hook 'org-src-mode-hook #'doom-modeline-set-special-modeline)
 (add-hook 'circe-mode-hook   #'doom-modeline-set-special-modeline)
 
-;; Show version string for multi-version managers like rvm, rbenv, pyenv, etc.
-(defvar-local doom-modeline-env-version nil)
-(defvar-local doom-modeline-env-command nil)
-(add-hook 'focus-in-hook #'doom-modeline-update-env)
-(add-hook 'find-file-hook #'doom-modeline-update-env)
-(defun doom-modeline-update-env ()
-  "Update environment for mode-line."
-  (when doom-modeline-env-command
-    (let* ((default-directory (doom-modeline-project-root))
-           (s (shell-command-to-string doom-modeline-env-command)))
-      (setq doom-modeline-env-version (if (string-match "[ \t\n\r]+\\'" s)
-                                          (replace-match "" t t s)
-                                        s)))))
+;; Versions, support Python, Ruby and Golang
+(add-hook 'python-mode-hook
+          (lambda ()
+            (setq doom-modeline-env-command "python --version 2>&1 | cut -d' ' -f2")))
+(add-hook 'ruby-mode-hook
+          (lambda ()
+            (setq doom-modeline-env-command "ruby --version 2>&1 | cut -d' ' -f2")))
+(add-hook 'go-mode-hook
+          (lambda ()
+            (setq doom-modeline-env-command "go version 2>&1 | cut -d' ' -f3 | tr -d 'go'")))
 
 (provide 'doom-modeline)
 
