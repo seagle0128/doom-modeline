@@ -449,140 +449,140 @@ Example:
 
 
 (doom-modeline-def-segment buffer-default-directory
-                           "Displays `default-directory'. This is for special buffers like the scratch
+  "Displays `default-directory'. This is for special buffers like the scratch
 buffer where knowing the current project directory is important."
-                           (let ((face (if (doom-modeline--active) 'doom-modeline-buffer-path)))
-                             (concat (if (display-graphic-p) " ")
-                                     (doom-modeline-maybe-icon-octicon
-                                      "file-directory"
-                                      :face face
-                                      :v-adjust -0.05
-                                      :height 1.25)
-                                     (propertize (concat " " (abbreviate-file-name default-directory))
-                                                 'face face))))
+  (let ((face (if (doom-modeline--active) 'doom-modeline-buffer-path)))
+    (concat (if (display-graphic-p) " ")
+            (doom-modeline-maybe-icon-octicon
+             "file-directory"
+             :face face
+             :v-adjust -0.05
+             :height 1.25)
+            (propertize (concat " " (abbreviate-file-name default-directory))
+                        'face face))))
 
 
 ;;
 (doom-modeline-def-segment buffer-info
-                           "Combined information about the current buffer, including the current working
+  "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
-                           (concat
-                            (cond (buffer-read-only
-                                   (concat (doom-modeline-maybe-icon-octicon
-                                            "lock"
-                                            :face 'doom-modeline-warning
-                                            :v-adjust -0.05)
-                                           " "))
-                                  ((buffer-modified-p)
-                                   (concat (doom-modeline-maybe-icon-faicon
-                                            "floppy-o"
-                                            :face 'doom-modeline-buffer-modified
-                                            :v-adjust -0.0575)
-                                           " "))
-                                  ((and buffer-file-name
-                                        (not (file-exists-p buffer-file-name)))
-                                   (concat (doom-modeline-maybe-icon-octicon
-                                            "circle-slash"
-                                            :face 'doom-modeline-urgent
-                                            :v-adjust -0.05)
-                                           " "))
-                                  ((buffer-narrowed-p)
-                                   (concat (doom-modeline-maybe-icon-octicon
-                                            "fold"
-                                            :face 'doom-modeline-warning
-                                            :v-adjust -0.05)
-                                           " ")))
-                            (if buffer-file-name
-                                (doom-modeline-buffer-file-name)
-                              "%b")))
+  (concat
+   (cond (buffer-read-only
+          (concat (doom-modeline-maybe-icon-octicon
+                   "lock"
+                   :face 'doom-modeline-warning
+                   :v-adjust -0.05)
+                  " "))
+         ((buffer-modified-p)
+          (concat (doom-modeline-maybe-icon-faicon
+                   "floppy-o"
+                   :face 'doom-modeline-buffer-modified
+                   :v-adjust -0.0575)
+                  " "))
+         ((and buffer-file-name
+               (not (file-exists-p buffer-file-name)))
+          (concat (doom-modeline-maybe-icon-octicon
+                   "circle-slash"
+                   :face 'doom-modeline-urgent
+                   :v-adjust -0.05)
+                  " "))
+         ((buffer-narrowed-p)
+          (concat (doom-modeline-maybe-icon-octicon
+                   "fold"
+                   :face 'doom-modeline-warning
+                   :v-adjust -0.05)
+                  " ")))
+   (if buffer-file-name
+       (doom-modeline-buffer-file-name)
+     "%b")))
 
 ;;
 (doom-modeline-def-segment buffer-info-simple
-                           "Display only the current buffer's name, but with fontification."
-                           (propertize
-                            "%b"
-                            'face (cond ((and buffer-file-name (buffer-modified-p))
-                                         'doom-modeline-buffer-modified)
-                                        ((doom-modeline--active) 'doom-modeline-buffer-file))))
+  "Display only the current buffer's name, but with fontification."
+  (propertize
+   "%b"
+   'face (cond ((and buffer-file-name (buffer-modified-p))
+                'doom-modeline-buffer-modified)
+               ((doom-modeline--active) 'doom-modeline-buffer-file))))
 
 ;;
 (doom-modeline-def-segment buffer-encoding
-                           "Displays the encoding and eol style of the buffer the same way Atom does."
-                           (concat (pcase (coding-system-eol-type buffer-file-coding-system)
-                                     (0 "LF  ")
-                                     (1 "CRLF  ")
-                                     (2 "CR  "))
-                                   (let ((sys (coding-system-plist buffer-file-coding-system)))
-                                     (cond ((memq (plist-get sys :category) '(coding-category-undecided coding-category-utf-8))
-                                            "UTF-8")
-                                           (t (upcase (symbol-name (plist-get sys :name))))))
-                                   "  "))
+  "Displays the encoding and eol style of the buffer the same way Atom does."
+  (concat (pcase (coding-system-eol-type buffer-file-coding-system)
+            (0 "LF  ")
+            (1 "CRLF  ")
+            (2 "CR  "))
+          (let ((sys (coding-system-plist buffer-file-coding-system)))
+            (cond ((memq (plist-get sys :category) '(coding-category-undecided coding-category-utf-8))
+                   "UTF-8")
+                  (t (upcase (symbol-name (plist-get sys :name))))))
+          "  "))
 
 ;;
 (doom-modeline-def-segment major-mode
-                           "The major mode, including process, environment and text-scale info."
-                           (propertize
-                            (concat (format-mode-line mode-name)
-                                    (when (stringp mode-line-process)
-                                      mode-line-process)
-                                    (when doom-modeline-env-version
-                                      (concat " " doom-modeline-env-version))
-                                    (and (featurep 'face-remap)
-                                         (/= text-scale-mode-amount 0)
-                                         (format " (%+d)" text-scale-mode-amount)))
-                            'face (if (doom-modeline--active) 'doom-modeline-buffer-major-mode)))
+  "The major mode, including process, environment and text-scale info."
+  (propertize
+   (concat (format-mode-line mode-name)
+           (when (stringp mode-line-process)
+             mode-line-process)
+           (when doom-modeline-env-version
+             (concat " " doom-modeline-env-version))
+           (and (featurep 'face-remap)
+                (/= text-scale-mode-amount 0)
+                (format " (%+d)" text-scale-mode-amount)))
+   'face (if (doom-modeline--active) 'doom-modeline-buffer-major-mode)))
 
 
 (defun doom-modeline-maybe-icon-octicon (&rest args)
   "Display octicon ARGS."
-  (when (and (display-graphic-p) (not (eq system-type 'windows-nt)))
+  (when (display-graphic-p)
     (apply 'all-the-icons-octicon args)))
 
 (defun doom-modeline-maybe-icon-faicon (&rest args)
   "Display fontawesome icon ARGS."
-  (when (and (display-graphic-p) (not (eq system-type 'windows-nt)))
+  (when (display-graphic-p)
     (apply 'all-the-icons-faicon args)))
 
 (defun doom-modeline-maybe-icon-material (&rest args)
   "Display material icon ARGS."
-  (when (and (display-graphic-p) (not (eq system-type 'windows-nt)))
+  (when (display-graphic-p)
     (apply 'all-the-icons-material args)))
 
 ;;
 (doom-modeline-def-segment vcs
-                           "Displays the current branch, colored based on its state."
-                           (when (and vc-mode buffer-file-name)
-                             (let* ((backend (vc-backend buffer-file-name))
-                                    (state   (vc-state buffer-file-name backend)))
-                               (let ((face    'mode-line-inactive)
-                                     (active  (doom-modeline--active))
-                                     (all-the-icons-default-adjust -0.1))
-                                 (concat (if (display-graphic-p) "  ")
-                                         (cond ((memq state '(edited added))
-                                                (if active (setq face 'doom-modeline-info))
-                                                (doom-modeline-maybe-icon-octicon
-                                                 "git-compare"
-                                                 :face face
-                                                 :v-adjust -0.05))
-                                               ((eq state 'needs-merge)
-                                                (if active (setq face 'doom-modeline-info))
-                                                (doom-modeline-maybe-icon-octicon "git-merge" :face face))
-                                               ((eq state 'needs-update)
-                                                (if active (setq face 'doom-modeline-warning))
-                                                (doom-modeline-maybe-icon-octicon "arrow-down" :face face))
-                                               ((memq state '(removed conflict unregistered))
-                                                (if active (setq face 'doom-modeline-urgent))
-                                                (doom-modeline-maybe-icon-octicon "alert" :face face))
-                                               (t
-                                                (if active (setq face 'font-lock-doc-face))
-                                                (doom-modeline-maybe-icon-octicon
-                                                 "git-branch"
-                                                 :face face
-                                                 :v-adjust -0.05)))
-                                         " "
-                                         (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
-                                                     'face (if active face))
-                                         " ")))))
+  "Displays the current branch, colored based on its state."
+  (when (and vc-mode buffer-file-name)
+    (let* ((backend (vc-backend buffer-file-name))
+           (state   (vc-state buffer-file-name backend)))
+      (let ((face    'mode-line-inactive)
+            (active  (doom-modeline--active))
+            (all-the-icons-default-adjust -0.1))
+        (concat (if (display-graphic-p) "  ")
+                (cond ((memq state '(edited added))
+                       (if active (setq face 'doom-modeline-info))
+                       (doom-modeline-maybe-icon-octicon
+                        "git-compare"
+                        :face face
+                        :v-adjust -0.05))
+                      ((eq state 'needs-merge)
+                       (if active (setq face 'doom-modeline-info))
+                       (doom-modeline-maybe-icon-octicon "git-merge" :face face))
+                      ((eq state 'needs-update)
+                       (if active (setq face 'doom-modeline-warning))
+                       (doom-modeline-maybe-icon-octicon "arrow-down" :face face))
+                      ((memq state '(removed conflict unregistered))
+                       (if active (setq face 'doom-modeline-urgent))
+                       (doom-modeline-maybe-icon-octicon "alert" :face face))
+                      (t
+                       (if active (setq face 'font-lock-doc-face))
+                       (doom-modeline-maybe-icon-octicon
+                        "git-branch"
+                        :face face
+                        :v-adjust -0.05)))
+                " "
+                (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
+                            'face (if active face))
+                " ")))))
 
 
 ;;
@@ -598,22 +598,22 @@ directory, the file name, and its state (modified, read-only or non-existent)."
           (if vc-mode "  " " ")))
 
 (doom-modeline-def-segment flycheck
-                           "Displays color-coded flycheck error status in the current buffer with pretty
+  "Displays color-coded flycheck error status in the current buffer with pretty
 icons."
-                           (when (boundp 'flycheck-last-status-change)
-                             (pcase flycheck-last-status-change
-                               (`finished (if flycheck-current-errors
-                                              (let-alist (flycheck-count-errors flycheck-current-errors)
-                                                (let ((sum (+ (or .error 0) (or .warning 0))))
-                                                  (doom-modeline-icon "do_not_disturb_alt"
-                                                                      (number-to-string sum)
-                                                                      (if .error 'doom-modeline-urgent 'doom-modeline-warning)
-                                                                      -0.25)))
-                                            (doom-modeline-icon "check" nil 'doom-modeline-info)))
-                               (`running     (doom-modeline-icon "access_time" nil 'font-lock-doc-face -0.25))
-                               (`no-checker  (doom-modeline-icon "sim_card_alert" "-" 'font-lock-doc-face))
-                               (`errored     (doom-modeline-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
-                               (`interrupted (doom-modeline-icon "pause" "Interrupted" 'font-lock-doc-face)))))
+  (when (boundp 'flycheck-last-status-change)
+    (pcase flycheck-last-status-change
+      (`finished (if flycheck-current-errors
+                     (let-alist (flycheck-count-errors flycheck-current-errors)
+                       (let ((sum (+ (or .error 0) (or .warning 0))))
+                         (doom-modeline-icon "do_not_disturb_alt"
+                                             (number-to-string sum)
+                                             (if .error 'doom-modeline-urgent 'doom-modeline-warning)
+                                             -0.25)))
+                   (doom-modeline-icon "check" nil 'doom-modeline-info)))
+      (`running     (doom-modeline-icon "access_time" nil 'font-lock-doc-face -0.25))
+      (`no-checker  (doom-modeline-icon "sim_card_alert" "-" 'font-lock-doc-face))
+      (`errored     (doom-modeline-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
+      (`interrupted (doom-modeline-icon "pause" "Interrupted" 'font-lock-doc-face)))))
 ;; ('interrupted (doom-modeline-icon "x" "Interrupted" 'font-lock-doc-face)))))
 
 
@@ -624,25 +624,25 @@ icons."
                   (current-column)))
 
 (doom-modeline-def-segment selection-info
-                           "Information about the current selection, such as how many characters and
+  "Information about the current selection, such as how many characters and
 lines are selected, or the NxM dimensions of a block selection."
-                           (when (and (doom-modeline--active) (or mark-active (eq evil-state 'visual)))
-                             (let ((reg-beg (region-beginning))
-                                   (reg-end (region-end)))
-                               (propertize
-                                (let ((lines (count-lines reg-beg (min (1+ reg-end) (point-max)))))
-                                  (cond ((or (bound-and-true-p rectangle-mark-mode)
-                                             (eq 'block evil-visual-selection))
-                                         (let ((cols (abs (- (doom-modeline-column reg-end)
-                                                             (doom-modeline-column reg-beg)))))
-                                           (format "%dx%dB" lines cols)))
-                                        ((eq 'line evil-visual-selection)
-                                         (format "%dL" lines))
-                                        ((> lines 1)
-                                         (format "%dC %dL" (- (1+ reg-end) reg-beg) lines))
-                                        (t
-                                         (format "%dC" (- (1+ reg-end) reg-beg)))))
-                                'face 'doom-modeline-highlight))))
+  (when (and (doom-modeline--active) (or mark-active (eq evil-state 'visual)))
+    (let ((reg-beg (region-beginning))
+          (reg-end (region-end)))
+      (propertize
+       (let ((lines (count-lines reg-beg (min (1+ reg-end) (point-max)))))
+         (cond ((or (bound-and-true-p rectangle-mark-mode)
+                    (eq 'block evil-visual-selection))
+                (let ((cols (abs (- (doom-modeline-column reg-end)
+                                    (doom-modeline-column reg-beg)))))
+                  (format "%dx%dB" lines cols)))
+               ((eq 'line evil-visual-selection)
+                (format "%dL" lines))
+               ((> lines 1)
+                (format "%dC %dL" (- (1+ reg-end) reg-beg) lines))
+               (t
+                (format "%dC" (- (1+ reg-end) reg-beg)))))
+       'face 'doom-modeline-highlight))))
 
 
 ;;
@@ -719,36 +719,36 @@ Require `anzu', also `evil-anzu' if using `evil-mode'
      'face (if (doom-modeline--active) 'doom-modeline-panel))))
 
 (doom-modeline-def-segment matches
-                           "Displays: 1. the currently recording macro, 2. A current/total for the
+  "Displays: 1. the currently recording macro, 2. A current/total for the
 current search term (with anzu), 3. The number of substitutions being conducted
 with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
-                           (let ((meta (concat (doom-modeline--macro-recording)
-                                               (doom-modeline--anzu)
-                                               (doom-modeline--evil-substitute)
-                                               (doom-modeline--iedit))))
-                             (or (and (not (equal meta "")) meta)
-                                 (if buffer-file-name " %I "))))
+  (let ((meta (concat (doom-modeline--macro-recording)
+                      (doom-modeline--anzu)
+                      (doom-modeline--evil-substitute)
+                      (doom-modeline--iedit))))
+    (or (and (not (equal meta "")) meta)
+        (if buffer-file-name " %I "))))
 
 ;; TODO Include other information
 (doom-modeline-def-segment media-info
-                           "Metadata regarding the current file, such as dimensions for images."
-                           (cond ((eq major-mode 'image-mode)
-                                  (cl-destructuring-bind (width . height)
-                                      (image-size (image-get-display-property) :pixels)
-                                    (format "  %dx%d  " width height)))))
+  "Metadata regarding the current file, such as dimensions for images."
+  (cond ((eq major-mode 'image-mode)
+         (cl-destructuring-bind (width . height)
+             (image-size (image-get-display-property) :pixels)
+           (format "  %dx%d  " width height)))))
 
 (doom-modeline-def-segment bar
-                           "The bar regulates the height of the mode-line in GUI Emacs.
+  "The bar regulates the height of the mode-line in GUI Emacs.
 Returns \"\" to not break --no-window-system."
-                           (if (display-graphic-p)
-                               (doom-modeline--make-xpm
-                                (face-background (if (doom-modeline--active)
-                                                     'doom-modeline-bar
-                                                   'doom-modeline-inactive-bar)
-                                                 nil t)
-                                doom-modeline-height
-                                doom-modeline-bar-width)
-                             ""))
+  (if (display-graphic-p)
+      (doom-modeline--make-xpm
+       (face-background (if (doom-modeline--active)
+                            'doom-modeline-bar
+                          'doom-modeline-inactive-bar)
+                        nil t)
+       doom-modeline-height
+       doom-modeline-bar-width)
+    ""))
 
 (defun doom-modeline-eyebrowse-number ()
   "The eyebrowse number."
@@ -770,47 +770,47 @@ Returns \"\" to not break --no-window-system."
              (cadr minibuffer-edges)))))
 
 (doom-modeline-def-segment persp-number
-                           "The persp number."
-                           (when (featurep 'persp-mode)
-                             (when (doom-modeline-window-bottom-left-p)
-                               (-when-let* ((persp (get-current-persp)))
-                                 (propertize
-                                  (concat
-                                   (number-to-string
-                                    (+ 1
-                                       (cl-position
-                                        (persp-name persp)
-                                        (persp-names-current-frame-fast-ordered))))
-                                   "."
-                                   (or (doom-modeline-eyebrowse-number) "1")
-                                   " ")
-                                  'face 'doom-modeline-persp)))))
+  "The persp number."
+  (when (featurep 'persp-mode)
+    (when (doom-modeline-window-bottom-left-p)
+      (-when-let* ((persp (get-current-persp)))
+        (propertize
+         (concat
+          (number-to-string
+           (+ 1
+              (cl-position
+               (persp-name persp)
+               (persp-names-current-frame-fast-ordered))))
+          "."
+          (or (doom-modeline-eyebrowse-number) "1")
+          " ")
+         'face 'doom-modeline-persp)))))
 
 
 (advice-add #'window-numbering-install-mode-line :override #'ignore)
 (advice-add #'window-numbering-clear-mode-line :override #'ignore)
 
 (doom-modeline-def-segment window-number
-                           (if (bound-and-true-p window-numbering-mode)
-                               (propertize (format " %s " (window-numbering-get-number-string))
-                                           'face (if (doom-modeline--active)
-                                                     'doom-modeline-bar
-                                                   'doom-modeline-inactive-bar))
-                             ""))
+  (if (bound-and-true-p window-numbering-mode)
+      (propertize (format " %s " (window-numbering-get-number-string))
+                  'face (if (doom-modeline--active)
+                            'doom-modeline-bar
+                          'doom-modeline-inactive-bar))
+    ""))
 
 (declare-function eyebrowse--get 'eyebrowse)
 (doom-modeline-def-segment workspace-number
-                           "The current workspace name or number. Requires `eyebrowse-mode' to be
+  "The current workspace name or number. Requires `eyebrowse-mode' to be
 enabled."
-                           (if (and (bound-and-true-p eyebrowse-mode)
-                                    (< 1 (length (eyebrowse--get 'window-configs))))
-                               (let* ((num (eyebrowse--get 'current-slot))
-                                      (tag (when num (nth 2 (assoc num (eyebrowse--get 'window-configs)))))
-                                      (str (if (and tag (< 0 (length tag)))
-                                               tag
-                                             (when num (int-to-string num)))))
-                                 (propertize (format "%s " str) 'face 'doom-modeline-eyebrowse))
-                             ""))
+  (if (and (bound-and-true-p eyebrowse-mode)
+           (< 1 (length (eyebrowse--get 'window-configs))))
+      (let* ((num (eyebrowse--get 'current-slot))
+             (tag (when num (nth 2 (assoc num (eyebrowse--get 'window-configs)))))
+             (str (if (and tag (< 0 (length tag)))
+                      tag
+                    (when num (int-to-string num)))))
+        (propertize (format "%s " str) 'face 'doom-modeline-eyebrowse))
+    ""))
 
 ;;
 ;; Mode lines
