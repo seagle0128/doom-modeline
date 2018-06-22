@@ -10,11 +10,13 @@ It's also the part of [Centaur Emacs](https://github.com/seagle0128/.emacs.d).
 
 The DOOM modeline was designed for minimalism, and offers:
 
-- A match count panel (for evil-search, iedit and evil-substitute)
+- A match count panel (for anzue, iedit, evil-search and evil-substitute)
 - An indicator for recording a macro
-- Local python/ruby version in the major-mode
-- A customizable mode-line height (see +doom-modeline-height)
+- Local python/ruby/go version in the major-mode
+- A customizable mode-line height (see doom-modeline-height)
 - An error/warning count segment for flycheck
+- A workspace number segment for eyebrowse
+- A window number segment for window-numbering
 
 ## Install
 
