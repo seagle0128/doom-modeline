@@ -820,7 +820,7 @@ enabled."
 ;;
 
 (doom-modeline-def-modeline main
-                            (workspace-number bar matches " " buffer-info "  %l:%c %p  " selection-info)
+                            (workspace-number window-number bar matches " " buffer-info "  %l:%c %p  " selection-info)
                             (buffer-encoding major-mode vcs flycheck))
 
 (doom-modeline-def-modeline minimal
