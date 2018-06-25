@@ -50,6 +50,7 @@ If you do not have them already installed, here are the dependencies:
 (use-package shrink-path)
 (use-package all-the-icons)
 (use-package eldoc-eval)
+(use-package projectile)
 ```
 
 ## Screenshots
