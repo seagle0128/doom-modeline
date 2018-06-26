@@ -5,7 +5,7 @@
 ;; Author: Vincent Zhang <seagle0128@gmail.com>
 ;; URL: https://github.com/seagle0128/doom-modeline
 ;; Version: 0.1.1
-;; Package-Requires: ((emacs "24.4") (dash "2.11.0") (all-the-icons "1.0.0") (projectile "0.10.0") (shrink-path "0.2.0") (eldoc-eval "0.1"))
+;; Package-Requires: ((emacs "24.4") (all-the-icons "1.0.0") (projectile "0.10.0") (shrink-path "0.2.0") (eldoc-eval "0.1"))
 ;; Keywords: modeline mode-line doom
 
 ;; This file is not part of GNU Emacs.
@@ -128,7 +128,7 @@ Throws an error if it doesn't exist."
 (defun doom-modeline-set-modeline (key &optional default)
   "Set the modeline format. Does nothing if the modeline KEY doesn't exist.
 If DEFAULT is non-nil, set the default mode-line for all buffers."
-  (-when-let* ((modeline (doom-modeline key)))
+  (let ((modeline (doom-modeline key)))
     (setf (if default
               (default-value 'mode-line-format)
             (buffer-local-value 'mode-line-format (current-buffer)))
@@ -303,7 +303,7 @@ active."
 (defvar doom-modeline-current-window (frame-selected-window))
 (defun doom-modeline-set-selected-window (&rest _)
   "Set `doom-modeline-current-window' appropriately."
-  (-when-let* ((win (frame-selected-window)))
+  (let ((win (frame-selected-window)))
     (unless (minibuffer-window-active-p win)
       (setq doom-modeline-current-window win))))
 
@@ -776,7 +776,7 @@ Returns \"\" to not break --no-window-system."
   "The persp number."
   (when (featurep 'persp-mode)
     (when (doom-modeline-window-bottom-left-p)
-      (-when-let* ((persp (get-current-persp)))
+      (let ((persp (get-current-persp)))
         (propertize
          (concat
           (number-to-string
