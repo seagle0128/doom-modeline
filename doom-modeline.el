@@ -696,6 +696,7 @@ icons."
 ;;
 
 (defsubst doom-modeline-column (pos)
+  "Get the column of the position `POS'."
   (save-excursion (goto-char pos)
                   (current-column)))
 
@@ -715,8 +716,8 @@ lines are selected, or the NxM dimensions of a block selection."
        (let ((lines (count-lines beg (min end (point-max)))))
          (concat (cond ((or (bound-and-true-p rectangle-mark-mode)
                             (eq 'block evil-visual-selection))
-                        (let ((cols (abs (- (doom-column end)
-                                            (doom-column beg)))))
+                        (let ((cols (abs (- (doom-modeline-column end)
+                                            (doom-modeline-column beg)))))
                           (format "%dx%dB" lines cols)))
                        ((eq evil-visual-selection 'line)
                         (format "%dL" lines))
