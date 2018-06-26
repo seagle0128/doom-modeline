@@ -50,6 +50,128 @@
 (require 'shrink-path)
 (require 'eldoc-eval)
 
+;;
+;; Variables
+;;
+
+(defvar doom-modeline-height 29
+  "How tall the mode-line should be (only respected in GUI).")
+
+(defvar doom-modeline-bar-width 3
+  "How wide the mode-line bar should be (only respected in GUI).")
+
+(defvar doom-modeline-vspc
+  (propertize " " 'face 'variable-pitch)
+  "Text style with icons in mode-line.")
+
+(defvar doom-modeline-buffer-file-name-style 'truncate-upto-project
+  "Determines the style used by `doom-modeline-buffer-file-name'.
+Given ~/Projects/FOSS/emacs/lisp/comint.el
+truncate-upto-project => ~/P/F/emacs/lisp/comint.el
+truncate-upto-root => ~/P/F/e/lisp/comint.el
+truncate-all => ~/P/F/e/l/comint.el
+relative-from-project => emacs/lisp/comint.el
+relative-to-project => lisp/comint.el
+file-name => comint.el")
+
+;; externs
+(defvar anzu--current-position 0)
+(defvar anzu--overflow-p nil)
+(defvar anzu--state nil)
+(defvar anzu--total-matched 0)
+(defvar evil-ex-active-highlights-alist nil)
+(defvar evil-ex-argument nil)
+(defvar evil-ex-range nil)
+(defvar evil-mode nil)
+(defvar evil-state nil)
+(defvar evil-visual-beginning nil)
+(defvar evil-visual-end nil)
+(defvar evil-visual-selection nil)
+(defvar iedit-mode nil)
+(defvar iedit-occurrences-overlays nil)
+(defvar text-scale-mode-amount)
+(defvar-local flycheck-current-errors nil)
+
+;;
+;; Custom faces
+;;
+
+(defgroup doom-modeline nil
+  ""
+  :group 'doom)
+
+(defface doom-modeline-buffer-path
+  '((t (:inherit mode-line-emphasis :bold t)))
+  "Face used for the dirname part of the buffer path."
+  :group 'doom-modeline)
+
+(defface doom-modeline-buffer-file
+  '((t (:inherit mode-line-buffer-id)))
+  "Face used for the filename part of the mode-line buffer path."
+  :group 'doom-modeline)
+
+(defface doom-modeline-buffer-modified
+  '((t (:inherit error :background nil :bold t)))
+  "Face used for the 'unsaved' symbol in the mode-line."
+  :group 'doom-modeline)
+
+(defface doom-modeline-buffer-major-mode
+  '((t (:inherit mode-line-emphasis :bold t)))
+  "Face used for the major-mode segment in the mode-line."
+  :group 'doom-modeline)
+
+(defface doom-modeline-highlight
+  '((t (:inherit mode-line-emphasis)))
+  "Face for bright segments of the mode-line."
+  :group 'doom-modeline)
+
+(defface doom-modeline-panel
+  '((t (:inherit mode-line-highlight)))
+  "Face for 'X out of Y' segments, such as `doom-modeline--anzu', `doom-modeline--evil-substitute' and
+`iedit'"
+  :group 'doom-modeline)
+
+(defface doom-modeline-info
+  `((t (:inherit success :bold t)))
+  "Face for info-level messages in the modeline. Used by `*vc'."
+  :group 'doom-modeline)
+
+(defface doom-modeline-warning
+  `((t (:inherit warning :bold t)))
+  "Face for warnings in the modeline. Used by `*flycheck'"
+  :group 'doom-modeline)
+
+(defface doom-modeline-urgent
+  `((t (:inherit error :bold t)))
+  "Face for errors in the modeline. Used by `*flycheck'"
+  :group 'doom-modeline)
+
+;; Bar
+(defface doom-modeline-bar '((t (:inherit highlight)))
+  "The face used for the left-most bar on the mode-line of an active window."
+  :group 'doom-modeline)
+
+(defface doom-modeline-eldoc-bar '((t (:inherit shadow)))
+  "The face used for the left-most bar on the mode-line when eldoc-eval is
+active."
+  :group 'doom-modeline)
+
+(defface doom-modeline-inactive-bar '((t (:inherit warning :inverse-video t)))
+  "The face used for the left-most bar on the mode-line of an inactive window."
+  :group 'doom-modeline)
+
+(defface doom-modeline-persp '((t ()))
+  "The face used for persp number."
+  :group 'doom-modeline)
+
+(defface doom-modeline-eyebrowse '((t ()))
+  "The face used for eyebrowse."
+  :group 'doom-modeline)
+
+(defface doom-modeline-bracket '((t (:inherit shadow)))
+  "The face used for brackets around the project."
+  :group 'doom-modeline)
+
 (eval-and-compile
   (defun doom-modeline--resolve-hooks (hooks)
     (cl-loop with quoted-p = (eq (car-safe hooks) 'quote)
@@ -141,116 +263,6 @@ If STRICT-P, return nil if no project was found, otherwise return
   (let (projectile-require-project-root)
     (projectile-project-root)))
 
-;;
-;; Variables
-;;
-
-(defvar doom-modeline-height 29
-  "How tall the mode-line should be (only respected in GUI).")
-
-(defvar doom-modeline-bar-width 3
-  "How wide the mode-line bar should be (only respected in GUI).")
-
-(defvar doom-modeline-vspc
-  (propertize " " 'face 'variable-pitch)
-  "Text style with icons in mode-line.")
-
-(defvar doom-modeline-buffer-file-name-style 'truncate-upto-project
-  "Determines the style used by `doom-modeline-buffer-file-name'.
-Given ~/Projects/FOSS/emacs/lisp/comint.el
-truncate-upto-project => ~/P/F/emacs/lisp/comint.el
-truncate-upto-root => ~/P/F/e/lisp/comint.el
-truncate-all => ~/P/F/e/l/comint.el
-relative-from-project => emacs/lisp/comint.el
-relative-to-project => lisp/comint.el
-file-name => comint.el")
-
-;; externs
-(defvar anzu--state nil)
-(defvar evil-mode nil)
-(defvar evil-state nil)
-(defvar evil-visual-selection nil)
-(defvar iedit-mode nil)
-
-;;
-;; Custom faces
-;;
-
-(defgroup doom-modeline nil
-  ""
-  :group 'doom)
-
-(defface doom-modeline-buffer-path
-  '((t (:inherit mode-line-emphasis :bold t)))
-  "Face used for the dirname part of the buffer path."
-  :group 'doom-modeline)
-
-(defface doom-modeline-buffer-file
-  '((t (:inherit mode-line-buffer-id)))
-  "Face used for the filename part of the mode-line buffer path."
-  :group 'doom-modeline)
-
-(defface doom-modeline-buffer-modified
-  '((t (:inherit error :background nil :bold t)))
-  "Face used for the 'unsaved' symbol in the mode-line."
-  :group 'doom-modeline)
-
-(defface doom-modeline-buffer-major-mode
-  '((t (:inherit mode-line-emphasis :bold t)))
-  "Face used for the major-mode segment in the mode-line."
-  :group 'doom-modeline)
-
-(defface doom-modeline-highlight
-  '((t (:inherit mode-line-emphasis)))
-  "Face for bright segments of the mode-line."
-  :group 'doom-modeline)
-
-(defface doom-modeline-panel
-  '((t (:inherit mode-line-highlight)))
-  "Face for 'X out of Y' segments, such as `doom-modeline--anzu', `doom-modeline--evil-substitute' and
-`iedit'"
-  :group 'doom-modeline)
-
-(defface doom-modeline-info
-  `((t (:inherit success :bold t)))
-  "Face for info-level messages in the modeline. Used by `*vc'."
-  :group 'doom-modeline)
-
-(defface doom-modeline-warning
-  `((t (:inherit warning :bold t)))
-  "Face for warnings in the modeline. Used by `*flycheck'"
-  :group 'doom-modeline)
-
-(defface doom-modeline-urgent
-  `((t (:inherit error :bold t)))
-  "Face for errors in the modeline. Used by `*flycheck'"
-  :group 'doom-modeline)
-
-;; Bar
-(defface doom-modeline-bar '((t (:inherit highlight)))
-  "The face used for the left-most bar on the mode-line of an active window."
-  :group 'doom-modeline)
-
-(defface doom-modeline-eldoc-bar '((t (:inherit shadow)))
-  "The face used for the left-most bar on the mode-line when eldoc-eval is
-active."
-  :group 'doom-modeline)
-
-(defface doom-modeline-inactive-bar '((t (:inherit warning :inverse-video t)))
-  "The face used for the left-most bar on the mode-line of an inactive window."
-  :group 'doom-modeline)
-
-(defface doom-modeline-persp '((t ()))
-  "The face used for persp number."
-  :group 'doom-modeline)
-
-(defface doom-modeline-eyebrowse '((t ()))
-  "The face used for eyebrowse."
-  :group 'doom-modeline)
-
-(defface doom-modeline-bracket '((t (:inherit shadow)))
-  "The face used for brackets around the project."
-  :group 'doom-modeline)
 
 ;;
 ;; modeline configs
