@@ -531,6 +531,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
            (when doom-modeline-env-version
              (concat " " doom-modeline-env-version))
            (and (featurep 'face-remap)
+                (> text-scale-mode-amount 0)
                 (/= text-scale-mode-amount 0)
                 (format " (%+d)" text-scale-mode-amount)))
    'face (if (doom-modeline--active) 'doom-modeline-buffer-major-mode)))
