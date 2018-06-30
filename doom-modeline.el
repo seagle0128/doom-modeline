@@ -678,10 +678,10 @@ lines are selected, or the NxM dimensions of a block selection."
   "Show the match index and total number thereof.
 Require `anzu', also `evil-anzu' if using `evil-mode'
  for compatibility with `evil-search'."
+  (setq anzu-cons-mode-line-p nil)
   (when (and (featurep 'anzu)
              anzu--state
              (not (bound-and-true-p iedit-mode)))
-    (setq anzu-cons-mode-line-p nil)
     (propertize
      (let ((here anzu--current-position)
            (total anzu--total-matched))
