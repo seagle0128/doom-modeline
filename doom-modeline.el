@@ -713,6 +713,7 @@ Require `anzu', also `evil-anzu' if using `evil-mode'
      'face (if (doom-modeline--active) 'doom-modeline-panel))))
 
 (defun doom-modeline-themes--overlay-sort (a b)
+  "Sort overlay A and B."
   (< (overlay-start a) (overlay-start b)))
 
 (defsubst doom-modeline--iedit ()
