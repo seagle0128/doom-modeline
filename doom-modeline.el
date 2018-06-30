@@ -403,7 +403,7 @@ active.")
                               'face (if file-faces `(:inherit ,file-faces)))))))))
 
 (defun doom-modeline--buffer-file-name-relative (&optional include-project)
-  "Propertized variable `buffer-file-name' showing directories relative to `INCLUDE-PROJECT' root only."
+  "Propertized variable `buffer-file-name' showing directories relative to INCLUDE-PROJECT root only."
   (let ((root (doom-modeline-project-root))
         (active (doom-modeline--active)))
     (if (null root)
