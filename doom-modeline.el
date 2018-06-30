@@ -635,17 +635,21 @@ icons."
 (doom-modeline-def-segment selection-info
   "Information about the current selection, such as how many characters and
 lines are selected, or the NxM dimensions of a block selection."
-  (when (and (doom-modeline--active) (or mark-active (eq evil-state 'visual)))
+  (when (and (doom-modeline--active)
+             (or mark-active
+                 (and (bound-and-true-p evil-state) (eq evil-state 'visual))))
     (let ((reg-beg (region-beginning))
           (reg-end (region-end)))
       (propertize
        (let ((lines (count-lines reg-beg (min (1+ reg-end) (point-max)))))
          (cond ((or (bound-and-true-p rectangle-mark-mode)
-                    (eq 'block evil-visual-selection))
+                    (and (bound-and-true-p evil-visual-selection)
+                         (eq 'block evil-visual-selection)))
                 (let ((cols (abs (- (doom-modeline-column reg-end)
                                     (doom-modeline-column reg-beg)))))
                   (format "%dx%dB" lines cols)))
-               ((eq 'line evil-visual-selection)
+               ((and (bound-and-true-p evil-visual-selection)
+                     (eq evil-visual-selection 'line))
                 (format "%dL" lines))
                ((> lines 1)
                 (format "%dC %dL" (- (1+ reg-end) reg-beg) lines))
@@ -674,8 +678,10 @@ lines are selected, or the NxM dimensions of a block selection."
   "Show the match index and total number thereof.
 Require `anzu', also `evil-anzu' if using `evil-mode'
  for compatibility with `evil-search'."
-  (setq anzu-cons-mode-line-p nil)
-  (when (and anzu--state (not iedit-mode))
+  (when (and (featurep 'anzu)
+             anzu--state
+             (not (bound-and-true-p iedit-mode)))
+    (setq anzu-cons-mode-line-p nil)
     (propertize
      (let ((here anzu--current-position)
            (total anzu--total-matched))
@@ -691,7 +697,8 @@ Require `anzu', also `evil-anzu' if using `evil-mode'
 
 (defsubst doom-modeline--evil-substitute ()
   "Show number of matches for evil-ex substitutions and highlights in real time."
-  (when (and evil-mode
+  (when (and (featurep 'evil)
+             evil-mode
              (or (assq 'evil-ex-substitute evil-ex-active-highlights-alist)
                  (assq 'evil-ex-global-match evil-ex-active-highlights-alist)
                  (assq 'evil-ex-buffer-match evil-ex-active-highlights-alist)))
@@ -710,7 +717,7 @@ Require `anzu', also `evil-anzu' if using `evil-mode'
 
 (defsubst doom-modeline--iedit ()
   "Show the number of iedit regions matches + what match you're on."
-  (when (and iedit-mode iedit-occurrences-overlays)
+  (when (and (featurep 'iedit) iedit-mode iedit-occurrences-overlays)
     (propertize
      (let ((this-oc (or (let ((inhibit-message t))
                           (iedit-find-current-occurrence-overlay))
