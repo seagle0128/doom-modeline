@@ -928,15 +928,15 @@ enabled."
                             (media-info major-mode))
 
 (doom-modeline-def-modeline special
-                            (bar matches " " buffer-info-simple "  %l:%c %p  " selection-info)
+                            (window-number bar matches " " buffer-info-simple "  %l:%c %p  " selection-info)
                             (buffer-encoding major-mode flycheck))
 
 (doom-modeline-def-modeline project
-                            (bar buffer-default-directory)
+                            (window-number bar buffer-default-directory)
                             (major-mode))
 
 (doom-modeline-def-modeline media
-                            (bar " %b  ")
+                            (window-number bar " %b  ")
                             (media-info major-mode))
 
 ;;
