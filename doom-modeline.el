@@ -67,7 +67,7 @@
 (defvar doom-modeline-buffer-file-name-style 'truncate-upto-project
   "Determines the style used by `doom-modeline-buffer-file-name'.
 
-  Given ~/Projects/FOSS/emacs/lisp/comint.el
+Given ~/Projects/FOSS/emacs/lisp/comint.el
   truncate-upto-project => ~/P/F/emacs/lisp/comint.el
   truncate-upto-root => ~/P/F/e/lisp/comint.el
   truncate-all => ~/P/F/e/l/comint.el
@@ -204,10 +204,10 @@ active.")
 (defmacro doom-modeline-def-modeline (name lhs &optional rhs)
   "Define a modeline format and byte-compiles it.
 
-  NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
-  LHS and RHS are lists of symbols of modeline segments defined
-  with `doom-modeline-def-segment'.
-  Example:
+NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
+LHS and RHS are lists of symbols of modeline segments defined
+with `doom-modeline-def-segment'.
+Example:
   (doom-modeline-def-modeline minimal
     (bar matches \" \" buffer-info)
     (media-info major-mode))
@@ -239,7 +239,7 @@ active.")
 (defun doom-modeline-set-modeline (key &optional default)
   "Set the modeline format. Does nothing if the modeline KEY doesn't exist.
 
-  If DEFAULT is non-nil, set the default mode-line for all buffers."
+If DEFAULT is non-nil, set the default mode-line for all buffers."
   (let ((modeline (doom-modeline key)))
     (setf (if default
               (default-value 'mode-line-format)
@@ -249,7 +249,7 @@ active.")
 (defun doom-modeline-project-root ()
   "Get the path to the root of your project.
 
-  If STRICT-P, return nil if no project was found, otherwise return
+If STRICT-P, return nil if no project was found, otherwise return
 `default-directory'."
   (let (projectile-require-project-root)
     (projectile-project-root)))
@@ -385,7 +385,7 @@ active.")
 (defun doom-modeline--buffer-file-name-truncate (&optional truncate-tail)
   "Propertized variable `buffer-file-name' that truncates every dir along path.
 
-  If TRUNCATE-TAIL is t also truncate the parent directory of the file."
+If TRUNCATE-TAIL is t also truncate the parent directory of the file."
   (let ((dirs (shrink-path-prompt (file-name-directory buffer-file-truename)))
         (active (doom-modeline--active)))
     (if (null dirs)
@@ -421,9 +421,9 @@ active.")
 (defun doom-modeline--buffer-file-name (truncate-project-root-parent)
   "Propertized variable `buffer-file-name'.
 
-  If TRUNCATE-PROJECT-ROOT-PARENT is t space will be saved by truncating it down
+If TRUNCATE-PROJECT-ROOT-PARENT is t space will be saved by truncating it down
 fish-shell style.
-  Example:
+Example:
   ~/Projects/FOSS/emacs/lisp/comint.el => ~/P/F/emacs/lisp/comint.el"
   (let* ((project-root (doom-modeline-project-root))
          (file-name-split (shrink-path-file-mixed project-root
