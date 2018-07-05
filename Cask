@@ -2,6 +2,7 @@
 
 (package "doom-modeline" "0.2.0" "A fancy mode-line from DOOM Emacs.")
 
-(depends-on "all-the-icons")
+(package-file "doom-modeline.el")
+
 (development
-  (depends-on "ert-runner"))
+ (depends-on "ert-runner"))

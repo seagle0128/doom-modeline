@@ -19,4 +19,5 @@ before_install:
 
 script:
   - emacs --version
-  # - emacs --batch -f batch-byte-compile ../doom-modeline/doom-modeline.el
+  - pwd
+  - cask emacs cask --batch -f batch-byte-compile ../doom-modeline/doom-modeline.el
