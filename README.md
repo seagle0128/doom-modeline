@@ -1,6 +1,6 @@
 # doom-modeline
 
-[![Release Tag](https://github.com/seagle0128/doom-modeline/releases)](https://img.shields.io/github/tag/seagle0128/doom-modeline.svg?label=release)
+[![Release Tag](https://img.shields.io/github/tag/seagle0128/doom-modeline.svg?label=release)](https://github.com/seagle0128/doom-modeline/releases)
 [![MELPA](https://melpa.org/packages/doom-modeline-badge.svg)](https://melpa.org/#/doom-modeline)
 [![License](http://img.shields.io/:license-gpl3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
 
