@@ -31,7 +31,6 @@
 ;;
 ;; This package offers a modern modeline them which is extraced from DOOM Emacs
 ;; (https://github.com/hlissner/doom-emacs/tree/master/modules/ui/doom-modeline).
-;;
 ;; It's also the part of Centaur Emacs (https://github.com/seagle0128/.emacs.d).
 ;;
 ;; The DOOM modeline was designed for minimalism, and offers:
@@ -164,6 +163,117 @@ active.")
 (defface doom-modeline-eyebrowse '((t ()))
   "The face used for eyebrowse.")
 
+;;
+;; Variables
+;;
+
+(defvar doom-modeline-height 29
+  "How tall the mode-line should be (only respected in GUI).")
+
+(defvar doom-modeline-bar-width 3
+  "How wide the mode-line bar should be (only respected in GUI).")
+
+(defvar doom-modeline-vspc
+  (propertize " " 'face 'variable-pitch)
+  "Text style with icons in mode-line.")
+
+(defvar doom-modeline-buffer-file-name-style 'truncate-upto-project
+  "Determines the style used by `doom-modeline-buffer-file-name'.
+
+Given ~/Projects/FOSS/emacs/lisp/comint.el
+  truncate-upto-project => ~/P/F/emacs/lisp/comint.el
+  truncate-upto-root => ~/P/F/e/lisp/comint.el
+  truncate-all => ~/P/F/e/l/comint.el
+  relative-from-project => emacs/lisp/comint.el
+  relative-to-project => lisp/comint.el
+  file-name => comint.el")
+
+;; externs
+(defvar anzu--current-position)
+(defvar anzu--overflow-p)
+(defvar anzu--state)
+(defvar anzu--total-matched)
+(defvar anzu-cons-mode-line-p)
+(defvar anzu-minimum-input-length)
+(defvar anzu-search-threshold)
+(defvar evil-ex-active-highlights-alist)
+(defvar evil-ex-argument)
+(defvar evil-ex-range)
+(defvar evil-mode)
+(defvar evil-state)
+(defvar evil-visual-beginning)
+(defvar evil-visual-end)
+(defvar evil-visual-selection)
+(defvar flycheck-current-errors)
+(defvar iedit-mode)
+(defvar iedit-occurrences-overlays)
+(defvar text-scale-mode-amount)
+
+;;
+;; Custom faces
+;;
+
+(defgroup doom-modeline nil
+  "Doom mode-line faces."
+  :group 'faces)
+
+(defface doom-modeline-buffer-path
+  '((t (:inherit mode-line-emphasis :bold t)))
+  "Face used for the dirname part of the buffer path.")
+
+(defface doom-modeline-buffer-file
+  '((t (:inherit mode-line-buffer-id)))
+  "Face used for the filename part of the mode-line buffer path.")
+
+(defface doom-modeline-buffer-modified
+  '((t (:inherit error :background nil :bold t)))
+  "Face used for the 'unsaved' symbol in the mode-line.")
+
+(defface doom-modeline-buffer-major-mode
+  '((t (:inherit mode-line-emphasis :bold t)))
+  "Face used for the major-mode segment in the mode-line.")
+
+(defface doom-modeline-highlight
+  '((t (:inherit mode-line-emphasis)))
+  "Face for bright segments of the mode-line.")
+
+(defface doom-modeline-panel
+  '((t (:inherit mode-line-highlight)))
+  "Face for 'X out of Y' segments, such as `doom-modeline--anzu', `doom-modeline--evil-substitute' and
+`iedit'")
+
+(defface doom-modeline-info
+  `((t (:inherit success :bold t)))
+  "Face for info-level messages in the modeline. Used by `*vc'.")
+
+(defface doom-modeline-warning
+  `((t (:inherit warning :bold t)))
+  "Face for warnings in the modeline. Used by `*flycheck'")
+
+(defface doom-modeline-urgent
+  `((t (:inherit error :bold t)))
+  "Face for errors in the modeline. Used by `*flycheck'")
+
+;; Bar
+(defface doom-modeline-bar '((t (:inherit highlight)))
+  "The face used for the left-most bar on the mode-line of an active window.")
+
+(defface doom-modeline-eldoc-bar '((t (:inherit shadow)))
+  "The face used for the left-most bar on the mode-line when eldoc-eval is
+active.")
+
+(defface doom-modeline-inactive-bar '((t (:inherit warning :inverse-video t)))
+  "The face used for the left-most bar on the mode-line of an inactive window.")
+
+(defface doom-modeline-persp '((t ()))
+  "The face used for persp number.")
+
+(defface doom-modeline-eyebrowse '((t ()))
+  "The face used for eyebrowse.")
+
+(defface doom-modeline-bracket '((t (:inherit shadow)))
+  "The face used for brackets around the project.")
+
 (eval-and-compile
   (defun doom-modeline--resolve-hook-forms (hooks)
     (cl-loop with quoted-p = (eq (car-safe hooks) 'quote)
@@ -275,7 +385,7 @@ Example:
 (defun doom-modeline-set-modeline (key &optional default)
   "Set the modeline format. Does nothing if the modeline KEY doesn't exist.
 
-  If DEFAULT is non-nil, set the default mode-line for all buffers."
+If DEFAULT is non-nil, set the default mode-line for all buffers."
   (let ((modeline (doom-modeline key)))
     (setf (if default
               (default-value 'mode-line-format)
@@ -289,6 +399,7 @@ If STRICT-P, return nil if no project was found, otherwise return
 `default-directory'."
   (let (projectile-require-project-root)
     (projectile-project-root)))
+
 
 ;;
 ;; modeline configs
@@ -387,6 +498,8 @@ If STRICT-P, return nil if no project was found, otherwise return
       (setq doom-modeline-env-version (if (string-match "[ \t\n\r]+\\'" s)
                                           (replace-match "" t t s)
                                         s)))))
+
+
 ;;
 ;; Modeline helpers
 ;;
@@ -497,10 +610,10 @@ If TRUNCATE-TAIL is t also truncate the parent directory of the file."
 (defun doom-modeline--buffer-file-name (truncate-project-root-parent)
   "Propertized variable `buffer-file-name'.
 
-  If TRUNCATE-PROJECT-ROOT-PARENT is t space will be saved by truncating it down
-  fish-shell style.
+If TRUNCATE-PROJECT-ROOT-PARENT is t space will be saved by truncating it down
+fish-shell style.
 
-  Example:
+Example:
   ~/Projects/FOSS/emacs/lisp/comint.el => ~/P/F/emacs/lisp/comint.el"
   (let* ((project-root (doom-modeline-project-root))
          (file-name-split (shrink-path-file-mixed project-root
@@ -598,6 +711,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                    "UTF-8")
                   (t (upcase (symbol-name (plist-get sys :name))))))
           "  "))
+
 
 ;;
 ;; major-mode
@@ -856,6 +970,7 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
     (or (and (not (equal meta "")) meta)
         (if buffer-file-name " %I "))))
 
+
 ;;
 ;; media-info
 ;;
@@ -868,6 +983,7 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
              (image-size (image-get-display-property) :pixels)
            (format "  %dx%d  " width height)))))
 
+
 ;;
 ;; bar
 ;;
@@ -876,7 +992,7 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 (defvar doom-modeline--bar-inactive nil)
 (doom-modeline-def-segment bar
   "The bar regulates the height of the mode-line in GUI Emacs.
-Returns \"\" to not break --no-window-system."
+  Returns \"\" to not break --no-window-system."
   (if (display-graphic-p)
       (if (doom-modeline--active)
           doom-modeline--bar-active
@@ -1045,6 +1161,17 @@ enabled."
 
 (add-hook 'focus-in-hook #'doom-modeline-focus)
 (add-hook 'focus-out-hook #'doom-modeline-unfocus)
+
+;; Versions, support Python, Ruby and Golang
+(add-hook 'python-mode-hook
+          (lambda ()
+            (setq doom-modeline-env-command "python --version 2>&1 | cut -d' ' -f2")))
+(add-hook 'ruby-mode-hook
+          (lambda ()
+            (setq doom-modeline-env-command "ruby --version 2>&1 | cut -d' ' -f2")))
+(add-hook 'go-mode-hook
+          (lambda ()
+            (setq doom-modeline-env-command "go version 2>&1 | cut -d' ' -f3 | tr -d 'go'")))
 
 (provide 'doom-modeline)
 
