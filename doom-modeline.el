@@ -233,7 +233,7 @@ active.")
 (defmacro doom-modeline-def-modeline (name lhs &optional rhs)
   "Defines a modeline format and byte-compiles it.
 
-AME is a symbol to identify it (used by `doom-modeline' for retrieval).
+NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
 LHS and RHS are lists of symbols of modeline segments defined with
 `doom-modeline-def-segment'.
 Example:
@@ -1020,13 +1020,16 @@ enabled."
 ;; Versions, support Python, Ruby and Golang
 (add-hook 'python-mode-hook
           (lambda ()
-            (setq doom-modeline-env-command "python --version 2>&1 | cut -d' ' -f2")))
+            (when (executable-find "python")
+              (setq doom-modeline-env-command "python --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))
 (add-hook 'ruby-mode-hook
           (lambda ()
-            (setq doom-modeline-env-command "ruby --version 2>&1 | cut -d' ' -f2")))
+            (when (executable-find "ruby")
+              (setq doom-modeline-env-command "ruby --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))
 (add-hook 'go-mode-hook
           (lambda ()
-            (setq doom-modeline-env-command "go version 2>&1 | cut -d' ' -f3 | tr -d 'go'")))
+            (when (executable-find "go")
+              (setq doom-modeline-env-command "go version 2>&1 | cut -d' ' -f3 | tr -d 'go' | sed -n '1p'"))))
 
 
 ;; Ensure modeline is inactive when Emacs is unfocused (and active otherwise)
