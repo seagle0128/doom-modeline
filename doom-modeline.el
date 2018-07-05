@@ -41,6 +41,17 @@
 ;; 4. A customizable mode-line height (see doom-modeline-height)
 ;; 5. An error/warning count segment for flycheck
 ;;
+;; Installation:
+;; From melpa, `M-x package-install RET doom-modeline RET`.
+;; In `init.el`,
+;; (require 'doom-modeline)
+;; (doom-modeline-init)
+;; or
+;; (use-package doom-modeline
+;;   :ensure t
+;;   :defer t
+;;   :hook (after-init . doom-modeline-init))
+;;
 
 ;;; Code:
 
