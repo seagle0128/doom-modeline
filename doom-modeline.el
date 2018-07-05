@@ -380,7 +380,8 @@ If STRICT-P, return nil if no project was found, otherwise return
       (sit-for eldoc-show-in-mode-line-delay))))
 (setq eldoc-in-minibuffer-show-fn #'doom-modeline--show-eldoc)
 
-(eldoc-in-minibuffer-mode +1)
+(declare-function eldoc-in-minibuffer-mode 'eldoc-eval)
+(eldoc-in-minibuffer-mode 1)
 
 
 ;; anzu and evil-anzu expose current/total state that can be displayed in the
