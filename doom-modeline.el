@@ -163,51 +163,6 @@ active.")
 (defface doom-modeline-eyebrowse '((t ()))
   "The face used for eyebrowse.")
 
-;;
-;; Variables
-;;
-
-(defvar doom-modeline-height 29
-  "How tall the mode-line should be (only respected in GUI).")
-
-(defvar doom-modeline-bar-width 3
-  "How wide the mode-line bar should be (only respected in GUI).")
-
-(defvar doom-modeline-vspc
-  (propertize " " 'face 'variable-pitch)
-  "Text style with icons in mode-line.")
-
-(defvar doom-modeline-buffer-file-name-style 'truncate-upto-project
-  "Determines the style used by `doom-modeline-buffer-file-name'.
-
-Given ~/Projects/FOSS/emacs/lisp/comint.el
-  truncate-upto-project => ~/P/F/emacs/lisp/comint.el
-  truncate-upto-root => ~/P/F/e/lisp/comint.el
-  truncate-all => ~/P/F/e/l/comint.el
-  relative-from-project => emacs/lisp/comint.el
-  relative-to-project => lisp/comint.el
-  file-name => comint.el")
-
-;; externs
-(defvar anzu--current-position)
-(defvar anzu--overflow-p)
-(defvar anzu--state)
-(defvar anzu--total-matched)
-(defvar anzu-cons-mode-line-p)
-(defvar anzu-minimum-input-length)
-(defvar anzu-search-threshold)
-(defvar evil-ex-active-highlights-alist)
-(defvar evil-ex-argument)
-(defvar evil-ex-range)
-(defvar evil-mode)
-(defvar evil-state)
-(defvar evil-visual-beginning)
-(defvar evil-visual-end)
-(defvar evil-visual-selection)
-(defvar flycheck-current-errors)
-(defvar iedit-mode)
-(defvar iedit-occurrences-overlays)
-(defvar text-scale-mode-amount)
 
 ;;
 ;; Custom faces
@@ -1161,17 +1116,6 @@ enabled."
 
 (add-hook 'focus-in-hook #'doom-modeline-focus)
 (add-hook 'focus-out-hook #'doom-modeline-unfocus)
-
-;; Versions, support Python, Ruby and Golang
-(add-hook 'python-mode-hook
-          (lambda ()
-            (setq doom-modeline-env-command "python --version 2>&1 | cut -d' ' -f2")))
-(add-hook 'ruby-mode-hook
-          (lambda ()
-            (setq doom-modeline-env-command "ruby --version 2>&1 | cut -d' ' -f2")))
-(add-hook 'go-mode-hook
-          (lambda ()
-            (setq doom-modeline-env-command "go version 2>&1 | cut -d' ' -f3 | tr -d 'go'")))
 
 (provide 'doom-modeline)
 
