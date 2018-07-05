@@ -1,4 +1,4 @@
-language: generic
+language: emacs-lisp
 sudo: false
 
 env:
@@ -12,13 +12,11 @@ matrix:
     env:
       - EVM_EMACS=emacs-git-snapshot-travis
 
-before_script:
-  - pwd
+before_install:
   - curl -fsSkL https://gist.github.com/rejeep/ebcd57c3af83b049833b/raw > x.sh && source ./x.sh
   - evm install $EVM_EMACS --use --skip
-  # - mkdir -p lib && curl https://raw.githubusercontent.com/nschum/elisp-lint/stable/elisp-lint.el > lib/elisp-lint.el
+  - cask
 
 script:
   - emacs --version
-  - pwd
-  - emacs --batch -f batch-byte-compile ../doom-modeline/doom-modeline.el
+  # - emacs --batch -f batch-byte-compile ../doom-modeline/doom-modeline.el
