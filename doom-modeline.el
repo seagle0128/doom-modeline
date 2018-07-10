@@ -1019,14 +1019,37 @@ enabled."
 (doom-modeline-def-segment global
   "For the time string and whatever uses global-mode-string."
   (when (< 0 (length global-mode-string))
-    '(" " global-mode-string)))
+    '("" global-mode-string " ")))
+
+;;
+;; position
+;;
+
+;; Be compatible with Emacs25.
+(defvar-local doom-modeline-column-zero-based
+  (or (bound-and-true-p column-number-indicator-zero-based) t))
+(defvar-local doom-modeline-percent-position
+  (or (bound-and-true-p mode-line-percent-position) '(-3 "%p")))
+(setq-default mode-line-position
+              '((line-number-mode
+                 (column-number-mode
+                  (doom-modeline-column-zero-based " %l:%c" " %l:%C")
+                  " %l")
+                 (column-number-mode (doom-modeline-column-zero-based " :%c" " :%C")))
+                (if doom-modeline-percent-position (" " doom-modeline-percent-position))
+                (:eval (when (or line-number-mode column-number-mode doom-modeline-percent-position) " "))))
+
+(doom-modeline-def-segment buffer-position
+  "The buffer position information."
+  '(" " mode-line-position))
+
 
 ;;
 ;; Mode lines
 ;;
 
 (doom-modeline-def-modeline main
-                            (workspace-number window-number bar matches " " buffer-info "  %l:%c %p  " selection-info)
+                            (workspace-number window-number bar matches " " buffer-info buffer-position  " " selection-info)
                             (buffer-encoding major-mode vcs flycheck global))
 
 (doom-modeline-def-modeline minimal
@@ -1034,7 +1057,7 @@ enabled."
                             (media-info major-mode))
 
 (doom-modeline-def-modeline special
-                            (window-number bar matches " " buffer-info-simple "  %l:%c %p  " selection-info)
+                            (window-number bar matches " " buffer-info-simple buffer-position " " selection-info)
                             (buffer-encoding major-mode flycheck global))
 
 (doom-modeline-def-modeline project
