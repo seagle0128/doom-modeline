@@ -1013,12 +1013,21 @@ enabled."
     ""))
 
 ;;
+;; global
+;;
+
+(doom-modeline-def-segment global
+  "For the time string and whatever uses global-mode-string."
+  (when (< 0 (length global-mode-string))
+    '(" " global-mode-string)))
+
+;;
 ;; Mode lines
 ;;
 
 (doom-modeline-def-modeline main
                             (workspace-number window-number bar matches " " buffer-info "  %l:%c %p  " selection-info)
-                            (buffer-encoding major-mode vcs flycheck))
+                            (buffer-encoding major-mode vcs flycheck global))
 
 (doom-modeline-def-modeline minimal
                             (bar matches " " buffer-info)
@@ -1026,15 +1035,15 @@ enabled."
 
 (doom-modeline-def-modeline special
                             (window-number bar matches " " buffer-info-simple "  %l:%c %p  " selection-info)
-                            (buffer-encoding major-mode flycheck))
+                            (buffer-encoding major-mode flycheck global))
 
 (doom-modeline-def-modeline project
                             (window-number bar buffer-default-directory)
-                            (major-mode))
+                            (major-mode global))
 
 (doom-modeline-def-modeline media
                             (window-number bar " %b  ")
-                            (media-info major-mode))
+                            (media-info major-mode global))
 
 ;;
 ;; Hooks
