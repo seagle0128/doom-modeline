@@ -1035,7 +1035,7 @@ enabled."
 (doom-modeline-def-segment global
   "For the time string and whatever uses global-mode-string."
   (when (< 0 (length global-mode-string))
-    '(" " global-mode-string)))
+    '(" " global-mode-string "  ")))
 
 
 ;;
@@ -1073,7 +1073,7 @@ See `mode-line-percent-position'.")
 
 (doom-modeline-def-modeline main
                             (workspace-number window-number bar matches " " buffer-info buffer-position  " " selection-info)
-                            (buffer-encoding major-mode vcs flycheck global))
+                            (global buffer-encoding major-mode vcs flycheck))
 
 (doom-modeline-def-modeline minimal
                             (bar matches " " buffer-info)
@@ -1081,15 +1081,15 @@ See `mode-line-percent-position'.")
 
 (doom-modeline-def-modeline special
                             (window-number bar matches " " buffer-info-simple buffer-position " " selection-info)
-                            (buffer-encoding major-mode flycheck global))
+                            (global buffer-encoding major-mode flycheck))
 
 (doom-modeline-def-modeline project
                             (window-number bar buffer-default-directory)
-                            (major-mode global))
+                            (global major-mode))
 
 (doom-modeline-def-modeline media
                             (window-number bar " %b  ")
-                            (media-info major-mode global))
+                            (global media-info major-mode))
 
 ;;
 ;; Hooks
