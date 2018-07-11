@@ -1019,7 +1019,7 @@ enabled."
 (doom-modeline-def-segment global
   "For the time string and whatever uses global-mode-string."
   (when (< 0 (length global-mode-string))
-    '("" global-mode-string " ")))
+    '(" " global-mode-string " ")))
 
 ;;
 ;; position
