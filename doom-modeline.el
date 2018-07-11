@@ -1025,11 +1025,17 @@ enabled."
 ;; position
 ;;
 
-;; Be compatible with Emacs25.
+;; Be compatible with Emacs 25.
 (defvar-local doom-modeline-column-zero-based
-  (or (bound-and-true-p column-number-indicator-zero-based) t))
+  (or (bound-and-true-p column-number-indicator-zero-based) t)
+  "When non-nil, mode line displays column numbers zero-based.
+See `column-number-indicator-zero-based'.")
+
 (defvar-local doom-modeline-percent-position
-  (or (bound-and-true-p mode-line-percent-position) '(-3 "%p")))
+  (or (bound-and-true-p mode-line-percent-position) '(-3 "%p"))
+  "Specification of \"percentage offset\" of window through buffer.
+See `mode-line-percent-position'.")
+
 (setq-default mode-line-position
               '((line-number-mode
                  (column-number-mode
