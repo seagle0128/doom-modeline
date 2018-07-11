@@ -103,6 +103,21 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
 (defvar text-scale-mode-amount)
 (defvar winum-auto-setup-mode-line)
 
+(declare-function anzu--reset-status 'anzu)
+(declare-function anzu--where-is-here 'anzu)
+(declare-function eldoc-in-minibuffer-mode 'eldoc-eval)
+(declare-function evil-delimited-arguments 'evil-common)
+(declare-function eyebrowse--get 'eyebrowse)
+(declare-function face-remap-remove-relative 'face-remap)
+(declare-function flycheck-count-errors 'flycheck)
+(declare-function iedit-find-current-occurrence-overlay 'iedit-lib)
+(declare-function iedit-prev-occurrence 'iedit-lib)
+(declare-function image-get-display-property 'image-mode)
+(declare-function magit-toplevel 'magit-git)
+(declare-function window-numbering-clear-mode-line 'window-numbering)
+(declare-function window-numbering-get-number-string 'window-numbering)
+(declare-function window-numbering-install-mode-line 'window-numbering)
+(declare-function winum-get-number-string 'winum)
 
 ;;
 ;; Custom faces
@@ -380,9 +395,7 @@ If STRICT-P, return nil if no project was found, otherwise return
       (sit-for eldoc-show-in-mode-line-delay))))
 (setq eldoc-in-minibuffer-show-fn #'doom-modeline--show-eldoc)
 
-(declare-function eldoc-in-minibuffer-mode 'eldoc-eval)
 (eldoc-in-minibuffer-mode 1)
-
 
 ;; anzu and evil-anzu expose current/total state that can be displayed in the
 ;; mode-line.
@@ -391,12 +404,14 @@ If STRICT-P, return nil if no project was found, otherwise return
         anzu-minimum-input-length 1
         anzu-search-threshold 250)
 
-  (defun doom-modeline-fix-anzu-count (positions here)
-    (cl-loop for (start . end) in positions
-             collect t into before
-             when (and (>= here start) (<= here end))
-             return (length before)
-             finally return 0))
+  (eval-when-compile
+    (defun doom-modeline-fix-anzu-count (positions here)
+      (cl-loop for (start . end) in positions
+               collect t into before
+               when (and (>= here start) (<= here end))
+               return (length before)
+               finally return 0)))
+
   (advice-add #'anzu--where-is-here :override #'doom-modeline-fix-anzu-count)
 
   ;; Avoid anzu conflicts across buffers
@@ -734,7 +749,6 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 (add-hook 'after-save-hook #'doom-modeline--update-vcs)
 (add-hook 'find-file-hook #'doom-modeline--update-vcs t)
 
-(declare-function magit-toplevel "magit-git")
 (defun doom-modeline-magit-post-refresh ()
   "Update vcs state in mode-line after refreshing in magit."
   (dolist (buf (buffer-list))
@@ -836,6 +850,7 @@ lines are selected, or the NxM dimensions of a block selection."
                  (when doom-modeline-enable-word-count
                    (format " %dW" (count-words beg end)))))
        'face 'doom-modeline-highlight))))
+
 
 ;;
 ;; matches (anzu, evil-substitute, iedit, macro)
@@ -994,11 +1009,11 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
                             'doom-modeline-inactive-bar))
       "")))
 
+
 ;;
 ;; workspace-number
 ;;
 
-(declare-function eyebrowse--get 'eyebrowse)
 (doom-modeline-def-segment workspace-number
   "The current workspace name or number. Requires `eyebrowse-mode' to be
 enabled."
@@ -1012,6 +1027,7 @@ enabled."
         (propertize (format "%s " str) 'face 'doom-modeline-eyebrowse))
     ""))
 
+
 ;;
 ;; global
 ;;
@@ -1020,6 +1036,7 @@ enabled."
   "For the time string and whatever uses global-mode-string."
   (when (< 0 (length global-mode-string))
     '(" " global-mode-string " ")))
+
 
 ;;
 ;; position
