@@ -521,7 +521,7 @@ If STRICT-P, return nil if no project was found, otherwise return
                                'face
                                (let ((face (or (and (buffer-modified-p)
                                                     'doom-modeline-buffer-modified)
-                                               (and (active)
+                                               (and (doom-modeline--active)
                                                     'doom-modeline-buffer-file))))
                                  (when face `(:inherit ,face))))))
      'help-echo buffer-file-truename)))
