@@ -404,7 +404,7 @@ If STRICT-P, return nil if no project was found, otherwise return
         anzu-minimum-input-length 1
         anzu-search-threshold 250)
 
-  (eval-when-compile
+  (eval-and-compile
     (defun doom-modeline-fix-anzu-count (positions here)
       (cl-loop for (start . end) in positions
                collect t into before
