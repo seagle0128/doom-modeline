@@ -1151,15 +1151,15 @@ See `mode-line-percent-position'.")
 ;; Versions, support Python, Ruby and Golang
 (add-hook 'python-mode-hook
           (lambda ()
-            (when (executable-find "python")
+            (when (and (executable-find "python") (executable-find "cut") (executable-find "sed"))
               (setq doom-modeline-env-command "python --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))
 (add-hook 'ruby-mode-hook
           (lambda ()
-            (when (executable-find "ruby")
+            (when (and (executable-find "ruby") (executable-find "cut") (executable-find "sed"))
               (setq doom-modeline-env-command "ruby --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))
 (add-hook 'go-mode-hook
           (lambda ()
-            (when (executable-find "go")
+            (when (and (executable-find "go") (executable-find "cut") (executable-find "tr") (executable-find "sed"))
               (setq doom-modeline-env-command "go version 2>&1 | cut -d' ' -f3 | tr -d 'go' | sed -n '1p'"))))
 
 
