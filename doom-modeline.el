@@ -94,6 +94,12 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
 (defvar evil-ex-range)
 (defvar evil-mode)
 (defvar evil-state)
+(defvar evil-emacs-state-tag)
+(defvar evil-insert-state-tag)
+(defvar evil-motion-state-tag)
+(defvar evil-normal-state-tag)
+(defvar evil-operator-state-tag)
+(defvar evil-visual-state-tag)
 (defvar evil-visual-beginning)
 (defvar evil-visual-end)
 (defvar evil-visual-selection)
@@ -979,13 +985,30 @@ See `mode-line-percent-position'.")
   "The buffer position information."
   '(" " mode-line-position))
 
+;;
+;; evil-state
+;;
+
+(doom-modeline-def-segment evil-state
+  "The current evil state. Requires `evil-mode' to be enabled."
+  (when (bound-and-true-p evil-local-mode)
+    (let ((tag (evil-state-property evil-state :tag t)))
+      (propertize (s-trim-right tag) 'face
+                  (if (doom-modeline--active)
+                      (cond ((eq tag evil-normal-state-tag) 'doom-modeline-info)
+                            ((eq tag evil-emacs-state-tag) 'doom-modeline-warning)
+                            ((eq tag evil-insert-state-tag) 'doom-modeline-urgent)
+                            ((eq tag evil-motion-state-tag) 'doom-modeline-buffer-path)
+                            ((eq tag evil-visual-state-tag) 'doom-modeline-buffer-file)
+                            ((eq tag evil-operator-state-tag) 'doom-modeline-buffer-path)))))))
+
 
 ;;
 ;; Mode lines
 ;;
 
 (doom-modeline-def-modeline main
-                            (workspace-number window-number bar matches " " buffer-info buffer-position  " " selection-info)
+                            (workspace-number window-number bar evil-state matches " " buffer-info buffer-position  " " selection-info)
                             (global buffer-encoding major-mode vcs flycheck))
 
 (doom-modeline-def-modeline minimal
@@ -993,7 +1016,7 @@ See `mode-line-percent-position'.")
                             (media-info major-mode))
 
 (doom-modeline-def-modeline special
-                            (window-number bar matches " " buffer-info-simple buffer-position " " selection-info)
+                            (window-number bar evil-state matches " " buffer-info-simple buffer-position " " selection-info)
                             (global buffer-encoding major-mode flycheck))
 
 (doom-modeline-def-modeline project
