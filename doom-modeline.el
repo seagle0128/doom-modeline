@@ -923,7 +923,7 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
     (if (< 0 (length num))
         (propertize (format " %s " num)
                     'face (if (doom-modeline--active)
-                              'doom-modeline-bar
+                              'doom-modeline-panel
                             'doom-modeline-inactive-bar))
       "")))
 
