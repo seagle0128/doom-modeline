@@ -181,9 +181,6 @@ active.")
 (defface doom-modeline-inactive-bar '((t (:inherit warning :inverse-video t)))
   "The face used for the left-most bar on the mode-line of an inactive window.")
 
-(defface doom-modeline-eyebrowse '((t ()))
-  "The face used for eyebrowse.")
-
 
 ;;
 ;; Modeline library
@@ -942,7 +939,8 @@ enabled."
              (str (if (and tag (< 0 (length tag)))
                       tag
                     (when num (int-to-string num)))))
-        (propertize (format "%s " str) 'face 'doom-modeline-eyebrowse))
+        (propertize (format " %s " str) 'face
+                    (if (doom-modeline--active) 'doom-modeline-highlight)))
     ""))
 
 
