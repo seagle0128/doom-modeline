@@ -991,7 +991,7 @@ See `mode-line-percent-position'.")
   "The current evil state. Requires `evil-mode' to be enabled."
   (when (bound-and-true-p evil-local-mode)
     (let ((tag (evil-state-property evil-state :tag t)))
-      (propertize (s-trim-right tag) 'face
+      (propertize tag 'face
                   (if (doom-modeline--active)
                       (cond ((eq tag evil-normal-state-tag) 'doom-modeline-info)
                             ((eq tag evil-emacs-state-tag) 'doom-modeline-warning)
