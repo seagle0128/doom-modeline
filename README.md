@@ -19,7 +19,7 @@ The DOOM modeline was designed for minimalism, and offers:
 - An error/warning count segment for flycheck
 - A workspace number segment for eyebrowse
 - A window number segment for winum and window-numbering
-- An Evil state indicator segment
+- An indicator for evil state
 
 ## Install
 
