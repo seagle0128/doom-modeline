@@ -604,11 +604,9 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 ;;
 
 (doom-modeline-def-segment major-mode
-  "The major mode, including process, environment and text-scale info."
+  "The major mode, including environment and text-scale info."
   (propertize
    (concat (format-mode-line mode-name)
-           (when (stringp mode-line-process)
-             mode-line-process)
            (when doom-modeline-env-version
              (concat " " doom-modeline-env-version))
            (and (featurep 'face-remap)
@@ -620,6 +618,16 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                  text-scale-mode-amount)))
    'face (if (doom-modeline--active) 'doom-modeline-buffer-major-mode)))
 
+
+;;
+;; process
+;;
+
+(doom-modeline-def-segment process
+  "The process info."
+  (if mode-line-process
+      mode-line-process
+    ""))
 
 ;;
 ;; vcs
@@ -1007,7 +1015,7 @@ See `mode-line-percent-position'.")
 
 (doom-modeline-def-modeline main
                             (workspace-number window-number bar evil-state matches " " buffer-info buffer-position  " " selection-info)
-                            (global buffer-encoding major-mode vcs flycheck))
+                            (global buffer-encoding major-mode process vcs flycheck))
 
 (doom-modeline-def-modeline minimal
                             (bar matches " " buffer-info)
@@ -1015,7 +1023,7 @@ See `mode-line-percent-position'.")
 
 (doom-modeline-def-modeline special
                             (window-number bar evil-state matches " " buffer-info-simple buffer-position " " selection-info)
-                            (global buffer-encoding major-mode flycheck))
+                            (global buffer-encoding major-mode process flycheck))
 
 (doom-modeline-def-modeline project
                             (window-number bar buffer-default-directory)
