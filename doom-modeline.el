@@ -669,7 +669,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                              (if active (setq face 'doom-modeline-urgent))
                              (doom-modeline-maybe-icon-octicon "alert" :face face))
                             (t
-                             (if active (setq face 'font-lock-doc-face))
+                             (if active (setq face 'doom-modeline-info))
                              (doom-modeline-maybe-icon-octicon
                               "git-branch"
                               :face face
