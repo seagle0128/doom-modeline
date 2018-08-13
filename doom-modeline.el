@@ -845,7 +845,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 
 (defsubst doom-modeline--iedit ()
   "Show the number of iedit regions matches + what match you're on."
-  (when (and (featurep 'iedit) iedit-mode iedit-occurrences-overlays)
+  (when (and (bound-and-true-p iedit-mode) (bound-and-true-p iedit-occurrences-overlays))
     (propertize
      (let ((this-oc (or (let ((inhibit-message t))
                           (iedit-find-current-occurrence-overlay))
