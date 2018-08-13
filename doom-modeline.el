@@ -320,34 +320,34 @@ If STRICT-P, return nil if no project was found, otherwise return
 
 ;; anzu and evil-anzu expose current/total state that can be displayed in the
 ;; mode-line.
-(when (featurep 'anzu)
-  (setq anzu-cons-mode-line-p nil
-        anzu-minimum-input-length 1
-        anzu-search-threshold 250)
+(eval-and-compile
+  (when (featurep 'anzu)
+    (setq anzu-cons-mode-line-p nil
+          anzu-minimum-input-length 1
+          anzu-search-threshold 250)
 
-  (eval-and-compile
     (defun doom-modeline-fix-anzu-count (positions here)
       (cl-loop for (start . end) in positions
                collect t into before
                when (and (>= here start) (<= here end))
                return (length before)
-               finally return 0)))
+               finally return 0))
 
-  (advice-add #'anzu--where-is-here :override #'doom-modeline-fix-anzu-count)
+    (advice-add #'anzu--where-is-here :override #'doom-modeline-fix-anzu-count)
 
-  ;; Avoid anzu conflicts across buffers
-  ;; (mapc #'make-variable-buffer-local
-  ;;       '(anzu--total-matched anzu--current-position anzu--state
-  ;;                             anzu--cached-count anzu--cached-positions anzu--last-command
-  ;;                             anzu--last-isearch-string anzu--overflow-p))
+    ;; Avoid anzu conflicts across buffers
+    ;; (mapc #'make-variable-buffer-local
+    ;;       '(anzu--total-matched anzu--current-position anzu--state
+    ;;                             anzu--cached-count anzu--cached-positions anzu--last-command
+    ;;                             anzu--last-isearch-string anzu--overflow-p))
 
-  ;; Ensure anzu state is cleared when searches & iedit are done
-  (add-hook 'isearch-mode-end-hook #'anzu--reset-status t)
-  ;; (add-hook '+evil-esc-hook #'anzu--reset-status t)
-  (add-hook 'iedit-mode-end-hook #'anzu--reset-status))
+    ;; Ensure anzu state is cleared when searches & iedit are done
+    (add-hook 'isearch-mode-end-hook #'anzu--reset-status t)
+    ;; (add-hook '+evil-esc-hook #'anzu--reset-status t)
+    (add-hook 'iedit-mode-end-hook #'anzu--reset-status))
 
-(when (featurep 'evil-anzu)
-  (evil-ex-start-search evil-ex-start-word-search))
+  (when (featurep 'evil-anzu)
+    (evil-ex-start-search evil-ex-start-word-search)))
 
 ;; Keep `doom-modeline-current-window' up-to-date
 (defvar doom-modeline-current-window (frame-selected-window))
