@@ -67,7 +67,7 @@
 ;; Variables
 ;;
 
-(defvar doom-modeline-height 29
+(defvar doom-modeline-height 23
   "How tall the mode-line should be (only respected in GUI Emacs).")
 
 (defvar doom-modeline-bar-width 3
@@ -95,6 +95,7 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
 (defvar evil-ex-active-highlights-alist)
 (defvar evil-ex-argument)
 (defvar evil-ex-range)
+(defvar evil-ex-start-word-search)
 (defvar evil-mode)
 (defvar evil-state)
 (defvar evil-emacs-state-tag)
@@ -116,6 +117,8 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
 (declare-function anzu--where-is-here 'anzu)
 (declare-function eldoc-in-minibuffer-mode 'eldoc-eval)
 (declare-function evil-delimited-arguments 'evil-common)
+(declare-function evil-ex-start-search 'evil-search)
+(declare-function evil-state-property 'evil-common)
 (declare-function eyebrowse--get 'eyebrowse)
 (declare-function face-remap-remove-relative 'face-remap)
 (declare-function flycheck-count-errors 'flycheck)
@@ -266,7 +269,7 @@ Example:
   "Return a mode-line configuration associated with KEY (a symbol).
 
   Throws an error if it doesn't exist."
-  (let ((fn (intern (format "doom-modeline-format--%s" key))))
+  (let ((fn (intern-soft (format "doom-modeline-format--%s" key))))
     (when (functionp fn)
       `(:eval (,fn)))))
 
@@ -290,7 +293,7 @@ If STRICT-P, return nil if no project was found, otherwise return
 
 
 ;;
-;; modeline configs
+;; Plugins
 ;;
 
 (defun doom-modeline-eldoc (text)
@@ -317,7 +320,7 @@ If STRICT-P, return nil if no project was found, otherwise return
 
 ;; anzu and evil-anzu expose current/total state that can be displayed in the
 ;; mode-line.
-(when (featurep 'evil-anzu)
+(when (featurep 'anzu)
   (setq anzu-cons-mode-line-p nil
         anzu-minimum-input-length 1
         anzu-search-threshold 250)
@@ -333,16 +336,18 @@ If STRICT-P, return nil if no project was found, otherwise return
   (advice-add #'anzu--where-is-here :override #'doom-modeline-fix-anzu-count)
 
   ;; Avoid anzu conflicts across buffers
-  (mapc #'make-variable-buffer-local
-        '(anzu--total-matched anzu--current-position anzu--state
-                              anzu--cached-count anzu--cached-positions anzu--last-command
-                              anzu--last-isearch-string anzu--overflow-p))
+  ;; (mapc #'make-variable-buffer-local
+  ;;       '(anzu--total-matched anzu--current-position anzu--state
+  ;;                             anzu--cached-count anzu--cached-positions anzu--last-command
+  ;;                             anzu--last-isearch-string anzu--overflow-p))
 
   ;; Ensure anzu state is cleared when searches & iedit are done
   (add-hook 'isearch-mode-end-hook #'anzu--reset-status t)
   ;; (add-hook '+evil-esc-hook #'anzu--reset-status t)
   (add-hook 'iedit-mode-end-hook #'anzu--reset-status))
 
+(when (featurep 'evil-anzu)
+  (evil-ex-start-search evil-ex-start-word-search))
 
 ;; Keep `doom-modeline-current-window' up-to-date
 (defvar doom-modeline-current-window (frame-selected-window))
@@ -362,17 +367,16 @@ If STRICT-P, return nil if no project was found, otherwise return
 (advice-add #'handle-switch-frame :after #'doom-modeline-set-selected-window)
 (advice-add #'select-window :after #'doom-modeline-set-selected-window)
 (with-no-warnings
-  (if (not (boundp 'after-focus-change-function))
-      (progn
-        (add-hook 'focus-in-hook  #'doom-modeline-set-selected-window)
-        (add-hook 'focus-out-hook #'doom-modeline-unset-selected-window))
-    (defun doom-modeline-refresh-frame ()
-      (setq doom-modeline-current-window nil)
-      (cl-loop for frame in (frame-list)
-               if (eq (frame-focus-state frame) t)
-               return (setq doom-modeline-current-window (frame-selected-window frame)))
-      (force-mode-line-update))
-    (add-function :after after-focus-change-function #'doom-modeline-refresh-frame)))
+  (cond ((not (boundp 'after-focus-change-function))
+         (add-hook 'focus-in-hook  #'doom-modeline-set-selected-window)
+         (add-hook 'focus-out-hook #'doom-modeline-unset-selected-window))
+        ((defun doom-modeline-refresh-frame ()
+           (setq doom-modeline-current-window nil)
+           (cl-loop for frame in (frame-list)
+                    if (eq (frame-focus-state frame) t)
+                    return (setq doom-modeline-current-window (frame-selected-window frame)))
+           (force-mode-line-update))
+         (add-function :after after-focus-change-function #'doom-modeline-refresh-frame))))
 
 ;; Show version string for multi-version managers like rvm, rbenv, pyenv, etc.
 (defvar-local doom-modeline-env-version nil)
@@ -611,8 +615,8 @@ directory, the file name, and its state (modified, read-only or non-existent)."
   (propertize
    (concat (format-mode-line mode-name)
            (when doom-modeline-env-version
-             (concat " " doom-modeline-env-version))
-           (and (featurep 'face-remap)
+             (format " %s" doom-modeline-env-version))
+           (and (boundp 'text-scale-mode-amount)
                 (/= text-scale-mode-amount 0)
                 (format
                  (if (> text-scale-mode-amount 0)
@@ -672,6 +676,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                       (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
                                   'face (if active face))
                       " "))))))
+(add-hook 'after-revert-hook #'doom-modeline--update-vcs)
 (add-hook 'after-save-hook #'doom-modeline--update-vcs)
 (add-hook 'find-file-hook #'doom-modeline--update-vcs t)
 
@@ -802,9 +807,7 @@ lines are selected, or the NxM dimensions of a block selection."
 
 Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 `evil-search'."
-  (setq anzu-cons-mode-line-p nil)
-  (when (and (featurep 'anzu)
-             anzu--state
+  (when (and (bound-and-true-p anzu--state)
              (not (bound-and-true-p iedit-mode)))
     (propertize
      (let ((here anzu--current-position)
@@ -821,8 +824,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 
 (defsubst doom-modeline--evil-substitute ()
   "Show number of matches for evil-ex substitutions and highlights in real time."
-  (when (and (featurep 'evil)
-             evil-mode
+  (when (and (bound-and-true-p evil-mode)
              (or (assq 'evil-ex-substitute evil-ex-active-highlights-alist)
                  (assq 'evil-ex-global-match evil-ex-active-highlights-alist)
                  (assq 'evil-ex-buffer-match evil-ex-active-highlights-alist)))
@@ -937,7 +939,7 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 
 
 ;;
-;; workspace-number
+;; workspace number
 ;;
 
 (doom-modeline-def-segment workspace-number
@@ -993,6 +995,7 @@ See `mode-line-percent-position'.")
 (doom-modeline-def-segment buffer-position
   "The buffer position information."
   '(" " mode-line-position))
+
 
 ;;
 ;; evil-state
@@ -1083,10 +1086,6 @@ See `mode-line-percent-position'.")
 ;;
 
 (doom-modeline-set-modeline 'main t) ; set default modeline
-
-;; (add-hook 'doom-load-theme-hook #'doom-modeline-init)
-;; (add-hook 'doom-scratch-buffer-hook #'doom-modeline-set-special-modeline)
-;; (add-hook 'doom-dashboard-mode-hook #'doom-modeline-set-project-modeline)
 
 (add-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
 (add-hook 'org-src-mode-hook #'doom-modeline-set-special-modeline)
