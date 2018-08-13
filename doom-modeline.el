@@ -101,7 +101,6 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
 (defvar evil-ex-active-highlights-alist)
 (defvar evil-ex-argument)
 (defvar evil-ex-range)
-(defvar evil-ex-start-word-search)
 (defvar evil-mode)
 (defvar evil-state)
 (defvar evil-emacs-state-tag)
@@ -123,7 +122,6 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
 (declare-function anzu--where-is-here 'anzu)
 (declare-function eldoc-in-minibuffer-mode 'eldoc-eval)
 (declare-function evil-delimited-arguments 'evil-common)
-(declare-function evil-ex-start-search 'evil-search)
 (declare-function evil-state-property 'evil-common)
 (declare-function eyebrowse--get 'eyebrowse)
 (declare-function face-remap-remove-relative 'face-remap)
@@ -326,8 +324,8 @@ If STRICT-P, return nil if no project was found, otherwise return
 
 ;; anzu and evil-anzu expose current/total state that can be displayed in the
 ;; mode-line.
-(eval-and-compile
-  (when (featurep 'anzu)
+(when (featurep 'anzu)
+  (eval-and-compile
     (setq anzu-cons-mode-line-p nil
           anzu-minimum-input-length 1
           anzu-search-threshold 250)
@@ -350,10 +348,7 @@ If STRICT-P, return nil if no project was found, otherwise return
     ;; Ensure anzu state is cleared when searches & iedit are done
     (add-hook 'isearch-mode-end-hook #'anzu--reset-status t)
     ;; (add-hook '+evil-esc-hook #'anzu--reset-status t)
-    (add-hook 'iedit-mode-end-hook #'anzu--reset-status))
-
-  (when (featurep 'evil-anzu)
-    (evil-ex-start-search evil-ex-start-word-search)))
+    (add-hook 'iedit-mode-end-hook #'anzu--reset-status)))
 
 ;; Keep `doom-modeline-current-window' up-to-date
 (defvar doom-modeline-current-window (frame-selected-window))
