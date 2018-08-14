@@ -1066,7 +1066,7 @@ See `mode-line-percent-position'.")
     ;; of Emacs, someone give the man a modeline!
     (dolist (bname '("*scratch*" "*Messages*"))
       (with-current-buffer bname
-        (doom-modeline-set-modeline 'special)))))
+        (doom-modeline-set-modeline 'main)))))
 
 ;;;###autoload
 (defun doom-modeline-set-special-modeline ()
