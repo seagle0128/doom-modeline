@@ -76,7 +76,7 @@
 (defvar doom-modeline-height 29
   "How tall the mode-line should be (only respected in GUI Emacs).")
 
-(defvar doom-modeline-bar-width 3
+(defvar doom-modeline-bar-width 1
   "How wide the mode-line bar should be (only respected in GUI Emacs).")
 
 (defvar doom-modeline-buffer-file-name-style 'truncate-upto-project
@@ -935,7 +935,7 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
     (if (< 0 (length num))
         (propertize (format " %s " num)
                     'face (if (doom-modeline--active)
-                              'doom-modeline-panel
+                              `(:inherit doom-modeline-bar :foreground ,(face-background 'default))
                             'doom-modeline-inactive-bar))
       "")))
 
