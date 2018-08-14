@@ -690,7 +690,9 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 (doom-modeline-def-segment vcs
   "Displays the current branch, colored based on its state."
-  doom-modeline--vcs)
+  (if (doom-modeline--active)
+      doom-modeline--vcs
+    ""))
 
 
 ;;
@@ -736,7 +738,9 @@ Uses `all-the-icons-material' to fetch the icon."
 (doom-modeline-def-segment flycheck
   "Displays color-coded flycheck error status in the current buffer with pretty
 icons."
-  doom-modeline--flycheck)
+  (if (doom-modeline--active)
+      doom-modeline--flycheck
+    ""))
 
 
 ;;
