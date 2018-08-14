@@ -325,12 +325,6 @@ If STRICT-P, return nil if no project was found, otherwise return
 ;; anzu and evil-anzu expose current/total state that can be displayed in the
 ;; mode-line.
 (when (featurep 'anzu)
-  (add-hook 'anzu-mode-hook
-            (lambda ()
-              (setq anzu-cons-mode-line-p nil
-                    anzu-minimum-input-length 1
-                    anzu-search-threshold 250)))
-
   (defun doom-modeline-fix-anzu-count (positions here)
     (cl-loop for (start . end) in positions
              collect t into before
@@ -809,6 +803,7 @@ lines are selected, or the NxM dimensions of a block selection."
 
 Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 `evil-search'."
+  (setq anzu-cons-mode-line-p nil)
   (when (and (bound-and-true-p anzu--state)
              (not (bound-and-true-p iedit-mode)))
     (propertize
