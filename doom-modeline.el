@@ -90,6 +90,9 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
   relative-to-project => lisp/comint.el
   file-name => comint.el")
 
+(defvar doom-modeline-python-executable "python"
+	"What executable for python will be used (if nil nothing will be shown)")
+
 ;; externs
 (defvar anzu--current-position)
 (defvar anzu--overflow-p)
@@ -1091,8 +1094,8 @@ See `mode-line-percent-position'.")
 ;; Versions, support Python, Ruby and Golang
 (add-hook 'python-mode-hook
           (lambda ()
-            (when (and (executable-find "python") (executable-find "cut") (executable-find "sed"))
-              (setq doom-modeline-env-command "python --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))
+            (when (and (executable-find doom-modeline-python-executable) (executable-find "cut") (executable-find "sed"))
+              (setq doom-modeline-env-command (concat doom-modeline-python-executable " --version 2>&1 | cut -d' ' -f2 | sed -n '1p'")))))
 (add-hook 'ruby-mode-hook
           (lambda ()
             (when (and (executable-find "ruby") (executable-find "cut") (executable-find "sed"))
