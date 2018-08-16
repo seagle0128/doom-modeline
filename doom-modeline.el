@@ -96,8 +96,6 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
 (defvar anzu--state)
 (defvar anzu--total-matched)
 (defvar anzu-cons-mode-line-p)
-(defvar anzu-minimum-input-length)
-(defvar anzu-search-threshold)
 (defvar evil-ex-active-highlights-alist)
 (defvar evil-ex-argument)
 (defvar evil-ex-range)
@@ -235,39 +233,36 @@ active.")
             ((error "%s is not a valid segment" seg))))
     (nreverse forms)))
 
-(defmacro doom-modeline-def-modeline (name lhs &optional rhs)
+(defun doom-modeline-def-modeline (name lhs &optional rhs)
   "Defines a modeline format and byte-compiles it.
 
 NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
 LHS and RHS are lists of symbols of modeline segments defined with
 `doom-modeline-def-segment'.
+
 Example:
-  (doom-modeline-def-modeline minimal
-    (bar matches \" \" buffer-info)
-    (media-info major-mode))
+  (doom-modeline-def-modeline 'minimal
+    '(bar matches \" \" buffer-info)
+    '(media-info major-mode))
   (doom-modeline-set-modeline 'minimal t)"
   (let ((sym (intern (format "doom-modeline-format--%s" name)))
         (lhs-forms (doom-modeline--prepare-segments lhs))
         (rhs-forms (doom-modeline--prepare-segments rhs)))
-    `(progn
-       (fset ',sym
-             (lambda ()
-               ,(concat "Modeline:\n"
-                        (format "  %s\n  %s"
-                                (prin1-to-string lhs)
-                                (prin1-to-string rhs)))
-               (let ((lhs (list ,@lhs-forms))
-                     (rhs (list ,@rhs-forms)))
-                 (let ((rhs-str (format-mode-line rhs)))
-                   (list lhs
-                         (propertize
-                          " " 'display
-                          `((space :align-to (- (+ right right-fringe right-margin)
-                                                ,(+ 1 (string-width rhs-str))))))
-                         rhs-str)))))
-       ,(unless (bound-and-true-p byte-compile-current-file)
-          `(let (byte-compile-warnings)
-             (byte-compile #',sym))))))
+    (defalias sym
+      (lambda ()
+        (let ((lhs (eval `(list ,@lhs-forms) t))
+              (rhs (eval `(list ,@rhs-forms) t)))
+          (let ((rhs-str (format-mode-line rhs)))
+            (list lhs
+                  (propertize
+                   " " 'display
+                   `((space :align-to (- (+ right right-fringe right-margin)
+                                         ,(+ 1 (string-width rhs-str))))))
+                  rhs-str))))
+      (concat "Modeline:\n"
+              (format "  %s\n  %s"
+                      (prin1-to-string lhs)
+                      (prin1-to-string rhs))))))
 
 (defun doom-modeline (key)
   "Return a mode-line configuration associated with KEY (a symbol).
@@ -408,7 +403,7 @@ If STRICT-P, return nil if no project was found, otherwise return
   (when (display-graphic-p)
     (apply 'all-the-icons-material args)))
 
-(defsubst doom-modeline--active ()
+(defun doom-modeline--active ()
   "Whether is an active window."
   (eq (selected-window) doom-modeline-current-window))
 
@@ -1021,25 +1016,25 @@ See `mode-line-percent-position'.")
 ;; Mode lines
 ;;
 
-(doom-modeline-def-modeline main
-                            (workspace-number window-number bar evil-state matches " " buffer-info buffer-position  " " selection-info)
-                            (global buffer-encoding major-mode process vcs flycheck))
+(doom-modeline-def-modeline 'main
+                            ' (workspace-number window-number bar evil-state matches " " buffer-info buffer-position  " " selection-info)
+                            '(global buffer-encoding major-mode process vcs flycheck))
 
-(doom-modeline-def-modeline minimal
-                            (bar matches " " buffer-info)
-                            (media-info major-mode))
+(doom-modeline-def-modeline 'minimal
+                            '(bar matches " " buffer-info)
+                            '(media-info major-mode))
 
-(doom-modeline-def-modeline special
-                            (window-number bar evil-state matches " " buffer-info-simple buffer-position " " selection-info)
-                            (global buffer-encoding major-mode process flycheck))
+(doom-modeline-def-modeline 'special
+                            '(window-number bar evil-state matches " " buffer-info-simple buffer-position " " selection-info)
+                            '(global buffer-encoding major-mode process flycheck))
 
-(doom-modeline-def-modeline project
-                            (window-number bar buffer-default-directory)
-                            (global major-mode))
+(doom-modeline-def-modeline 'project
+                            '(window-number bar buffer-default-directory)
+                            '(global major-mode))
 
-(doom-modeline-def-modeline media
-                            (window-number bar " %b  ")
-                            (global media-info major-mode))
+(doom-modeline-def-modeline 'media
+                            '(window-number bar " %b  ")
+                            '(global media-info major-mode))
 
 ;;
 ;; Hooks
