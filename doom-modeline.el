@@ -192,6 +192,24 @@ active.")
 (defface doom-modeline-inactive-bar '((t (:inherit warning :inverse-video t)))
   "The face used for the left-most bar on the mode-line of an inactive window.")
 
+(defface doom-modeline-evil-emacs-state '((t (:inherit doom-modeline-warning)))
+  "Face for the Emacs state tag in evil state indicator.")
+
+(defface doom-modeline-evil-insert-state'((t (:inherit doom-modeline-urgent)))
+  "Face for the insert state tag in evil state indicator.")
+
+(defface doom-modeline-evil-motion-state'((t :inherit doom-modeline-buffer-path))
+  "Face for the motion state tag in evil state indicator.")
+
+(defface doom-modeline-evil-normal-state'((t (:inherit doom-modeline-info)))
+  "Face for the normal state tag in evil state indicator.")
+
+(defface doom-modeline-evil-operator-state'((t (:inherit doom-modeline-buffer-path)))
+  "Face for the operator state tag in evil state indicator.")
+
+(defface doom-modeline-evil-visual-state'((t (:inherit doom-modeline-buffer-file)))
+  "Face for the visual state tag in evil state indicator.")
+
 
 ;;
 ;; Modeline library
@@ -1007,12 +1025,12 @@ See `mode-line-percent-position'.")
     (let ((tag (evil-state-property evil-state :tag t)))
       (propertize tag 'face
                   (if (doom-modeline--active)
-                      (cond ((eq tag evil-normal-state-tag) 'doom-modeline-info)
-                            ((eq tag evil-emacs-state-tag) 'doom-modeline-warning)
-                            ((eq tag evil-insert-state-tag) 'doom-modeline-urgent)
-                            ((eq tag evil-motion-state-tag) 'doom-modeline-buffer-path)
-                            ((eq tag evil-visual-state-tag) 'doom-modeline-buffer-file)
-                            ((eq tag evil-operator-state-tag) 'doom-modeline-buffer-path)))))))
+                      (cond ((eq tag evil-normal-state-tag) 'doom-modeline-evil-normal-state)
+                            ((eq tag evil-emacs-state-tag) 'doom-modeline-evil-emacs-state)
+                            ((eq tag evil-insert-state-tag) 'doom-modeline-evil-insert-state)
+                            ((eq tag evil-motion-state-tag) 'doom-modeline-evil-motion-state)
+                            ((eq tag evil-visual-state-tag) 'doom-modeline-evil-visual-state)
+                            ((eq tag evil-operator-state-tag) 'doom-modeline-evil-operator-state)))))))
 
 
 ;;
