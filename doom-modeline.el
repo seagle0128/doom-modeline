@@ -1122,6 +1122,10 @@ See `mode-line-percent-position'.")
           (lambda ()
             (when (and (executable-find "go") (executable-find "cut") (executable-find "tr") (executable-find "sed"))
               (setq doom-modeline-env-command "go version 2>&1 | cut -d' ' -f3 | tr -d 'go' | sed -n '1p'"))))
+(add-hook 'elixir-mode-hook
+          (lambda ()
+            (when (and (executable-find "iex") (executable-find "cut") (executable-find "sed"))
+              (setq doom-modeline-env-command "iex --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))
 
 
 ;; Ensure modeline is inactive when Emacs is unfocused (and active otherwise)
