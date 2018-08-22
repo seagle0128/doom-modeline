@@ -210,6 +210,8 @@ active.")
 (defface doom-modeline-evil-visual-state'((t (:inherit doom-modeline-buffer-file)))
   "Face for the visual state tag in evil state indicator.")
 
+(defface doom-modeline-evil-replace-state'((t (:inherit doom-modeline-error)))
+  "Face for the replace state tag in evil state indicator.")
 
 ;;
 ;; Modeline library
@@ -1030,7 +1032,8 @@ See `mode-line-percent-position'.")
                             ((eq tag evil-insert-state-tag) 'doom-modeline-evil-insert-state)
                             ((eq tag evil-motion-state-tag) 'doom-modeline-evil-motion-state)
                             ((eq tag evil-visual-state-tag) 'doom-modeline-evil-visual-state)
-                            ((eq tag evil-operator-state-tag) 'doom-modeline-evil-operator-state)))))))
+                            ((eq tag evil-operator-state-tag) 'doom-modeline-evil-operator-state)
+                            ((eq tag evil-replace-state-tag) 'doom-modeline-evil-replace-state)))))))
 
 
 ;;
