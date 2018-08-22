@@ -91,7 +91,7 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
   file-name => comint.el")
 
 (defvar doom-modeline-python-executable "python"
-	"What executable for python will be used (if nil nothing will be shown)")
+  "What executable of Python will be used (if nil nothing will be shown).")
 
 ;; externs
 (defvar anzu--current-position)
