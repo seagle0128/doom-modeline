@@ -118,6 +118,7 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
 (defvar iedit-occurrences-overlays)
 (defvar text-scale-mode-amount)
 (defvar winum-auto-setup-mode-line)
+(defvar mc/mode-line)
 
 (declare-function anzu--reset-status 'anzu)
 (declare-function anzu--where-is-here 'anzu)
@@ -879,6 +880,14 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
                length))
      'face (if (doom-modeline--active) 'doom-modeline-panel))))
 
+(defsubst doom-modeline--multiple-cursors ()
+  (when (bound-and-true-p multiple-cursors-mode)
+    (propertize
+     (concat (car mc/mode-line)
+             (eval (cadadr mc/mode-line))
+             " ")
+     'face (if (doom-modeline--active) 'doom-modeline-panel))))
+
 (doom-modeline-def-segment matches
   "Displays: 1. the currently recording macro, 2. A current/total for the
 current search term (with anzu), 3. The number of substitutions being conducted
@@ -886,7 +895,8 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
   (let ((meta (concat (doom-modeline--macro-recording)
                       (doom-modeline--anzu)
                       (doom-modeline--evil-substitute)
-                      (doom-modeline--iedit))))
+                      (doom-modeline--iedit)
+                      (doom-modeline--multiple-cursors))))
     (or (and (not (equal meta "")) meta)
         (if buffer-file-name " %I "))))
 
