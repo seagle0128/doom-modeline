@@ -1124,7 +1124,7 @@ See `mode-line-percent-position'.")
 (add-hook 'org-src-mode-hook #'doom-modeline-set-special-modeline)
 (add-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
 
-;; Versions, support Python, Ruby and Golang
+;; Versions, support Python, Ruby, Perl and Golang, etc.
 (add-hook 'python-mode-hook
           (lambda ()
             (when (and (executable-find doom-modeline-python-executable) (executable-find "cut") (executable-find "sed"))
