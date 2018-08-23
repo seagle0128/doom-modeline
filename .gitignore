@@ -2,3 +2,4 @@
 *.elc
 *.html
 .cask/
+dist/
