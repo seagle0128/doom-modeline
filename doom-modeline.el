@@ -1131,6 +1131,10 @@ See `mode-line-percent-position'.")
           (lambda ()
             (when (and (executable-find "ruby") (executable-find "cut") (executable-find "sed"))
               (setq doom-modeline-env-command "ruby --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))
+(add-hook 'perl-mode-hook
+          (lambda ()
+            (when (and (executable-find "perl") (executable-find "cut") (executable-find "tr") (executable-find "sed"))
+              (setq doom-modeline-env-command "perl --version 2>&1 | cut -d'(' -f2 | cut -d')' -f1 | tr -d 'v' | sed -n '2p'"))))
 (add-hook 'go-mode-hook
           (lambda ()
             (when (and (executable-find "go") (executable-find "cut") (executable-find "tr") (executable-find "sed"))
