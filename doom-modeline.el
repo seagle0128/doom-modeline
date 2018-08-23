@@ -109,6 +109,7 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
 (defvar evil-motion-state-tag)
 (defvar evil-normal-state-tag)
 (defvar evil-operator-state-tag)
+(defvar evil-replace-state-tag)
 (defvar evil-visual-state-tag)
 (defvar evil-visual-beginning)
 (defvar evil-visual-end)
@@ -883,6 +884,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
      'face (if (doom-modeline--active) 'doom-modeline-panel))))
 
 (defsubst doom-modeline--multiple-cursors ()
+  "Show the number of multiple cursors."
   (when (bound-and-true-p multiple-cursors-mode)
     (propertize
      (concat (car mc/mode-line)
