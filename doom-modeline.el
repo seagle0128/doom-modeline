@@ -1053,7 +1053,7 @@ See `mode-line-percent-position'.")
 ;;
 
 (doom-modeline-def-modeline 'main
-                            ' (workspace-number window-number bar evil-state matches " " buffer-info buffer-position  " " selection-info)
+                            '(workspace-number window-number bar evil-state matches " " buffer-info buffer-position  " " selection-info)
                             '(global buffer-encoding major-mode process vcs flycheck))
 
 (doom-modeline-def-modeline 'minimal
