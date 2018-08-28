@@ -17,7 +17,11 @@ before_install:
   - evm install $EVM_EMACS --use --skip
   - cask
 
+install:
+  - cask install
+  
 script:
   - emacs --version
   - pwd
-  - cask emacs cask --batch -f batch-byte-compile ../doom-modeline/doom-modeline.el
+  - cask build 
+# - cask emacs cask --batch -f batch-byte-compile ../doom-modeline/doom-modeline.el
