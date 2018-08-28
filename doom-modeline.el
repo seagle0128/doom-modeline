@@ -63,11 +63,17 @@
 (require 'shrink-path)
 
 
+;;
+;; Compatibility
+;;
+
 (unless (>= emacs-major-version 26)
   (with-no-warnings
     ;; if-let and when-let are deprecated in Emacs 26+ in favor of their
     ;; if-let* variants, so we alias them for 25 users.
+    (defalias 'if-let* #'if-let)
     (defalias 'when-let* #'when-let)))
+
 
 ;;
 ;; Variables
