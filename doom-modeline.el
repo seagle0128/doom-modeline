@@ -654,9 +654,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 (doom-modeline-def-segment process
   "The process info."
-  (if (and (doom-modeline--active) mode-line-process)
-      mode-line-process
-    ""))
+  mode-line-process)
 
 ;;
 ;; vcs
