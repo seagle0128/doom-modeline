@@ -64,18 +64,6 @@
 
 
 ;;
-;; Compatibility
-;;
-
-(unless (>= emacs-major-version 26)
-  (with-no-warnings
-    ;; if-let and when-let are deprecated in Emacs 26+ in favor of their
-    ;; if-let* variants, so we alias them for 25 users.
-    (defalias 'if-let* #'if-let)
-    (defalias 'when-let* #'when-let)))
-
-
-;;
 ;; Variables
 ;;
 
@@ -307,7 +295,7 @@ Example:
   "Set the modeline format. Does nothing if the modeline KEY doesn't exist.
 
 If DEFAULT is non-nil, set the default mode-line for all buffers."
-  (when-let* ((modeline (doom-modeline key)))
+  (when-let ((modeline (doom-modeline key)))
     (setf (if default
               (default-value 'mode-line-format)
             (buffer-local-value 'mode-line-format (current-buffer)))
@@ -375,7 +363,7 @@ If STRICT-P, return nil if no project was found, otherwise return
 (defvar doom-modeline-current-window (frame-selected-window))
 (defun doom-modeline-set-selected-window (&rest _)
   "Set `doom-modeline-current-window' appropriately."
-  (when-let* ((win (frame-selected-window)))
+  (when-let ((win (frame-selected-window)))
     (unless (minibuffer-window-active-p win)
       (setq doom-modeline-current-window win)
       (force-mode-line-update))))
