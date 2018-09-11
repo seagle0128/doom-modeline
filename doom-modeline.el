@@ -451,7 +451,7 @@ active.")
                                           if (= d 0) collect (string-to-char " ")
                                           else collect (string-to-char "."))
                                  (if (eq idx len) "\"};" "\",\n")))))
-  'xpm t :ascent 'center)))))
+        'xpm t :ascent 'center)))))
 
 (defun doom-modeline-buffer-file-name ()
   "Propertized variable `buffer-file-name' based on `+doom-modeline-buffer-file-name-style'."
@@ -1029,7 +1029,7 @@ See `mode-line-percent-position'.")
   "The current evil state. Requires `evil-mode' to be enabled."
   (when (bound-and-true-p evil-local-mode)
     (let ((tag (evil-state-property evil-state :tag t)))
-      (propertize tag 'face
+      (propertize (s-trim-right tag) 'face
                   (if (doom-modeline--active)
                       (cond ((eq tag evil-normal-state-tag) 'doom-modeline-evil-normal-state)
                             ((eq tag evil-emacs-state-tag) 'doom-modeline-evil-emacs-state)
