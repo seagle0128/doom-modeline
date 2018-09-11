@@ -206,7 +206,7 @@ active.")
 (defface doom-modeline-evil-visual-state'((t (:inherit doom-modeline-buffer-file)))
   "Face for the visual state tag in evil state indicator.")
 
-(defface doom-modeline-evil-replace-state'((t (:inherit doom-modeline-error)))
+(defface doom-modeline-evil-replace-state'((t (:inherit doom-modeline-buffer-modified)))
   "Face for the replace state tag in evil state indicator.")
 
 ;;
@@ -255,14 +255,14 @@ active.")
 (defun doom-modeline-def-modeline (name lhs &optional rhs)
   "Defines a modeline format and byte-compiles it.
 
-NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
-LHS and RHS are lists of symbols of modeline segments defined with
-`doom-modeline-def-segment'.
+  NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
+  LHS and RHS are lists of symbols of modeline segments defined with
+  `doom-modeline-def-segment'.
 
-Example:
+  Example:
   (doom-modeline-def-modeline 'minimal
-    '(bar matches \" \" buffer-info)
-    '(media-info major-mode))
+                              '(bar matches \" \" buffer-info)
+                              '(media-info major-mode))
   (doom-modeline-set-modeline 'minimal t)"
   (let ((sym (intern (format "doom-modeline-format--%s" name)))
         (lhs-forms (doom-modeline--prepare-segments lhs))
@@ -294,7 +294,7 @@ Example:
 (defun doom-modeline-set-modeline (key &optional default)
   "Set the modeline format. Does nothing if the modeline KEY doesn't exist.
 
-If DEFAULT is non-nil, set the default mode-line for all buffers."
+  If DEFAULT is non-nil, set the default mode-line for all buffers."
   (when-let ((modeline (doom-modeline key)))
     (setf (if default
               (default-value 'mode-line-format)
@@ -304,8 +304,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 (defun doom-modeline-project-root ()
   "Get the path to the root of your project.
 
-If STRICT-P, return nil if no project was found, otherwise return
-`default-directory'."
+  If STRICT-P, return nil if no project was found, otherwise return
+  `default-directory'."
   (let (projectile-require-project-root)
     (projectile-project-root)))
 
@@ -451,7 +451,7 @@ If STRICT-P, return nil if no project was found, otherwise return
                                           if (= d 0) collect (string-to-char " ")
                                           else collect (string-to-char "."))
                                  (if (eq idx len) "\"};" "\",\n")))))
-        'xpm t :ascent 'center)))))
+  'xpm t :ascent 'center)))))
 
 (defun doom-modeline-buffer-file-name ()
   "Propertized variable `buffer-file-name' based on `+doom-modeline-buffer-file-name-style'."
