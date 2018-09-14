@@ -46,6 +46,8 @@ In `init.el`,
 This package requires the fonts included with `all-the-icons` to be installed.
 Run `M-x all-the-icons-install-fonts` to do so.
 
+Recommand to use [doom-themes](https://github.com/hlissner/emacs-doom-themes);
+
 ## Screenshots
 
 ![modeline](https://github.com/hlissner/doom-emacs/raw/screenshots/ml.png)
