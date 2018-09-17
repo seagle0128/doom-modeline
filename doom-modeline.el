@@ -771,9 +771,11 @@ segment.")
 (doom-modeline-def-segment selection-info
   "Information about the current selection, such as how many characters and
 lines are selected, or the NxM dimensions of a block selection."
-  (when (and mark-active (doom-modeline--active))
+  (when (and (or mark-active (and (bound-and-true-p evil-local-mode)
+                                  (eq evil-state 'visual)))
+             (doom-modeline--active))
     (cl-destructuring-bind (beg . end)
-        (if (and (bound-and-true-p evil-state) (eq evil-state 'visual))
+        (if (and (bound-and-true-p evil-local-mode) (eq evil-state 'visual))
             (cons evil-visual-beginning evil-visual-end)
           (cons (region-beginning) (region-end)))
       (propertize
