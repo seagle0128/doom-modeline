@@ -688,18 +688,6 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 (add-hook 'after-save-hook #'doom-modeline--update-vcs)
 (add-hook 'find-file-hook #'doom-modeline--update-vcs t)
 
-(defun doom-modeline-magit-post-refresh ()
-  "Update vcs state in mode-line after refreshing in magit."
-  (dolist (buf (buffer-list))
-    (when (and (not (buffer-modified-p buf))
-               (buffer-file-name buf)
-               (file-exists-p (buffer-file-name buf))
-               (file-in-directory-p (buffer-file-name buf) (magit-toplevel)))
-      (with-current-buffer buf
-        (vc-refresh-state)
-        (doom-modeline--update-vcs)))))
-(add-hook 'magit-post-refresh-hook #'doom-modeline-magit-post-refresh)
-
 (doom-modeline-def-segment vcs
   "Displays the current branch, colored based on its state."
   (if (doom-modeline--active)
