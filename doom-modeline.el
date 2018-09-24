@@ -525,7 +525,7 @@ fish-shell style.
 Example:
   ~/Projects/FOSS/emacs/lisp/comint.el => ~/P/F/emacs/lisp/comint.el"
   (let* ((project-root (doom-modeline-project-root))
-         (file-name-split (shrink-path-file-mixed project-root
+         (file-name-split (shrink-path-file-mixed (or project-root "")
                                                   (file-name-directory buffer-file-name)
                                                   buffer-file-name))
          (active (doom-modeline--active)))
