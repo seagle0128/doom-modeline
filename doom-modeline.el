@@ -309,6 +309,8 @@ active.")
   (let (projectile-require-project-root)
     (projectile-project-root)))
 
+;; Disable projectile mode-line segment
+(setq projectile-dynamic-mode-line nil)
 
 ;;
 ;; Plugins
