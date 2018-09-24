@@ -661,7 +661,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 ;;
 
 (defvar-local doom-modeline--vcs nil)
-(defun doom-modeline--update-vcs ()
+(defun doom-modeline--update-vcs (&rest _)
   "Update vsc state in mode-line."
   (setq doom-modeline--vcs
         (when (and vc-mode buffer-file-name)
@@ -699,7 +699,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 (add-hook 'after-revert-hook #'doom-modeline--update-vcs)
 (add-hook 'after-save-hook #'doom-modeline--update-vcs)
 (add-hook 'find-file-hook #'doom-modeline--update-vcs t)
-(advice-add #'vc-refresh-state :after #'doom-modeline--update-vcs)
+(advice-add #'select-window :after #'doom-modeline--update-vcs)
 
 (doom-modeline-def-segment vcs
   "Displays the current branch, colored based on its state."
