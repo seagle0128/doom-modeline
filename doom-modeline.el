@@ -156,6 +156,10 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
   '((t (:inherit (mode-line-emphasis bold))))
   "Face used for the major-mode segment in the mode-line.")
 
+(defface doom-modeline-project-root-dir
+  '((t (:inherit (mode-line-emphasis bold))))
+  "Face used for the project part of the mode-line buffer path.")
+
 (defface doom-modeline-highlight
   '((t (:inherit mode-line-emphasis)))
   "Face for bright segments of the mode-line.")
