@@ -402,8 +402,8 @@ active.")
 (defun doom-modeline-update-env ()
   "Update environment info on mode-line."
   (when doom-modeline-env-command
-    (let* ((default-directory (doom-modeline-project-root))
-           (s (shell-command-to-string doom-modeline-env-command)))
+    (let ((default-directory (or (doom-modeline-project-root) ""))
+          (s (shell-command-to-string doom-modeline-env-command)))
       (setq doom-modeline-env-version (if (string-match "[ \t\n\r]+\\'" s)
                                           (replace-match "" t t s)
                                         s)))))
@@ -530,8 +530,8 @@ fish-shell style.
 
 Example:
   ~/Projects/FOSS/emacs/lisp/comint.el => ~/P/F/emacs/lisp/comint.el"
-  (let* ((project-root (doom-modeline-project-root))
-         (file-name-split (shrink-path-file-mixed (or project-root "")
+  (let* ((project-root (or (doom-modeline-project-root) ""))
+         (file-name-split (shrink-path-file-mixed project-root
                                                   (file-name-directory file-path)
                                                   file-path))
          (active (doom-modeline--active)))
