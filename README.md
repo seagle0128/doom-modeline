@@ -20,6 +20,7 @@ The DOOM modeline was designed for minimalism, and offers:
 - A workspace number segment for `eyebrowse`
 - A window number segment for `winum` and `window-numbering`
 - An indicator for `evil` state
+- An indicator for current input method
 
 ## Install
 
