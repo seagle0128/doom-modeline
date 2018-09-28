@@ -1044,12 +1044,27 @@ See `mode-line-percent-position'.")
 
 
 ;;
+;; input method
+;;
+
+(doom-modeline-def-segment input-method
+  "The current input method."
+  (cond
+   (current-input-method
+    (concat current-input-method-title "  "))
+   ((and (bound-and-true-p evil-mode)
+         (bound-and-true-p evil-input-method))
+    (concat
+     (nth 3 (assoc default-input-method input-method-alist))
+     "  "))))
+
+;;
 ;; Mode lines
 ;;
 
 (doom-modeline-def-modeline 'main
                             '(workspace-number window-number bar evil-state matches " " buffer-info buffer-position " " selection-info)
-                            '(global buffer-encoding major-mode process vcs flycheck))
+                            '(global input-method buffer-encoding major-mode process vcs flycheck))
 
 (doom-modeline-def-modeline 'minimal
                             '(bar matches " " buffer-info)
@@ -1057,7 +1072,7 @@ See `mode-line-percent-position'.")
 
 (doom-modeline-def-modeline 'special
                             '(window-number bar evil-state matches " " buffer-info-simple buffer-position " " selection-info)
-                            '(global buffer-encoding major-mode process flycheck))
+                            '(global input-method buffer-encoding major-mode process flycheck))
 
 (doom-modeline-def-modeline 'project
                             '(window-number bar buffer-default-directory)
