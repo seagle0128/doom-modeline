@@ -964,8 +964,7 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
     (if (< 0 (length num))
         (propertize (format " %s " num)
                     'face (if (doom-modeline--active)
-                              `(:inherit doom-modeline-bar :foreground ,(face-background 'default))
-                            'doom-modeline-inactive-bar))
+                              'doom-modeline-buffer-file))
       "")))
 
 
