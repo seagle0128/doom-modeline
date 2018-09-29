@@ -1067,7 +1067,7 @@ See `mode-line-percent-position'.")
 ;;
 
 (doom-modeline-def-modeline 'main
-                            '(workspace-number window-number bar evil-state matches " " buffer-info buffer-position " " selection-info)
+                            '(bar workspace-number window-number evil-state matches " " buffer-info buffer-position " " selection-info)
                             '(global input-method buffer-encoding major-mode process vcs flycheck))
 
 (doom-modeline-def-modeline 'minimal
@@ -1075,15 +1075,15 @@ See `mode-line-percent-position'.")
                             '(media-info major-mode))
 
 (doom-modeline-def-modeline 'special
-                            '(window-number bar evil-state matches " " buffer-info-simple buffer-position " " selection-info)
+                            '(bar window-number evil-state matches " " buffer-info-simple buffer-position " " selection-info)
                             '(global input-method buffer-encoding major-mode process flycheck))
 
 (doom-modeline-def-modeline 'project
-                            '(window-number bar buffer-default-directory)
+                            '(bar window-number buffer-default-directory)
                             '(global major-mode))
 
 (doom-modeline-def-modeline 'media
-                            '(window-number bar " %b  ")
+                            '(bar window-number " %b  ")
                             '(global media-info major-mode))
 
 ;;
