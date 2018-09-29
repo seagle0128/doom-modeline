@@ -635,7 +635,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 (doom-modeline-def-segment major-mode
   "The major mode, including environment and text-scale info."
   (propertize
-   (concat (format-mode-line mode-name)
+   (concat (substring (format-mode-line mode-line-modes) 2 -3)
            (when doom-modeline-env-version
              (format " %s" doom-modeline-env-version))
            (and (boundp 'text-scale-mode-amount)
