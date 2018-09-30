@@ -244,7 +244,7 @@ active.")
                  `(let (byte-compile-warnings)
                     (byte-compile #',sym))))))))
 
-(defsubst doom-modeline--prepare-segments (segments)
+(defun doom-modeline--prepare-segments (segments)
   "Prepare mode-line `SEGMENTS'."
   (let (forms it)
     (dolist (seg segments)
@@ -252,7 +252,7 @@ active.")
              (push seg forms))
             ((symbolp seg)
              (cond ((setq it (cdr (assq seg doom-modeline-fn-alist)))
-                    (push (list it) forms))
+                    (push (list :eval (list it)) forms))
                    ((setq it (cdr (assq seg doom-modeline-var-alist)))
                     (push it forms))
                    ((error "%s is not a defined segment" seg))))
@@ -276,19 +276,20 @@ active.")
         (rhs-forms (doom-modeline--prepare-segments rhs)))
     (defalias sym
       (lambda ()
-        (let ((lhs (eval `(list ,@lhs-forms) t))
-              (rhs (eval `(list ,@rhs-forms) t)))
-          (let ((rhs-str (format-mode-line rhs)))
-            (list lhs
-                  (propertize
-                   " " 'display
-                   `((space :align-to (- (+ right right-fringe right-margin)
-                                         ,(+ 1 (string-width rhs-str))))))
-                  rhs-str))))
+        (let ((rhs-str (format-mode-line rhs-forms)))
+          (list lhs-forms
+                (propertize
+                 " " 'display
+                 `((space :align-to (- (+ right right-fringe right-margin)
+                                       ,(+ 1 (string-width rhs-str))))))
+                rhs-str)))
       (concat "Modeline:\n"
               (format "  %s\n  %s"
                       (prin1-to-string lhs)
-                      (prin1-to-string rhs))))))
+                      (prin1-to-string rhs))))
+    (unless (bound-and-true-p byte-compile-current-file)
+      (let (byte-compile-warnings)
+        (byte-compile sym)))))
 
 (defun doom-modeline (key)
   "Return a mode-line configuration associated with KEY (a symbol).
