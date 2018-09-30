@@ -635,7 +635,14 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 (doom-modeline-def-segment major-mode
   "The major mode, including environment and text-scale info."
   (propertize
-   (concat (format-mode-line mode-name)
+   (concat (format-mode-line
+            `(:propertize ("" mode-name)
+                          help-echo "Major mode\n\
+mouse-1: Display major mode menu\n\
+mouse-2: Show help for major mode\n\
+mouse-3: Toggle minor modes"
+                          mouse-face mode-line-highlight
+                          local-map ,mode-line-major-mode-keymap))
            (when doom-modeline-env-version
              (format " %s" doom-modeline-env-version))
            (and (boundp 'text-scale-mode-amount)
