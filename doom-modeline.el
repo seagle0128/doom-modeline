@@ -990,7 +990,7 @@ enabled."
                       tag
                     (when num (int-to-string num)))))
         (propertize (format " %s " str) 'face
-                    (if (doom-modeline--active) 'doom-modeline-highlight)))
+                    (if (doom-modeline--active) 'doom-modeline-buffer-major-mode)))
     ""))
 
 
