@@ -189,7 +189,10 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
   "The face used for the left-most bar on the mode-line when eldoc-eval is
 active.")
 
-(defface doom-modeline-inactive-bar '((t (:inherit warning :inverse-video t)))
+(defface doom-modeline-inactive-bar `((t (:background
+                                          ,(face-foreground 'mode-line-inactive)
+                                          :foreground
+                                          ,(face-background 'mode-line-inactive))))
   "The face used for the left-most bar on the mode-line of an inactive window.")
 
 (defface doom-modeline-evil-emacs-state '((t (:inherit doom-modeline-warning)))
