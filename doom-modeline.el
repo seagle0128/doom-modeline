@@ -401,8 +401,11 @@ active.")
 ;; Show version string for multi-version managers like rvm, rbenv, pyenv, etc.
 (defvar-local doom-modeline-env-version nil)
 (defvar-local doom-modeline-env-command nil)
-(add-hook 'focus-in-hook #'doom-modeline-update-env)
 (add-hook 'find-file-hook #'doom-modeline-update-env)
+(with-no-warnings
+  (if (boundp 'after-focus-change-function)
+      (add-function :after after-focus-change-function #'doom-modeline-update-env)
+    (add-hook 'focus-in-hook #'doom-modeline-update-env)))
 (defun doom-modeline-update-env ()
   "Update environment info on mode-line."
   (when doom-modeline-env-command
@@ -1184,8 +1187,17 @@ See `mode-line-percent-position'.")
   "Unfocus mode-line."
   (setq doom-modeline-remap-face-cookie (face-remap-add-relative 'mode-line 'mode-line-inactive)))
 
-(add-hook 'focus-in-hook #'doom-modeline-focus)
-(add-hook 'focus-out-hook #'doom-modeline-unfocus)
+(with-no-warnings
+  (if (boundp 'after-focus-change-function)
+      (progn
+        (defun doom-modeline-focus-change ()
+          (if (frame-focus-state)
+              (doom-modeline-focus)
+            (doom-modeline-unfocus)))
+        (add-function :after after-focus-change-function #'doom-modeline-focus-change))
+    (progn
+      (add-hook 'focus-in-hook #'doom-modeline-focus)
+      (add-hook 'focus-out-hook #'doom-modeline-unfocus))))
 
 (provide 'doom-modeline)
 
