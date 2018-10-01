@@ -189,7 +189,10 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
   "The face used for the left-most bar on the mode-line when eldoc-eval is
 active.")
 
-(defface doom-modeline-inactive-bar '((t (:inherit warning :inverse-video t)))
+(defface doom-modeline-inactive-bar `((t (:background
+                                          ,(face-foreground 'mode-line-inactive)
+                                          :foreground
+                                          ,(face-background 'mode-line-inactive))))
   "The face used for the left-most bar on the mode-line of an inactive window.")
 
 (defface doom-modeline-evil-emacs-state '((t (:inherit doom-modeline-warning)))
@@ -241,7 +244,7 @@ active.")
                  `(let (byte-compile-warnings)
                     (byte-compile #',sym))))))))
 
-(defsubst doom-modeline--prepare-segments (segments)
+(defun doom-modeline--prepare-segments (segments)
   "Prepare mode-line `SEGMENTS'."
   (let (forms it)
     (dolist (seg segments)
@@ -249,7 +252,7 @@ active.")
              (push seg forms))
             ((symbolp seg)
              (cond ((setq it (cdr (assq seg doom-modeline-fn-alist)))
-                    (push (list it) forms))
+                    (push (list :eval (list it)) forms))
                    ((setq it (cdr (assq seg doom-modeline-var-alist)))
                     (push it forms))
                    ((error "%s is not a defined segment" seg))))
@@ -273,19 +276,20 @@ active.")
         (rhs-forms (doom-modeline--prepare-segments rhs)))
     (defalias sym
       (lambda ()
-        (let ((lhs (eval `(list ,@lhs-forms) t))
-              (rhs (eval `(list ,@rhs-forms) t)))
-          (let ((rhs-str (format-mode-line rhs)))
-            (list lhs
-                  (propertize
-                   " " 'display
-                   `((space :align-to (- (+ right right-fringe right-margin)
-                                         ,(+ 1 (string-width rhs-str))))))
-                  rhs-str))))
+        (let ((rhs-str (format-mode-line rhs-forms)))
+          (list lhs-forms
+                (propertize
+                 " " 'display
+                 `((space :align-to (- (+ right right-fringe right-margin)
+                                       ,(+ 1 (string-width rhs-str))))))
+                rhs-str)))
       (concat "Modeline:\n"
               (format "  %s\n  %s"
                       (prin1-to-string lhs)
-                      (prin1-to-string rhs))))))
+                      (prin1-to-string rhs))))
+    (unless (bound-and-true-p byte-compile-current-file)
+      (let (byte-compile-warnings)
+        (byte-compile sym)))))
 
 (defun doom-modeline (key)
   "Return a mode-line configuration associated with KEY (a symbol).
@@ -635,7 +639,14 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 (doom-modeline-def-segment major-mode
   "The major mode, including environment and text-scale info."
   (propertize
-   (concat (format-mode-line mode-name)
+   (concat (format-mode-line
+            `(:propertize ("" mode-name)
+                          help-echo "Major mode\n\
+mouse-1: Display major mode menu\n\
+mouse-2: Show help for major mode\n\
+mouse-3: Toggle minor modes"
+                          mouse-face mode-line-highlight
+                          local-map ,mode-line-major-mode-keymap))
            (when doom-modeline-env-version
              (format " %s" doom-modeline-env-version))
            (and (boundp 'text-scale-mode-amount)
