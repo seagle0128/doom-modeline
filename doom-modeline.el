@@ -701,7 +701,7 @@ mouse-3: Toggle minor modes"
                              (if active (setq face 'doom-modeline-urgent))
                              (doom-modeline-maybe-icon-octicon "alert" :face face))
                             (t
-                             (if active (setq face 'doom-modeline-info))
+                             (if active (setq face 'font-lock-doc-face))
                              (doom-modeline-maybe-icon-octicon
                               "git-branch"
                               :face face
