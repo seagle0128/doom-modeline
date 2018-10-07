@@ -49,6 +49,25 @@ Run `M-x all-the-icons-install-fonts` to do so.
 
 Recommand to use [doom-themes](https://github.com/hlissner/emacs-doom-themes);
 
+## Customize
+
+``` emacs-lisp
+;; How tall the mode-line should be (only respected in GUI Emacs)
+(setq doom-modeline-height 25)
+
+;; How wide the mode-line bar should be (only respected in GUI Emacs)
+(setq doom-modeline-bar-width 3)
+
+;; Determines the style used by `doom-modeline-buffer-file-name'
+;; If you are expereicing laggy issue, especially while editing remote files via
+;; tramp, please use `file-name', `truncate-all' or `truncate-upto-root' style.
+;; Please refer to https://github.com/bbatsov/projectile/issues/657.
+(setq doom-modeline-buffer-file-name-style 'truncate-upto-project)
+
+;; What executable of Python will be used (if nil nothing will be shown)
+(setq doom-modeline-python-executable "python")
+```
+
 ## Screenshots
 
 ![modeline](https://github.com/hlissner/doom-emacs/raw/screenshots/ml.png)
