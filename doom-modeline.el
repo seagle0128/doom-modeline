@@ -309,13 +309,16 @@ active.")
             (buffer-local-value 'mode-line-format (current-buffer)))
           (list "%e" modeline))))
 
+(defvar-local doom-modeline-project-root nil)
 (defun doom-modeline-project-root ()
   "Get the path to the root of your project.
 
   If STRICT-P, return nil if no project was found, otherwise return
   `default-directory'."
-  (let (projectile-require-project-root)
-    (projectile-project-root)))
+  (if (local-variable-p 'doom-modeline-project-root)
+      doom-modeline-project-root
+    (let (projectile-require-project-root)
+      (setq doom-modeline-project-root (projectile-project-root)))))
 
 ;; Disable projectile mode-line segment
 (setq projectile-dynamic-mode-line nil)
