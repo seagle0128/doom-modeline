@@ -59,8 +59,9 @@ Recommand to use [doom-themes](https://github.com/hlissner/emacs-doom-themes);
 (setq doom-modeline-bar-width 3)
 
 ;; Determines the style used by `doom-modeline-buffer-file-name'
-;; If you are expereicing laggy issue, especially while editing remote files via
-;; tramp, please use `file-name', `truncate-all' or `truncate-upto-root' style.
+;; If you are expereicing the laggy issue, especially while editing remote files
+;; with tramp, please use `file-name', `truncate-all' or `truncate-upto-root'
+;; style.
 ;; Please refer to https://github.com/bbatsov/projectile/issues/657.
 (setq doom-modeline-buffer-file-name-style 'truncate-upto-project)
 

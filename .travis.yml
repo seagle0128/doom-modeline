@@ -24,4 +24,3 @@ script:
   - emacs --version
   - pwd
   - cask build 
-# - cask emacs cask --batch -f batch-byte-compile ../doom-modeline/doom-modeline.el
