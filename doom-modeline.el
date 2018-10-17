@@ -286,10 +286,7 @@ active.")
       (concat "Modeline:\n"
               (format "  %s\n  %s"
                       (prin1-to-string lhs)
-                      (prin1-to-string rhs))))
-    (unless (bound-and-true-p byte-compile-current-file)
-      (let (byte-compile-warnings)
-        (byte-compile sym)))))
+                      (prin1-to-string rhs))))))
 
 (defun doom-modeline (key)
   "Return a mode-line configuration associated with KEY (a symbol).
