@@ -276,7 +276,7 @@ active.")
         (rhs-forms (doom-modeline--prepare-segments rhs)))
     (defalias sym
       (lambda ()
-        (let ((rhs-str (format-mode-line rhs-forms)))
+        (let ((rhs-str (format-mode-line (cons "" rhs-forms))))
           (list lhs-forms
                 (propertize
                  " " 'display
