@@ -496,7 +496,7 @@ active.")
      'help-echo buffer-file-truename)))
 
 (defun doom-modeline--buffer-file-name-truncate (file-path true-file-path &optional truncate-tail)
-  "Propertized `buffer-file-name' that truncates every dir along path.
+  "Propertized variable `buffer-file-name' that truncates every dir along path.
 If TRUNCATE-TAIL is t also truncate the parent directory of the file."
   (let ((dirs (shrink-path-prompt (file-name-directory true-file-path)))
         (active (doom-modeline--active)))
