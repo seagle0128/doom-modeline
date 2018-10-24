@@ -130,6 +130,8 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
 (declare-function window-numbering-clear-mode-line 'window-numbering)
 (declare-function window-numbering-get-number-string 'window-numbering)
 (declare-function window-numbering-install-mode-line 'window-numbering)
+(declare-function winum--clear-mode-line 'winum)
+(declare-function winum--install-mode-line 'winum)
 (declare-function winum-get-number-string 'winum)
 
 ;;
