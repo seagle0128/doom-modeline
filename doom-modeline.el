@@ -972,7 +972,6 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 (advice-add #'winum--clear-mode-line :override #'ignore)
 
 (doom-modeline-def-segment window-number
-  (setq winum-auto-setup-mode-line nil)
   (let ((num (cond
               ((bound-and-true-p ace-window-display-mode)
                (setq mode-line-format
@@ -980,6 +979,7 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
                                       (default-value 'mode-line-format)))
                (window-parameter (selected-window) 'ace-window-path))
               ((bound-and-true-p winum-mode)
+               (setq winum-auto-setup-mode-line nil)
                (winum-get-number-string))
               ((bound-and-true-p window-numbering-mode)
                (window-numbering-get-number-string))
