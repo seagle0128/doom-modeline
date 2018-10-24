@@ -966,6 +966,8 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 
 (advice-add #'window-numbering-install-mode-line :override #'ignore)
 (advice-add #'window-numbering-clear-mode-line :override #'ignore)
+(advice-add #'winum--install-mode-line :override #'ignore)
+(advice-add #'winum--clear-mode-line :override #'ignore)
 
 (doom-modeline-def-segment window-number
   (setq winum-auto-setup-mode-line nil)
