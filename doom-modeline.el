@@ -121,6 +121,7 @@ The icons may not be showed correctly on Windows. Disable to make it work.")
 
 (declare-function anzu--reset-status 'anzu)
 (declare-function anzu--where-is-here 'anzu)
+(declare-function aw-update 'ace-window)
 (declare-function eldoc-in-minibuffer-mode 'eldoc-eval)
 (declare-function evil-delimited-arguments 'evil-common)
 (declare-function evil-state-property 'evil-common)
@@ -982,6 +983,7 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
                (setq mode-line-format
                      (assq-delete-all 'ace-window-display-mode
                                       (default-value 'mode-line-format)))
+               (aw-update)
                (window-parameter (selected-window) 'ace-window-path))
               ((bound-and-true-p winum-mode)
                (setq winum-auto-setup-mode-line nil)
