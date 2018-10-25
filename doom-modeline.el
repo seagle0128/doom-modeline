@@ -929,7 +929,8 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
   ;; TODO Include other information
   (cond ((eq major-mode 'image-mode)
          (cl-destructuring-bind (width . height)
-             (image-size (image-get-display-property) :pixels)
+             (when (fboundp 'image-size)
+               (image-size (image-get-display-property) :pixels))
            (format "  %dx%d  " width height)))))
 
 
