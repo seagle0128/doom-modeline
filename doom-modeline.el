@@ -85,7 +85,11 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
   file-name => comint.el")
 
 (defvar doom-modeline-python-executable "python"
-  "What executable of Python will be used (if nil nothing will be shown).")
+  "What executable of Python will be used (if nil nothing will be showed).")
+
+(defvar doom-modeline-icon t
+  "Whether show `all-the-icons' or not (if nil nothing will be showed).
+The icons may not be showed correctly on Windows. Disable to make it work.")
 
 ;; externs
 (defvar anzu--current-position)
@@ -422,19 +426,19 @@ active.")
 ;; Modeline helpers
 ;;
 
-(defun doom-modeline-maybe-icon-octicon (&rest args)
+(defun doom-modeline-icon-octicon (&rest args)
   "Display octicon via `ARGS'."
-  (when (display-graphic-p)
+  (when doom-modeline-icon
     (apply 'all-the-icons-octicon args)))
 
-(defun doom-modeline-maybe-icon-faicon (&rest args)
+(defun doom-modeline-icon-faicon (&rest args)
   "Display font awesome icon via `ARGS'."
-  (when (display-graphic-p)
+  (when doom-modeline-icon
     (apply 'all-the-icons-faicon args)))
 
-(defun doom-modeline-maybe-icon-material (&rest args)
+(defun doom-modeline-icon-material (&rest args)
   "Display material icon via `ARGS'."
-  (when (display-graphic-p)
+  (when doom-modeline-icon
     (apply 'all-the-icons-material args)))
 
 (defun doom-modeline--active ()
@@ -574,7 +578,7 @@ Example:
 buffer where knowing the current project directory is important."
   (let ((face (if (doom-modeline--active) 'doom-modeline-buffer-path)))
     (concat (if (display-graphic-p) " ")
-            (doom-modeline-maybe-icon-octicon
+            (doom-modeline-icon-octicon
              "file-directory"
              :face face
              :v-adjust -0.05
@@ -587,26 +591,26 @@ buffer where knowing the current project directory is important."
   "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
   (concat (cond (buffer-read-only
-                 (concat (doom-modeline-maybe-icon-octicon
+                 (concat (doom-modeline-icon-octicon
                           "lock"
                           :face 'doom-modeline-warning
                           :v-adjust -0.05)
                          " "))
                 ((buffer-modified-p)
-                 (concat (doom-modeline-maybe-icon-faicon
+                 (concat (doom-modeline-icon-faicon
                           "floppy-o"
                           :face 'doom-modeline-buffer-modified
                           :v-adjust -0.0575)
                          " "))
                 ((and buffer-file-name
                       (not (file-exists-p buffer-file-name)))
-                 (concat (doom-modeline-maybe-icon-octicon
+                 (concat (doom-modeline-icon-octicon
                           "circle-slash"
                           :face 'doom-modeline-urgent
                           :v-adjust -0.05)
                          " "))
                 ((buffer-narrowed-p)
-                 (concat (doom-modeline-maybe-icon-octicon
+                 (concat (doom-modeline-icon-octicon
                           "fold"
                           :face 'doom-modeline-warning
                           :v-adjust -0.05)
@@ -686,25 +690,25 @@ mouse-3: Toggle minor modes"
             (let ((face    'mode-line-inactive)
                   (active  (doom-modeline--active))
                   (all-the-icons-default-adjust -0.1))
-              (concat (if (display-graphic-p) "  ")
+              (concat "  "
                       (cond ((memq state '(edited added))
                              (if active (setq face 'doom-modeline-info))
-                             (doom-modeline-maybe-icon-octicon
+                             (doom-modeline-icon-octicon
                               "git-compare"
                               :face face
                               :v-adjust -0.05))
                             ((eq state 'needs-merge)
                              (if active (setq face 'doom-modeline-info))
-                             (doom-modeline-maybe-icon-octicon "git-merge" :face face))
+                             (doom-modeline-icon-octicon "git-merge" :face face))
                             ((eq state 'needs-update)
                              (if active (setq face 'doom-modeline-warning))
-                             (doom-modeline-maybe-icon-octicon "arrow-down" :face face))
+                             (doom-modeline-icon-octicon "arrow-down" :face face))
                             ((memq state '(removed conflict unregistered))
                              (if active (setq face 'doom-modeline-urgent))
-                             (doom-modeline-maybe-icon-octicon "alert" :face face))
+                             (doom-modeline-icon-octicon "alert" :face face))
                             (t
                              (if active (setq face 'font-lock-doc-face))
-                             (doom-modeline-maybe-icon-octicon
+                             (doom-modeline-icon-octicon
                               "git-branch"
                               :face face
                               :v-adjust -0.05)))
@@ -738,7 +742,7 @@ Uses `all-the-icons-material' to fetch the icon."
   (concat (if vc-mode " " "  ")
           (when icon
             (concat
-             (doom-modeline-maybe-icon-material icon :face face :height 1.1 :v-adjust (or voffset -0.2))
+             (doom-modeline-icon-material icon :face face :height 1.1 :v-adjust (or voffset -0.2))
              (if text doom-modeline-vspc)))
           (if text (propertize text 'face face))
           (if vc-mode "  " " ")))
@@ -828,7 +832,7 @@ lines are selected, or the NxM dimensions of a block selection."
                             "Macro")
                           'face 'doom-modeline-panel)
               sep
-              (doom-modeline-maybe-icon-octicon "triangle-right"
+              (doom-modeline-icon-octicon "triangle-right"
                                                 :face 'doom-modeline-panel
                                                 :v-adjust -0.05)
               sep))))
