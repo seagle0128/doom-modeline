@@ -390,7 +390,6 @@ active.")
   (setq doom-modeline-current-window nil)
   (force-mode-line-update))
 
-(add-hook 'after-make-frame-functions (lambda () (force-mode-line-update)))
 (add-hook 'window-configuration-change-hook #'doom-modeline-set-selected-window)
 (advice-add #'handle-switch-frame :after #'doom-modeline-set-selected-window)
 (advice-add #'select-window :after #'doom-modeline-set-selected-window)
