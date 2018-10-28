@@ -97,6 +97,7 @@ The icons may not be showed correctly on Windows. Disable to make it work.")
 (defvar anzu--state)
 (defvar anzu--total-matched)
 (defvar anzu-cons-mode-line-p)
+(defvar aw-keys)
 (defvar evil-ex-active-highlights-alist)
 (defvar evil-ex-argument)
 (defvar evil-ex-range)
@@ -121,7 +122,10 @@ The icons may not be showed correctly on Windows. Disable to make it work.")
 
 (declare-function anzu--reset-status 'anzu)
 (declare-function anzu--where-is-here 'anzu)
+(declare-function avy-traverse 'avy)
+(declare-function avy-tree 'avy)
 (declare-function aw-update 'ace-window)
+(declare-function aw-window-list 'ace-window)
 (declare-function eldoc-in-minibuffer-mode 'eldoc-eval)
 (declare-function evil-delimited-arguments 'evil-common)
 (declare-function evil-state-property 'evil-common)
@@ -973,6 +977,23 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 ;;
 ;; window number
 ;;
+
+;; Fix `ace-window-display' doesn't respect the ignore buffers.
+(defun doom-modeline-aw-update ()
+  "Update ace-window-path window parameter for all windows.
+
+Ensure all windows are labeled so the user can select a specific
+one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
+  (let ((ignore-window-parameters t))
+    (avy-traverse
+     (avy-tree (aw-window-list) aw-keys)
+     (lambda (path leaf)
+       (set-window-parameter
+        leaf 'ace-window-path
+        (propertize
+         (apply #'string (reverse path))
+         'face 'aw-mode-line-face))))))
+(advice-add #'aw-update :override #'doom-modeline-aw-update)
 
 (advice-add #'window-numbering-install-mode-line :override #'ignore)
 (advice-add #'window-numbering-clear-mode-line :override #'ignore)
