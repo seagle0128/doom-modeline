@@ -377,8 +377,8 @@ active.")
 
 ;; Ensure anzu state is cleared when searches & iedit are done
 (add-hook 'isearch-mode-end-hook #'anzu--reset-status t)
-;; (add-hook '+evil-esc-hook #'anzu--reset-status t)
 (add-hook 'iedit-mode-end-hook #'anzu--reset-status)
+(advice-add #'evil-force-normal-state :after #'anzu--reset-status)
 
 ;; Keep `doom-modeline-current-window' up-to-date
 (defvar doom-modeline-current-window (frame-selected-window))
