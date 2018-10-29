@@ -62,7 +62,6 @@
 (require 'projectile)
 (require 'shrink-path)
 
-
 ;;
 ;; Variables
 ;;
@@ -91,7 +90,10 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
   "Whether show `all-the-icons' or not (if nil nothing will be showed).
 The icons may not be showed correctly on Windows. Disable to make it work.")
 
-;; externs
+;;
+;; externals
+;;
+
 (defvar anzu--current-position)
 (defvar anzu--overflow-p)
 (defvar anzu--state)
@@ -101,15 +103,8 @@ The icons may not be showed correctly on Windows. Disable to make it work.")
 (defvar evil-ex-active-highlights-alist)
 (defvar evil-ex-argument)
 (defvar evil-ex-range)
-(defvar evil-mode)
+(defvar evil-local-mode)
 (defvar evil-state)
-(defvar evil-emacs-state-tag)
-(defvar evil-insert-state-tag)
-(defvar evil-motion-state-tag)
-(defvar evil-normal-state-tag)
-(defvar evil-operator-state-tag)
-(defvar evil-replace-state-tag)
-(defvar evil-visual-state-tag)
 (defvar evil-visual-beginning)
 (defvar evil-visual-end)
 (defvar evil-visual-selection)
@@ -128,7 +123,15 @@ The icons may not be showed correctly on Windows. Disable to make it work.")
 (declare-function aw-window-list 'ace-window)
 (declare-function eldoc-in-minibuffer-mode 'eldoc-eval)
 (declare-function evil-delimited-arguments 'evil-common)
+(declare-function evil-emacs-state-p 'evil-states)
+(declare-function evil-force-normal-state 'evil-commands)
+(declare-function evil-insert-state-p 'evil-states)
+(declare-function evil-motion-state-p 'evil-states)
+(declare-function evil-normal-state-p 'evil-states)
+(declare-function evil-operator-state-p 'evil-states)
+(declare-function evil-replace-state-p 'evil-states)
 (declare-function evil-state-property 'evil-common)
+(declare-function evil-visual-state-p 'evil-states)
 (declare-function eyebrowse--get 'eyebrowse)
 (declare-function face-remap-remove-relative 'face-remap)
 (declare-function flycheck-count-errors 'flycheck)
@@ -867,7 +870,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 
 (defsubst doom-modeline--evil-substitute ()
   "Show number of matches for evil-ex substitutions and highlights in real time."
-  (when (and (bound-and-true-p evil-mode)
+  (when (and (bound-and-true-p evil-local-mode)
              (or (assq 'evil-ex-substitute evil-ex-active-highlights-alist)
                  (assq 'evil-ex-global-match evil-ex-active-highlights-alist)
                  (assq 'evil-ex-buffer-match evil-ex-active-highlights-alist)))
@@ -1108,7 +1111,7 @@ See `mode-line-percent-position'.")
   (cond
    (current-input-method
     (concat current-input-method-title "  "))
-   ((and (bound-and-true-p evil-mode)
+   ((and (bound-and-true-p evil-local-mode)
          (bound-and-true-p evil-input-method))
     (concat
      (nth 3 (assoc default-input-method input-method-alist))
