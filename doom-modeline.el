@@ -1088,15 +1088,15 @@ See `mode-line-percent-position'.")
   "The current evil state. Requires `evil-mode' to be enabled."
   (when (bound-and-true-p evil-local-mode)
     (let ((tag (evil-state-property evil-state :tag t)))
-      (propertize (s-trim-right tag) 'face
+      (propertize tag 'face
                   (if (doom-modeline--active)
-                      (cond ((eq tag evil-normal-state-tag) 'doom-modeline-evil-normal-state)
-                            ((eq tag evil-emacs-state-tag) 'doom-modeline-evil-emacs-state)
-                            ((eq tag evil-insert-state-tag) 'doom-modeline-evil-insert-state)
-                            ((eq tag evil-motion-state-tag) 'doom-modeline-evil-motion-state)
-                            ((eq tag evil-visual-state-tag) 'doom-modeline-evil-visual-state)
-                            ((eq tag evil-operator-state-tag) 'doom-modeline-evil-operator-state)
-                            ((eq tag evil-replace-state-tag) 'doom-modeline-evil-replace-state)))))))
+                      (cond ((evil-normal-state-p) 'doom-modeline-evil-normal-state)
+                            ((evil-emacs-state-p) 'doom-modeline-evil-emacs-state)
+                            ((evil-insert-state-p) 'doom-modeline-evil-insert-state)
+                            ((evil-motion-state-p) 'doom-modeline-evil-motion-state)
+                            ((evil-visual-state-p) 'doom-modeline-evil-visual-state)
+                            ((evil-operator-state-p) 'doom-modeline-evil-operator-state)
+                            ((evil-replace-state-p) 'doom-modeline-evil-replace-state)))))))
 
 
 ;;
