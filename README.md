@@ -71,6 +71,11 @@ Recommand to use [doom-themes](https://github.com/hlissner/emacs-doom-themes);
 ;; Whether show `all-the-icons' or not (if nil nothing will be showed).
 ;; The icons may not be showed correctly on Windows. Disable to make it work.
 (setq doom-modeline-icon t)
+
+;; Don’t compact font caches during GC.
+;; If you are expereicing the laggy issue especially on Windows, Please add this
+;; configuration.
+(setq inhibit-compacting-font-caches t)
 ```
 
 ## Screenshots
