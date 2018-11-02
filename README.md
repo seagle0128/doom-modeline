@@ -73,8 +73,8 @@ Recommand to use [doom-themes](https://github.com/hlissner/emacs-doom-themes);
 (setq doom-modeline-icon t)
 
 ;; Don’t compact font caches during GC.
-;; If you are expereicing the laggy issue especially on Windows, Please add this
-;; configuration.
+;; If you are expereicing the laggy issue especially on Windows, please set to
+;; non-nil.
 (setq inhibit-compacting-font-caches t)
 ```
 
