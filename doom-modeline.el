@@ -61,6 +61,7 @@
 (require 'eldoc-eval)
 (require 'projectile)
 (require 'shrink-path)
+(require 'subr-x)
 
 ;;
 ;; Variables
