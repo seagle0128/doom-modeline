@@ -556,7 +556,7 @@ Example:
   ~/Projects/FOSS/emacs/lisp/comint.el => ~/P/F/emacs/lisp/comint.el"
   (let* ((project-root (or (doom-modeline-project-root) ""))
          (file-name-split (shrink-path-file-mixed project-root
-                                                  (file-name-directory file-path)
+                                                  (or (file-name-directory file-path) "./")
                                                   file-path))
          (active (doom-modeline--active)))
     (if (null file-name-split)
