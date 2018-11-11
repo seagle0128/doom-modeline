@@ -329,8 +329,9 @@ active.")
   `default-directory'."
   (if (local-variable-p 'doom-modeline-project-root)
       doom-modeline-project-root
-    (let (projectile-require-project-root)
-      (setq doom-modeline-project-root (projectile-project-root)))))
+    (let ((projectile-require-project-root))
+      (setq doom-modeline-project-root
+            (projectile-ensure-project (projectile-project-root))))))
 
 ;; Disable projectile mode-line segment
 (setq projectile-dynamic-mode-line nil)
