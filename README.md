@@ -21,6 +21,7 @@ The DOOM modeline was designed for minimalism, and offers:
 - A window number segment for `ace-window`, `winum` and `window-numbering`
 - An indicator for `evil` state
 - An indicator for current input method
+- Highlight project name in buffer information if `projectile` or `project` is available.
 
 ## Install
 

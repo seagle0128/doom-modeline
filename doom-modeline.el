@@ -5,7 +5,7 @@
 ;; Author: Vincent Zhang <seagle0128@gmail.com>
 ;; Homepage: https://github.com/seagle0128/doom-modeline
 ;; Version: 0.6.1
-;; Package-Requires: ((emacs "25.1") (all-the-icons "1.0.0") (projectile "0.10.0") (shrink-path "0.2.0") (eldoc-eval "0.1") (dash "2.11.0"))
+;; Package-Requires: ((emacs "25.1") (all-the-icons "1.0.0") (shrink-path "0.2.0") (eldoc-eval "0.1") (dash "2.11.0"))
 ;; Keywords: faces mode-line
 
 ;; This file is not part of GNU Emacs.
@@ -59,9 +59,10 @@
 
 (require 'all-the-icons)
 (require 'eldoc-eval)
-(require 'projectile)
 (require 'shrink-path)
 (require 'subr-x)
+(when (>= emacs-major-version 26)
+  (require 'project))
 
 ;;
 ;; Variables
@@ -112,6 +113,7 @@ The icons may not be showed correctly on Windows. Disable to make it work.")
 (defvar flycheck-current-errors)
 (defvar iedit-mode)
 (defvar iedit-occurrences-overlays)
+(defvar projectile-dynamic-mode-line)
 (defvar text-scale-mode-amount)
 (defvar winum-auto-setup-mode-line)
 (defvar mc/mode-line)
@@ -140,6 +142,10 @@ The icons may not be showed correctly on Windows. Disable to make it work.")
 (declare-function iedit-prev-occurrence 'iedit-lib)
 (declare-function image-get-display-property 'image-mode)
 (declare-function magit-toplevel 'magit-git)
+(declare-function project-current 'project)
+(declare-function project-roots 'project)
+(declare-function projectile-ensure-project 'projectile)
+(declare-function projectile-project-root 'projectile)
 (declare-function window-numbering-clear-mode-line 'window-numbering)
 (declare-function window-numbering-get-number-string 'window-numbering)
 (declare-function window-numbering-install-mode-line 'window-numbering)
@@ -329,9 +335,14 @@ active.")
   `default-directory'."
   (if (local-variable-p 'doom-modeline-project-root)
       doom-modeline-project-root
-    (let ((projectile-require-project-root))
-      (setq doom-modeline-project-root
-            (projectile-ensure-project (projectile-project-root))))))
+    (or
+     (when (featurep 'projectile)
+       (let ((projectile-require-project-root nil))
+         (setq doom-modeline-project-root
+               (projectile-ensure-project (projectile-project-root)))))
+     (when (featurep 'project)
+       (when-let ((project (project-current)))
+         (car (project-roots project)))))))
 
 ;; Disable projectile mode-line segment
 (setq projectile-dynamic-mode-line nil)
