@@ -610,7 +610,7 @@ buffer where knowing the current project directory is important."
 
 ;;
 (defvar-local doom-modeline-buffer-file-name nil)
-(defun doom-modeline-update-buffer-file-name (&rest _)
+(defun doom-modeline-update-buffer-file-name ()
   "Propertized variable `buffer-file-name' based on `doom-modeline-buffer-file-name-style'."
   (setq doom-modeline-buffer-file-name
         ;; Show buffer name if it doesn't equal the file name.
@@ -627,7 +627,6 @@ buffer where knowing the current project directory is important."
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'after-save-hook #'doom-modeline-update-buffer-file-name)
-;; (advice-add #'select-window :after #'doom-modeline-update-buffer-file-name)
 
 (doom-modeline-def-segment buffer-info
   "Combined information about the current buffer, including the current working
@@ -657,9 +656,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                           :face 'doom-modeline-warning
                           :v-adjust -0.05)
                          " ")))
-          ;; HACK: Compatible with loading `doom-modeline' after init time.
-          (or doom-modeline-buffer-file-name
-              (doom-modeline-update-buffer-file-name))))
+          doom-modeline-buffer-file-name))
 
 (doom-modeline-def-segment buffer-info-simple
   "Display only the current buffer's name, but with fontification."
