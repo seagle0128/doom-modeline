@@ -523,6 +523,7 @@ active.")
                             (when face `(:inherit ,face))))))
            'help-echo buffer-file-truename))))
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-name)
+(add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'after-save-hook #'doom-modeline-update-buffer-file-name)
 
 (defun doom-modeline--buffer-file-name-truncate (file-path true-file-path &optional truncate-tail)
