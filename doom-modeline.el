@@ -492,7 +492,7 @@ active.")
                                           if (= d 0) collect (string-to-char " ")
                                           else collect (string-to-char "."))
                                  (if (eq idx len) "\"};" "\",\n")))))
-  'xpm t :ascent 'center)))))
+        'xpm t :ascent 'center)))))
 
 (defun doom-modeline-buffer-file-name ()
   "Propertized variable `buffer-file-name' based on `doom-modeline-buffer-file-name-style'."
@@ -855,8 +855,8 @@ lines are selected, or the NxM dimensions of a block selection."
                           'face 'doom-modeline-panel)
               sep
               (doom-modeline-icon-octicon "triangle-right"
-                                                :face 'doom-modeline-panel
-                                                :v-adjust -0.05)
+                                          :face 'doom-modeline-panel
+                                          :v-adjust -0.05)
               sep))))
 
 (defsubst doom-modeline--anzu ()
