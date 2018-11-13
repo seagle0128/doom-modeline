@@ -342,8 +342,6 @@ active.")
                (car (project-roots project))))
            default-directory))))
 
-(project-roots (project-current))
-
 ;; Disable projectile mode-line segment
 (setq projectile-dynamic-mode-line nil)
 
