@@ -332,7 +332,7 @@ active.")
   "Get the path to the root of your project.
 
   Return `default-directory' if no project was found."
-  (if (local-variable-p 'doom-modeline-project-root)
+  (if doom-modeline-project-root
       doom-modeline-project-root
     (setq doom-modeline-project-root
           (or
