@@ -643,7 +643,13 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                           :v-adjust -0.05)
                          " ")))
           (if doom-modeline-buffer-file-name
-              doom-modeline-buffer-file-name
+              ;; Show buffer name if the buffer name doesn't equal the file name.
+              ;; NOTE: Format: "buffer-file-name[buffer-name]".
+              ;; Except the same buffer names in different directories.
+              (if (string-equal (file-name-nondirectory doom-modeline-buffer-file-name)
+                                (replace-regexp-in-string "<.+>$" "" (or (buffer-name) "")))
+                  doom-modeline-buffer-file-name
+                (format "%s[%s]" doom-modeline-buffer-file-name (buffer-name)))
             "%b")))
 
 (doom-modeline-def-segment buffer-info-simple
