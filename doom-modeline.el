@@ -521,8 +521,7 @@ active.")
                                           (and (doom-modeline--active)
                                                'doom-modeline-buffer-file))))
                             (when face `(:inherit ,face))))))
-           'help-echo buffer-file-truename)))
-  (message "#####%s####" doom-modeline-buffer-file-name))
+           'help-echo buffer-file-truename))))
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'after-save-hook #'doom-modeline-update-buffer-file-name)
 
@@ -642,7 +641,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                           :face 'doom-modeline-warning
                           :v-adjust -0.05)
                          " ")))
-          (if  doom-modeline-buffer-file-name
+          (if doom-modeline-buffer-file-name
               doom-modeline-buffer-file-name
             "%b")))
 
