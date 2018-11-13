@@ -495,7 +495,7 @@ active.")
         'xpm t :ascent 'center)))))
 
 (defvar-local doom-modeline-buffer-file-name nil)
-(defun doom-modeline-update-buffer-file-name ()
+(defun doom-modeline-update-buffer-file-name (&rest _)
   "Propertized variable `buffer-file-name' based on `doom-modeline-buffer-file-name-style'."
   (setq doom-modeline-buffer-file-name
         (let ((buffer-file-name (or (buffer-file-name (buffer-base-buffer)) "")))
@@ -525,6 +525,7 @@ active.")
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'after-save-hook #'doom-modeline-update-buffer-file-name)
+(advice-add #'select-window :after #'doom-modeline-update-buffer-file-name)
 
 (defun doom-modeline--buffer-file-name-truncate (file-path true-file-path &optional truncate-tail)
   "Propertized variable `buffer-file-name' that truncates every dir along path.
@@ -617,6 +618,10 @@ buffer where knowing the current project directory is important."
 (doom-modeline-def-segment buffer-info
   "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
+
+  ;; HACK: Compatible with loading `doom-modeline' after init time.
+  (unless doom-modeline-buffer-file-name (doom-modeline-update-buffer-file-name))
+
   (concat (cond (buffer-read-only
                  (concat (doom-modeline-icon-octicon
                           "lock"
@@ -643,11 +648,12 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                           :v-adjust -0.05)
                          " ")))
           (if doom-modeline-buffer-file-name
-              ;; Show buffer name if the buffer name doesn't equal the file name.
+              ;; Show buffer name if it doesn't equal the file name.
               ;; NOTE: Format: "buffer-file-name[buffer-name]".
               ;; Except the same buffer names in different directories.
-              (if (string-equal (file-name-nondirectory doom-modeline-buffer-file-name)
-                                (replace-regexp-in-string "<.+>$" "" (or (buffer-name) "")))
+              (if (string-equal
+                   (file-name-nondirectory doom-modeline-buffer-file-name)
+                   (replace-regexp-in-string "<.+>$" "" (or (buffer-name) "")))
                   doom-modeline-buffer-file-name
                 (format "%s[%s]" doom-modeline-buffer-file-name (buffer-name)))
             "%b")))
