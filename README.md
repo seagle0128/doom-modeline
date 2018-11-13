@@ -39,10 +39,11 @@ In `init.el`,
 ### Use-package
 
 ``` emacs-lisp
+;; Don't load after init time.
 (use-package doom-modeline
       :ensure t
       :defer t
-      :hook (after-init . doom-modeline-init))
+      :init (doom-modeline-init))
 ```
 
 This package requires the fonts included with `all-the-icons` to be installed.
