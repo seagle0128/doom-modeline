@@ -494,38 +494,32 @@ active.")
                                  (if (eq idx len) "\"};" "\",\n")))))
         'xpm t :ascent 'center)))))
 
-(defvar-local doom-modeline-buffer-file-name nil)
-(defun doom-modeline-update-buffer-file-name (&rest _)
+(defun doom-modeline-buffer-file-name ()
   "Propertized variable `buffer-file-name' based on `doom-modeline-buffer-file-name-style'."
-  (setq doom-modeline-buffer-file-name
-        (let ((buffer-file-name (or (buffer-file-name (buffer-base-buffer)) "")))
-          (unless buffer-file-truename
-            (setq buffer-file-truename (file-truename buffer-file-name)))
-          (propertize
-           (pcase doom-modeline-buffer-file-name-style
-             (`truncate-upto-project
-              (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink))
-             (`truncate-upto-root
-              (doom-modeline--buffer-file-name-truncate buffer-file-name buffer-file-truename))
-             (`truncate-all
-              (doom-modeline--buffer-file-name-truncate buffer-file-name buffer-file-truename t))
-             (`relative-to-project
-              (doom-modeline--buffer-file-name-relative buffer-file-name buffer-file-truename))
-             (`relative-from-project
-              (doom-modeline--buffer-file-name-relative buffer-file-name buffer-file-truename 'include-project))
-             (`file-name
-              (propertize (file-name-nondirectory buffer-file-name)
-                          'face
-                          (let ((face (or (and (buffer-modified-p)
-                                               'doom-modeline-buffer-modified)
-                                          (and (doom-modeline--active)
-                                               'doom-modeline-buffer-file))))
-                            (when face `(:inherit ,face))))))
-           'help-echo buffer-file-truename))))
-(add-hook 'find-file-hook #'doom-modeline-update-buffer-file-name)
-(add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-name)
-(add-hook 'after-save-hook #'doom-modeline-update-buffer-file-name)
-(advice-add #'select-window :after #'doom-modeline-update-buffer-file-name)
+  (let ((buffer-file-name (or (buffer-file-name (buffer-base-buffer)) "")))
+    (unless buffer-file-truename
+      (setq buffer-file-truename (file-truename buffer-file-name)))
+    (propertize
+     (pcase doom-modeline-buffer-file-name-style
+       (`truncate-upto-project
+        (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink))
+       (`truncate-upto-root
+        (doom-modeline--buffer-file-name-truncate buffer-file-name buffer-file-truename))
+       (`truncate-all
+        (doom-modeline--buffer-file-name-truncate buffer-file-name buffer-file-truename t))
+       (`relative-to-project
+        (doom-modeline--buffer-file-name-relative buffer-file-name buffer-file-truename))
+       (`relative-from-project
+        (doom-modeline--buffer-file-name-relative buffer-file-name buffer-file-truename 'include-project))
+       (`file-name
+        (propertize (file-name-nondirectory buffer-file-name)
+                    'face
+                    (let ((face (or (and (buffer-modified-p)
+                                         'doom-modeline-buffer-modified)
+                                    (and (doom-modeline--active)
+                                         'doom-modeline-buffer-file))))
+                      (when face `(:inherit ,face))))))
+     'help-echo buffer-file-truename)))
 
 (defun doom-modeline--buffer-file-name-truncate (file-path true-file-path &optional truncate-tail)
   "Propertized variable `buffer-file-name' that truncates every dir along path.
@@ -615,13 +609,29 @@ buffer where knowing the current project directory is important."
                         'face face))))
 
 ;;
+(defvar-local doom-modeline-buffer-file-name nil)
+(defun doom-modeline-update-buffer-file-name (&rest _)
+  "Propertized variable `buffer-file-name' based on `doom-modeline-buffer-file-name-style'."
+  (setq doom-modeline-buffer-file-name
+        ;; Show buffer name if it doesn't equal the file name.
+        ;; NOTE: Format: "buffer-file-name[buffer-name]".
+        ;; Except the same buffer names in different directories.
+        (if buffer-file-name
+            (let ((file-name (doom-modeline-buffer-file-name)))
+              (if (string-equal
+                   (file-name-nondirectory buffer-file-name)
+                   (replace-regexp-in-string "<.+>$" "" (or (buffer-name) "")))
+                  file-name
+                (format "%s[%s]" file-name (buffer-name))))
+          "%b")))
+(add-hook 'find-file-hook #'doom-modeline-update-buffer-file-name)
+(add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-name)
+(add-hook 'after-save-hook #'doom-modeline-update-buffer-file-name)
+(advice-add #'select-window :after #'doom-modeline-update-buffer-file-name)
+
 (doom-modeline-def-segment buffer-info
   "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
-
-  ;; HACK: Compatible with loading `doom-modeline' after init time.
-  (unless doom-modeline-buffer-file-name (doom-modeline-update-buffer-file-name))
-
   (concat (cond (buffer-read-only
                  (concat (doom-modeline-icon-octicon
                           "lock"
@@ -647,16 +657,9 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                           :face 'doom-modeline-warning
                           :v-adjust -0.05)
                          " ")))
-          (if doom-modeline-buffer-file-name
-              ;; Show buffer name if it doesn't equal the file name.
-              ;; NOTE: Format: "buffer-file-name[buffer-name]".
-              ;; Except the same buffer names in different directories.
-              (if (string-equal
-                   (file-name-nondirectory doom-modeline-buffer-file-name)
-                   (replace-regexp-in-string "<.+>$" "" (or (buffer-name) "")))
-                  doom-modeline-buffer-file-name
-                (format "%s[%s]" doom-modeline-buffer-file-name (buffer-name)))
-            "%b")))
+          ;; HACK: Compatible with loading `doom-modeline' after init time.
+          (or doom-modeline-buffer-file-name
+              (doom-modeline-update-buffer-file-name))))
 
 (doom-modeline-def-segment buffer-info-simple
   "Display only the current buffer's name, but with fontification."
