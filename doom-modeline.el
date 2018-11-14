@@ -616,14 +616,14 @@ buffer where knowing the current project directory is important."
         ;; Show buffer name if it doesn't equal the file name.
         ;; NOTE: Format: "buffer-file-name[buffer-name]".
         ;; Except the same buffer names in different directories.
-        (if buffer-file-name
-            (let ((file-name (doom-modeline-buffer-file-name)))
-              (if (string-equal
-                   (file-name-nondirectory buffer-file-name)
-                   (replace-regexp-in-string "<.+>$" "" (or (buffer-name) "")))
-                  file-name
-                (format "%s[%s]" file-name (buffer-name))))
-          "%b")))
+        (when-let ((file-name (doom-modeline-buffer-file-name))
+                   (buffer-name (buffer-name))
+                   (buffer-file-name buffer-file-name))
+          (if (string-equal
+               (file-name-nondirectory buffer-file-name)
+               (replace-regexp-in-string "<.+>$" "" buffer-name))
+              file-name
+            (format "%s[%s]" file-name buffer-name)))))
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'after-save-hook #'doom-modeline-update-buffer-file-name)
@@ -656,7 +656,10 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                           :face 'doom-modeline-warning
                           :v-adjust -0.05)
                          " ")))
-          doom-modeline-buffer-file-name))
+          (if (and buffer-file-name
+                   (file-exists-p buffer-file-name))
+              doom-modeline-buffer-file-name
+            "%b")))
 
 (doom-modeline-def-segment buffer-info-simple
   "Display only the current buffer's name, but with fontification."
