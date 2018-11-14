@@ -610,7 +610,7 @@ buffer where knowing the current project directory is important."
 
 ;;
 (defvar-local doom-modeline-buffer-file-name nil)
-(defun doom-modeline-update-buffer-file-name ()
+(defun doom-modeline-update-buffer-file-name (&rest _)
   "Propertized variable `buffer-file-name' based on `doom-modeline-buffer-file-name-style'."
   (setq doom-modeline-buffer-file-name
         ;; Show buffer name if it doesn't equal the file name.
@@ -628,6 +628,7 @@ buffer where knowing the current project directory is important."
 (add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'after-save-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'git-timemachine-mode-hook #'doom-modeline-update-buffer-file-name)
+(advice-add #'rename-buffer :after #'doom-modeline-update-buffer-file-name)
 
 (doom-modeline-def-segment buffer-info
   "Combined information about the current buffer, including the current working
