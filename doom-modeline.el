@@ -656,7 +656,8 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                           :face 'doom-modeline-warning
                           :v-adjust -0.05)
                          " ")))
-          (if (and buffer-file-name
+          (if (and doom-modeline-buffer-file-name
+                   buffer-file-name
                    (file-exists-p buffer-file-name))
               doom-modeline-buffer-file-name
             "%b")))
