@@ -629,6 +629,13 @@ buffer where knowing the current project directory is important."
 (add-hook 'after-save-hook #'doom-modeline-update-buffer-file-name)
 (advice-add #'rename-buffer :after #'doom-modeline-update-buffer-file-name)
 
+(when (>= emacs-major-version 26)
+  (add-variable-watcher
+   'doom-modeline-buffer-file-name-style
+   (lambda (_sym _val op _where)
+     (when (eq op 'set)
+       (doom-modeline-update-buffer-file-name)))))
+
 (doom-modeline-def-segment buffer-info
   "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
