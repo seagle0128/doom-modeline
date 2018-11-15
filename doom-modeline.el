@@ -1036,9 +1036,10 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
 (doom-modeline-def-segment window-number
   (let ((num (cond
               ((bound-and-true-p ace-window-display-mode)
-               (setq-default mode-line-format
-                             (assq-delete-all 'ace-window-display-mode
-                                              (default-value 'mode-line-format)))
+               (setq mode-line-format
+                     (assq-delete-all 'ace-window-display-mode
+                                      (default-value 'mode-line-format)))
+               (setq-default mode-line-format mode-line-format)
                (aw-update)
                (window-parameter (selected-window) 'ace-window-path))
               ((bound-and-true-p winum-mode)
