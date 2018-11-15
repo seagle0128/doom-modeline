@@ -618,9 +618,10 @@ buffer where knowing the current project directory is important."
   (when-let ((file-name (doom-modeline-buffer-file-name))
              (buffer-name (buffer-name))
              (buffer-file-name buffer-file-name))
-    (if (string-equal
-         (file-name-nondirectory buffer-file-name)
-         (replace-regexp-in-string "<.+>$" "" buffer-name))
+    (if (or (not (file-exists-p buffer-file-name))
+            (string-equal
+             (file-name-nondirectory buffer-file-name)
+             (replace-regexp-in-string "<.+>$" "" buffer-name)))
         file-name
       (format "%s[%s]" file-name buffer-name))))
 
