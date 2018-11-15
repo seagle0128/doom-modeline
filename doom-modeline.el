@@ -609,33 +609,20 @@ buffer where knowing the current project directory is important."
                         'face face))))
 
 ;;
-(defvar-local doom-modeline-buffer-file-name
-  (propertize "%b" 'face 'doom-modeline-buffer-file))
-(defun doom-modeline-update-buffer-file-name (&rest _)
-  "Propertized variable `buffer-file-name' based on `doom-modeline-buffer-file-name-style'."
-  (setq doom-modeline-buffer-file-name
-        ;; Show buffer name if it doesn't equal the file name.
-        ;; NOTE: Format: "buffer-file-name[buffer-name]".
-        ;; Except the same buffer names in different directories.
-        (when-let ((file-name (doom-modeline-buffer-file-name))
-                   (buffer-name (buffer-name))
-                   (buffer-file-name buffer-file-name))
-          (if (string-equal
-               (file-name-nondirectory buffer-file-name)
-               (replace-regexp-in-string "<.+>$" "" buffer-name))
-              file-name
-            (format "%s[%s]" file-name buffer-name)))))
-(add-hook 'find-file-hook #'doom-modeline-update-buffer-file-name)
-(add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-name)
-(add-hook 'after-save-hook #'doom-modeline-update-buffer-file-name)
-(advice-add #'rename-buffer :after #'doom-modeline-update-buffer-file-name)
+(defun doom-modeline-update-buffer-file-name ()
+  "Update buffer file name in mode-line.
 
-(when (>= emacs-major-version 26)
-  (add-variable-watcher
-   'doom-modeline-buffer-file-name-style
-   (lambda (_sym _val op _where)
-     (when (eq op 'set)
-       (doom-modeline-update-buffer-file-name)))))
+  Show buffer name if it doesn't equal the file name.
+  Format: \"buffer-file-name[buffer-name]\".
+  Except the same buffer names in different directories."
+  (when-let ((file-name (doom-modeline-buffer-file-name))
+             (buffer-name (buffer-name))
+             (buffer-file-name buffer-file-name))
+    (if (string-equal
+         (file-name-nondirectory buffer-file-name)
+         (replace-regexp-in-string "<.+>$" "" buffer-name))
+        file-name
+      (format "%s[%s]" file-name buffer-name))))
 
 (doom-modeline-def-segment buffer-info
   "Combined information about the current buffer, including the current working
@@ -668,9 +655,9 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                        :face 'doom-modeline-warning
                        :v-adjust -0.05)
                       " "))))
-     (if (and active buffer-file-name)
-         doom-modeline-buffer-file-name
-       (propertize "%b" 'face (if active 'doom-modeline-buffer-file))))))
+     (if buffer-file-name
+         (doom-modeline-update-buffer-file-name)
+       "%b"))))
 
 (doom-modeline-def-segment buffer-info-simple
   "Display only the current buffer's name, but with fontification."
