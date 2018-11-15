@@ -609,7 +609,7 @@ buffer where knowing the current project directory is important."
                         'face face))))
 
 ;;
-(defvar-local doom-modeline-buffer-file-name nil)
+(defvar-local doom-modeline-buffer-file-name "%b")
 (defun doom-modeline-update-buffer-file-name (&rest _)
   "Propertized variable `buffer-file-name' based on `doom-modeline-buffer-file-name-style'."
   (setq doom-modeline-buffer-file-name
@@ -657,9 +657,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                           :face 'doom-modeline-warning
                           :v-adjust -0.05)
                          " ")))
-          (if (and doom-modeline-buffer-file-name
-                   buffer-file-name
-                   (file-exists-p buffer-file-name))
+          (if buffer-file-name
               doom-modeline-buffer-file-name
             "%b")))
 
