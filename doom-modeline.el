@@ -1011,7 +1011,7 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 ;; window number
 ;;
 
-;; Fix `ace-window-display' doesn't respect the ignore buffers.
+;; HACK: `ace-window-display-mode' should respect the ignore buffers.
 (defun doom-modeline-aw-update ()
   "Update ace-window-path window parameter for all windows.
 
@@ -1036,9 +1036,9 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
 (doom-modeline-def-segment window-number
   (let ((num (cond
               ((bound-and-true-p ace-window-display-mode)
-               (setq mode-line-format
-                     (assq-delete-all 'ace-window-display-mode
-                                      (default-value 'mode-line-format)))
+               (setq-default mode-line-format
+                             (assq-delete-all 'ace-window-display-mode
+                                              (default-value 'mode-line-format)))
                (aw-update)
                (window-parameter (selected-window) 'ace-window-path))
               ((bound-and-true-p winum-mode)
