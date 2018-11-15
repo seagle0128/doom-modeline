@@ -609,7 +609,8 @@ buffer where knowing the current project directory is important."
                         'face face))))
 
 ;;
-(defvar-local doom-modeline-buffer-file-name "%b")
+(defvar-local doom-modeline-buffer-file-name
+  (propertize "%b" 'face 'doom-modeline-buffer-file))
 (defun doom-modeline-update-buffer-file-name (&rest _)
   "Propertized variable `buffer-file-name' based on `doom-modeline-buffer-file-name-style'."
   (setq doom-modeline-buffer-file-name
@@ -639,34 +640,37 @@ buffer where knowing the current project directory is important."
 (doom-modeline-def-segment buffer-info
   "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
-  (concat (cond (buffer-read-only
-                 (concat (doom-modeline-icon-octicon
-                          "lock"
-                          :face 'doom-modeline-warning
-                          :v-adjust -0.05)
-                         " "))
-                ((buffer-modified-p)
-                 (concat (doom-modeline-icon-faicon
-                          "floppy-o"
-                          :face 'doom-modeline-buffer-modified
-                          :v-adjust -0.0575)
-                         " "))
-                ((and buffer-file-name
-                      (not (file-exists-p buffer-file-name)))
-                 (concat (doom-modeline-icon-octicon
-                          "circle-slash"
-                          :face 'doom-modeline-urgent
-                          :v-adjust -0.05)
-                         " "))
-                ((buffer-narrowed-p)
-                 (concat (doom-modeline-icon-octicon
-                          "fold"
-                          :face 'doom-modeline-warning
-                          :v-adjust -0.05)
-                         " ")))
-          (if (and (doom-modeline--active) buffer-file-name )
-              doom-modeline-buffer-file-name
-            "%b")))
+  (let ((active (doom-modeline--active)))
+    (concat
+     (when active
+       (cond (buffer-read-only
+              (concat (doom-modeline-icon-octicon
+                       "lock"
+                       :face 'doom-modeline-warning
+                       :v-adjust -0.05)
+                      " "))
+             ((buffer-modified-p)
+              (concat (doom-modeline-icon-faicon
+                       "floppy-o"
+                       :face 'doom-modeline-buffer-modified
+                       :v-adjust -0.0575)
+                      " "))
+             ((and buffer-file-name
+                   (not (file-exists-p buffer-file-name)))
+              (concat (doom-modeline-icon-octicon
+                       "circle-slash"
+                       :face 'doom-modeline-urgent
+                       :v-adjust -0.05)
+                      " "))
+             ((buffer-narrowed-p)
+              (concat (doom-modeline-icon-octicon
+                       "fold"
+                       :face 'doom-modeline-warning
+                       :v-adjust -0.05)
+                      " "))))
+     (if (and active buffer-file-name)
+         doom-modeline-buffer-file-name
+       (propertize "%b" 'face (if active 'doom-modeline-buffer-file))))))
 
 (doom-modeline-def-segment buffer-info-simple
   "Display only the current buffer's name, but with fontification."
