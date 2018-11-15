@@ -795,7 +795,7 @@ Uses `all-the-icons-material' to fetch the icon."
   (concat (if vc-mode " " "  ")
           (when icon
             (concat
-             (doom-modeline-icon-material icon :face face :height 1.1 :v-adjust (or voffset -0.2))
+             (doom-modeline-icon-material icon :face face :height 0.95 :v-adjust (or voffset -0.2))
              (if text doom-modeline-vspc)))
           (if text (propertize text 'face face))
           (if vc-mode "  " " ")))
@@ -814,7 +814,7 @@ Uses `all-the-icons-material' to fetch the icon."
                              (doom-modeline-icon "do_not_disturb_alt"
                                                  (number-to-string sum)
                                                  (if .error 'doom-modeline-urgent 'doom-modeline-warning)
-                                                 -0.25)))
+                                                 -0.15)))
                        (doom-modeline-icon "check" nil 'doom-modeline-info)))
           (`running     (doom-modeline-icon "access_time" nil 'font-lock-doc-face -0.25))
           (`no-checker  (doom-modeline-icon "sim_card_alert" "-" 'font-lock-doc-face))
