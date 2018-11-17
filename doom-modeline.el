@@ -658,7 +658,8 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                       " "))))
      (if buffer-file-name
          (doom-modeline-update-buffer-file-name)
-       "%b"))))
+       (propertize "%b" 'face (when (doom-modeline--active)
+                                'doom-modeline-buffer-file))))))
 
 (doom-modeline-def-segment buffer-info-simple
   "Display only the current buffer's name, but with fontification."
