@@ -550,7 +550,7 @@ Show relative path to the project and truncate it.
 Example:
   ~/Projects/FOSS/emacs/lisp/comint.el => emacs/l/comint.el"
   (let* ((project-root (doom-modeline-project-root))
-         (relative-path (file-relative-name (file-name-directory file-path)
+         (relative-path (file-relative-name (or (file-name-directory file-path) "./")
                                             (file-truename project-root))))
     (let ((active (doom-modeline--active))
           (modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified)))
