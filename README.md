@@ -60,11 +60,24 @@ Recommand to use [doom-themes](https://github.com/hlissner/emacs-doom-themes);
 (setq doom-modeline-bar-width 3)
 
 ;; Determines the style used by `doom-modeline-buffer-file-name'.
+;;
+;; Basically `file-name' is the fastest but most ugly, and
+;; `truncate-upto-project' is slowest but most fancy.
+;; `truncate-with-project' is ~3x faster than `truncate-upto-project'.
+;;
+;; Given ~/Projects/FOSS/emacs/lisp/comint.el
+;;   truncate-upto-project => ~/P/F/emacs/lisp/comint.el
+;;   truncate-with-project => emacs/l/comint.el
+;;   truncate-upto-root => ~/P/F/e/lisp/comint.el
+;;   truncate-all => ~/P/F/e/l/comint.el
+;;   relative-from-project => emacs/lisp/comint.el
+;;   relative-to-project => lisp/comint.el
+;;   file-name => comint.el
+;;
 ;; If you are expereicing the laggy issue, especially while editing remote files
-;; with tramp, please use `file-name', `truncate-all' or `truncate-upto-root'
-;; style.
+;; with tramp, please don't use `truncate-upto-project' style and try others.
 ;; Please refer to https://github.com/bbatsov/projectile/issues/657.
-(setq doom-modeline-buffer-file-name-style 'truncate-upto-project)
+(setq doom-modeline-buffer-file-name-style 'truncate-with-project)
 
 ;; What executable of Python will be used (if nil nothing will be showed).
 (setq doom-modeline-python-executable "python")
