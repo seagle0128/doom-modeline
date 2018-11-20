@@ -559,11 +559,13 @@ Example:
         (let ((project-props  `(,@(if project-faces  `(:inherit ,project-faces)) ,@(if active '(:weight bold))))
               (relative-props `(,@(if relative-faces `(:inherit ,relative-faces))))
               (file-props     `(,@(if file-faces     `(:inherit ,file-faces)))))
-          (concat (propertize (file-name-nondirectory (directory-file-name project-root))
+          (concat (propertize (concat
+                               (file-name-nondirectory (directory-file-name project-root))
+                               "/")
                               'face project-props)
                   (propertize (if (string-equal relative-path "./")
-                                  "/"
-                                (shrink-path--dirs-internal relative-path t))
+                                  ""
+                                (substring (shrink-path--dirs-internal relative-path t) 1))
                               'face relative-props)
                   (propertize (file-name-nondirectory file-path) 'face file-props)))))))
 
