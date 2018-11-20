@@ -559,7 +559,7 @@ Example:
         (let ((project-props  `(,@(if project-faces  `(:inherit ,project-faces)) ,@(if active '(:weight bold))))
               (relative-props `(,@(if relative-faces `(:inherit ,relative-faces))))
               (file-props     `(,@(if file-faces     `(:inherit ,file-faces)))))
-          (concat (propertize (file-name-nondirectory (directory-file-name (doom-modeline-project-root)))
+          (concat (propertize (file-name-nondirectory (directory-file-name project-root))
                               'face project-props)
                   (propertize (if (string-equal relative-path "./")
                                   "/"
