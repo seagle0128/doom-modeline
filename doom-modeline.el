@@ -340,7 +340,7 @@ active.")
            (when (featurep 'projectile) (projectile-project-root))
            (when (featurep 'project)
              (when-let ((project (project-current)))
-               (car (project-roots project))))
+               (expand-file-name (car (project-roots project)))))
            default-directory))))
 
 ;; Disable projectile mode-line segment
@@ -550,8 +550,7 @@ Show relative path to the project and truncate it.
 Example:
   ~/Projects/FOSS/emacs/lisp/comint.el => emacs/l/comint.el"
   (let* ((project-root (doom-modeline-project-root))
-         (relative-path (file-relative-name (or (file-name-directory file-path) "./")
-                                            (file-truename project-root))))
+         (relative-path (file-relative-name (or (file-name-directory file-path) "./") project-root)))
     (let ((active (doom-modeline--active))
           (modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified)))
       (let ((project-faces  (or modified-faces (if active 'font-lock-string-face)))
