@@ -74,12 +74,14 @@
 (defvar doom-modeline-bar-width 3
   "How wide the mode-line bar should be (only respected in GUI Emacs).")
 
-(defvar doom-modeline-buffer-file-name-style 'truncate-with-project
+(defvar doom-modeline-buffer-file-name-style 'truncate-upto-project
   "Determines the style used by `doom-modeline-buffer-file-name'.
 
 Given ~/Projects/FOSS/emacs/lisp/comint.el
   truncate-upto-project => ~/P/F/emacs/lisp/comint.el
+  truncate-from-project => ~/Projects/FOSS/emacs/l/comint.el
   truncate-with-project => emacs/l/comint.el
+  truncate-except-project => ~/P/F/emacs/l/comint.el
   truncate-upto-root => ~/P/F/e/lisp/comint.el
   truncate-all => ~/P/F/e/l/comint.el
   relative-from-project => emacs/lisp/comint.el
@@ -504,8 +506,12 @@ active.")
      (pcase doom-modeline-buffer-file-name-style
        (`truncate-upto-project
         (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink))
+       (`truncate-from-project
+        (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename nil 'shrink))
        (`truncate-with-project
-        ( doom-modeline--buffer-file-name-truncate-with-project buffer-file-name buffer-file-truename))
+        (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink 'shink 'hide))
+       (`truncate-except-project
+        (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink 'shink))
        (`truncate-upto-root
         (doom-modeline--buffer-file-name-truncate buffer-file-name buffer-file-truename))
        (`truncate-all
@@ -543,32 +549,6 @@ If TRUNCATE-TAIL is t also truncate the parent directory of the file."
                   (propertize (file-name-nondirectory file-path)
                               'face (if file-faces `(:inherit ,file-faces)))))))))
 
-(defun doom-modeline--buffer-file-name-truncate-with-project (file-path _true-file-path)
-  "Propertized variable `buffer-file-name' based on FILE-PATH.
-
-Show relative path to the project and truncate it.
-Example:
-  ~/Projects/FOSS/emacs/lisp/comint.el => emacs/l/comint.el"
-  (let* ((project-root (doom-modeline-project-root))
-         (relative-path (file-relative-name (or (file-name-directory file-path) "./") project-root)))
-    (let ((active (doom-modeline--active))
-          (modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified)))
-      (let ((project-faces  (or modified-faces (if active 'font-lock-string-face)))
-            (relative-faces (or modified-faces (if active 'doom-modeline-buffer-path)))
-            (file-faces     (or modified-faces (if active 'doom-modeline-buffer-file))))
-        (let ((project-props  `(,@(if project-faces  `(:inherit ,project-faces)) ,@(if active '(:weight bold))))
-              (relative-props `(,@(if relative-faces `(:inherit ,relative-faces))))
-              (file-props     `(,@(if file-faces     `(:inherit ,file-faces)))))
-          (concat (propertize (concat
-                               (file-name-nondirectory (directory-file-name project-root))
-                               "/")
-                              'face project-props)
-                  (propertize (if (string-equal relative-path "./")
-                                  ""
-                                (substring (shrink-path--dirs-internal relative-path t) 1))
-                              'face relative-props)
-                  (propertize (file-name-nondirectory file-path) 'face file-props)))))))
-
 (defun doom-modeline--buffer-file-name-relative (_file-path true-file-path &optional include-project)
   "Propertized variable `buffer-file-name' showing directories relative to project's root only."
   (let ((root (doom-modeline-project-root))
@@ -585,38 +565,63 @@ Example:
                 (propertize (file-name-nondirectory true-file-path)
                             'face (if file-faces `(:inherit ,file-faces))))))))
 
-(defun doom-modeline--buffer-file-name (file-path _true-file-path &optional truncate-project-root-parent)
-  "Propertized variable `buffer-file-name'.
+(defun doom-modeline--buffer-file-name (file-path _true-file-path &optional truncate-project-root-parent truncate-project-relative-path hide-project-root-parent)
+  "Propertized variable `buffer-file-name' given by FILE-PATH.
 
-If TRUNCATE-PROJECT-ROOT-PARENT is t space will be saved by truncating it down
-fish-shell style.
+If TRUNCATE-PROJECT-ROOT-PARENT is non-nil will be saved by truncating project
+root parent down fish-shell style.
 
 Example:
-  ~/Projects/FOSS/emacs/lisp/comint.el => ~/P/F/emacs/lisp/comint.el"
-  (let* ((project-root (doom-modeline-project-root))
-         (file-name-split (shrink-path-file-mixed project-root
-                                                  (or (file-name-directory file-path) "./")
-                                                  file-path))
-         (active (doom-modeline--active)))
-    (if (null file-name-split)
-        (propertize "%b" 'face (if active 'doom-modeline-buffer-file))
-      (pcase-let ((`(,root-path-parent ,project ,relative-path ,file-path) file-name-split))
-        (let ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified)))
-          (let ((sp-faces       (or modified-faces (if active 'font-lock-comment-face)))
-                (project-faces  (or modified-faces (if active 'font-lock-string-face)))
-                (relative-faces (or modified-faces (if active 'doom-modeline-buffer-path)))
-                (file-faces     (or modified-faces (if active 'doom-modeline-buffer-file))))
-            (let ((sp-props       `(,@(if sp-faces       `(:inherit ,sp-faces))      ,@(if active '(:weight bold))))
-                  (project-props  `(,@(if project-faces  `(:inherit ,project-faces)) ,@(if active '(:weight bold))))
-                  (relative-props `(,@(if relative-faces `(:inherit ,relative-faces))))
-                  (file-props     `(,@(if file-faces     `(:inherit ,file-faces)))))
-              (concat (propertize (if truncate-project-root-parent
-                                      root-path-parent
-                                    (abbreviate-file-name project-root))
-                                  'face sp-props)
-                      (propertize (concat project "/") 'face project-props)
-                      (if relative-path (propertize relative-path 'face relative-props))
-                      (propertize file-path 'face file-props)))))))))
+  ~/Projects/FOSS/emacs/lisp/comint.el => ~/P/F/emacs/lisp/comint.el
+
+If TRUNCATE-PROJECT-RELATIVE-PATH is non-nil will be saved by truncating project
+relative path down fish-shell style.
+
+Example:
+  ~/Projects/FOSS/emacs/lisp/comint.el => ~/Projects/FOSS/emacs/l/comint.el
+
+If HIDE-PROJECT-ROOT-PARENT is non-nil will hide project root parent.
+
+Example:
+  ~/Projects/FOSS/emacs/lisp/comint.el => emacs/lisp/comint.el"
+  (let ((project-root (doom-modeline-project-root))
+        (active (doom-modeline--active))
+        (modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified)))
+    (let ((sp-faces       (or modified-faces (if active 'font-lock-comment-face)))
+          (project-faces  (or modified-faces (if active 'font-lock-string-face)))
+          (relative-faces (or modified-faces (if active 'doom-modeline-buffer-path)))
+          (file-faces     (or modified-faces (if active 'doom-modeline-buffer-file))))
+      (let ((sp-props       `(,@(if sp-faces       `(:inherit ,sp-faces))      ,@(if active '(:weight bold))))
+            (project-props  `(,@(if project-faces  `(:inherit ,project-faces)) ,@(if active '(:weight bold))))
+            (relative-props `(,@(if relative-faces `(:inherit ,relative-faces))))
+            (file-props     `(,@(if file-faces     `(:inherit ,file-faces)))))
+        (concat
+         ;; project root parent
+         (unless hide-project-root-parent
+           (propertize
+            (when-let (root-path-parent
+                       (file-name-directory (directory-file-name project-root)))
+              (if truncate-project-root-parent
+                  (shrink-path--dirs-internal root-path-parent t)
+                (abbreviate-file-name root-path-parent)))
+            'face sp-props))
+         ;; project
+         (propertize
+          (concat (file-name-nondirectory (directory-file-name project-root)) "/")
+          'face project-props)
+         ;; relative path
+         (propertize
+          (when-let (relative-path (file-relative-name
+                                    (or (file-name-directory file-path) "./")
+                                    project-root))
+            (if (string-equal relative-path "./")
+                ""
+              (if truncate-project-relative-path
+                  (substring (shrink-path--dirs-internal relative-path t) 1)
+                relative-path)))
+          'face relative-props)
+         ;; file name
+         (propertize (file-name-nondirectory file-path) 'face file-props))))))
 
 
 ;;
