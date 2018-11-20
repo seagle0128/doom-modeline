@@ -559,11 +559,12 @@ Example:
         (let ((project-props  `(,@(if project-faces  `(:inherit ,project-faces)) ,@(if active '(:weight bold))))
               (relative-props `(,@(if relative-faces `(:inherit ,relative-faces))))
               (file-props     `(,@(if file-faces     `(:inherit ,file-faces)))))
-          (concat (propertize
-                   (concat (file-name-nondirectory (directory-file-name (doom-modeline-project-root))) "/")
-                   'face project-props)
-                  (unless (string-equal relative-path "./")
-                    (propertize (shrink-path--dirs-internal relative-path t) 'face relative-props))
+          (concat (propertize (file-name-nondirectory (directory-file-name (doom-modeline-project-root)))
+                              'face project-props)
+                  (propertize (if (string-equal relative-path "./")
+                                  "/"
+                                (shrink-path--dirs-internal relative-path t))
+                              'face relative-props)
                   (propertize (file-name-nondirectory file-path) 'face file-props)))))))
 
 (defun doom-modeline--buffer-file-name-relative (_file-path true-file-path &optional include-project)
