@@ -240,6 +240,9 @@ active.")
 (defface doom-modeline-evil-replace-state'((t (:inherit doom-modeline-buffer-modified)))
   "Face for the replace state tag in evil state indicator.")
 
+(defface doom-modeline-god-state'((t (:inherit doom-modeline-info)))
+  "Face for the god state indicator.")
+
 ;;
 ;; Modeline library
 ;;
@@ -1168,6 +1171,16 @@ See `mode-line-percent-position'.")
 
 
 ;;
+;; god-state
+;;
+
+(doom-modeline-def-segment god-state
+  "The current god state. Requires `god-mode' to be enabled."
+  (when (bound-and-true-p god-local-mode)
+    (propertize " <G> " 'face 'doom-modeline-god-state)))
+
+
+;;
 ;; input method
 ;;
 
@@ -1182,12 +1195,13 @@ See `mode-line-percent-position'.")
      (nth 3 (assoc default-input-method input-method-alist))
      "  "))))
 
+
 ;;
 ;; Mode lines
 ;;
 
 (doom-modeline-def-modeline 'main
-                            '(bar workspace-number window-number evil-state matches " " buffer-info buffer-position " " selection-info)
+                            '(bar workspace-number window-number evil-state god-state matches " " buffer-info buffer-position " " selection-info)
                             '(global input-method buffer-encoding major-mode process vcs flycheck))
 
 (doom-modeline-def-modeline 'minimal
@@ -1195,7 +1209,7 @@ See `mode-line-percent-position'.")
                             '(media-info major-mode))
 
 (doom-modeline-def-modeline 'special
-                            '(bar window-number evil-state matches " " buffer-info-simple buffer-position " " selection-info)
+                            '(bar window-number evil-state god-state matches " " buffer-info-simple buffer-position " " selection-info)
                             '(global input-method buffer-encoding major-mode process flycheck))
 
 (doom-modeline-def-modeline 'project
