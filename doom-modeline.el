@@ -1207,11 +1207,22 @@ See `mode-line-percent-position'.")
 
 
 ;;
+;; remote host
+;;
+
+(doom-modeline-def-segment remote-host
+  "Hostname for remote buffers."
+  (when default-directory
+    (when-let ((host (file-remote-p default-directory 'host)))
+      (concat "@" host))))
+
+
+;;
 ;; Mode lines
 ;;
 
 (doom-modeline-def-modeline 'main
-                            '(bar workspace-number window-number evil-state god-state ryo-modal-state matches " " buffer-info buffer-position " " selection-info)
+                            '(bar workspace-number window-number evil-state god-state ryo-modal-state matches " " buffer-info remote-host buffer-position " " selection-info)
                             '(global input-method buffer-encoding major-mode process vcs flycheck))
 
 (doom-modeline-def-modeline 'minimal
