@@ -344,7 +344,7 @@ active.")
            (when (featurep 'project)
              (when-let ((project (project-current)))
                (expand-file-name (car (project-roots project)))))
-           default-directory))))
+           (file-local-name default-directory)))))
 
 ;; Disable projectile mode-line segment
 (setq projectile-dynamic-mode-line nil)
@@ -500,9 +500,8 @@ active.")
 
 (defun doom-modeline-buffer-file-name ()
   "Propertized variable `buffer-file-name' based on `doom-modeline-buffer-file-name-style'."
-  (let ((buffer-file-name (or (buffer-file-name (buffer-base-buffer)) "")))
-    (unless buffer-file-truename
-      (setq buffer-file-truename (file-truename buffer-file-name)))
+  (let ((buffer-file-name (file-local-name (or (buffer-file-name (buffer-base-buffer)) "")))
+        (buffer-file-truename (file-local-name (or buffer-file-truename (file-truename buffer-file-name) ""))))
     (propertize
      (pcase doom-modeline-buffer-file-name-style
        (`truncate-upto-project
@@ -602,7 +601,9 @@ Example:
            (propertize
             (when-let (root-path-parent
                        (file-name-directory (directory-file-name project-root)))
-              (if truncate-project-root-parent
+              (if (and truncate-project-root-parent
+                       (not (string-empty-p root-path-parent))
+                       (not (string-equal root-path-parent "/")))
                   (shrink-path--dirs-internal root-path-parent t)
                 (abbreviate-file-name root-path-parent)))
             'face sp-props))
@@ -643,8 +644,8 @@ buffer where knowing the current project directory is important."
                         'face face))))
 
 ;;
-(defun doom-modeline-update-buffer-file-name ()
-  "Update buffer file name in mode-line.
+(defun doom-modeline-fixed-buffer-file-name ()
+  "Fix buffer file name in mode-line.
 
   Show buffer name if it doesn't equal the file name.
   Format: \"buffer-file-name[buffer-name]\".
@@ -691,7 +692,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                          :v-adjust -0.05)
                         " "))))
      (if buffer-file-name
-         (doom-modeline-update-buffer-file-name)
+         (doom-modeline-fixed-buffer-file-name)
        (propertize "%b" 'face (if active 'doom-modeline-buffer-file))))))
 
 (doom-modeline-def-segment buffer-info-simple
