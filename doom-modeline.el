@@ -86,7 +86,8 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
   truncate-all => ~/P/F/e/l/comint.el
   relative-from-project => emacs/lisp/comint.el
   relative-to-project => lisp/comint.el
-  file-name => comint.el")
+  file-name => comint.el
+  buffer-name => comint.el<2> (uniquify buffer name)")
 
 (defvar doom-modeline-python-executable "python"
   "What executable of Python will be used (if nil nothing will be showed).")
@@ -520,14 +521,17 @@ active.")
         (doom-modeline--buffer-file-name-relative buffer-file-name buffer-file-truename))
        (`relative-from-project
         (doom-modeline--buffer-file-name-relative buffer-file-name buffer-file-truename 'include-project))
-       (`file-name
-        (propertize (file-name-nondirectory buffer-file-name)
-                    'face
-                    (let ((face (or (and (buffer-modified-p)
-                                         'doom-modeline-buffer-modified)
-                                    (and (doom-modeline--active)
-                                         'doom-modeline-buffer-file))))
-                      (when face `(:inherit ,face))))))
+       (style
+        (propertize
+         (pcase style
+           (`file-name (file-name-nondirectory buffer-file-name))
+           (`buffer-name (buffer-name)))
+         'face
+         (let ((face (or (and (buffer-modified-p)
+                              'doom-modeline-buffer-modified)
+                         (and (doom-modeline--active)
+                              'doom-modeline-buffer-file))))
+           (when face `(:inherit ,face))))))
      'help-echo buffer-file-truename)))
 
 (defun doom-modeline--buffer-file-name-truncate (file-path true-file-path &optional truncate-tail)
@@ -644,7 +648,7 @@ buffer where knowing the current project directory is important."
                         'face face))))
 
 ;;
-(defun doom-modeline-fixed-buffer-file-name ()
+(defun doom-modeline-fix-buffer-file-name ()
   "Fix buffer file name in mode-line.
 
   Show buffer name if it doesn't equal the file name.
@@ -653,7 +657,8 @@ buffer where knowing the current project directory is important."
   (when-let ((file-name (doom-modeline-buffer-file-name))
              (buffer-name (buffer-name))
              (buffer-file-name buffer-file-name))
-    (if (or (not (file-exists-p buffer-file-name))
+    (if (or (eq doom-modeline-buffer-file-name-style 'buffer-name)
+            (not (file-exists-p buffer-file-name))
             (string-equal
              (file-name-nondirectory buffer-file-name)
              (replace-regexp-in-string "<.+>$" "" buffer-name)))
@@ -692,7 +697,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                          :v-adjust -0.05)
                         " "))))
      (if buffer-file-name
-         (doom-modeline-fixed-buffer-file-name)
+         (doom-modeline-fix-buffer-file-name)
        (propertize "%b" 'face (if active 'doom-modeline-buffer-file))))))
 
 (doom-modeline-def-segment buffer-info-simple

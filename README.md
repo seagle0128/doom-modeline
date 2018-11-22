@@ -73,7 +73,8 @@ Recommand to use [doom-themes](https://github.com/hlissner/emacs-doom-themes);
 ;;   truncate-all => ~/P/F/e/l/comint.el
 ;;   relative-from-project => emacs/lisp/comint.el
 ;;   relative-to-project => lisp/comint.el
-;;   file-name => comint.el"
+;;   file-name => comint.el
+;;   buffer-name => comint.el<2> (uniquify buffer name)
 ;;
 ;; If you are expereicing the laggy issue, especially while editing remote files
 ;; with tramp, please try `file-name' style.
