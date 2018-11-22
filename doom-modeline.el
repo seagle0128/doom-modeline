@@ -96,6 +96,10 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
   "Whether show `all-the-icons' or not (if nil nothing will be showed).
 The icons may not be showed correctly on Windows. Disable to make it work.")
 
+(defvar doom-modeline-major-mode-icon nil
+  "Whether show the icon for major mode. It should respect `doom-modeline-icon'.")
+
+
 ;;
 ;; externals
 ;;
@@ -454,19 +458,24 @@ active.")
 ;;
 
 (defun doom-modeline-icon-octicon (&rest args)
-  "Display octicon via `ARGS'."
+  "Display octicon via ARGS."
   (when doom-modeline-icon
     (apply 'all-the-icons-octicon args)))
 
 (defun doom-modeline-icon-faicon (&rest args)
-  "Display font awesome icon via `ARGS'."
+  "Display font awesome icon via ARGS."
   (when doom-modeline-icon
     (apply 'all-the-icons-faicon args)))
 
 (defun doom-modeline-icon-material (&rest args)
-  "Display material icon via `ARGS'."
+  "Display material icon via ARGS."
   (when doom-modeline-icon
     (apply 'all-the-icons-material args)))
+
+(defun doom-modeline-icon-for-mode (&rest args)
+  "Display icon for major mode via ARGS."
+  (when doom-modeline-icon
+    (apply 'all-the-icons-icon-for-mode args)))
 
 (defun doom-modeline--active ()
   "Whether is an active window."
@@ -670,32 +679,47 @@ buffer where knowing the current project directory is important."
 directory, the file name, and its state (modified, read-only or non-existent)."
   (let ((active (doom-modeline--active)))
     (concat
-     (if active
-         (cond (buffer-read-only
-                (concat (doom-modeline-icon-octicon
-                         "lock"
-                         :face 'doom-modeline-warning
-                         :v-adjust -0.05)
-                        " "))
-               ((buffer-modified-p)
-                (concat (doom-modeline-icon-faicon
-                         "floppy-o"
-                         :face 'doom-modeline-buffer-modified
-                         :v-adjust -0.0575)
-                        " "))
-               ((and buffer-file-name
-                     (not (file-exists-p buffer-file-name)))
-                (concat (doom-modeline-icon-octicon
-                         "circle-slash"
-                         :face 'doom-modeline-urgent
-                         :v-adjust -0.05)
-                        " "))
-               ((buffer-narrowed-p)
-                (concat (doom-modeline-icon-octicon
-                         "fold"
-                         :face 'doom-modeline-warning
-                         :v-adjust -0.05)
-                        " "))))
+     (cond (buffer-read-only
+            (concat (doom-modeline-icon-octicon
+                     "lock"
+                     :face (if active 'doom-modeline-warning)
+                     :v-adjust -0.05)
+                    " "))
+           ((buffer-modified-p)
+            (concat (doom-modeline-icon-faicon
+                     "floppy-o"
+                     :face (if active 'doom-modeline-buffer-modified)
+                     :v-adjust -0.0575)
+                    " "))
+           ((and buffer-file-name
+                 (not (file-exists-p buffer-file-name)))
+            (concat (doom-modeline-icon-octicon
+                     "circle-slash"
+                     :face (if active 'doom-modeline-urgent)
+                     :v-adjust -0.05)
+                    " "))
+           ((buffer-narrowed-p)
+            (concat (doom-modeline-icon-octicon
+                     "fold"
+                     :face (if active 'doom-modeline-warning)
+                     :v-adjus t -0.05)
+                    " ")))
+
+     (when doom-modeline-major-mode-icon
+       (let ((icon (doom-modeline-icon-for-mode major-mode)))
+         (unless (symbolp icon)
+           (concat
+            (propertize icon
+                        'help-echo (format "Major-mode: `%s'" major-mode)
+                        'display '(raise 0)
+                        'face (cond (buffer-read-only 'doom-modeline-warninng)
+                                    ((buffer-modified-p) 'doom-modeline-buffer-modified)
+                                    ((and buffer-file-name
+                                          (not (file-exists-p buffer-file-name)))
+                                     'doom-modeline-urgent)
+                                    ((buffer-narrowed-p) 'doom-modeline-warning)))
+            " "))))
+
      (if buffer-file-name
          (doom-modeline-fix-buffer-file-name)
        (propertize "%b" 'face (if active 'doom-modeline-buffer-file))))))
