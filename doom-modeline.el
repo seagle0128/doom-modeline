@@ -824,6 +824,7 @@ mouse-3: Toggle minor modes"
 (add-hook 'after-revert-hook #'doom-modeline--update-vcs)
 (add-hook 'after-save-hook #'doom-modeline--update-vcs)
 (add-hook 'find-file-hook #'doom-modeline--update-vcs t)
+(advice-add #'vc-refresh-state :after #'doom-modeline--update-vcs)
 (advice-add #'select-window :after #'doom-modeline--update-vcs)
 
 (doom-modeline-def-segment vcs
