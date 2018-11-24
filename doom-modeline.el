@@ -679,7 +679,7 @@ buffer where knowing the current project directory is important."
             (concat
              (propertize icon
                          'help-echo (format "Major-mode: `%s'" major-mode)
-                         'display '(raise 0)
+                         'display '(raise -0.15)
                          'face `(:height 1.1
                                  :family ,(all-the-icons-icon-family-for-mode major-mode)
                                  :inherit))
