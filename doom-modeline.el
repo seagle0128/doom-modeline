@@ -680,12 +680,9 @@ buffer where knowing the current project directory is important."
              (propertize icon
                          'help-echo (format "Major-mode: `%s'" major-mode)
                          'display '(raise 0)
-                         'face (cond (buffer-read-only 'doom-modeline-warning)
-                                     ((buffer-modified-p) 'doom-modeline-buffer-modified)
-                                     ((and buffer-file-name
-                                           (not (file-exists-p buffer-file-name)))
-                                      'doom-modeline-urgent)
-                                     ((buffer-narrowed-p) 'doom-modeline-warning)))
+                         'face '(:height 1.1
+                                 :family (all-the-icons-icon-family-for-mode major-mode)
+                                 :inherit))
              " ")))))
 (add-hook 'find-file-hook 'doom-modeline-update-buffer-file-icon)
 (add-hook 'after-save-hook 'doom-modeline-update-buffer-file-icon)
