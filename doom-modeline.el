@@ -670,6 +670,75 @@ buffer where knowing the current project directory is important."
                         'face face))))
 
 ;;
+(defvar-local doom-modeline--buffer-file-icon nil)
+(defun doom-modeline-update-buffer-file-icon (&rest _)
+  "Update file icon in mode-line."
+  (setq doom-modeline--buffer-file-icon
+        (let ((icon (doom-modeline-icon-for-mode major-mode)))
+          (unless (symbolp icon)
+            (concat
+             (propertize icon
+                         'help-echo (format "Major-mode: `%s'" major-mode)
+                         'display '(raise 0)
+                         'face (cond (buffer-read-only 'doom-modeline-warning)
+                                     ((buffer-modified-p) 'doom-modeline-buffer-modified)
+                                     ((and buffer-file-name
+                                           (not (file-exists-p buffer-file-name)))
+                                      'doom-modeline-urgent)
+                                     ((buffer-narrowed-p) 'doom-modeline-warning)))
+             " ")))))
+(add-hook 'find-file-hook 'doom-modeline-update-buffer-file-icon)
+(add-hook 'after-save-hook 'doom-modeline-update-buffer-file-icon)
+(add-hook 'after-revert-hook 'doom-modeline-update-buffer-file-icon)
+;; (add-hook 'read-only-mode-hook 'doom-modeline-update-buffer-file-icon)
+(add-hook 'after-change-major-mode-hook 'doom-modeline-update-buffer-file-icon)
+(add-hook 'clone-indirect-buffer-hook 'doom-modeline-update-buffer-file-icon)
+;; This hook will cause magit exception
+;; (add-hook 'after-change-functions 'doom-modeline-update-buffer-file-icon)
+(advice-add #'undo :after #'doom-modeline-update-buffer-file-icon)
+(advice-add #'undo-tree-undo :after #'doom-modeline-update-buffer-file-icon)
+;; (advice-add #'narrow-to-region :after #'doom-modeline-update-buffer-file-icon)
+
+(defvar-local doom-modeline--buffer-file-state-icon nil)
+(defun doom-modeline-update-buffer-file-state-icon (&rest _)
+  "Update the buffer or file state in mode-line."
+  (setq doom-modeline--buffer-file-state-icon
+        (let ((active (doom-modeline--active)))
+          (cond (buffer-read-only
+                 (concat (doom-modeline-icon-octicon
+                          "lock"
+                          :face (if active 'doom-modeline-warning)
+                          :v-adjust -0.05)
+                         " "))
+                ((buffer-modified-p)
+                 (concat (doom-modeline-icon-faicon
+                          "floppy-o"
+                          :face (if active 'doom-modeline-buffer-modified)
+                          :v-adjust -0.0575)
+                         " "))
+                ((and buffer-file-name
+                      (not (file-exists-p buffer-file-name)))
+                 (concat (doom-modeline-icon-octicon
+                          "circle-slash"
+                          :face (if active 'doom-modeline-urgent)
+                          :v-adjust -0.05)
+                         " "))
+                ((buffer-narrowed-p)
+                 (concat (doom-modeline-icon-octicon
+                          "fold"
+                          :display '(raise 0)
+                          :face (if active 'doom-modeline-warning)
+                          :v-adjus t -0.05)
+                         " "))))))
+(add-hook 'find-file-hook 'doom-modeline-update-buffer-file-state-icon)
+(add-hook 'after-save-hook 'doom-modeline-update-buffer-file-state-icon)
+(add-hook 'after-revert-hook 'doom-modeline-update-buffer-file-state-icon)
+(add-hook 'read-only-mode-hook 'doom-modeline-update-buffer-file-state-icon)
+(add-hook 'after-change-functions 'doom-modeline-update-buffer-file-state-icon)
+(advice-add #'undo :after #'doom-modeline-update-buffer-file-state-icon)
+(advice-add #'undo-tree-undo :after #'doom-modeline-update-buffer-file-state-icon)
+(advice-add #'narrow-to-region :after #'doom-modeline-update-buffer-file-state-icon)
+
 (defun doom-modeline-fix-buffer-file-name ()
   "Fix buffer file name in mode-line.
 
@@ -687,71 +756,32 @@ buffer where knowing the current project directory is important."
         file-name
       (format "%s[%s]" file-name buffer-name))))
 
-(defvar-local doom-modeline--file-icon nil)
-(defun doom-modeline-update-file-icon ()
-  "Update file icon in mode-line."
-  (when doom-modeline-major-mode-icon
-    (setq doom-modeline--file-icon
-          (let ((icon (doom-modeline-icon-for-mode major-mode)))
-            (unless (symbolp icon)
-              (concat
-               (propertize icon
-                           'help-echo (format "Major-mode: `%s'" major-mode)
-                           'display '(raise 0)
-                           'face (cond (buffer-read-only 'doom-modeline-warninng)
-                                       ((buffer-modified-p) 'doom-modeline-buffer-modified)
-                                       ((and buffer-file-name
-                                             (not (file-exists-p buffer-file-name)))
-                                        'doom-modeline-urgent)
-                                       ((buffer-narrowed-p) 'doom-modeline-warning)))
-               " "))))))
-(add-hook 'find-file-hook 'doom-modeline-update-file-icon)
-(add-hook 'after-save-hook 'doom-modeline-update-file-icon)
-(add-hook 'after-revert-hook 'doom-modeline-update-file-icon)
-(add-hook 'after-change-major-mode-hook 'doom-modeline-update-file-icon)
-
-(add-variable-watcher
- 'doom-modeline-major-mode-icon
- (lambda (_sym _val op _where)
-   (when (eq op 'set)
-     (doom-modeline-update-file-icon))))
+(defvar-local doom-modeline--buffer-file-name nil)
+(defun doom-modeline-update-buffer-file-name (&rest _)
+  "Update buffer file name in mode-line."
+  (setq doom-modeline--buffer-file-name
+        (if buffer-file-name
+            (doom-modeline-fix-buffer-file-name)
+          (propertize "%b" 'face (if (doom-modeline--active) 'doom-modeline-buffer-file)))))
+(add-hook 'find-file-hook 'doom-modeline-update-buffer-file-name)
+(add-hook 'after-save-hook 'doom-modeline-update-buffer-file-name)
+(add-hook 'after-revert-hook 'doom-modeline-update-buffer-file-name)
+(add-hook 'after-change-functions 'doom-modeline-update-buffer-file-name)
+(add-hook 'clone-indirect-buffer-hook 'doom-modeline-update-buffer-file-name)
+(advice-add #'rename-buffer :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'set-visited-file-name :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'select-window :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'undo :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'undo-tree-undo :after #'doom-modeline-update-buffer-file-name)
 
 (doom-modeline-def-segment buffer-info
   "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
-  (let ((active (doom-modeline--active)))
-    (concat
-     (cond (buffer-read-only
-            (concat (doom-modeline-icon-octicon
-                     "lock"
-                     :face (if active 'doom-modeline-warning)
-                     :v-adjust -0.05)
-                    " "))
-           ((buffer-modified-p)
-            (concat (doom-modeline-icon-faicon
-                     "floppy-o"
-                     :face (if active 'doom-modeline-buffer-modified)
-                     :v-adjust -0.0575)
-                    " "))
-           ((and buffer-file-name
-                 (not (file-exists-p buffer-file-name)))
-            (concat (doom-modeline-icon-octicon
-                     "circle-slash"
-                     :face (if active 'doom-modeline-urgent)
-                     :v-adjust -0.05)
-                    " "))
-           ((buffer-narrowed-p)
-            (concat (doom-modeline-icon-octicon
-                     "fold"
-                     :face (if active 'doom-modeline-warning)
-                     :v-adjus t -0.05)
-                    " ")))
-
-     (or doom-modeline--file-icon (doom-modeline-update-file-icon))
-
-     (if buffer-file-name
-         (doom-modeline-fix-buffer-file-name)
-       (propertize "%b" 'face (if active 'doom-modeline-buffer-file))))))
+  (concat
+   (or doom-modeline--buffer-file-state-icon (doom-modeline-update-buffer-file-state-icon))
+   (when (and doom-modeline-icon doom-modeline-major-mode-icon)
+     (or doom-modeline--buffer-file-icon (doom-modeline-update-buffer-file-icon)))
+   (or doom-modeline--buffer-file-name (doom-modeline-update-buffer-file-name))))
 
 (doom-modeline-def-segment buffer-info-simple
   "Display only the current buffer's name, but with fontification."
