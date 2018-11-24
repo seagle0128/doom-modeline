@@ -725,7 +725,7 @@ buffer where knowing the current project directory is important."
                           "fold"
                           :display '(raise 0)
                           :face (if active 'doom-modeline-warning)
-                          :v-adjus t -0.05)
+                          :v-adjust -0.05)
                          " "))))))
 (add-hook 'find-file-hook 'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-save-hook 'doom-modeline-update-buffer-file-state-icon)
