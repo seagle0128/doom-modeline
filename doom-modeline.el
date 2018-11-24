@@ -354,18 +354,18 @@ active.")
   "Get the path to the root of your project.
 
   Return `default-directory' if no project was found."
-  (if doom-modeline-project-root
-      doom-modeline-project-root
-    (setq doom-modeline-project-root
-          (or
-           (when (featurep 'projectile) (projectile-project-root))
-           (when (featurep 'project)
-             (when-let ((project (project-current)))
-               (expand-file-name (car (project-roots project)))))
-           (file-local-name default-directory)))))
+  (or doom-modeline-project-root
+      (setq doom-modeline-project-root
+            (or
+             (when (featurep 'projectile) (projectile-project-root))
+             (when (featurep 'project)
+               (when-let ((project (project-current)))
+                 (expand-file-name (car (project-roots project)))))
+             (file-local-name default-directory)))))
 
 ;; Disable projectile mode-line segment
 (setq projectile-dynamic-mode-line nil)
+
 
 ;;
 ;; Plugins
@@ -838,12 +838,11 @@ mouse-3: Toggle minor modes"
 (add-hook 'after-save-hook #'doom-modeline--update-vcs)
 (add-hook 'find-file-hook #'doom-modeline--update-vcs t)
 (advice-add #'vc-refresh-state :after #'doom-modeline--update-vcs)
-(advice-add #'select-window :after #'doom-modeline--update-vcs)
 
 (doom-modeline-def-segment vcs
   "Displays the current branch, colored based on its state."
   (if (doom-modeline--active)
-      doom-modeline--vcs
+      (or doom-modeline--vcs (doom-modeline--update-vcs))
     ""))
 
 
@@ -855,7 +854,7 @@ mouse-3: Toggle minor modes"
   (propertize " " 'face 'variable-pitch)
   "Text style with icons in mode-line.")
 
-(defun doom-modeline-icon (icon &optional text face voffset)
+(defun doom-modeline-flycheck-icon (icon &optional text face voffset)
   "Displays an ICON with FACE, followed by TEXT.
 Uses `all-the-icons-material' to fetch the icon."
   (concat (if vc-mode " " "  ")
@@ -877,15 +876,15 @@ Uses `all-the-icons-material' to fetch the icon."
           (`finished (if flycheck-current-errors
                          (let-alist (flycheck-count-errors flycheck-current-errors)
                            (let ((sum (+ (or .error 0) (or .warning 0))))
-                             (doom-modeline-icon "do_not_disturb_alt"
+                             (doom-modeline-flycheck-icon "do_not_disturb_alt"
                                                  (number-to-string sum)
                                                  (if .error 'doom-modeline-urgent 'doom-modeline-warning)
                                                  -0.15)))
-                       (doom-modeline-icon "check" nil 'doom-modeline-info)))
-          (`running     (doom-modeline-icon "access_time" nil 'font-lock-doc-face -0.25))
-          (`no-checker  (doom-modeline-icon "sim_card_alert" "-" 'font-lock-doc-face))
-          (`errored     (doom-modeline-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
-          (`interrupted (doom-modeline-icon "pause" "Interrupted" 'font-lock-doc-face)))))
+                       (doom-modeline-flycheck-icon "check" nil 'doom-modeline-info)))
+          (`running     (doom-modeline-flycheck-icon "access_time" nil 'font-lock-doc-face -0.25))
+          (`no-checker  (doom-modeline-flycheck-icon "sim_card_alert" "-" 'font-lock-doc-face))
+          (`errored     (doom-modeline-flycheck-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
+          (`interrupted (doom-modeline-flycheck-icon "pause" "Interrupted" 'font-lock-doc-face)))))
 
 (doom-modeline-def-segment flycheck
   "Displays color-coded flycheck error status in the current buffer with pretty
