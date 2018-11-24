@@ -723,7 +723,6 @@ buffer where knowing the current project directory is important."
                 ((buffer-narrowed-p)
                  (concat (doom-modeline-icon-octicon
                           "fold"
-                          :display '(raise 0)
                           :face (if active 'doom-modeline-warning)
                           :v-adjust -0.05)
                          " "))))))
