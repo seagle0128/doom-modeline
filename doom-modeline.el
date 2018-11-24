@@ -101,6 +101,19 @@ The icons may not be showed correctly on Windows. Disable to make it work.")
 
 
 ;;
+;; compatibility
+;;
+
+;;`file-local-name' is introduced in 25.2.2.
+(unless (fboundp 'file-local-name)
+  (defun file-local-name (file)
+    "Return the local name component of FILE.
+It returns a file name which can be used directly as argument of
+`process-file', `start-file-process', or `shell-command'."
+    (or (file-remote-p file 'localname) file)))
+
+
+;;
 ;; externals
 ;;
 
