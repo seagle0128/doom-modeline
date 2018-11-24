@@ -89,7 +89,7 @@ Recommand to use [doom-themes](https://github.com/hlissner/emacs-doom-themes);
 (setq doom-modeline-icon t)
 
 ;; Whether show the icon for major mode. It should respect `doom-modeline-icon'.
-(setq doom-modeline-major-mode-icon nil)
+(setq doom-modeline-major-mode-icon t)
 
 ;; Don’t compact font caches during GC.
 ;; If you are expereicing the laggy issue especially on Windows, please set to

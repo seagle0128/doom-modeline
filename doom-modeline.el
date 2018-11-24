@@ -96,7 +96,7 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
   "Whether show `all-the-icons' or not (if nil nothing will be showed).
 The icons may not be showed correctly on Windows. Disable to make it work.")
 
-(defvar doom-modeline-major-mode-icon nil
+(defvar doom-modeline-major-mode-icon t
   "Whether show the icon for major mode. It should respect `doom-modeline-icon'.")
 
 
