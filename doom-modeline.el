@@ -92,9 +92,11 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
 (defvar doom-modeline-python-executable "python"
   "What executable of Python will be used (if nil nothing will be showed).")
 
-(defvar doom-modeline-icon t
-  "Whether show `all-the-icons' or not (if nil nothing will be showed).
-The icons may not be showed correctly on Windows. Disable to make it work.")
+(defvar doom-modeline-icon (display-graphic-p)
+  "Whether show `all-the-icons' or not.
+
+Non-nil to show the icons in mode-line.
+The icons may not be showed correctly in terminal and on Windows.")
 
 (defvar doom-modeline-major-mode-icon nil
   "Whether show the icon for major mode. It should respect `doom-modeline-icon'.")
