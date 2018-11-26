@@ -680,9 +680,7 @@ buffer where knowing the current project directory is important."
              (propertize icon
                          'help-echo (format "Major-mode: `%s'" major-mode)
                          'display '(raise -0.15)
-                         'face `(:height 1.1
-                                 :family ,(all-the-icons-icon-family-for-mode major-mode)
-                                 :inherit))
+                         'face `(:height 1.1 :family ,(all-the-icons-icon-family-for-mode major-mode) :inherit))
              " ")))))
 (add-hook 'find-file-hook 'doom-modeline-update-buffer-file-icon)
 (add-hook 'after-save-hook 'doom-modeline-update-buffer-file-icon)
@@ -774,9 +772,9 @@ buffer where knowing the current project directory is important."
   "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
   (concat
-   (or doom-modeline--buffer-file-state-icon (doom-modeline-update-buffer-file-state-icon))
    (when (and doom-modeline-icon doom-modeline-major-mode-icon)
      (or doom-modeline--buffer-file-icon (doom-modeline-update-buffer-file-icon)))
+   (or doom-modeline--buffer-file-state-icon (doom-modeline-update-buffer-file-state-icon))
    (or doom-modeline--buffer-file-name (doom-modeline-update-buffer-file-name))))
 
 (doom-modeline-def-segment buffer-info-simple
