@@ -98,7 +98,7 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
 Non-nil to show the icons in mode-line.
 The icons may not be showed correctly in terminal and on Windows.")
 
-(defvar doom-modeline-major-mode-icon nil
+(defvar doom-modeline-major-mode-icon t
   "Whether show the icon for major mode. It should respect `doom-modeline-icon'.")
 
 
