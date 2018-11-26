@@ -902,7 +902,7 @@ Uses `all-the-icons-material' to fetch the icon."
   (concat (if vc-mode " " "  ")
           (when icon
             (concat
-             (doom-modeline-icon-material icon :face face :height 1.1 :v-adjust (or voffset -0.2))
+             (doom-modeline-icon-material icon :face face :height 0.95 :v-adjust (or voffset -0.2))
              (if text doom-modeline-vspc)))
           (if text (propertize text 'face face))
           (if vc-mode "  " " ")))
