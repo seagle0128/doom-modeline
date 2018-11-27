@@ -175,6 +175,7 @@ It returns a file name which can be used directly as argument of
 (declare-function project-roots 'project)
 (declare-function projectile-ensure-project 'projectile)
 (declare-function projectile-project-root 'projectile)
+(declare-function undo-tree-undo 'undo-tree)
 (declare-function window-numbering-clear-mode-line 'window-numbering)
 (declare-function window-numbering-get-number-string 'window-numbering)
 (declare-function window-numbering-install-mode-line 'window-numbering)
