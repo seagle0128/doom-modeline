@@ -112,6 +112,10 @@ The icons may not be showed correctly in terminal and on Windows.")
 ;; compatibility
 ;;
 
+;; Don’t compact font caches during GC.
+(if (eq system-type 'windows-nt)
+    (setq inhibit-compacting-font-caches t))
+
 ;;`file-local-name' is introduced in 25.2.2.
 (unless (fboundp 'file-local-name)
   (defun file-local-name (file)
