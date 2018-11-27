@@ -746,6 +746,8 @@ buffer where knowing the current project directory is important."
              (buffer-file-name buffer-file-name))
     (if (or (eq doom-modeline-buffer-file-name-style 'buffer-name)
             (not (file-exists-p buffer-file-name))
+            (and (not uniquify-buffer-name-style)
+                 (not (eq uniquify-buffer-name-style 'post-forward-angle-brackets)))
             (string-equal
              (file-name-nondirectory buffer-file-name)
              (replace-regexp-in-string "<.+>$" "" buffer-name)))
