@@ -16,7 +16,8 @@ default.
 
 The `doom-modeline` was designed for minimalism and fast, and offers:
 
-- A match count panel (for `anzu`, `iedit`, `multi-cusor`, `evil-search` and `evil-substitute`)
+- A match count panel (for `anzu`, `iedit`, `multiple-cursors`, `symbol-overlay`,
+  `evil-search` and `evil-substitute`)
 - An indicator for recording a macro
 - Local `python`/`ruby`/`perl`/`go`/`elixir` version in the major-mode
 - A customizable mode-line height (see `doom-modeline-height`)
@@ -26,10 +27,10 @@ The `doom-modeline` was designed for minimalism and fast, and offers:
 - An indicator for `evil` state
 - An indicator for `god` state
 - An indicator for `ryo-modal` state
-- An indicator for remote host.
+- An indicator for remote host
 - An indicator for current input method
 - Truncated file names, file icon, buffer state and project name in buffer
-  information segment, which is compatible with `projectile` or `project`.
+  information segment, which is compatible with `projectile` or `project`
 
 ## Install
 

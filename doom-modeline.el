@@ -34,7 +34,8 @@
 ;; It's also integrated into Centaur Emacs (https://github.com/seagle0128/.emacs.d).
 ;;
 ;; The doom-modeline was designed for minimalism and fast, and offers:
-;; - A match count panel (for evil-search, iedit and evil-substitute)
+;; - A match count panel (for anzu, iedit, multiple-cursors, symbol-overlay,
+;;   evil-search and evil-substitute)
 ;; - An indicator for recording a macro
 ;; - Local python/ruby version in the major-mode
 ;; - A customizable mode-line height (see doom-modeline-height)
@@ -44,10 +45,10 @@
 ;; - An indicator for evil state
 ;; - An indicator for god state
 ;; - An indicator for ryo-modal state
-;; - An indicator for remote host.
+;; - An indicator for remote host
 ;; - An indicator for current input method
 ;; - Truncated file names, file icon, buffer state and project name in buffer
-;;   information segment, which is compatible with projectile or project.
+;;   information segment, which is compatible with projectile or project
 ;;
 ;; Installation:
 ;; From melpa, `M-x package-install RET doom-modeline RET`.
@@ -150,6 +151,8 @@ It returns a file name which can be used directly as argument of
 (defvar text-scale-mode-amount)
 (defvar winum-auto-setup-mode-line)
 (defvar mc/mode-line)
+(defvar symbol-overlay-keywords-alist)
+(defvar symbol-overlay-temp-symbol)
 
 (declare-function anzu--reset-status 'anzu)
 (declare-function anzu--where-is-here 'anzu)
@@ -177,8 +180,10 @@ It returns a file name which can be used directly as argument of
 (declare-function magit-toplevel 'magit-git)
 (declare-function project-current 'project)
 (declare-function project-roots 'project)
-(declare-function projectile-ensure-project 'projectile)
 (declare-function projectile-project-root 'projectile)
+(declare-function symbol-overlay-assoc 'symbol-overlay)
+(declare-function symbol-overlay-get-list 'symbol-overlay)
+(declare-function symbol-overlay-get-symbol 'symbol-overlay)
 (declare-function undo-tree-undo 'undo-tree)
 (declare-function window-numbering-clear-mode-line 'window-numbering)
 (declare-function window-numbering-get-number-string 'window-numbering)
@@ -186,6 +191,7 @@ It returns a file name which can be used directly as argument of
 (declare-function winum--clear-mode-line 'winum)
 (declare-function winum--install-mode-line 'winum)
 (declare-function winum-get-number-string 'winum)
+
 
 ;;
 ;; Custom faces
@@ -1079,6 +1085,23 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
                length))
      'face (if (doom-modeline--active) 'doom-modeline-panel))))
 
+(defsubst doom-modeline--symbol-overlay ()
+  "Show the number of matches for symbol overlay."
+  (when (and (bound-and-true-p symbol-overlay-keywords-alist)
+             (not (bound-and-true-p symbol-overlay-temp-symbol))
+             (not (bound-and-true-p iedit-mode)))
+    (let* ((keyword (symbol-overlay-assoc (symbol-overlay-get-symbol)))
+           (symbol (car keyword))
+           (before (symbol-overlay-get-list symbol 'car))
+           (after (symbol-overlay-get-list symbol 'cdr))
+           (count (length before)))
+      (if (symbol-overlay-assoc symbol)
+          (propertize
+           (format (concat  " %d/%d " (and (cadr keyword) "in scope "))
+                   (+ count 1)
+                   (+ count (length after)))
+           'face (if (doom-modeline--active) 'doom-modeline-panel))))))
+
 (defsubst doom-modeline--multiple-cursors ()
   "Show the number of multiple cursors."
   (when (bound-and-true-p multiple-cursors-mode)
@@ -1096,6 +1119,7 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
                       (doom-modeline--anzu)
                       (doom-modeline--evil-substitute)
                       (doom-modeline--iedit)
+                      (doom-modeline--symbol-overlay)
                       (doom-modeline--multiple-cursors))))
     (or (and (not (equal meta "")) meta)
         (if buffer-file-name " %I "))))
