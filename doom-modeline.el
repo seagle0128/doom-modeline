@@ -776,11 +776,15 @@ buffer where knowing the current project directory is important."
   "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
   (concat
-   (when (and doom-modeline-icon doom-modeline-major-mode-icon)
-     (or doom-modeline--buffer-file-icon (doom-modeline-update-buffer-file-icon)))
+   ;; major mode icon
+   (if (and doom-modeline-icon doom-modeline-major-mode-icon)
+       (or doom-modeline--buffer-file-icon (doom-modeline-update-buffer-file-icon)))
 
-   (or doom-modeline--buffer-file-state-icon (doom-modeline-update-buffer-file-state-icon))
+   ;; state icon
+   (if (doom-modeline--active)
+       (or doom-modeline--buffer-file-state-icon (doom-modeline-update-buffer-file-state-icon)))
 
+   ;; buffer file name
    (if (doom-modeline--active)
        (or doom-modeline--buffer-file-name (doom-modeline-update-buffer-file-name))
      "%b")))
