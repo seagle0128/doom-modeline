@@ -29,19 +29,25 @@
 
 ;;; Commentary:
 ;;
-;; This package offers a modern modeline them which is extraced from DOOM Emacs
+;; This package offers a modern modeline them which is extracted from DOOM Emacs
 ;; (https://github.com/hlissner/doom-emacs/tree/master/modules/ui/doom-modeline).
-;; It's also the part of Centaur Emacs (https://github.com/seagle0128/.emacs.d).
+;; It's also integrated into Centaur Emacs (https://github.com/seagle0128/.emacs.d).
 ;;
-;; The DOOM modeline was designed for minimalism, and offers:
-;; 1. A match count panel (for evil-search, iedit and evil-substitute)
-;; 2. An indicator for recording a macro
-;; 3. Local python/ruby version in the major-mode
-;; 4. A customizable mode-line height (see doom-modeline-height)
-;; 5. An error/warning count segment for flycheck
-;; 6. A workspace number segment for eyebrowse
-;; 7. A window number segment for winum and window-numbering
-;; 8. An indicator for evil state
+;; The doom-modeline was designed for minimalism and fast, and offers:
+;; - A match count panel (for evil-search, iedit and evil-substitute)
+;; - An indicator for recording a macro
+;; - Local python/ruby version in the major-mode
+;; - A customizable mode-line height (see doom-modeline-height)
+;; - An error/warning count segment for flycheck
+;; - A workspace number segment for eyebrowse
+;; - A window number segment for winum and window-numbering
+;; - An indicator for evil state
+;; - An indicator for god state
+;; - An indicator for ryo-modal state
+;; - An indicator for remote host.
+;; - An indicator for current input method
+;; - Truncated file names, file icon, buffer state and project name in buffer
+;;   information segment, which is compatible with projectile or project.
 ;;
 ;; Installation:
 ;; From melpa, `M-x package-install RET doom-modeline RET`.

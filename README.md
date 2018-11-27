@@ -5,12 +5,16 @@
 [![MELPA Stable](https://stable.melpa.org/packages/doom-modeline-badge.svg)](https://stable.melpa.org/#/doom-modeline)
 [![License](http://img.shields.io/:license-gpl3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
 
-A fancy mode-line from [DOOM Emacs](https://github.com/hlissner/doom-emacs/tree/master/modules/ui/doom-modeline).
-It's integrated to [Centaur Emacs](https://github.com/seagle0128/.emacs.d).
+A fast and fancy mode-line which is extracted from [DOOM
+Emacs](https://github.com/hlissner/doom-emacs/tree/master/modules/ui/doom-modeline),
+but it provides more features and it's much faster.
+
+It's integrated into [Centaur Emacs](https://github.com/seagle0128/.emacs.d) by
+default.
 
 ## Feature
 
-The DOOM modeline was designed for minimalism, and offers:
+The `doom-modeline` was designed for minimalism and fast, and offers:
 
 - A match count panel (for `anzu`, `iedit`, `multi-cusor`, `evil-search` and `evil-substitute`)
 - An indicator for recording a macro
@@ -24,7 +28,8 @@ The DOOM modeline was designed for minimalism, and offers:
 - An indicator for `ryo-modal` state
 - An indicator for remote host.
 - An indicator for current input method
-- Highlight project name in buffer information if `projectile` or `project` is available.
+- Truncated file names, file icon, buffer state and project name in buffer
+  information segment, which is compatible with `projectile` or `project`.
 
 ## Install
 
@@ -51,7 +56,8 @@ In `init.el`,
 This package requires the fonts included with `all-the-icons` to be installed.
 Run `M-x all-the-icons-install-fonts` to do so.
 
-Recommand to use [doom-themes](https://github.com/hlissner/emacs-doom-themes);
+Strongly recommend to use
+[doom-themes](https://github.com/hlissner/emacs-doom-themes) at the same time.
 
 ## Customize
 
@@ -90,12 +96,30 @@ Recommand to use [doom-themes](https://github.com/hlissner/emacs-doom-themes);
 
 ;; Whether show the icon for major mode. It should respect `doom-modeline-icon'.
 (setq doom-modeline-major-mode-icon t)
-
-;; Don’t compact font caches during GC.
-;; If you are expereicing the laggy issue especially on Windows, please set to
-;; non-nil.
-(setq inhibit-compacting-font-caches t)
 ```
+
+
+## FAQ
+
+1. I am experiencing the laggy issue on Windows, how to resolve it?
+
+   You need to add this configuration into your init file.
+
+   ``` emacs-lisp
+   ;; Don’t compact font caches during GC.
+   (setq inhibit-compacting-font-caches t)
+   ```
+
+1. A ridiculous path is displayed on mode-line while visiting a symbolink.
+
+    It's the default behaviors of Vanilla Emacs. If you want to display the real
+    names, please put this into your init file.
+
+    ``` emacs-lisp
+    (setq find-file-visit-truename t)
+    ```
+
+    If the file is controlled by vc, refer to `vc-follow-symlinks`.
 
 ## Screenshots
 
