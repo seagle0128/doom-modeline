@@ -323,15 +323,14 @@ active.")
 
 (defun doom-modeline-def-modeline (name lhs &optional rhs)
   "Defines a modeline format and byte-compiles it.
+NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
+LHS and RHS are lists of symbols of modeline segments defined with
+`doom-modeline-def-segment'.
 
-  NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
-  LHS and RHS are lists of symbols of modeline segments defined with
-  `doom-modeline-def-segment'.
-
-  Example:
+Example:
   (doom-modeline-def-modeline 'minimal
-                              '(bar matches \" \" buffer-info)
-                              '(media-info major-mode))
+     '(bar matches \" \" buffer-info)
+     '(media-info major-mode))
   (doom-modeline-set-modeline 'minimal t)"
   (let ((sym (intern (format "doom-modeline-format--%s" name)))
         (lhs-forms (doom-modeline--prepare-segments lhs))
@@ -352,16 +351,14 @@ active.")
 
 (defun doom-modeline (key)
   "Return a mode-line configuration associated with KEY (a symbol).
-
-  Throws an error if it doesn't exist."
+Throws an error if it doesn't exist."
   (let ((fn (intern-soft (format "doom-modeline-format--%s" key))))
     (when (functionp fn)
       `(:eval (,fn)))))
 
 (defun doom-modeline-set-modeline (key &optional default)
   "Set the modeline format. Does nothing if the modeline KEY doesn't exist.
-
-  If DEFAULT is non-nil, set the default mode-line for all buffers."
+If DEFAULT is non-nil, set the default mode-line for all buffers."
   (when-let ((modeline (doom-modeline key)))
     (setf (if default
               (default-value 'mode-line-format)
@@ -613,7 +610,6 @@ If TRUNCATE-TAIL is t also truncate the parent directory of the file."
 
 (defun doom-modeline--buffer-file-name (file-path _true-file-path &optional truncate-project-root-parent truncate-project-relative-path hide-project-root-parent)
   "Propertized variable `buffer-file-name' given by FILE-PATH.
-
 If TRUNCATE-PROJECT-ROOT-PARENT is non-nil will be saved by truncating project
 root parent down fish-shell style.
 
@@ -755,10 +751,9 @@ buffer where knowing the current project directory is important."
 
 (defun doom-modeline-fix-buffer-file-name ()
   "Fix buffer file name in mode-line.
-
-  Show buffer name if it doesn't equal the file name.
-  Format: \"buffer-file-name[buffer-name]\".
-  Except the same buffer names in different directories."
+Show buffer name if it doesn't equal the file name.
+Format: \"buffer-file-name[buffer-name]\".
+Except the same buffer names in different directories."
   (when-let ((file-name (doom-modeline-buffer-file-name))
              (buffer-name (buffer-name))
              (buffer-file-name buffer-file-name))
@@ -1115,8 +1110,10 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 
 (doom-modeline-def-segment matches
   "Displays: 1. the currently recording macro, 2. A current/total for the
-current search term (with anzu), 3. The number of substitutions being conducted
-with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
+current search term (with `anzu'), 3. The number of substitutions being conducted
+with `evil-ex-substitute', and/or 4. The number of active `iedit' regions,
+5. The current/total for the highlight term (with `symbol-overlay'), 6. The number
+of active `multiple-cursors'."
   (let ((meta (concat (doom-modeline--macro-recording)
                       (doom-modeline--anzu)
                       (doom-modeline--evil-substitute)
@@ -1149,7 +1146,7 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 (defvar doom-modeline--bar-inactive nil)
 (doom-modeline-def-segment bar
   "The bar regulates the height of the mode-line in GUI Emacs.
-  Returns \"\" to not break --no-window-system."
+Returns \"\" to not break --no-window-system."
   (if (display-graphic-p)
       (if (doom-modeline--active)
           doom-modeline--bar-active
@@ -1181,7 +1178,6 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions."
 ;; HACK: `ace-window-display-mode' should respect the ignore buffers.
 (defun doom-modeline-aw-update ()
   "Update ace-window-path window parameter for all windows.
-
 Ensure all windows are labeled so the user can select a specific
 one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
   (let ((ignore-window-parameters t))
@@ -1227,8 +1223,8 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
 ;;
 
 (doom-modeline-def-segment workspace-number
-  "The current workspace name or number. Requires `eyebrowse-mode' to be
-enabled."
+  "The current workspace name or number.
+Requires `eyebrowse-mode' to be enabled."
   (if (and (bound-and-true-p eyebrowse-mode)
            (< 1 (length (eyebrowse--get 'window-configs))))
       (let* ((num (eyebrowse--get 'current-slot))
@@ -1354,24 +1350,24 @@ See `mode-line-percent-position'.")
 ;;
 
 (doom-modeline-def-modeline 'main
-                            '(bar workspace-number window-number evil-state god-state ryo-modal-state matches " " buffer-info remote-host buffer-position " " selection-info)
-                            '(global input-method buffer-encoding major-mode process vcs flycheck))
+  '(bar workspace-number window-number evil-state god-state ryo-modal-state matches " " buffer-info remote-host buffer-position " " selection-info)
+  '(global input-method buffer-encoding major-mode process vcs flycheck))
 
 (doom-modeline-def-modeline 'minimal
-                            '(bar matches " " buffer-info)
-                            '(media-info major-mode))
+  '(bar matches " " buffer-info)
+  '(media-info major-mode))
 
 (doom-modeline-def-modeline 'special
-                            '(bar window-number evil-state god-state ryo-modal-state matches " " buffer-info-simple buffer-position " " selection-info)
-                            '(global input-method buffer-encoding major-mode process flycheck))
+  '(bar window-number evil-state god-state ryo-modal-state matches " " buffer-info-simple buffer-position " " selection-info)
+  '(global input-method buffer-encoding major-mode process flycheck))
 
 (doom-modeline-def-modeline 'project
-                            '(bar window-number buffer-default-directory)
-                            '(global major-mode))
+  '(bar window-number buffer-default-directory)
+  '(global major-mode))
 
 (doom-modeline-def-modeline 'media
-                            '(bar window-number " %b  ")
-                            '(global media-info major-mode))
+  '(bar window-number " %b  ")
+  '(global media-info major-mode))
 
 ;;
 ;; Hooks
