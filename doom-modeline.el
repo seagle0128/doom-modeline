@@ -375,12 +375,13 @@ active.")
   Return `default-directory' if no project was found."
   (or doom-modeline-project-root
       (setq doom-modeline-project-root
-            (or
-             (when (featurep 'projectile) (projectile-project-root))
-             (when (featurep 'project)
-               (when-let ((project (project-current)))
-                 (expand-file-name (car (project-roots project)))))
-             (file-local-name default-directory)))))
+            (file-local-name
+             (or
+              (when (featurep 'projectile) (projectile-project-root))
+              (when (featurep 'project)
+                (when-let ((project (project-current)))
+                  (expand-file-name (car (project-roots project)))))
+              default-directory)))))
 
 ;; Disable projectile mode-line segment
 (setq projectile-dynamic-mode-line nil)
