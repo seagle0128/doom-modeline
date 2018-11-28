@@ -1090,12 +1090,12 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
   (when (and (bound-and-true-p symbol-overlay-keywords-alist)
              (not (bound-and-true-p symbol-overlay-temp-symbol))
              (not (bound-and-true-p iedit-mode)))
-    (let* ((keyword (symbol-overlay-assoc
-                     (ignore-errors (symbol-overlay-get-symbol))))
-           (symbol (car keyword))
-           (before (symbol-overlay-get-list symbol 'car))
-           (after (symbol-overlay-get-list symbol 'cdr))
-           (count (length before)))
+    (when-let* ((keyword (symbol-overlay-assoc
+                          (ignore-errors (symbol-overlay-get-symbol))))
+                (symbol (car keyword))
+                (before (symbol-overlay-get-list symbol 'car))
+                (after (symbol-overlay-get-list symbol 'cdr))
+                (count (length before)))
       (if (symbol-overlay-assoc symbol)
           (propertize
            (format (concat  " %d/%d " (and (cadr keyword) "in scope "))
