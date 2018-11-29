@@ -1399,6 +1399,11 @@ See `mode-line-percent-position'.")
         (doom-modeline-set-modeline 'main)))))
 
 ;;;###autoload
+(defun doom-modeline-set-minimal-modeline ()
+  "Set sepcial mode-line."
+  (doom-modeline-set-modeline 'minimal))
+
+;;;###autoload
 (defun doom-modeline-set-special-modeline ()
   "Set sepcial mode-line."
   (doom-modeline-set-modeline 'special))
@@ -1422,6 +1427,7 @@ See `mode-line-percent-position'.")
 (add-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
 (add-hook 'org-src-mode-hook #'doom-modeline-set-special-modeline)
 (add-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
+(add-hook 'dashboard-mode-hook #'doom-modeline-set-minimal-modeline)
 
 ;; Versions, support Python, Ruby, Perl and Golang, etc.
 (add-hook 'python-mode-hook
