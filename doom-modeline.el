@@ -374,7 +374,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
       (setq doom-modeline-project-root
             (file-local-name
              (or
-              (when (featurep 'projectile) (projectile-project-root))
+              (when (featurep 'projectile)
+                (ignore-errors (projectile-project-root)))
               (when (featurep 'project)
                 (when-let ((project (project-current)))
                   (expand-file-name (car (project-roots project)))))
