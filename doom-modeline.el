@@ -377,8 +377,9 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
               (when (featurep 'projectile)
                 (ignore-errors (projectile-project-root)))
               (when (featurep 'project)
-                (when-let ((project (project-current)))
-                  (expand-file-name (car (project-roots project)))))
+                (ignore-errors
+                  (when-let ((project (project-current)))
+                    (expand-file-name (car (project-roots project))))))
               default-directory)))))
 
 ;; Disable projectile mode-line segment
