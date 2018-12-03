@@ -542,8 +542,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
 (defun doom-modeline-buffer-file-name ()
   "Propertized variable `buffer-file-name' based on `doom-modeline-buffer-file-name-style'."
-  (let ((buffer-file-name (file-local-name (or (buffer-file-name (buffer-base-buffer)) "")))
-        (buffer-file-truename (file-local-name (or buffer-file-truename (file-truename buffer-file-name) ""))))
+  (let* ((buffer-file-name (file-local-name (or (buffer-file-name (buffer-base-buffer)) "")))
+         (buffer-file-truename (file-local-name (or buffer-file-truename (file-truename buffer-file-name) ""))))
     (propertize
      (pcase doom-modeline-buffer-file-name-style
        (`truncate-upto-project
@@ -642,15 +642,15 @@ Example:
         (concat
          ;; project root parent
          (unless hide-project-root-parent
-           (propertize
-            (when-let (root-path-parent
-                       (file-name-directory (directory-file-name project-root)))
+           (when-let (root-path-parent
+                      (file-name-directory (directory-file-name project-root)))
+             (propertize
               (if (and truncate-project-root-parent
                        (not (string-empty-p root-path-parent))
                        (not (string-equal root-path-parent "/")))
                   (shrink-path--dirs-internal root-path-parent t)
-                (abbreviate-file-name root-path-parent)))
-            'face sp-props))
+                (abbreviate-file-name root-path-parent))
+              'face sp-props)))
          ;; project
          (propertize
           (concat (file-name-nondirectory (directory-file-name project-root)) "/")
