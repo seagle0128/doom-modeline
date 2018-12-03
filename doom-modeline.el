@@ -573,7 +573,10 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
                          (and (doom-modeline--active)
                               'doom-modeline-buffer-file))))
            (when face `(:inherit ,face))))))
-     'help-echo buffer-file-truename)))
+     'help-echo (concat buffer-file-truename
+                        (unless (string-equal (buffer-name)
+                                              (file-name-nondirectory buffer-file-truename))
+                          (concat "\n" (buffer-name)))))))
 
 (defun doom-modeline--buffer-file-name-truncate (file-path true-file-path &optional truncate-tail)
   "Propertized variable `buffer-file-name' that truncates every dir along path.
@@ -751,30 +754,12 @@ buffer where knowing the current project directory is important."
 (advice-add #'undo-tree-undo :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'narrow-to-region :after #'doom-modeline-update-buffer-file-state-icon)
 
-(defun doom-modeline-fix-buffer-file-name ()
-  "Fix buffer file name in mode-line.
-Show buffer name if it doesn't equal the file name.
-Format: \"buffer-file-name[buffer-name]\".
-Except the same buffer names in different directories."
-  (when-let ((file-name (doom-modeline-buffer-file-name))
-             (buffer-name (buffer-name))
-             (buffer-file-name buffer-file-name))
-    (if (or (eq doom-modeline-buffer-file-name-style 'buffer-name)
-            (not (file-exists-p buffer-file-name))
-            (and (not uniquify-buffer-name-style)
-                 (not (eq uniquify-buffer-name-style 'post-forward-angle-brackets)))
-            (string-equal
-             (file-name-nondirectory buffer-file-name)
-             (replace-regexp-in-string "<.+>$" "" buffer-name)))
-        file-name
-      (format "%s[%s]" file-name buffer-name))))
-
 (defvar-local doom-modeline--buffer-file-name nil)
 (defun doom-modeline-update-buffer-file-name (&rest _)
   "Update buffer file name in mode-line."
   (setq doom-modeline--buffer-file-name
         (if buffer-file-name
-            (doom-modeline-fix-buffer-file-name)
+            (doom-modeline-buffer-file-name)
           (propertize "%b" 'face (if (doom-modeline--active) 'doom-modeline-buffer-file)))))
 (add-hook 'find-file-hook 'doom-modeline-update-buffer-file-name)
 (add-hook 'after-save-hook 'doom-modeline-update-buffer-file-name)
