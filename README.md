@@ -23,6 +23,7 @@ The `doom-modeline` was designed for minimalism and fast, and offers:
 - A customizable mode-line height (see `doom-modeline-height`)
 - An error/warning count segment for `flycheck`
 - A workspace number segment for `eyebrowse`
+- A perspective name segment for `persp-mode`
 - A window number segment for `ace-window`, `winum` and `window-numbering`
 - An indicator for `evil` state
 - An indicator for `god` state
@@ -98,7 +99,6 @@ Strongly recommend to use
 ;; Whether show the icon for major mode. It should respect `doom-modeline-icon'.
 (setq doom-modeline-major-mode-icon t)
 ```
-
 
 ## FAQ
 
