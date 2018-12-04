@@ -109,6 +109,9 @@ The icons may not be showed correctly in terminal and on Windows.")
 (defvar doom-modeline-major-mode-icon t
   "Whether show the icon for major mode. It should respect `doom-modeline-icon'.")
 
+(defvar doom-modeline-minor-modes nil
+  "Whether display minor modes or not. Non-nil to display in mode-line.")
+
 
 ;;
 ;; compatibility
@@ -1273,13 +1276,32 @@ Requires `eyebrowse-mode' to be enabled."
 
 
 ;;
+;; minor modes
+;;
+
+(doom-modeline-def-segment minor-modes
+  (when doom-modeline-minor-modes
+    `((:propertize  (" " minor-mode-alist " ")
+                    mouse-face mode-line-highlight
+                    help-echo "Minor mode\n\
+mouse-1: Display minor mode menu\n\
+mouse-2: Show help for minor mode\n\
+mouse-3: Toggle minor modes"
+                    local-map ,mode-line-minor-mode-keymap)
+      (:propertize "%n"
+                   mouse-face mode-line-highlight
+                   help-echo "mouse-2: Remove narrowing from buffer"
+                   local-map ,(make-mode-line-mouse-map
+                               'mouse-2 #'mode-line-widen)))))
+
+;;
 ;; global
 ;;
 
 (doom-modeline-def-segment global
   "For the time string and whatever uses global-mode-string."
   (if (< 0 (length global-mode-string))
-      '(" " global-mode-string " ")
+      '("" global-mode-string " ")
     ""))
 
 
@@ -1361,12 +1383,12 @@ See `mode-line-percent-position'.")
   "The current input method."
   (cond
    (current-input-method
-    (concat current-input-method-title "  "))
+    (concat " " current-input-method-title " "))
    ((and (bound-and-true-p evil-local-mode)
          (bound-and-true-p evil-input-method))
     (concat
      (nth 3 (assoc default-input-method input-method-alist))
-     "  "))))
+     " "))))
 
 
 ;;
@@ -1386,7 +1408,7 @@ See `mode-line-percent-position'.")
 
 (doom-modeline-def-modeline 'main
   '(bar workspace-number window-number evil-state god-state ryo-modal-state matches " " buffer-info remote-host buffer-position " " selection-info)
-  '(global persp-name input-method buffer-encoding major-mode process vcs flycheck))
+  '(global persp-name minor-modes input-method buffer-encoding major-mode process vcs flycheck))
 
 (doom-modeline-def-modeline 'minimal
   '(bar matches " " buffer-info)

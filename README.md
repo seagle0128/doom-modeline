@@ -98,6 +98,9 @@ Strongly recommend to use
 
 ;; Whether show the icon for major mode. It should respect `doom-modeline-icon'.
 (setq doom-modeline-major-mode-icon t)
+
+;; Whether display minor modes or not. Non-nil to display in mode-line.
+(setq doom-modeline-minor-modes nil)
 ```
 
 ## FAQ
