@@ -1404,6 +1404,7 @@ See `mode-line-percent-position'.")
       ((and (bound-and-true-p evil-local-mode)
             (bound-and-true-p evil-input-method))
        (concat
+        " "
         (nth 3 (assoc default-input-method input-method-alist))
         " "))
       (t ""))
