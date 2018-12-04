@@ -826,6 +826,17 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 
 ;;
+;; remote host
+;;
+
+(doom-modeline-def-segment remote-host
+  "Hostname for remote buffers."
+  (when default-directory
+    (when-let ((host (file-remote-p default-directory 'host)))
+      (concat "@" host))))
+
+
+;;
 ;; major-mode
 ;;
 
@@ -859,6 +870,27 @@ mouse-3: Toggle minor modes"
 (doom-modeline-def-segment process
   "The process info."
   mode-line-process)
+
+
+;;
+;; minor modes
+;;
+
+(doom-modeline-def-segment minor-modes
+  (when doom-modeline-minor-modes
+    `((:propertize  (" " minor-mode-alist " ")
+                    mouse-face mode-line-highlight
+                    help-echo "Minor mode\n\
+mouse-1: Display minor mode menu\n\
+mouse-2: Show help for minor mode\n\
+mouse-3: Toggle minor modes"
+                    local-map ,mode-line-minor-mode-keymap)
+      (:propertize "%n"
+                   mouse-face mode-line-highlight
+                   help-echo "mouse-2: Remove narrowing from buffer"
+                   local-map ,(make-mode-line-mouse-map
+                               'mouse-2 #'mode-line-widen)))))
+
 
 ;;
 ;; vcs
@@ -1276,31 +1308,13 @@ Requires `eyebrowse-mode' to be enabled."
 
 
 ;;
-;; minor modes
-;;
-
-(doom-modeline-def-segment minor-modes
-  (when doom-modeline-minor-modes
-    `((:propertize  (" " minor-mode-alist " ")
-                    mouse-face mode-line-highlight
-                    help-echo "Minor mode\n\
-mouse-1: Display minor mode menu\n\
-mouse-2: Show help for minor mode\n\
-mouse-3: Toggle minor modes"
-                    local-map ,mode-line-minor-mode-keymap)
-      (:propertize "%n"
-                   mouse-face mode-line-highlight
-                   help-echo "mouse-2: Remove narrowing from buffer"
-                   local-map ,(make-mode-line-mouse-map
-                               'mouse-2 #'mode-line-widen)))))
-
-;;
 ;; global
 ;;
 
 (doom-modeline-def-segment global
   "For the time string and whatever uses global-mode-string."
-  (if (< 0 (length global-mode-string))
+  (if (and (doom-modeline--active)
+           (< 0 (length global-mode-string)))
       '("" global-mode-string " ")
     ""))
 
@@ -1381,25 +1395,17 @@ See `mode-line-percent-position'.")
 
 (doom-modeline-def-segment input-method
   "The current input method."
-  (cond
-   (current-input-method
-    (concat " " current-input-method-title " "))
-   ((and (bound-and-true-p evil-local-mode)
-         (bound-and-true-p evil-input-method))
-    (concat
-     (nth 3 (assoc default-input-method input-method-alist))
-     " "))))
-
-
-;;
-;; remote host
-;;
-
-(doom-modeline-def-segment remote-host
-  "Hostname for remote buffers."
-  (when default-directory
-    (when-let ((host (file-remote-p default-directory 'host)))
-      (concat "@" host))))
+  (when (doom-modeline--active)
+    (propertize
+     (cond
+      (current-input-method
+       (concat " " current-input-method-title " "))
+      ((and (bound-and-true-p evil-local-mode)
+            (bound-and-true-p evil-input-method))
+       (concat
+        (nth 3 (assoc default-input-method input-method-alist))
+        " ")))
+     'face 'doom-modeline-buffer-major-mode)))
 
 
 ;;
