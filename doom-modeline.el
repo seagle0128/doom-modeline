@@ -288,7 +288,7 @@ active.")
 (defface doom-modeline-persp-name '((t (:inherit font-lock-comment-face :italic t)))
   "Face for the replace state tag in evil state indicator.")
 
-(defface doom-modeline-persp-buffer-not-in-persp '((t (:inherit doom-modeline-persp-name :bold t)))
+(defface doom-modeline-persp-buffer-not-in-persp '((t (:inherit font-lock-doc-face :bold t)))
   "Face for the replace state tag in evil state indicator.")
 
 
@@ -1405,7 +1405,8 @@ See `mode-line-percent-position'.")
             (bound-and-true-p evil-input-method))
        (concat
         (nth 3 (assoc default-input-method input-method-alist))
-        " ")))
+        " "))
+      (t ""))
      'face 'doom-modeline-buffer-major-mode)))
 
 
