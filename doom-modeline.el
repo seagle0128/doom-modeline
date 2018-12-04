@@ -801,14 +801,14 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 (doom-modeline-def-segment buffer-encoding
   "Displays the encoding and eol style of the buffer the same way Atom does."
   (concat (pcase (coding-system-eol-type buffer-file-coding-system)
-            (0 "LF  ")
-            (1 "CRLF  ")
-            (2 "CR  "))
+            (0 " LF ")
+            (1 " RLF ")
+            (2 " CR "))
           (let ((sys (coding-system-plist buffer-file-coding-system)))
             (cond ((memq (plist-get sys :category) '(coding-category-undecided coding-category-utf-8))
-                   "UTF-8")
+                   " UTF-8 ")
                   (t (upcase (symbol-name (plist-get sys :name))))))
-          "  "))
+          " "))
 
 
 ;;
