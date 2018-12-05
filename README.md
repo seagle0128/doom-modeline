@@ -28,6 +28,7 @@ The `doom-modeline` was designed for minimalism and fast, and offers:
 - An indicator for `evil` state
 - An indicator for `god` state
 - An indicator for `ryo-modal` state
+- An indicator for `xah-fly-keys` state
 - An indicator for remote host
 - An indicator for current input method
 - Truncated file names, file icon, buffer state and project name in buffer

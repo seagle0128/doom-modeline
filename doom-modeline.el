@@ -46,6 +46,7 @@
 ;; - An indicator for evil state
 ;; - An indicator for god state
 ;; - An indicator for ryo-modal state
+;; - An indicator for xah-fly-keys state
 ;; - An indicator for remote host
 ;; - An indicator for current input method
 ;; - Truncated file names, file icon, buffer state and project name in buffer
@@ -151,12 +152,13 @@ It returns a file name which can be used directly as argument of
 (defvar flycheck-current-errors)
 (defvar iedit-mode)
 (defvar iedit-occurrences-overlays)
-(defvar persp-nil-name)
-(defvar text-scale-mode-amount)
-(defvar winum-auto-setup-mode-line)
 (defvar mc/mode-line)
+(defvar persp-nil-name)
 (defvar symbol-overlay-keywords-alist)
 (defvar symbol-overlay-temp-symbol)
+(defvar text-scale-mode-amount)
+(defvar winum-auto-setup-mode-line)
+(defvar xah-fly-insert-state-q)
 
 (declare-function anzu--reset-status 'anzu)
 (declare-function anzu--where-is-here 'anzu)
@@ -1382,12 +1384,25 @@ See `mode-line-percent-position'.")
 ;; ryo-modal state
 ;;
 
-(doom-modeline-def-segment ryo-modal-state ()
+(doom-modeline-def-segment ryo-modal ()
   "The current ryo-modal state. Requires `ryo-modal-mode' to be enabled."
   (when (bound-and-true-p ryo-modal-mode)
     (propertize " <R> " 'face (if (doom-modeline--active)
                                   'doom-modeline-evil-normal-state))))
 
+
+;;
+;; xah-fly-keys state
+;;
+
+(doom-modeline-def-segment xah-fly-keys ()
+  "The current xah-fly-keys state."
+  (when (boundp xah-fly-insert-state-q)
+    (propertize (if xah-fly-insert-state-q
+                    " <I> "
+                  " <C> ")
+                'face (if (doom-modeline--active)
+                          'doom-modeline-evil-normal-state))))
 
 ;;
 ;; input method
@@ -1415,7 +1430,7 @@ See `mode-line-percent-position'.")
 ;;
 
 (doom-modeline-def-modeline 'main
-  '(bar workspace-number window-number evil-state god-state ryo-modal-state matches " " buffer-info remote-host buffer-position " " selection-info)
+  '(bar workspace-number window-number evil-state god-state ryo-modal xah-fly-keys matches " " buffer-info remote-host buffer-position " " selection-info)
   '(global persp-name minor-modes input-method buffer-encoding major-mode process vcs flycheck))
 
 (doom-modeline-def-modeline 'minimal
@@ -1423,7 +1438,7 @@ See `mode-line-percent-position'.")
   '(media-info major-mode))
 
 (doom-modeline-def-modeline 'special
-  '(bar window-number evil-state god-state ryo-modal-state matches " " buffer-info-simple buffer-position " " selection-info)
+  '(bar window-number evil-state god-state ryo-modal xah-fly-keys matches " " buffer-info-simple buffer-position " " selection-info)
   '(global input-method buffer-encoding major-mode process flycheck))
 
 (doom-modeline-def-modeline 'project
