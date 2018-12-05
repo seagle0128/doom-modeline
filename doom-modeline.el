@@ -987,7 +987,7 @@ Uses `all-the-icons-material' to fetch the icon."
            (`suspicious  (doom-modeline-flycheck-icon "priority_high" "Suspicious" 'doom-modeline-urgent))
            (_ (if vc-mode " " "  ")))
          'help-echo (pcase status
-                      ('finished "Display errors found by Flycheck")
+                      ('finished "mouse-1: Display warnings and errors")
                       ('running "Running...")
                       ('no-checker "No Checker")
                       ('not-checked "Not Checked")
@@ -1304,14 +1304,16 @@ Requires `eyebrowse-mode' to be enabled."
              'face (if (and persp
                             (not (persp-contain-buffer-p (current-buffer) persp)))
                        'doom-modeline-persp-buffer-not-in-persp
-                     'doom-modeline-persp-name))))))
+                     'doom-modeline-persp-name)
+             'mouse-face 'mode-line-highlight
+             'help-echo "mouse1: switch perspectives"
+             'local-map (make-mode-line-mouse-map 'mouse-1 #'persp-switch))))))
 
 (add-hook 'find-file-hook #'doom-modeline-update-persp-name)
 (add-hook 'after-revert-hook #'doom-modeline-update-persp-name)
 (add-hook 'persp-after-load-state-functions #'doom-modeline-update-persp-name)
 (add-hook 'persp-created-functions #'doom-modeline-update-persp-name)
 (add-hook 'persp-renamed-functions #'doom-modeline-update-persp-name)
-
 (advice-add #'select-window :after #'doom-modeline-update-persp-name)
 (advice-add #'persp-add-buffer :after #'doom-modeline-update-persp-name)
 (advice-add #'persp-remove-buffer :after #'doom-modeline-update-persp-name)
