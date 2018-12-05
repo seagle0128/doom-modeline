@@ -1411,7 +1411,7 @@ See `mode-line-percent-position'.")
 
 (doom-modeline-def-segment xah-fly-keys ()
   "The current xah-fly-keys state."
-  (when (boundp xah-fly-insert-state-q)
+  (when (boundp 'xah-fly-insert-state-q)
     (propertize (if xah-fly-insert-state-q
                     " <I> "
                   " <C> ")
