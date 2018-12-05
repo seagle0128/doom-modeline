@@ -180,6 +180,7 @@ It returns a file name which can be used directly as argument of
 (declare-function eyebrowse--get 'eyebrowse)
 (declare-function face-remap-remove-relative 'face-remap)
 (declare-function flycheck-count-errors 'flycheck)
+(declare-function flycheck-list-errors 'flycheck)
 (declare-function iedit-find-current-occurrence-overlay 'iedit-lib)
 (declare-function iedit-prev-occurrence 'iedit-lib)
 (declare-function image-get-display-property 'image-mode)
@@ -966,25 +967,38 @@ Uses `all-the-icons-material' to fetch the icon."
           (if vc-mode "  " " ")))
 
 (defvar-local doom-modeline--flycheck nil)
-(add-hook 'flycheck-status-changed-functions #'doom-modeline-update-flycheck-segment)
-(add-hook 'flycheck-mode-hook #'doom-modeline-update-flycheck-segment)
-
 (defun doom-modeline-update-flycheck-segment (&optional status)
   "Update flycheck segment via STATUS."
   (setq doom-modeline--flycheck
-        (pcase status
-          (`finished (if flycheck-current-errors
-                         (let-alist (flycheck-count-errors flycheck-current-errors)
-                           (let ((sum (+ (or .error 0) (or .warning 0))))
-                             (doom-modeline-flycheck-icon "do_not_disturb_alt"
-                                                          (number-to-string sum)
-                                                          (if .error 'doom-modeline-urgent 'doom-modeline-warning)
-                                                          -0.2)))
-                       (doom-modeline-flycheck-icon "check" nil 'doom-modeline-info)))
-          (`running     (doom-modeline-flycheck-icon "access_time" nil 'font-lock-doc-face -0.25))
-          (`no-checker  (doom-modeline-flycheck-icon "sim_card_alert" "-" 'font-lock-doc-face))
-          (`errored     (doom-modeline-flycheck-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
-          (`interrupted (doom-modeline-flycheck-icon "pause" "Interrupted" 'font-lock-doc-face)))))
+        (propertize
+         (pcase status
+           (`finished (if flycheck-current-errors
+                          (let-alist (flycheck-count-errors flycheck-current-errors)
+                            (let ((sum (+ (or .error 0) (or .warning 0))))
+                              (doom-modeline-flycheck-icon "do_not_disturb_alt"
+                                                           (number-to-string sum)
+                                                           (if .error 'doom-modeline-urgent 'doom-modeline-warning)
+                                                           -0.2)))
+                        (doom-modeline-flycheck-icon "check" nil 'doom-modeline-info)))
+           (`running     (doom-modeline-flycheck-icon "access_time" nil 'font-lock-doc-face -0.25))
+           (`no-checker  (doom-modeline-flycheck-icon "sim_card_alert" "-" 'font-lock-doc-face))
+           (`errored     (doom-modeline-flycheck-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
+           (`interrupted (doom-modeline-flycheck-icon "pause" "Interrupted" 'font-lock-doc-face))
+           (`suspicious  (doom-modeline-flycheck-icon "priority_high" "Suspicious" 'doom-modeline-urgent))
+           (_ (if vc-mode " " "  ")))
+         'help-echo (pcase status
+                      ('finished "Display errors found by Flycheck")
+                      ('running "Running...")
+                      ('no-checker "No Checker")
+                      ('not-checked "Not Checked")
+                      ('errored "Error")
+                      ('interrupted "Interrupted")
+                      ('suspicious "Suspicious"))
+         'mouse-face '(:box 1)
+         'local-map (make-mode-line-mouse-map
+                     'mouse-1 #'flycheck-list-errors))))
+(add-hook 'flycheck-status-changed-functions #'doom-modeline-update-flycheck-segment)
+(add-hook 'flycheck-mode-hook #'doom-modeline-update-flycheck-segment)
 
 (doom-modeline-def-segment flycheck
   "Displays color-coded flycheck error status in the current buffer with pretty
