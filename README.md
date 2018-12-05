@@ -31,6 +31,7 @@ The `doom-modeline` was designed for minimalism and fast, and offers:
 - An indicator for `xah-fly-keys` state
 - An indicator for remote host
 - An indicator for current input method
+- An indicator for `LSP` state
 - Truncated file names, file icon, buffer state and project name in buffer
   information segment, which is compatible with `projectile` or `project`
 

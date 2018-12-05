@@ -49,6 +49,7 @@
 ;; - An indicator for xah-fly-keys state
 ;; - An indicator for remote host
 ;; - An indicator for current input method
+;; - An indicator for LSP state
 ;; - Truncated file names, file icon, buffer state and project name in buffer
 ;;   information segment, which is compatible with projectile or project
 ;;
@@ -184,6 +185,7 @@ It returns a file name which can be used directly as argument of
 (declare-function iedit-find-current-occurrence-overlay 'iedit-lib)
 (declare-function iedit-prev-occurrence 'iedit-lib)
 (declare-function image-get-display-property 'image-mode)
+(declare-function lsp-mode-line 'lsp-mode)
 (declare-function magit-toplevel 'magit-git)
 (declare-function safe-persp-name 'persp-mode)
 (declare-function get-current-persp 'persp-mode)
@@ -822,9 +824,9 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 (doom-modeline-def-segment buffer-encoding
   "Displays the encoding and eol style of the buffer the same way Atom does."
   (concat (pcase (coding-system-eol-type buffer-file-coding-system)
-            (0 " LF ")
-            (1 " RLF ")
-            (2 " CR "))
+            (0 " LF")
+            (1 " RLF")
+            (2 " CR"))
           (let ((sys (coding-system-plist buffer-file-coding-system)))
             (cond ((memq (plist-get sys :category) '(coding-category-undecided coding-category-utf-8))
                    " UTF-8 ")
@@ -886,8 +888,7 @@ mouse-3: Toggle minor modes"
 (doom-modeline-def-segment minor-modes
   (when doom-modeline-minor-modes
     (propertize
-     (concat " "
-             (format-mode-line `(:propertize ("" minor-mode-alist)))
+     (concat (format-mode-line `(:propertize ("" minor-mode-alist)))
              " ")
      'face (if (doom-modeline--active) 'doom-modeline-buffer-minor-mode))))
 
@@ -1439,12 +1440,22 @@ See `mode-line-percent-position'.")
 
 
 ;;
+;; LSP
+;;
+
+(doom-modeline-def-segment lsp
+  "The LSP server state."
+  (if (and (doom-modeline--active)
+           (bound-and-true-p lsp-mode))
+      (concat (lsp-mode-line) " ")))
+
+;;
 ;; Mode lines
 ;;
 
 (doom-modeline-def-modeline 'main
   '(bar workspace-number window-number evil-state god-state ryo-modal xah-fly-keys matches " " buffer-info remote-host buffer-position " " selection-info)
-  '(global persp-name minor-modes input-method buffer-encoding major-mode process vcs flycheck))
+  '(global persp-name lsp minor-modes input-method buffer-encoding major-mode process vcs flycheck))
 
 (doom-modeline-def-modeline 'minimal
   '(bar matches " " buffer-info)
@@ -1452,7 +1463,7 @@ See `mode-line-percent-position'.")
 
 (doom-modeline-def-modeline 'special
   '(bar window-number evil-state god-state ryo-modal xah-fly-keys matches " " buffer-info-simple buffer-position " " selection-info)
-  '(global input-method buffer-encoding major-mode process flycheck))
+  '(global lsp minor-modes input-method buffer-encoding major-mode process flycheck))
 
 (doom-modeline-def-modeline 'project
   '(bar window-number buffer-default-directory)
