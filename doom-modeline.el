@@ -887,19 +887,7 @@ mouse-3: Toggle minor modes"
   (when doom-modeline-minor-modes
     (propertize
      (concat " "
-             (format-mode-line
-              `((:propertize ("" minor-mode-alist)
-                             mouse-face mode-line-highlight
-                             help-echo "Minor mode\n\
-mouse-1: Display minor mode menu\n\
-mouse-2: Show help for minor mode\n\
-mouse-3: Toggle minor modes"
-                             local-map ,mode-line-minor-mode-keymap)
-                (:propertize "%n"
-                             mouse-face mode-line-highlight
-                             help-echo "mouse-2: Remove narrowing from buffer"
-                             local-map ,(make-mode-line-mouse-map
-                                         'mouse-2 #'mode-line-widen))))
+             (format-mode-line `(:propertize ("" minor-mode-alist)))
              " ")
      'face (if (doom-modeline--active) 'doom-modeline-buffer-minor-mode))))
 
