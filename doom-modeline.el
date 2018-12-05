@@ -396,9 +396,6 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
                     (expand-file-name (car (project-roots project))))))
               default-directory)))))
 
-;; Disable projectile mode-line segment
-(setq projectile-dynamic-mode-line nil)
-
 
 ;;
 ;; Plugins
