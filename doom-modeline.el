@@ -190,6 +190,7 @@ It returns a file name which can be used directly as argument of
 (declare-function persp-contain-buffer-p 'persp-mode)
 (declare-function persp-add-buffer 'persp-mode)
 (declare-function persp-remove-buffer 'persp-mode)
+(declare-function persp-switch 'persp-mode)
 (declare-function project-current 'project)
 (declare-function project-roots 'project)
 (declare-function projectile-project-root 'projectile)
@@ -228,6 +229,10 @@ It returns a file name which can be used directly as argument of
 (defface doom-modeline-buffer-major-mode
   '((t (:inherit (mode-line-emphasis bold))))
   "Face used for the major-mode segment in the mode-line.")
+
+(defface doom-modeline-buffer-minor-mode
+  '((t (:inherit (mode-line-buffer-id bold))))
+  "Face used for the minor-modes segment in the mode-line.")
 
 (defface doom-modeline-project-root-dir
   '((t (:inherit (mode-line-emphasis bold))))
@@ -880,19 +885,23 @@ mouse-3: Toggle minor modes"
 
 (doom-modeline-def-segment minor-modes
   (when doom-modeline-minor-modes
-    `((:propertize  ("" minor-mode-alist)
-                    mouse-face mode-line-highlight
-                    help-echo "Minor mode\n\
+    (propertize
+     (concat " "
+             (format-mode-line
+              `((:propertize ("" minor-mode-alist)
+                             mouse-face mode-line-highlight
+                             help-echo "Minor mode\n\
 mouse-1: Display minor mode menu\n\
 mouse-2: Show help for minor mode\n\
 mouse-3: Toggle minor modes"
-                    local-map ,mode-line-minor-mode-keymap)
-      (:propertize "%n"
-                   mouse-face mode-line-highlight
-                   help-echo "mouse-2: Remove narrowing from buffer"
-                   local-map ,(make-mode-line-mouse-map
-                               'mouse-2 #'mode-line-widen))
-      " ")))
+                             local-map ,mode-line-minor-mode-keymap)
+                (:propertize "%n"
+                             mouse-face mode-line-highlight
+                             help-echo "mouse-2: Remove narrowing from buffer"
+                             local-map ,(make-mode-line-mouse-map
+                                         'mouse-2 #'mode-line-widen))))
+             " ")
+     'face (if (doom-modeline--active) 'doom-modeline-buffer-minor-mode))))
 
 
 ;;
