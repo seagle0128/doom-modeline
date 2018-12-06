@@ -114,6 +114,12 @@ The icons may not be showed correctly in terminal and on Windows.")
 (defvar doom-modeline-minor-modes nil
   "Whether display minor modes or not. Non-nil to display in mode-line.")
 
+(defvar doom-modeline-persp-name t
+  "Whether display perspective name or not. Non-nil to display in mode-line.")
+
+(defvar doom-modeline-lsp t
+  "Whether display `lsp' state or not. Non-nil to display in mode-line.")
+
 
 ;;
 ;; compatibility
@@ -1298,7 +1304,8 @@ Requires `eyebrowse-mode' to be enabled."
   "Update perspective name in mode-line."
   (setq doom-modeline--persp-name
         ;; Support `persp-mode', while not support `perspective'
-        (when (and (bound-and-true-p persp-mode)
+        (when (and doom-modeline-persp-name
+                   (bound-and-true-p persp-mode)
                    (fboundp 'safe-persp-name)
                    (fboundp 'get-current-persp))
           (let ((persp (get-current-persp)))
@@ -1454,7 +1461,8 @@ mouse-1: Display Line and Column Mode Menu"
 
 (doom-modeline-def-segment lsp
   "The LSP server state."
-  (if (and (doom-modeline--active)
+  (if (and doom-modeline-lsp
+           (doom-modeline--active)
            (bound-and-true-p lsp-mode))
       (concat (lsp-mode-line) " ")))
 
