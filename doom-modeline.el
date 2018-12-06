@@ -1168,7 +1168,12 @@ of active `multiple-cursors'."
                       (doom-modeline--symbol-overlay)
                       (doom-modeline--multiple-cursors))))
     (or (and (not (equal meta "")) meta)
-        (if buffer-file-name " %I "))))
+        (if (and buffer-file-name size-indication-mode)
+            (propertize " %I "
+                        'help-echo "Buffer size\n\
+mouse-1: Display Line and Column Mode Menu"
+                        'local-map mode-line-column-line-number-mode-map
+                        'mouse-face 'mode-line-highlight)))))
 
 
 ;;
@@ -1361,7 +1366,11 @@ See `mode-line-percent-position'.")
 
 (doom-modeline-def-segment buffer-position
   "The buffer position information."
-  '(" " mode-line-position))
+  `(:propertize (concat " " mode-line-position)
+                help-echo "Buffer position\n\
+mouse-1: Display Line and Column Mode Menu"
+                local-map ,mode-line-column-line-number-mode-map
+                mouse-face mode-line-highlight))
 
 
 ;;
