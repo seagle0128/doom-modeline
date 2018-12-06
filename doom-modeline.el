@@ -606,7 +606,6 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
                                          (buffer-name))
                           (concat "\n" (buffer-name)))
                         "\nmouse-1: Previous buffer\nmouse-3: Next buffer")
-     'mouse-face 'mode-line-highlight
      'local-map mode-line-buffer-identification-keymap)))
 
 (defun doom-modeline--buffer-file-name-truncate (file-path true-file-path &optional truncate-tail)
@@ -797,7 +796,6 @@ buffer where knowing the current project directory is important."
                       'help-echo
                       (purecopy "Buffer name
 mouse-1: Previous buffer\nmouse-3: Next buffer")
-                      'mouse-face 'mode-line-highlight
                       'local-map mode-line-buffer-identification-keymap))))
 (add-hook 'find-file-hook 'doom-modeline-update-buffer-file-name)
 (add-hook 'after-save-hook 'doom-modeline-update-buffer-file-name)
@@ -838,15 +836,18 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 ;;
 (doom-modeline-def-segment buffer-encoding
   "Displays the encoding and eol style of the buffer the same way Atom does."
-  (concat (pcase (coding-system-eol-type buffer-file-coding-system)
-            (0 " LF")
-            (1 " RLF")
-            (2 " CR"))
-          (let ((sys (coding-system-plist buffer-file-coding-system)))
-            (cond ((memq (plist-get sys :category) '(coding-category-undecided coding-category-utf-8))
-                   " UTF-8 ")
-                  (t (upcase (symbol-name (plist-get sys :name))))))
-          " "))
+  (propertize
+   (concat (pcase (coding-system-eol-type buffer-file-coding-system)
+             (0 " LF")
+             (1 " RLF")
+             (2 " CR"))
+           (let ((sys (coding-system-plist buffer-file-coding-system)))
+             (cond ((memq (plist-get sys :category) '(coding-category-undecided coding-category-utf-8))
+                    " UTF-8 ")
+                   (t (upcase (symbol-name (plist-get sys :name))))))
+           " ")
+   'help-echo 'mode-line-mule-info-help-echo
+   'local-map mode-line-coding-system-map))
 
 
 ;;
@@ -1187,8 +1188,7 @@ of active `multiple-cursors'."
             (propertize " %I "
                         'help-echo "Buffer size\n\
 mouse-1: Display Line and Column Mode Menu"
-                        'local-map mode-line-column-line-number-mode-map
-                        'mouse-face 'mode-line-highlight)))))
+                        'local-map mode-line-column-line-number-mode-map)))))
 
 
 ;;
@@ -1324,7 +1324,6 @@ Requires `eyebrowse-mode' to be enabled."
                             (not (persp-contain-buffer-p (current-buffer) persp)))
                        'doom-modeline-persp-buffer-not-in-persp
                      'doom-modeline-persp-name)
-             'mouse-face 'mode-line-highlight
              'help-echo "mouse1: switch perspectives"
              'local-map (make-mode-line-mouse-map 'mouse-1 #'persp-switch))))))
 
@@ -1385,8 +1384,7 @@ See `mode-line-percent-position'.")
   `(:propertize (concat " " mode-line-position)
                 help-echo "Buffer position\n\
 mouse-1: Display Line and Column Mode Menu"
-                local-map ,mode-line-column-line-number-mode-map
-                mouse-face mode-line-highlight))
+                local-map ,mode-line-column-line-number-mode-map))
 
 
 ;;
@@ -1461,7 +1459,15 @@ mouse-1: Display Line and Column Mode Menu"
         (nth 3 (assoc default-input-method input-method-alist))
         " "))
       (t ""))
-     'face 'doom-modeline-buffer-major-mode)))
+     'face 'doom-modeline-buffer-major-mode
+     'help-echo (concat
+                 "Current input method: "
+                 current-input-method
+                 "\n\
+mouse-2: Disable input method\n\
+mouse-3: Describe current input method")
+     'mouse-face 'mode-line-highlight
+     'local-map mode-line-input-method-map)))
 
 
 ;;
