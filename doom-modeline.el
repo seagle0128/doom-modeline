@@ -604,7 +604,10 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
      'help-echo (concat buffer-file-truename
                         (unless (string= (file-name-nondirectory buffer-file-truename)
                                          (buffer-name))
-                          (concat "\n" (buffer-name)))))))
+                          (concat "\n" (buffer-name)))
+                        "\nmouse-1: Previous buffer\nmouse-3: Next buffer")
+     'mouse-face 'mode-line-highlight
+     'local-map mode-line-buffer-identification-keymap)))
 
 (defun doom-modeline--buffer-file-name-truncate (file-path true-file-path &optional truncate-tail)
   "Propertized variable `buffer-file-name' that truncates every dir along path.
@@ -789,7 +792,13 @@ buffer where knowing the current project directory is important."
   (setq doom-modeline--buffer-file-name
         (if buffer-file-name
             (doom-modeline-buffer-file-name)
-          (propertize "%b" 'face (if (doom-modeline--active) 'doom-modeline-buffer-file)))))
+          (propertize "%b"
+                      'face (if (doom-modeline--active) 'doom-modeline-buffer-file)
+                      'help-echo
+                      (purecopy "Buffer name
+mouse-1: Previous buffer\nmouse-3: Next buffer")
+                      'mouse-face 'mode-line-highlight
+                      'local-map mode-line-buffer-identification-keymap))))
 (add-hook 'find-file-hook 'doom-modeline-update-buffer-file-name)
 (add-hook 'after-save-hook 'doom-modeline-update-buffer-file-name)
 (add-hook 'after-revert-hook 'doom-modeline-update-buffer-file-name)
