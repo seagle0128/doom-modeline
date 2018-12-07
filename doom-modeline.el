@@ -379,6 +379,7 @@ Example:
               (format "  %s\n  %s"
                       (prin1-to-string lhs)
                       (prin1-to-string rhs))))))
+(put 'doom-modeline-def-modeline 'lisp-indent-function 'defun)
 
 (defun doom-modeline (key)
   "Return a mode-line configuration associated with KEY (a symbol).
