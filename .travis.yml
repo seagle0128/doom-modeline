@@ -19,8 +19,8 @@ before_install:
 
 install:
   - cask install
-  
+
 script:
   - emacs --version
-  - pwd
-  - cask build 
+  - cask exec ert-runner
+  - cask build
