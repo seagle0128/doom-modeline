@@ -1362,14 +1362,31 @@ Requires `eyebrowse-mode' to be enabled."
 
 ;; Be compatible with Emacs 25.
 (defvar-local doom-modeline-column-zero-based
-  (or (bound-and-true-p column-number-indicator-zero-based) t)
+  (if (boundp 'column-number-indicator-zero-based)
+      column-number-indicator-zero-based
+    t)
   "When non-nil, mode line displays column numbers zero-based.
 See `column-number-indicator-zero-based'.")
 
 (defvar-local doom-modeline-percent-position
-  (or (bound-and-true-p mode-line-percent-position) '(-3 "%p"))
+  (if (boundp 'mode-line-percent-position)
+      mode-line-percent-position
+    '(-3 "%p"))
   "Specification of \"percentage offset\" of window through buffer.
 See `mode-line-percent-position'.")
+
+(when (>= emacs-major-version 26)
+  (add-variable-watcher
+   'column-number-indicator-zero-based
+   (lambda (_sym val op _where)
+     (when (eq op 'set)
+       (setq doom-modeline-column-zero-based val))))
+
+  (add-variable-watcher
+   'mode-line-percent-position
+   (lambda (_sym val op _where)
+     (when (eq op 'set)
+       (setq doom-modeline-percent-position val)))))
 
 (setq-default mode-line-position
               '((line-number-mode
