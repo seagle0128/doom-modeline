@@ -1361,14 +1361,14 @@ Requires `eyebrowse-mode' to be enabled."
 ;;
 
 ;; Be compatible with Emacs 25.
-(defvar-local doom-modeline-column-zero-based
+(defvar doom-modeline-column-zero-based
   (if (boundp 'column-number-indicator-zero-based)
       column-number-indicator-zero-based
     t)
   "When non-nil, mode line displays column numbers zero-based.
 See `column-number-indicator-zero-based'.")
 
-(defvar-local doom-modeline-percent-position
+(defvar doom-modeline-percent-position
   (if (boundp 'mode-line-percent-position)
       mode-line-percent-position
     '(-3 "%p"))
