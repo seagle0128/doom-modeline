@@ -848,6 +848,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                    (t (upcase (symbol-name (plist-get sys :name))))))
            " ")
    'help-echo 'mode-line-mule-info-help-echo
+   'mouse-face '(:box 1)
    'local-map mode-line-coding-system-map))
 
 
@@ -1189,6 +1190,7 @@ of active `multiple-cursors'."
             (propertize " %I "
                         'help-echo "Buffer size\n\
 mouse-1: Display Line and Column Mode Menu"
+                        'mouse-face '(:box 1)
                         'local-map mode-line-column-line-number-mode-map)))))
 
 
@@ -1326,6 +1328,7 @@ Requires `eyebrowse-mode' to be enabled."
                        'doom-modeline-persp-buffer-not-in-persp
                      'doom-modeline-persp-name)
              'help-echo "mouse1: switch perspectives"
+             'mouse-face '(:box 1)
              'local-map (make-mode-line-mouse-map 'mouse-1 #'persp-switch))))))
 
 (add-hook 'find-file-hook #'doom-modeline-update-persp-name)
@@ -1402,6 +1405,7 @@ See `mode-line-percent-position'.")
   `(:propertize (concat " " mode-line-position)
                 help-echo "Buffer position\n\
 mouse-1: Display Line and Column Mode Menu"
+                mouse-face (:box 1)
                 local-map ,mode-line-column-line-number-mode-map))
 
 
