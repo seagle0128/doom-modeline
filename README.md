@@ -34,6 +34,29 @@ The `doom-modeline` was designed for minimalism and fast, and offers:
 - An indicator for `LSP` state
 - Truncated file names, file icon, buffer state and project name in buffer
   information segment, which is compatible with `projectile` or `project`
+  
+## Screenshots
+
+![modeline](https://user-images.githubusercontent.com/140797/49694177-10dcd280-fbc0-11e8-8d21-971ede6afdb5.png
+ "Mode-line")
+
+![search_replace](https://user-images.githubusercontent.com/140797/49694189-6913d480-fbc0-11e8-93ae-9578455dcd2c.png
+"Search and Replace")
+
+![macro](https://user-images.githubusercontent.com/140797/49694199-cc056b80-fbc0-11e8-9bb1-533b1e64da66.png
+"Macro")
+
+![lsp_version](https://user-images.githubusercontent.com/140797/49694206-edfeee00-fbc0-11e8-9c50-888a2cd7a397.png
+"LSP and Version")
+
+![perspective](https://user-images.githubusercontent.com/140797/49694481-e0983280-fbc5-11e8-8cb2-c8d2e782bcdb.png
+ "Perspective")
+
+![vi_normal_state](https://user-images.githubusercontent.com/140797/49694476-b8103880-fbc5-11e8-9c18-91f5e9258333.png
+"VI Normal State")
+
+![vi_insert_state](https://user-images.githubusercontent.com/140797/49694461-8b5c2100-fbc5-11e8-993e-d97baa9f01af.png
+"VI Insert State")
 
 ## Install
 
@@ -132,25 +155,3 @@ Strongly recommend to use
     ```
 
     If the file is controlled by vc, refer to `vc-follow-symlinks`.
-
-## Screenshots
-
-![modeline](https://github.com/hlissner/doom-emacs/raw/screenshots/ml.png)
-
-![search](https://github.com/hlissner/doom-emacs/raw/screenshots/ml-search.png)
-
-![subst](https://github.com/hlissner/doom-emacs/raw/screenshots/ml-subst.png)
-
-![macro](https://github.com/hlissner/doom-emacs/raw/screenshots/ml-macro.png)
-
-![version](https://github.com/hlissner/doom-emacs/raw/screenshots/ml-version.png)
-![errors](https://github.com/hlissner/doom-emacs/raw/screenshots/ml-errors.png)
-
-![evil normal state](https://user-images.githubusercontent.com/140797/43999448-135ba3c6-9e3f-11e8-93cc-cb5d673a2d0e.png)
-![evil emacs state](https://user-images.githubusercontent.com/140797/43999468-6763b42c-9e3f-11e8-8f1c-f4d85cc583b8.png)
-
-![evil insert sate](https://user-images.githubusercontent.com/140797/43999462-5261ac64-9e3f-11e8-8da5-26a6e8cbf04b.png)
-![evil viusal state](https://user-images.githubusercontent.com/140797/43999464-5b2dd034-9e3f-11e8-80ba-0fc8af3599a3.png)
-
-![evil motion state](https://user-images.githubusercontent.com/140797/43999480-88548abc-9e3f-11e8-9d78-759546050a12.png)
-![evil operator state](https://user-images.githubusercontent.com/140797/43999484-9a7ea40c-9e3f-11e8-8b2b-c7c46aeece1f.png)
