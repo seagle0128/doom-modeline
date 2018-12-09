@@ -1608,6 +1608,10 @@ mouse-3: Describe current input method")
           (lambda ()
             (when (and (executable-find "iex") (executable-find "cut") (executable-find "sed"))
               (setq doom-modeline-env-command "iex --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))
+(add-hook 'rust-mode-hook
+          (lambda ()
+            (when (and (executable-find "rustc") (executable-find "cut") (executable-find "sed"))
+              (setq doom-modeline-env-command "rustc --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))
 
 
 ;; Ensure modeline is inactive when Emacs is unfocused (and active otherwise)
