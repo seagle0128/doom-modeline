@@ -790,8 +790,8 @@ buffer where knowing the current project directory is important."
                  (concat (doom-modeline-icon-material
                           "unfold_less"
                           :face (if active 'doom-modeline-warning)
-                          :height 1.1
-                          :v-adjust -0.2)
+                          :height 1.2
+                          :v-adjust -0.25)
                          doom-modeline-vspc))))))
 (add-hook 'find-file-hook 'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-save-hook 'doom-modeline-update-buffer-file-state-icon)
