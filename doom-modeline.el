@@ -527,6 +527,10 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; Modeline helpers
 ;;
 
+(defvar doom-modeline-vspc
+  (propertize " " 'face 'variable-pitch)
+  "Text style with icons in mode-line.")
+
 (defun doom-modeline-icon-octicon (&rest args)
   "Display octicon via ARGS."
   (when doom-modeline-icon
@@ -742,7 +746,7 @@ buffer where knowing the current project directory is important."
                          'help-echo (format "Major-mode: `%s'" major-mode)
                          'display '(raise -0.15)
                          'face `(:height 1.1 :family ,(all-the-icons-icon-family-for-mode major-mode) :inherit))
-             " ")))))
+             doom-modeline-vspc)))))
 (add-hook 'find-file-hook 'doom-modeline-update-buffer-file-icon)
 (add-hook 'after-save-hook 'doom-modeline-update-buffer-file-icon)
 (add-hook 'after-revert-hook 'doom-modeline-update-buffer-file-icon)
@@ -761,30 +765,34 @@ buffer where knowing the current project directory is important."
   (setq doom-modeline--buffer-file-state-icon
         (let ((active (doom-modeline--active)))
           (cond (buffer-read-only
-                 (concat (doom-modeline-icon-octicon
+                 (concat (doom-modeline-icon-material
                           "lock"
                           :face (if active 'doom-modeline-warning)
-                          :v-adjust -0.05)
-                         " "))
+                          :height 1.1
+                          :v-adjust -0.2)
+                         doom-modeline-vspc))
                 ((buffer-modified-p)
-                 (concat (doom-modeline-icon-faicon
-                          "floppy-o"
+                 (concat (doom-modeline-icon-material
+                          "save"
                           :face (if active 'doom-modeline-buffer-modified)
-                          :v-adjust -0.0575)
-                         " "))
+                          :height 1.1
+                          :v-adjust -0.2)
+                         doom-modeline-vspc))
                 ((and buffer-file-name
                       (not (file-exists-p buffer-file-name)))
-                 (concat (doom-modeline-icon-octicon
-                          "circle-slash"
+                 (concat (doom-modeline-icon-material
+                          "do_not_disturb_alt"
                           :face (if active 'doom-modeline-urgent)
-                          :v-adjust -0.05)
-                         " "))
+                          :height 1.1
+                          :v-adjust -0.2)
+                         doom-modeline-vspc))
                 ((buffer-narrowed-p)
-                 (concat (doom-modeline-icon-octicon
-                          "fold"
+                 (concat (doom-modeline-icon-material
+                          "unfold_less"
                           :face (if active 'doom-modeline-warning)
-                          :v-adjust -0.05)
-                         " "))))))
+                          :height 1.1
+                          :v-adjust -0.2)
+                         doom-modeline-vspc))))))
 (add-hook 'find-file-hook 'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-save-hook 'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-revert-hook 'doom-modeline-update-buffer-file-state-icon)
@@ -956,7 +964,7 @@ mouse-3: Toggle minor modes"
                               "git-branch"
                               :face face
                               :v-adjust -0.05)))
-                      " "
+                      doom-modeline-vspc
                       (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
                                   'face (if active face))
                       " "))))))
@@ -975,10 +983,6 @@ mouse-3: Toggle minor modes"
 ;;
 ;; flycheck
 ;;
-
-(defvar doom-modeline-vspc
-  (propertize " " 'face 'variable-pitch)
-  "Text style with icons in mode-line.")
 
 (defun doom-modeline-flycheck-icon (icon &optional text face voffset)
   "Displays an ICON with FACE, followed by TEXT.
