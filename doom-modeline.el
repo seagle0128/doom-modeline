@@ -983,13 +983,13 @@ mouse-3: Toggle minor modes"
 (defun doom-modeline-flycheck-icon (icon &optional text face voffset)
   "Displays an ICON with FACE, followed by TEXT.
 Uses `all-the-icons-material' to fetch the icon."
-  (concat (if vc-mode " " "  ")
+  (concat " "
           (when icon
             (concat
              (doom-modeline-icon-material icon :face face :height 0.95 :v-adjust (or voffset -0.2))
              (if text doom-modeline-vspc)))
           (if text (propertize text 'face face))
-          (if vc-mode "  " " ")))
+          "  "))
 
 (defvar-local doom-modeline--flycheck nil)
 (defun doom-modeline-update-flycheck-segment (&optional status)
