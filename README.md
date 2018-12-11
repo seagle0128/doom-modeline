@@ -5,16 +5,16 @@
 [![MELPA Stable](https://stable.melpa.org/packages/doom-modeline-badge.svg)](https://stable.melpa.org/#/doom-modeline)
 [![License](http://img.shields.io/:license-gpl3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
 
-A fast and fancy mode-line which is extracted from [DOOM
+A fancy and fast mode-line which was from [DOOM
 Emacs](https://github.com/hlissner/doom-emacs/tree/master/modules/ui/doom-modeline),
-but it provides more features and it's much faster.
+but it's more powerful and much faster.
 
 It's integrated into [Centaur Emacs](https://github.com/seagle0128/.emacs.d) by
 default.
 
 ## Feature
 
-The `doom-modeline` was designed for minimalism and fast, and offers:
+The `doom-modeline` was designed for minimalism, and offers:
 
 - A match count panel (for `anzu`, `iedit`, `multiple-cursors`, `symbol-overlay`,
   `evil-search` and `evil-substitute`)
@@ -32,6 +32,7 @@ The `doom-modeline` was designed for minimalism and fast, and offers:
 - An indicator for remote host
 - An indicator for current input method
 - An indicator for `LSP` state
+- An indicator for github notifications
 - Truncated file names, file icon, buffer state and project name in buffer
   information segment, which is compatible with `projectile` or `project`
   
@@ -47,16 +48,19 @@ The `doom-modeline` was designed for minimalism and fast, and offers:
 "Macro")
 
 ![lsp_version](https://user-images.githubusercontent.com/140797/49694206-edfeee00-fbc0-11e8-9c50-888a2cd7a397.png
-"LSP and Version")
+"Perspective, LSP, Version, VCS and Flycheck")
 
 ![perspective](https://user-images.githubusercontent.com/140797/49694481-e0983280-fbc5-11e8-8cb2-c8d2e782bcdb.png
- "Perspective")
+ "Perspective, LSP, Version and VCS")
 
-![vi_normal_state](https://user-images.githubusercontent.com/140797/49694476-b8103880-fbc5-11e8-9c18-91f5e9258333.png
-"VI Normal State")
+![github_notifications](https://user-images.githubusercontent.com/140797/49808406-6b7c5700-fd97-11e8-83bb-d2ddbe5be8eb.png
+"Github Notifications")
 
-![vi_insert_state](https://user-images.githubusercontent.com/140797/49694461-8b5c2100-fbc5-11e8-993e-d97baa9f01af.png
-"VI Insert State")
+![evil_normal_state](https://user-images.githubusercontent.com/140797/49694476-b8103880-fbc5-11e8-9c18-91f5e9258333.png
+"Evil Normal State")
+
+![evil_insert_state](https://user-images.githubusercontent.com/140797/49694461-8b5c2100-fbc5-11e8-993e-d97baa9f01af.png
+"Evil Insert State")
 
 ## Install
 
@@ -132,6 +136,12 @@ Strongly recommend to use
 
 ;; Whether display `lsp' state or not. Non-nil to display in mode-line.
 (setq doom-modeline-lsp t)
+
+;; Whether display github notifications or not.
+(setq doom-modeline-github t)
+
+;; The interval of checking github.
+(setq doom-modeline-github-interval (* 30 60))
 ```
 
 ## FAQ
@@ -155,3 +165,7 @@ Strongly recommend to use
     ```
 
     If the file is controlled by vc, refer to `vc-follow-symlinks`.
+
+1. Can I add my mode-line segments myself? How to do that?
+
+   Of course. Just add the segments into `global-mode-string`.

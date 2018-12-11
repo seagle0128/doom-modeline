@@ -29,11 +29,12 @@
 
 ;;; Commentary:
 ;;
-;; This package offers a modern modeline them which is extracted from DOOM Emacs
-;; (https://github.com/hlissner/doom-emacs/tree/master/modules/ui/doom-modeline).
+;; This package offers a fancy and fast mode-line which was from DOOM Emacs
+;; (https://github.com/hlissner/doom-emacs/tree/master/modules/ui/doom-modeline),
+;; but it's more powerful and much faster.
 ;; It's also integrated into Centaur Emacs (https://github.com/seagle0128/.emacs.d).
 ;;
-;; The doom-modeline was designed for minimalism and fast, and offers:
+;; The doom-modeline was designed for minimalism, and offers:
 ;; - A match count panel (for anzu, iedit, multiple-cursors, symbol-overlay,
 ;;   evil-search and evil-substitute)
 ;; - An indicator for recording a macro
@@ -50,6 +51,7 @@
 ;; - An indicator for remote host
 ;; - An indicator for current input method
 ;; - An indicator for LSP state
+;; - An indicator for github notifications
 ;; - Truncated file names, file icon, buffer state and project name in buffer
 ;;   information segment, which is compatible with projectile or project
 ;;
@@ -120,6 +122,12 @@ The icons may not be showed correctly in terminal and on Windows.")
 (defvar doom-modeline-lsp t
   "Whether display `lsp' state or not. Non-nil to display in mode-line.")
 
+(defvar doom-modeline-github t
+  "Whether display github notifications or not.")
+
+(defvar doom-modeline-github-interval (* 30 60)
+  "The interval of checking github.")
+
 
 ;;
 ;; compatibility
@@ -188,20 +196,21 @@ It returns a file name which can be used directly as argument of
 (declare-function face-remap-remove-relative 'face-remap)
 (declare-function flycheck-count-errors 'flycheck)
 (declare-function flycheck-list-errors 'flycheck)
+(declare-function get-current-persp 'persp-mode)
+(declare-function ghubp-get-notifications 'ghub+)
 (declare-function iedit-find-current-occurrence-overlay 'iedit-lib)
 (declare-function iedit-prev-occurrence 'iedit-lib)
 (declare-function image-get-display-property 'image-mode)
 (declare-function lsp-mode-line 'lsp-mode)
 (declare-function magit-toplevel 'magit-git)
-(declare-function safe-persp-name 'persp-mode)
-(declare-function get-current-persp 'persp-mode)
-(declare-function persp-contain-buffer-p 'persp-mode)
 (declare-function persp-add-buffer 'persp-mode)
+(declare-function persp-contain-buffer-p 'persp-mode)
 (declare-function persp-remove-buffer 'persp-mode)
 (declare-function persp-switch 'persp-mode)
 (declare-function project-current 'project)
 (declare-function project-roots 'project)
 (declare-function projectile-project-root 'projectile)
+(declare-function safe-persp-name 'persp-mode)
 (declare-function symbol-overlay-assoc 'symbol-overlay)
 (declare-function symbol-overlay-get-list 'symbol-overlay)
 (declare-function symbol-overlay-get-symbol 'symbol-overlay)
@@ -1327,7 +1336,7 @@ Requires `eyebrowse-mode' to be enabled."
                             (not (persp-contain-buffer-p (current-buffer) persp)))
                        'doom-modeline-persp-buffer-not-in-persp
                      'doom-modeline-persp-name)
-             'help-echo "mouse1: switch perspectives"
+             'help-echo "mouse-1: Switch perspective"
              'mouse-face '(:box 1)
              'local-map (make-mode-line-mouse-map 'mouse-1 #'persp-switch))))))
 
@@ -1504,13 +1513,53 @@ mouse-3: Describe current input method")
            (bound-and-true-p lsp-mode))
       (concat (lsp-mode-line) " ")))
 
+
+;;
+;; github
+;;
+
+(defvar doom-modeline--github-notifications-number 0)
+(defun doom-modeline-github-fetch-notifications ()
+  "Fetch github notifications."
+  (if (and doom-modeline-github
+           (fboundp 'ghubp-get-notifications))
+      (setq doom-modeline--github-notifications-number
+            (length (ignore-errors
+                      (ghubp-get-notifications :participating "true"))))))
+(run-with-timer 10
+                doom-modeline-github-interval
+                'doom-modeline-github-fetch-notifications)
+
+(defun github-open-notifications-participating ()
+  "Open GitHub Notifications/Participating page."
+  (interactive)
+  (browse-url "https://github.com/notifications/participating"))
+
+(doom-modeline-def-segment github
+  "The github notifications."
+  (if (and doom-modeline-github
+           (doom-modeline--active)
+           (> doom-modeline--github-notifications-number 0))
+      (propertize
+       (concat (if doom-modeline-icon " ")
+               (doom-modeline-icon-faicon "github" :v-adjust -0.0575 :face 'doom-modeline-warning)
+               (if doom-modeline-icon doom-modeline-vspc " ")
+               (propertize
+                (format "%s " doom-modeline--github-notifications-number)
+                'face 'doom-modeline-warning))
+       'help-echo "mouse-1: Show github notifications"
+       'mouse-face '(:box 1)
+       'local-map (make-mode-line-mouse-map
+                   'mouse-1
+                   #'github-open-notifications-participating))))
+
 ;;
 ;; Mode lines
 ;;
 
 (doom-modeline-def-modeline 'main
   '(bar workspace-number window-number evil-state god-state ryo-modal xah-fly-keys matches " " buffer-info remote-host buffer-position " " selection-info)
-  '(global persp-name lsp minor-modes input-method buffer-encoding major-mode process vcs flycheck))
+  '(global persp-name lsp github minor-modes input-method buffer-encoding major-mode process vcs flycheck))
 
 (doom-modeline-def-modeline 'minimal
   '(bar matches " " buffer-info)
