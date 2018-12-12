@@ -748,16 +748,12 @@ buffer where knowing the current project directory is important."
                          'face `(:height 1.1 :family ,(all-the-icons-icon-family-for-mode major-mode) :inherit))
              doom-modeline-vspc)))))
 (add-hook 'find-file-hook 'doom-modeline-update-buffer-file-icon)
-(add-hook 'after-save-hook 'doom-modeline-update-buffer-file-icon)
+;; (remove-hook 'after-save-hook 'doom-modeline-update-buffer-file-icon)
 (add-hook 'after-revert-hook 'doom-modeline-update-buffer-file-icon)
-;; (add-hook 'read-only-mode-hook 'doom-modeline-update-buffer-file-icon)
 (add-hook 'after-change-major-mode-hook 'doom-modeline-update-buffer-file-icon)
 (add-hook 'clone-indirect-buffer-hook 'doom-modeline-update-buffer-file-icon)
 ;; This hook will cause magit exception
 ;; (add-hook 'after-change-functions 'doom-modeline-update-buffer-file-icon)
-(advice-add #'undo :after #'doom-modeline-update-buffer-file-icon)
-(advice-add #'undo-tree-undo :after #'doom-modeline-update-buffer-file-icon)
-;; (advice-add #'narrow-to-region :after #'doom-modeline-update-buffer-file-icon)
 
 (defvar-local doom-modeline--buffer-file-state-icon nil)
 (defun doom-modeline-update-buffer-file-state-icon (&rest _)
@@ -798,8 +794,10 @@ buffer where knowing the current project directory is important."
 (add-hook 'after-revert-hook 'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'read-only-mode-hook 'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-change-functions 'doom-modeline-update-buffer-file-state-icon)
+(add-hook 'clone-indirect-buffer-hook 'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'undo :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'undo-tree-undo :after #'doom-modeline-update-buffer-file-state-icon)
+(advice-add #'undo-tree-redo :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'narrow-to-region :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'widen :after #'doom-modeline-update-buffer-file-state-icon)
 
@@ -825,6 +823,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer")
 (advice-add #'select-window :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'undo :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'undo-tree-undo :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'undo-tree-redo :after #'doom-modeline-update-buffer-file-name)
 
 (doom-modeline-def-segment buffer-info
   "Combined information about the current buffer, including the current working
@@ -1529,7 +1528,7 @@ mouse-3: Describe current input method")
       (setq doom-modeline--github-notifications-number
             (length (ignore-errors
                       (ghubp-get-notifications :participating "true"))))))
-(run-with-timer 10
+(run-with-timer 30
                 doom-modeline-github-interval
                 'doom-modeline-github-fetch-notifications)
 
