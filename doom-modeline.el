@@ -748,12 +748,9 @@ buffer where knowing the current project directory is important."
                          'face `(:height 1.1 :family ,(all-the-icons-icon-family-for-mode major-mode) :inherit))
              doom-modeline-vspc)))))
 (add-hook 'find-file-hook 'doom-modeline-update-buffer-file-icon)
-;; (remove-hook 'after-save-hook 'doom-modeline-update-buffer-file-icon)
 (add-hook 'after-revert-hook 'doom-modeline-update-buffer-file-icon)
 (add-hook 'after-change-major-mode-hook 'doom-modeline-update-buffer-file-icon)
 (add-hook 'clone-indirect-buffer-hook 'doom-modeline-update-buffer-file-icon)
-;; This hook will cause magit exception
-;; (add-hook 'after-change-functions 'doom-modeline-update-buffer-file-icon)
 
 (defvar-local doom-modeline--buffer-file-state-icon nil)
 (defun doom-modeline-update-buffer-file-state-icon (&rest _)
