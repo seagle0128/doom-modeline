@@ -744,7 +744,7 @@ buffer where knowing the current project directory is important."
             (concat
              (propertize icon
                          'help-echo (format "Major-mode: `%s'" major-mode)
-                         'display '(raise -0.15)
+                         'display '(raise -0.125)
                          'face `(:height 1.1 :family ,(all-the-icons-icon-family-for-mode major-mode) :inherit))
              doom-modeline-vspc)))))
 (add-hook 'find-file-hook 'doom-modeline-update-buffer-file-icon)
@@ -768,23 +768,23 @@ buffer where knowing the current project directory is important."
                  (concat (doom-modeline-icon-material
                           "lock"
                           :face (if active 'doom-modeline-warning)
-                          :height 1.1
-                          :v-adjust -0.2)
+                          :height 1.0
+                          :v-adjust -0.225)
                          doom-modeline-vspc))
                 ((buffer-modified-p)
                  (concat (doom-modeline-icon-material
                           "save"
                           :face (if active 'doom-modeline-buffer-modified)
-                          :height 1.1
-                          :v-adjust -0.2)
+                          :height 1.0
+                          :v-adjust -0.225)
                          doom-modeline-vspc))
                 ((and buffer-file-name
                       (not (file-exists-p buffer-file-name)))
                  (concat (doom-modeline-icon-material
                           "do_not_disturb_alt"
                           :face (if active 'doom-modeline-urgent)
-                          :height 1.1
-                          :v-adjust -0.2)
+                          :height 1.0
+                          :v-adjust -0.225)
                          doom-modeline-vspc))
                 ((buffer-narrowed-p)
                  (concat (doom-modeline-icon-material
@@ -990,7 +990,7 @@ Uses `all-the-icons-material' to fetch the icon."
   (concat " "
           (when icon
             (concat
-             (doom-modeline-icon-material icon :face face :height 0.95 :v-adjust (or voffset -0.2))
+             (doom-modeline-icon-material icon :face face :height 1.0 :v-adjust (or voffset -0.225))
              (if text doom-modeline-vspc)))
           (if text (propertize text 'face face))
           "  "))
@@ -1006,8 +1006,7 @@ Uses `all-the-icons-material' to fetch the icon."
                             (let ((sum (+ (or .error 0) (or .warning 0))))
                               (doom-modeline-flycheck-icon "do_not_disturb_alt"
                                                            (number-to-string sum)
-                                                           (if .error 'doom-modeline-urgent 'doom-modeline-warning)
-                                                           -0.2)))
+                                                           (if .error 'doom-modeline-urgent 'doom-modeline-warning))))
                         (doom-modeline-flycheck-icon "check" nil 'doom-modeline-info)))
            (`running     (doom-modeline-flycheck-icon "access_time" nil 'font-lock-doc-face -0.25))
            (`no-checker  (doom-modeline-flycheck-icon "sim_card_alert" "-" 'font-lock-doc-face))
