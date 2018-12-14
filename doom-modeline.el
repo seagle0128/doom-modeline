@@ -1639,8 +1639,10 @@ mouse-3: Describe current input method")
 ;; Versions, support Python, Ruby, Perl and Golang, etc.
 (add-hook 'python-mode-hook
           (lambda ()
-            (when (and doom-modeline-python-executable (executable-find doom-modeline-python-executable) (executable-find "cut") (executable-find "sed"))
-              (setq doom-modeline-env-command (concat doom-modeline-python-executable " --version 2>&1 | cut -d' ' -f2 | sed -n '1p'")))))
+            (cond ((and (fboundp 'pipenv-project-p) (pipenv-project-p) (executable-find "pipenv") (executable-find "cut") (executable-find "sed") (executable-find "xargs"))
+                   (setq doom-modeline-env-command "pipenv run python --version 2>&1 | cut -d' ' -f2 | sed -n '1p' | xargs echo 'Pipenv'"))
+                  ((and doom-modeline-python-executable (executable-find doom-modeline-python-executable) (executable-find "cut") (executable-find "sed"))
+                   (setq doom-modeline-env-command (concat doom-modeline-python-executable " --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))))
 (add-hook 'ruby-mode-hook
           (lambda ()
             (when (and (executable-find "ruby") (executable-find "cut") (executable-find "sed"))
