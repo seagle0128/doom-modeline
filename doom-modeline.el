@@ -214,6 +214,7 @@ It returns a file name which can be used directly as argument of
 (declare-function symbol-overlay-assoc 'symbol-overlay)
 (declare-function symbol-overlay-get-list 'symbol-overlay)
 (declare-function symbol-overlay-get-symbol 'symbol-overlay)
+(declare-function undo-tree-redo 'undo-tree)
 (declare-function undo-tree-undo 'undo-tree)
 (declare-function window-numbering-clear-mode-line 'window-numbering)
 (declare-function window-numbering-get-number-string 'window-numbering)
@@ -797,6 +798,12 @@ buffer where knowing the current project directory is important."
 (advice-add #'undo-tree-redo :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'narrow-to-region :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'widen :after #'doom-modeline-update-buffer-file-state-icon)
+
+(add-variable-watcher
+ 'buffer-read-only
+ (lambda (_sym val op _where)
+   (when (and (eq op 'set) (eq val nil))
+     (doom-modeline-update-buffer-file-state-icon))))
 
 (defvar-local doom-modeline--buffer-file-name nil)
 (defun doom-modeline-update-buffer-file-name (&rest _)
