@@ -753,40 +753,42 @@ buffer where knowing the current project directory is important."
 (add-hook 'after-change-major-mode-hook 'doom-modeline-update-buffer-file-icon)
 (add-hook 'clone-indirect-buffer-hook 'doom-modeline-update-buffer-file-icon)
 
+(defun doom-modeline-buffer-file-state-icon (icon &optional face height voffset)
+  "Displays an ICON with FACE, HEIGHT and VOFFSET.
+Uses `all-the-icons-material' to fetch the icon."
+  (when icon
+    (doom-modeline-icon-material
+     icon
+     :face (if (doom-modeline--active) face)
+     :height (or height (if (eq system-type 'darwin) 1.0 0.96))
+     :v-adjust (or voffset (if (eq system-type 'darwin) -0.225 -0.205)))))
+
 (defvar-local doom-modeline--buffer-file-state-icon nil)
 (defun doom-modeline-update-buffer-file-state-icon (&rest _)
   "Update the buffer or file state in mode-line."
   (setq doom-modeline--buffer-file-state-icon
-        (let ((active (doom-modeline--active)))
-          (cond (buffer-read-only
-                 (concat (doom-modeline-icon-material
-                          "lock"
-                          :face (if active 'doom-modeline-warning)
-                          :height 1.0
-                          :v-adjust -0.225)
-                         doom-modeline-vspc))
-                ((buffer-modified-p)
-                 (concat (doom-modeline-icon-material
-                          "save"
-                          :face (if active 'doom-modeline-buffer-modified)
-                          :height 1.0
-                          :v-adjust -0.225)
-                         doom-modeline-vspc))
-                ((and buffer-file-name
-                      (not (file-exists-p buffer-file-name)))
-                 (concat (doom-modeline-icon-material
-                          "do_not_disturb_alt"
-                          :face (if active 'doom-modeline-urgent)
-                          :height 1.0
-                          :v-adjust -0.225)
-                         doom-modeline-vspc))
-                ((buffer-narrowed-p)
-                 (concat (doom-modeline-icon-material
-                          "unfold_less"
-                          :face (if active 'doom-modeline-warning)
-                          :height 1.2
-                          :v-adjust -0.25)
-                         doom-modeline-vspc))))))
+        (cond (buffer-read-only
+               (concat (doom-modeline-buffer-file-state-icon
+                        "lock"
+                        'doom-modeline-warning)
+                       doom-modeline-vspc))
+              ((buffer-modified-p)
+               (concat (doom-modeline-buffer-file-state-icon
+                        "save"
+                        'doom-modeline-buffer-modified)
+                       doom-modeline-vspc))
+              ((and buffer-file-name
+                    (not (file-exists-p buffer-file-name)))
+               (concat (doom-modeline-buffer-file-state-icon
+                        "do_not_disturb_alt"
+                        'doom-modeline-urgent)
+                       doom-modeline-vspc))
+              ((buffer-narrowed-p)
+               (concat (doom-modeline-buffer-file-state-icon
+                        "unfold_less"
+                        'doom-modeline-warning
+                        1.1)
+                       doom-modeline-vspc)))))
 (add-hook 'find-file-hook 'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-save-hook 'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-revert-hook 'doom-modeline-update-buffer-file-state-icon)
@@ -995,7 +997,11 @@ Uses `all-the-icons-material' to fetch the icon."
   (concat " "
           (when icon
             (concat
-             (doom-modeline-icon-material icon :face face :height 1.0 :v-adjust (or voffset -0.225))
+             (doom-modeline-icon-material
+              icon
+              :face face
+              :height (if (eq system-type 'darwin) 1.0 0.96)
+              :v-adjust (or voffset (if (eq system-type 'darwin) -0.225 -0.205)))
              (if text doom-modeline-vspc)))
           (if text (propertize text 'face face))
           "  "))
