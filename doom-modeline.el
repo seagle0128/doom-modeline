@@ -1375,15 +1375,14 @@ Requires `eyebrowse-mode' to be enabled."
 
 
 ;;
-;; global
+;; misc info
 ;;
 
-(doom-modeline-def-segment global
-  "For the time string and whatever uses global-mode-string."
-  (if (and (doom-modeline--active)
-           (< 0 (length global-mode-string)))
-      '("" global-mode-string " ")
-    ""))
+(doom-modeline-def-segment misc-info
+  "Mode line construct for miscellaneous information.
+By default, this shows the information specified by `global-mode-string'."
+  (if (doom-modeline--active)
+      mode-line-misc-info))
 
 
 ;;
@@ -1576,7 +1575,7 @@ mouse-3: Describe current input method")
 
 (doom-modeline-def-modeline 'main
   '(bar workspace-number window-number evil-state god-state ryo-modal xah-fly-keys matches " " buffer-info remote-host buffer-position " " selection-info)
-  '(global persp-name lsp github minor-modes input-method buffer-encoding major-mode process vcs flycheck))
+  '(misc-info persp-name lsp github minor-modes input-method buffer-encoding major-mode process vcs flycheck))
 
 (doom-modeline-def-modeline 'minimal
   '(bar matches " " buffer-info)
@@ -1584,15 +1583,15 @@ mouse-3: Describe current input method")
 
 (doom-modeline-def-modeline 'special
   '(bar window-number evil-state god-state ryo-modal xah-fly-keys matches " " buffer-info-simple buffer-position " " selection-info)
-  '(global lsp minor-modes input-method buffer-encoding major-mode process flycheck))
+  '(misc-info lsp minor-modes input-method buffer-encoding major-mode process flycheck))
 
 (doom-modeline-def-modeline 'project
   '(bar window-number buffer-default-directory)
-  '(global major-mode))
+  '(misc-info major-mode))
 
 (doom-modeline-def-modeline 'media
   '(bar window-number " %b  ")
-  '(global media-info major-mode))
+  '(misc-info media-info major-mode))
 
 ;;
 ;; Hooks
