@@ -38,4 +38,7 @@
   (set-text-properties 0 (length txt) nil txt)
   txt)
 
+(defun font-info (&rest _)
+  "Mock `font-info'.")
+
 ;;; test-helper.el ends here
