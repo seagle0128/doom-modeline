@@ -50,6 +50,7 @@
 ;; - An indicator for xah-fly-keys state
 ;; - An indicator for remote host
 ;; - An indicator for current input method
+;; - An indicator for debug state
 ;; - An indicator for LSP state
 ;; - An indicator for github notifications
 ;; - Truncated file names, file icon, buffer state and project name in buffer
@@ -820,9 +821,8 @@ Uses `all-the-icons-material' to fetch the icon."
             (doom-modeline-buffer-file-name)
           (propertize "%b"
                       'face (if (doom-modeline--active) 'doom-modeline-buffer-file)
-                      'help-echo
-                      (purecopy "Buffer name
-mouse-1: Previous buffer\nmouse-3: Next buffer")
+                      'help-echo "Buffer name
+mouse-1: Previous buffer\nmouse-3: Next buffer"
                       'local-map mode-line-buffer-identification-keymap))))
 (add-hook 'find-file-hook 'doom-modeline-update-buffer-file-name)
 (add-hook 'after-save-hook 'doom-modeline-update-buffer-file-name)
@@ -1570,12 +1570,41 @@ mouse-3: Describe current input method")
                    #'github-open-notifications-participating))))
 
 ;;
+;; debug state
+;;
+
+(doom-modeline-def-segment debug
+  "The current debug state."
+  (when (doom-modeline--active)
+    (concat
+     (when debug-on-error
+       (propertize
+        (if doom-modeline-icon
+            (doom-modeline-icon-faicon "bug" :v-adjust -0.125 :face 'doom-modeline-urgent)
+          (propertize "!" 'face 'doom-modeline-urgent))
+        'help-echo "Debug on Error
+mouse-1: Toggle Debug on Error"
+        'mouse-face '(:box 1)
+        'local-map (make-mode-line-mouse-map 'mouse-1 #'toggle-debug-on-error)))
+     (when debug-on-quit
+       (propertize
+        (if doom-modeline-icon
+            (doom-modeline-icon-faicon "bug" :v-adjust -0.125 :face 'doom-modeline-warning)
+          (propertize "!" 'face 'doom-modeline-warning))
+        'help-echo "Debug on Quit
+mouse-1: Toggle Debug on Quit"
+        'mouse-face '(:box 1)
+        'local-map (make-mode-line-mouse-map 'mouse-1 #'toggle-debug-on-quit)))
+     (and (or debug-on-error debug-on-quit) " "))))
+
+
+;;
 ;; Mode lines
 ;;
 
 (doom-modeline-def-modeline 'main
   '(bar workspace-number window-number evil-state god-state ryo-modal xah-fly-keys matches " " buffer-info remote-host buffer-position " " selection-info)
-  '(misc-info persp-name lsp github minor-modes input-method buffer-encoding major-mode process vcs flycheck))
+  '(misc-info persp-name lsp github debug minor-modes input-method buffer-encoding major-mode process vcs flycheck))
 
 (doom-modeline-def-modeline 'minimal
   '(bar matches " " buffer-info)
@@ -1583,7 +1612,7 @@ mouse-3: Describe current input method")
 
 (doom-modeline-def-modeline 'special
   '(bar window-number evil-state god-state ryo-modal xah-fly-keys matches " " buffer-info-simple buffer-position " " selection-info)
-  '(misc-info lsp minor-modes input-method buffer-encoding major-mode process flycheck))
+  '(misc-info lsp debug minor-modes input-method buffer-encoding major-mode process flycheck))
 
 (doom-modeline-def-modeline 'project
   '(bar window-number buffer-default-directory)

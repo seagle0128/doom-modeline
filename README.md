@@ -30,6 +30,7 @@ The `doom-modeline` was designed for minimalism, and offers:
 - An indicator for `ryo-modal` state
 - An indicator for `xah-fly-keys` state
 - An indicator for remote host
+- An indicator for debug state
 - An indicator for current input method
 - An indicator for `LSP` state
 - An indicator for github notifications
