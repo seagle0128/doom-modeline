@@ -64,6 +64,12 @@ The `doom-modeline` was designed for minimalism, and offers:
 ![evil_insert_state](https://user-images.githubusercontent.com/140797/49694461-8b5c2100-fbc5-11e8-993e-d97baa9f01af.png
 "Evil Insert State")
 
+![minions](https://user-images.githubusercontent.com/140797/50301291-de857c00-04c1-11e9-84c5-bfbc8de8295f.png
+"Minions and minor modes")
+
+![debug](https://user-images.githubusercontent.com/140797/50302008-c57dca80-04c3-11e9-8578-50154ef4f9f0.png
+"Debug state")
+
 ## Install
 
 ### Manual
