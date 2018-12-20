@@ -30,15 +30,13 @@
 ;;
 ;;; Code:
 
-(require 'doom-modeline (expand-file-name "doom-modeline.el"))
-(require 'ert)
-
 (defun strip-text-properties(txt)
   "Strip text properties of TXT."
   (set-text-properties 0 (length txt) nil txt)
   txt)
 
-(defun font-info (&rest _)
-  "Mock `font-info'.")
+(defvar doom-modeline-height 26)
+
+(require 'doom-modeline (expand-file-name "doom-modeline.el"))
 
 ;;; test-helper.el ends here
