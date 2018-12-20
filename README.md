@@ -21,6 +21,7 @@ The `doom-modeline` was designed for minimalism, and offers:
 - An indicator for recording a macro
 - Local `python`/`ruby`/`perl`/`go`/`elixir` version in the major-mode
 - A customizable mode-line height (see `doom-modeline-height`)
+- A minor modes segment which is compatible with `minions`
 - An error/warning count segment for `flycheck`
 - A workspace number segment for `eyebrowse`
 - A perspective name segment for `persp-mode`

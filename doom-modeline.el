@@ -40,6 +40,7 @@
 ;; - An indicator for recording a macro
 ;; - Local python/ruby version in the major-mode
 ;; - A customizable mode-line height (see doom-modeline-height)
+;; - A minor modes segment which is compatible with minions
 ;; - An error/warning count segment for flycheck
 ;; - A workspace number segment for eyebrowse
 ;; - A perspective name segment for persp-mode
@@ -170,6 +171,8 @@ It returns a file name which can be used directly as argument of
 (defvar iedit-mode)
 (defvar iedit-occurrences-overlays)
 (defvar mc/mode-line)
+(defvar minions-mode)
+(defvar minions-mode-line-lighter)
 (defvar persp-nil-name)
 (defvar symbol-overlay-keywords-alist)
 (defvar symbol-overlay-temp-symbol)
@@ -205,6 +208,7 @@ It returns a file name which can be used directly as argument of
 (declare-function image-get-display-property 'image-mode)
 (declare-function lsp-mode-line 'lsp-mode)
 (declare-function magit-toplevel 'magit-git)
+(declare-function minions-minor-modes-menu 'minions)
 (declare-function persp-add-buffer 'persp-mode)
 (declare-function persp-contain-buffer-p 'persp-mode)
 (declare-function persp-remove-buffer 'persp-mode)
@@ -929,10 +933,20 @@ mouse-3: Toggle minor modes"
 
 (doom-modeline-def-segment minor-modes
   (when doom-modeline-minor-modes
-    (propertize
-     (concat (format-mode-line `(:propertize ("" minor-mode-alist)))
-             " ")
-     'face (if (doom-modeline--active) 'doom-modeline-buffer-minor-mode))))
+    (if (bound-and-true-p minions-mode)
+        (concat
+         " "
+         (propertize minions-mode-line-lighter
+                     'face (if (doom-modeline--active) 'doom-modeline-buffer-minor-mode)
+                     'help-echo "Minions
+mouse-1: Display minor modes menu"
+                     'mouse-face 'mode-line-highlight
+                     'local-map (make-mode-line-mouse-map
+                                 'mouse-1 #'minions-minor-modes-menu))
+         " ")
+      (propertize
+       (concat (format-mode-line `(:propertize ("" minor-mode-alist))) " ")
+       'face (if (doom-modeline--active) 'doom-modeline-buffer-minor-mode)))))
 
 
 ;;
