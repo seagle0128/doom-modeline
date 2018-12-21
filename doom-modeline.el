@@ -1589,6 +1589,7 @@ mouse-3: Describe current input method")
   "The current debug state."
   (when (doom-modeline--active)
     (concat
+     (and (or debug-on-error debug-on-quit) " ")
      (when debug-on-error
        (propertize
         (if doom-modeline-icon
