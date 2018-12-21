@@ -1592,7 +1592,7 @@ mouse-3: Describe current input method")
      (when debug-on-error
        (propertize
         (if doom-modeline-icon
-            (doom-modeline-icon-faicon "bug" :v-adjust -0.125 :face 'doom-modeline-urgent)
+            (doom-modeline-icon-faicon "bug" :v-adjust -0.0575 :face 'doom-modeline-urgent)
           (propertize "!" 'face 'doom-modeline-urgent))
         'help-echo "Debug on Error
 mouse-1: Toggle Debug on Error"
@@ -1601,7 +1601,7 @@ mouse-1: Toggle Debug on Error"
      (when debug-on-quit
        (propertize
         (if doom-modeline-icon
-            (doom-modeline-icon-faicon "bug" :v-adjust -0.125 :face 'doom-modeline-warning)
+            (doom-modeline-icon-faicon "bug" :v-adjust -0.0575 :face 'doom-modeline-warning)
           (propertize "!" 'face 'doom-modeline-warning))
         'help-echo "Debug on Quit
 mouse-1: Toggle Debug on Quit"
