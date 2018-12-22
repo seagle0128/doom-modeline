@@ -270,8 +270,8 @@ It returns a file name which can be used directly as argument of
 
 (defface doom-modeline-panel
   '((t (:inherit mode-line-highlight)))
-  "Face for 'X out of Y' segments, such as `doom-modeline--anzu', `doom-modeline--evil-substitute' and
-`iedit'")
+  "Face for 'X out of Y' segments, such as `doom-modeline--anzu',
+`doom-modeline--evil-substitute' and`iedit'")
 
 (defface doom-modeline-info
   `((t (:inherit (success bold))))
@@ -289,14 +289,10 @@ It returns a file name which can be used directly as argument of
 (defface doom-modeline-bar '((t (:inherit highlight)))
   "The face used for the left-most bar on the mode-line of an active window.")
 
-(defface doom-modeline-eldoc-bar '((t (:inherit highlight)))
-  "The face used for the left-most bar on the mode-line when eldoc-eval is
-active.")
+(defface doom-modeline-eldoc-bar `((t (:background ,(face-foreground 'doom-modeline-info))))
+  "The face used for the left-most bar on the mode-line when eldoc-eval is active.")
 
-(defface doom-modeline-inactive-bar `((t (:background
-                                          ,(face-foreground 'mode-line-inactive)
-                                          :foreground
-                                          ,(face-background 'mode-line-inactive))))
+(defface doom-modeline-inactive-bar `((t (:background ,(face-foreground 'mode-line-inactive))))
   "The face used for the left-most bar on the mode-line of an inactive window.")
 
 (defface doom-modeline-evil-emacs-state '((t (:inherit doom-modeline-warning)))
