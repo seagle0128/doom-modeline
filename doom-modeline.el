@@ -1561,7 +1561,7 @@ mouse-3: Describe current input method")
                 doom-modeline-github-interval
                 'doom-modeline-github-fetch-notifications)
 
-(defun github-open-notifications-participating ()
+(defun doom-modeline--github-open-notifications-participating ()
   "Open GitHub Notifications/Participating page."
   (interactive)
   (browse-url "https://github.com/notifications/participating"))
@@ -1582,7 +1582,7 @@ mouse-3: Describe current input method")
        'mouse-face '(:box 1)
        'local-map (make-mode-line-mouse-map
                    'mouse-1
-                   #'github-open-notifications-participating))))
+                   #'doom-modeline--github-open-notifications-participating))))
 
 ;;
 ;; debug state
