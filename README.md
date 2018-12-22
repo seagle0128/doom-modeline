@@ -145,7 +145,7 @@ Strongly recommend to use
 ;; Whether display `lsp' state or not. Non-nil to display in mode-line.
 (setq doom-modeline-lsp t)
 
-;; Whether display github notifications or not.
+;; Whether display github notifications or not. Requires `ghub+` package.
 (setq doom-modeline-github t)
 
 ;; The interval of checking github.
