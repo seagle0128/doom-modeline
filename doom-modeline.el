@@ -54,8 +54,8 @@
 ;; - An indicator for debug state
 ;; - An indicator for LSP state
 ;; - An indicator for github notifications
-;; - Truncated file names, file icon, buffer state and project name in buffer
-;;   information segment, which is compatible with projectile or project
+;; - Truncated file name, file icon, buffer state and project name in buffer
+;;   information segment, which is compatible with projectile and project
 ;;
 ;; Installation:
 ;; From melpa, `M-x package-install RET doom-modeline RET`.
