@@ -83,7 +83,9 @@
 ;;
 
 (defvar doom-modeline-height (let ((font (face-font 'mode-line)))
-                               (if font (* 2 (aref (font-info font) 2)) 25))
+                               (if (and font (fboundp 'font-info))
+                                   (* 2 (aref (font-info font) 2))
+                                 25))
   "How tall the mode-line should be (only respected in GUI Emacs).")
 
 (defvar doom-modeline-bar-width 3

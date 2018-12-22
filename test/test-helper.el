@@ -35,8 +35,6 @@
   (set-text-properties 0 (length txt) nil txt)
   txt)
 
-(defvar doom-modeline-height 26)
-
 (require 'doom-modeline (expand-file-name "doom-modeline.el"))
 
 ;;; test-helper.el ends here
