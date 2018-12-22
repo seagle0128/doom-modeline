@@ -289,7 +289,7 @@ It returns a file name which can be used directly as argument of
 (defface doom-modeline-bar '((t (:inherit highlight)))
   "The face used for the left-most bar on the mode-line of an active window.")
 
-(defface doom-modeline-eldoc-bar '((t (:inherit shadow)))
+(defface doom-modeline-eldoc-bar '((t (:inherit highlight)))
   "The face used for the left-most bar on the mode-line when eldoc-eval is
 active.")
 
@@ -439,10 +439,10 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
 (defun doom-modeline-eldoc (text)
   "Get eldoc TEXT for mode-line."
-  (concat (when (display-graphic-p)
-            (doom-modeline--make-xpm 'doom-modeline-eldoc-bar
-                                     doom-modeline-height
-                                     doom-modeline-bar-width))
+  (concat (doom-modeline--make-xpm 'doom-modeline-eldoc-bar
+                                   doom-modeline-bar-width
+                                   doom-modeline-height)
+          " "
           text))
 
 ;; Show eldoc in the mode-line with `eval-expression'

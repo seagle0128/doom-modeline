@@ -30,11 +30,11 @@
 ;;
 ;;; Code:
 
+(require 'doom-modeline (expand-file-name "doom-modeline.el"))
+
 (defun strip-text-properties(txt)
   "Strip text properties of TXT."
   (set-text-properties 0 (length txt) nil txt)
   txt)
-
-(require 'doom-modeline (expand-file-name "doom-modeline.el"))
 
 ;;; test-helper.el ends here
