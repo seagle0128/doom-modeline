@@ -128,7 +128,7 @@ The icons may not be showed correctly in terminal and on Windows.")
   "Whether display `lsp' state or not. Non-nil to display in mode-line.")
 
 (defvar doom-modeline-github t
-  "Whether display github notifications or not. Requires `ghub+' package.")
+  "Whether display github notifications or not. Requires `ghub' package.")
 
 (defvar doom-modeline-github-interval (* 30 60)
   "The interval of checking github.")
@@ -1553,18 +1553,19 @@ mouse-3: Describe current input method")
 (defun doom-modeline-github-fetch-notifications ()
   "Fetch github notifications."
   (if (and doom-modeline-github
-           (fboundp 'ghubp-get-notifications))
+           (fboundp 'ghub-get))
       (setq doom-modeline--github-notifications-number
             (length (ignore-errors
-                      (ghubp-get-notifications :participating "true"))))))
+                      (ghub-get "/notifications" '((notifications . "true")) :query))))))
+
 (run-with-timer 30
                 doom-modeline-github-interval
                 'doom-modeline-github-fetch-notifications)
 
-(defun doom-modeline--github-open-notifications-participating ()
-  "Open GitHub Notifications/Participating page."
+(defun doom-modeline--github-open-notifications ()
+  "Open GitHub Notifications page."
   (interactive)
-  (browse-url "https://github.com/notifications/participating"))
+  (browse-url "https://github.com/notifications"))
 
 (doom-modeline-def-segment github
   "The github notifications."
@@ -1582,7 +1583,7 @@ mouse-3: Describe current input method")
        'mouse-face '(:box 1)
        'local-map (make-mode-line-mouse-map
                    'mouse-1
-                   #'doom-modeline--github-open-notifications-participating))))
+                   #'doom-modeline--github-open-notifications))))
 
 ;;
 ;; debug state
