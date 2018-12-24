@@ -88,7 +88,7 @@
                                  25))
   "How tall the mode-line should be (only respected in GUI Emacs).")
 
-(defvar doom-modeline-bar-width 3
+(defvar doom-modeline-bar-width (if (eq system-type 'darwin) 3 6)
   "How wide the mode-line bar should be (only respected in GUI Emacs).")
 
 (defvar doom-modeline-buffer-file-name-style 'truncate-upto-project
