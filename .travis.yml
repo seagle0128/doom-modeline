@@ -24,3 +24,4 @@ script:
   - emacs --version
   - cask exec ert-runner
   - cask build
+  - cask package

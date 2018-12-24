@@ -1,4 +1,4 @@
-;;; doom-modeline.el --- A minimal and modern modeline -*- lexical-binding: t; -*-
+;;; doom-modeline.el --- A minimal and modern mode-line -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2018 Vincent Zhang
 

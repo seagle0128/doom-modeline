@@ -1,6 +1,6 @@
 (source melpa)
 
-(package "doom-modeline" "0.2.0" "A fancy mode-line from DOOM Emacs.")
+(package "doom-modeline" "0.1.0" "A minimal and modern mode-line.")
 
 (package-file "doom-modeline.el")
 
