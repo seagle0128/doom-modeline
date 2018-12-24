@@ -554,6 +554,11 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   (when doom-modeline-icon
     (apply 'all-the-icons-icon-for-mode args)))
 
+(defun doom-modeline-icon-for-file (&rest args)
+  "Display icon for major mode via ARGS."
+  (when doom-modeline-icon
+    (apply 'all-the-icons-icon-for-file args)))
+
 (defun doom-modeline--active ()
   "Whether is an active window."
   (eq (selected-window) doom-modeline-current-window))
@@ -743,6 +748,8 @@ buffer where knowing the current project directory is important."
   "Update file icon in mode-line."
   (setq doom-modeline--buffer-file-icon
         (let ((icon (doom-modeline-icon-for-mode major-mode :height 0.92)))
+          (if (symbolp icon)
+              (setq icon (doom-modeline-icon-for-file (buffer-name) :height 0.92)))
           (unless (symbolp icon)
             (propertize icon
                         'help-echo (format "Major-mode: `%s'" major-mode)
