@@ -127,7 +127,7 @@ The icons may not be showed correctly in terminal and on Windows.")
 (defvar doom-modeline-lsp t
   "Whether display `lsp' state or not. Non-nil to display in mode-line.")
 
-(defvar doom-modeline-github nil
+(defvar doom-modeline-github t
   "Whether display github notifications or not. Requires `ghub' package.")
 
 (defvar doom-modeline-github-interval (* 30 60)
@@ -203,8 +203,6 @@ It returns a file name which can be used directly as argument of
 (declare-function face-remap-remove-relative 'face-remap)
 (declare-function flycheck-count-errors 'flycheck)
 (declare-function flycheck-list-errors 'flycheck)
-(declare-function get-current-persp 'persp-mode)
-(declare-function ghubp-get-notifications 'ghub+)
 (declare-function iedit-find-current-occurrence-overlay 'iedit-lib)
 (declare-function iedit-prev-occurrence 'iedit-lib)
 (declare-function image-get-display-property 'image-mode)
@@ -218,7 +216,6 @@ It returns a file name which can be used directly as argument of
 (declare-function project-current 'project)
 (declare-function project-roots 'project)
 (declare-function projectile-project-root 'projectile)
-(declare-function safe-persp-name 'persp-mode)
 (declare-function symbol-overlay-assoc 'symbol-overlay)
 (declare-function symbol-overlay-get-list 'symbol-overlay)
 (declare-function symbol-overlay-get-symbol 'symbol-overlay)
@@ -1554,10 +1551,13 @@ mouse-3: Describe current input method")
 (defun doom-modeline-github-fetch-notifications ()
   "Fetch github notifications."
   (if (and doom-modeline-github
+           (fboundp 'async-start)
            (fboundp 'ghub-get))
-      (setq doom-modeline--github-notifications-number
-            (length (ignore-errors
-                      (ghub-get "/notifications" nil :query '((notifications . "true"))))))))
+      (async-start
+       (setq doom-modeline--github-notifications-number
+             (length
+              (ignore-errors
+                (ghub-get "/notifications" nil :query '((notifications . "true")))))))))
 
 (run-with-timer 30
                 doom-modeline-github-interval
