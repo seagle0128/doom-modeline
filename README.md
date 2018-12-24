@@ -146,7 +146,7 @@ Strongly recommend to use
 (setq doom-modeline-lsp t)
 
 ;; Whether display github notifications or not. Requires `ghub` package.
-(setq doom-modeline-github t)
+(setq doom-modeline-github nil)
 
 ;; The interval of checking github.
 (setq doom-modeline-github-interval (* 30 60))

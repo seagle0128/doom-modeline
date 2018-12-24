@@ -127,7 +127,7 @@ The icons may not be showed correctly in terminal and on Windows.")
 (defvar doom-modeline-lsp t
   "Whether display `lsp' state or not. Non-nil to display in mode-line.")
 
-(defvar doom-modeline-github t
+(defvar doom-modeline-github nil
   "Whether display github notifications or not. Requires `ghub' package.")
 
 (defvar doom-modeline-github-interval (* 30 60)
@@ -1557,7 +1557,7 @@ mouse-3: Describe current input method")
            (fboundp 'ghub-get))
       (setq doom-modeline--github-notifications-number
             (length (ignore-errors
-                      (ghub-get "/notifications" '((notifications . "true")) :query))))))
+                      (ghub-get "/notifications" nil :query '((notifications . "true"))))))))
 
 (run-with-timer 30
                 doom-modeline-github-interval
