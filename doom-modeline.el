@@ -775,7 +775,9 @@ Uses `all-the-icons-material' to fetch the icon."
               ((buffer-modified-p)
                (doom-modeline-buffer-file-state-icon
                 "save"
-                'doom-modeline-buffer-modified))
+                'doom-modeline-buffer-modified
+                1.05
+                -0.22))
               ((and buffer-file-name
                     (not (file-exists-p buffer-file-name)))
                (doom-modeline-buffer-file-state-icon
@@ -784,7 +786,9 @@ Uses `all-the-icons-material' to fetch the icon."
               ((buffer-narrowed-p)
                (doom-modeline-buffer-file-state-icon
                 "unfold_less"
-                'doom-modeline-warning)))))
+                'doom-modeline-warning
+                1.1
+                -0.225)))))
 (add-hook 'find-file-hook 'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-save-hook 'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-revert-hook 'doom-modeline-update-buffer-file-state-icon)
@@ -1019,11 +1023,7 @@ Uses `all-the-icons-material' to fetch the icon."
   (concat " "
           (when icon
             (concat
-             (doom-modeline-icon-material
-              icon
-              :face face
-              :height (if (eq system-type 'darwin) 1.0 0.96)
-              :v-adjust (or voffset (if (eq system-type 'darwin) -0.225 -0.205)))
+             (doom-modeline-icon-material icon :face face :height 1.1 :v-adjust (or voffset -0.2))
              (if text doom-modeline-vspc)))
           (if text (propertize text 'face face))
           "  "))
@@ -1039,9 +1039,10 @@ Uses `all-the-icons-material' to fetch the icon."
                             (let ((sum (+ (or .error 0) (or .warning 0))))
                               (doom-modeline-flycheck-icon "do_not_disturb_alt"
                                                            (number-to-string sum)
-                                                           (if .error 'doom-modeline-urgent 'doom-modeline-warning))))
+                                                           (if .error 'doom-modeline-urgent 'doom-modeline-warning)
+                                                           -0.225)))
                         (doom-modeline-flycheck-icon "check" nil 'doom-modeline-info)))
-           (`running     (doom-modeline-flycheck-icon "access_time" nil 'font-lock-doc-face -0.25))
+           (`running     (doom-modeline-flycheck-icon "access_time" nil 'font-lock-doc-face -0.225))
            (`no-checker  (doom-modeline-flycheck-icon "sim_card_alert" "-" 'font-lock-doc-face))
            (`errored     (doom-modeline-flycheck-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
            (`interrupted (doom-modeline-flycheck-icon "pause" "Interrupted" 'font-lock-doc-face))
