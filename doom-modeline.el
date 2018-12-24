@@ -1343,6 +1343,7 @@ Requires `eyebrowse-mode' to be enabled."
              (str (if (and tag (< 0 (length tag)))
                       tag
                     (when num (int-to-string num)))))
+        (assq-delete-all 'eyebrowse-mode mode-line-misc-info)
         (propertize (format " %s " str) 'face
                     (if (doom-modeline--active) 'doom-modeline-buffer-major-mode)))
     ""))
