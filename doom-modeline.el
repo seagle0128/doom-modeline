@@ -289,7 +289,7 @@ It returns a file name which can be used directly as argument of
 (defface doom-modeline-bar '((t (:inherit highlight)))
   "The face used for the left-most bar on the mode-line of an active window.")
 
-(defface doom-modeline-eldoc-bar `((t (:background ,(face-foreground 'doom-modeline-info))))
+(defface doom-modeline-eldoc-bar `((t (:background ,(face-foreground 'success))))
   "The face used for the left-most bar on the mode-line when eldoc-eval is active.")
 
 (defface doom-modeline-inactive-bar `((t (:background ,(face-foreground 'mode-line-inactive))))
