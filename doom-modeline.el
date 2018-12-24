@@ -1562,10 +1562,12 @@ mouse-3: Describe current input method")
            (fboundp 'async-start)
            (fboundp 'ghub-get))
       (async-start
-       (setq doom-modeline--github-notifications-number
-             (length
-              (ignore-errors
-                (ghub-get "/notifications" nil :query '((notifications . "true")))))))))
+       (lambda ()
+         (ignore-errors
+           (ghub-get "/notifications" nil :query '((notifications . "true")))))
+       (lambda (result)
+         (setq doom-modeline--github-notifications-number
+               (length result))))))
 
 (run-with-timer 30
                 doom-modeline-github-interval
