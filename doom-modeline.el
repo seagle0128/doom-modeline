@@ -116,7 +116,10 @@ Non-nil to show the icons in mode-line.
 The icons may not be showed correctly in terminal and on Windows.")
 
 (defvar doom-modeline-major-mode-icon t
-  "Whether show the icon for major mode. It should respect `doom-modeline-icon'.")
+  "Whether show the icon for major mode. It respects `doom-modeline-icon'.")
+
+(defvar doom-modeline-major-mode-color-icon t
+  "Display color icons for `major-mode'. It respects `all-the-icons-color-icons'.")
 
 (defvar doom-modeline-minor-modes nil
   "Whether display minor modes or not. Non-nil to display in mode-line.")
@@ -741,14 +744,11 @@ buffer where knowing the current project directory is important."
 (defun doom-modeline-update-buffer-file-icon (&rest _)
   "Update file icon in mode-line."
   (setq doom-modeline--buffer-file-icon
-        (let ((icon (doom-modeline-icon-for-mode major-mode)))
+        (let ((icon (doom-modeline-icon-for-mode major-mode :height 0.92)))
           (unless (symbolp icon)
-            (concat
-             (propertize icon
-                         'help-echo (format "Major-mode: `%s'" major-mode)
-                         'display '(raise -0.125)
-                         'face `(:height 1.1 :family ,(all-the-icons-icon-family-for-mode major-mode) :inherit))
-             doom-modeline-vspc)))))
+            (propertize icon
+                        'help-echo (format "Major-mode: `%s'" major-mode)
+                        'display '(raise -0.125))))))
 (add-hook 'find-file-hook 'doom-modeline-update-buffer-file-icon)
 (add-hook 'after-revert-hook 'doom-modeline-update-buffer-file-icon)
 (add-hook 'after-change-major-mode-hook 'doom-modeline-update-buffer-file-icon)
@@ -761,35 +761,30 @@ Uses `all-the-icons-material' to fetch the icon."
     (doom-modeline-icon-material
      icon
      :face (if (doom-modeline--active) face)
-     :height (or height (if (eq system-type 'darwin) 1.0 0.96))
-     :v-adjust (or voffset (if (eq system-type 'darwin) -0.225 -0.205)))))
+     :height (or height 1.0)
+     :v-adjust (or voffset -0.215))))
 
 (defvar-local doom-modeline--buffer-file-state-icon nil)
 (defun doom-modeline-update-buffer-file-state-icon (&rest _)
   "Update the buffer or file state in mode-line."
   (setq doom-modeline--buffer-file-state-icon
         (cond (buffer-read-only
-               (concat (doom-modeline-buffer-file-state-icon
-                        "lock"
-                        'doom-modeline-warning)
-                       doom-modeline-vspc))
+               (doom-modeline-buffer-file-state-icon
+                "lock"
+                'doom-modeline-warning))
               ((buffer-modified-p)
-               (concat (doom-modeline-buffer-file-state-icon
-                        "save"
-                        'doom-modeline-buffer-modified)
-                       doom-modeline-vspc))
+               (doom-modeline-buffer-file-state-icon
+                "save"
+                'doom-modeline-buffer-modified))
               ((and buffer-file-name
                     (not (file-exists-p buffer-file-name)))
-               (concat (doom-modeline-buffer-file-state-icon
-                        "do_not_disturb_alt"
-                        'doom-modeline-urgent)
-                       doom-modeline-vspc))
+               (doom-modeline-buffer-file-state-icon
+                "do_not_disturb_alt"
+                'doom-modeline-urgent))
               ((buffer-narrowed-p)
-               (concat (doom-modeline-buffer-file-state-icon
-                        "unfold_less"
-                        'doom-modeline-warning
-                        1.1)
-                       doom-modeline-vspc)))))
+               (doom-modeline-buffer-file-state-icon
+                "unfold_less"
+                'doom-modeline-warning)))))
 (add-hook 'find-file-hook 'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-save-hook 'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-revert-hook 'doom-modeline-update-buffer-file-state-icon)
@@ -835,24 +830,36 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 (doom-modeline-def-segment buffer-info
   "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
-  (concat
-   ;; major mode icon
-   (if (and doom-modeline-icon doom-modeline-major-mode-icon)
-       (or doom-modeline--buffer-file-icon
-           (doom-modeline-update-buffer-file-icon)))
+  (let ((active (doom-modeline--active)))
+    (concat
+     ;; major mode icon
+     (when (and doom-modeline-icon doom-modeline-major-mode-icon)
+       (when-let ((icon (or doom-modeline--buffer-file-icon
+                            (doom-modeline-update-buffer-file-icon))))
+         (concat
+          (if (and active doom-modeline-major-mode-color-icon)
+              icon
+            (propertize icon
+                        'face `(:height 1.1 :family ,(all-the-icons-icon-family icon) :inherit)))
+          doom-modeline-vspc)))
 
-   ;; state icon
-   (if (doom-modeline--active)
-       (or doom-modeline--buffer-file-state-icon
-           (doom-modeline-update-buffer-file-state-icon)))
+     ;; state icon
+     (when doom-modeline-icon
+       (when-let ((icon (or doom-modeline--buffer-file-state-icon
+                            (doom-modeline-update-buffer-file-state-icon))))
+         (concat
+          (if active
+              icon
+            (propertize icon
+                        'face `(:height 1.2 :family ,(all-the-icons-icon-family icon) :inherit)))
+          doom-modeline-vspc)))
 
-   ;; buffer file name
-   (if (doom-modeline--active)
-       (or doom-modeline--buffer-file-name
-           (doom-modeline-update-buffer-file-name))
-     (propertize
-      (or doom-modeline--buffer-file-name "%b")
-      'face 'mode-line-inactive))))
+     ;; buffer file name
+     (let ((name (or doom-modeline--buffer-file-name
+                     (doom-modeline-update-buffer-file-name))))
+       (if active
+           name
+         (propertize name 'face 'mode-line-inactive))))))
 
 (doom-modeline-def-segment buffer-info-simple
   "Display only the current buffer's name, but with fontification."

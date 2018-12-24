@@ -133,8 +133,11 @@ Strongly recommend to use
 ;; The icons may not be showed correctly on Windows. Disable to make it work.
 (setq doom-modeline-icon t)
 
-;; Whether show the icon for major mode. It should respect `doom-modeline-icon'.
+;; Whether show the icon for major mode. It respects `doom-modeline-icon'.
 (setq doom-modeline-major-mode-icon t)
+
+;; Display color icons for `major-mode'. It respects `all-the-icons-color-icons'.
+(setq doom-modeline-major-mode-color-icon t)
 
 ;; Whether display minor modes or not. Non-nil to display in mode-line.
 (setq doom-modeline-minor-modes nil)
