@@ -49,6 +49,21 @@ The `doom-modeline` was designed for minimalism, and offers:
 ![macro](https://user-images.githubusercontent.com/140797/49694199-cc056b80-fbc0-11e8-9bb1-533b1e64da66.png
 "Macro")
 
+![color_icon_cpp](https://user-images.githubusercontent.com/140797/50414928-3c63ec00-0853-11e9-9b26-6a1df278d332.png
+"Color C++ icon")
+
+![color_icon_java](https://user-images.githubusercontent.com/140797/50415081-1428bd00-0854-11e9-9ae5-91805290c524.png
+"Color Java icon")
+
+![color_icon_elisp](https://user-images.githubusercontent.com/140797/50415381-9f568280-0855-11e9-9478-34a6dd614d96.png
+"Color Elisp icon")
+
+![evil_normal_state](https://user-images.githubusercontent.com/140797/49694476-b8103880-fbc5-11e8-9c18-91f5e9258333.png
+"Evil Normal State")
+
+![evil_insert_state](https://user-images.githubusercontent.com/140797/49694461-8b5c2100-fbc5-11e8-993e-d97baa9f01af.png
+"Evil Insert State")
+
 ![lsp_version](https://user-images.githubusercontent.com/140797/49694206-edfeee00-fbc0-11e8-9c50-888a2cd7a397.png
 "Perspective, LSP, Version, VCS and Flycheck")
 
@@ -57,12 +72,6 @@ The `doom-modeline` was designed for minimalism, and offers:
 
 ![github_notifications](https://user-images.githubusercontent.com/140797/49808406-6b7c5700-fd97-11e8-83bb-d2ddbe5be8eb.png
 "Github Notifications")
-
-![evil_normal_state](https://user-images.githubusercontent.com/140797/49694476-b8103880-fbc5-11e8-9c18-91f5e9258333.png
-"Evil Normal State")
-
-![evil_insert_state](https://user-images.githubusercontent.com/140797/49694461-8b5c2100-fbc5-11e8-993e-d97baa9f01af.png
-"Evil Insert State")
 
 ![minions](https://user-images.githubusercontent.com/140797/50301291-de857c00-04c1-11e9-84c5-bfbc8de8295f.png
 "Minions and minor modes")
