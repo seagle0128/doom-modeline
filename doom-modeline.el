@@ -946,8 +946,8 @@ mouse-3: Toggle minor modes"
       (propertize
        (let ((base-dir-name (file-name-nondirectory (substring python-shell-virtualenv-root 0 -1))))
          (if (< 13 (length base-dir-name))
-             (format " %s..." (substring base-dir-name 0 10))
-           (format " %s" base-dir-name)))
+             (format " (%s...)" (substring base-dir-name 0 10))
+           (format " (%s)" base-dir-name)))
        'face (if (doom-modeline--active) 'doom-modeline-buffer-major-mode)))))
 
 
