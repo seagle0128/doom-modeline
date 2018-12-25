@@ -935,6 +935,23 @@ mouse-3: Toggle minor modes"
 
 
 ;;
+;; python-venv
+;;
+
+(doom-modeline-def-segment python-venv
+  "The current python virtual environment state."
+  (when (boundp 'python-shell-virtualenv-root)
+    (if (eq python-shell-virtualenv-root nil)
+        ""
+      (propertize
+       (let ((base-dir-name (file-name-nondirectory (substring python-shell-virtualenv-root 0 -1))))
+         (if (< 13 (length base-dir-name))
+             (format " %s..." (substring base-dir-name 0 10))
+           (format " %s" base-dir-name)))
+       'face (if (doom-modeline--active) 'doom-modeline-buffer-major-mode)))))
+
+
+;;
 ;; process
 ;;
 
@@ -1637,7 +1654,7 @@ mouse-1: Toggle Debug on Quit"
 
 (doom-modeline-def-modeline 'main
   '(bar workspace-number window-number evil-state god-state ryo-modal xah-fly-keys matches " " buffer-info remote-host buffer-position " " selection-info)
-  '(misc-info persp-name lsp github debug minor-modes input-method buffer-encoding major-mode process vcs flycheck))
+  '(misc-info persp-name lsp github debug minor-modes input-method buffer-encoding major-mode python-venv process vcs flycheck))
 
 (doom-modeline-def-modeline 'minimal
   '(bar matches " " buffer-info)
