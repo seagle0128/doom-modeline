@@ -940,7 +940,7 @@ mouse-3: Toggle minor modes"
 
 (doom-modeline-def-segment python-venv
   "The current python virtual environment state."
-  (when (boundp 'python-shell-virtualenv-root)
+  (when (eq major-mode 'python-mode)
     (if (eq python-shell-virtualenv-root nil)
         ""
       (propertize
