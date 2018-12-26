@@ -118,7 +118,7 @@ The icons may not be showed correctly in terminal and on Windows.")
 (defvar doom-modeline-major-mode-icon t
   "Whether show the icon for major mode. It respects `doom-modeline-icon'.")
 
-(defvar doom-modeline-major-mode-color-icon t
+(defvar doom-modeline-major-mode-color-icon nil
   "Display color icons for `major-mode'. It respects `all-the-icons-color-icons'.")
 
 (defvar doom-modeline-minor-modes nil

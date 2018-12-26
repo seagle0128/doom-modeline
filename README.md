@@ -146,7 +146,7 @@ Strongly recommend to use
 (setq doom-modeline-major-mode-icon t)
 
 ;; Display color icons for `major-mode'. It respects `all-the-icons-color-icons'.
-(setq doom-modeline-major-mode-color-icon t)
+(setq doom-modeline-major-mode-color-icon nil)
 
 ;; Whether display minor modes or not. Non-nil to display in mode-line.
 (setq doom-modeline-minor-modes nil)
