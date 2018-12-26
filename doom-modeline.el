@@ -1564,12 +1564,16 @@ mouse-3: Describe current input method")
 (defun doom-modeline-github-fetch-notifications ()
   "Fetch github notifications."
   (if (and doom-modeline-github
-           (fboundp 'async-start)
-           (fboundp 'ghub-get))
+           (fboundp 'async-start))
       (async-start
        (lambda ()
-         (ignore-errors
-           (ghub-get "/notifications" nil :query '((notifications . "true")))))
+         (package-initialize)
+         (require 'ghub nil t)
+         (when (fboundp 'ghub-get)
+           (ghub-get "/notifications"
+                     nil
+                     :query '((notifications . "true"))
+                     :noerror t)))
        (lambda (result)
          (setq doom-modeline--github-notifications-number
                (length result))))))
