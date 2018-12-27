@@ -1722,30 +1722,45 @@ mouse-1: Toggle Debug on Quit"
 ;; Versions, support Python, Ruby, Perl and Golang, etc.
 (add-hook 'python-mode-hook
           (lambda ()
-            (cond ((and (fboundp 'pipenv-project-p) (pipenv-project-p) (executable-find "pipenv") (executable-find "cut") (executable-find "sed") (executable-find "xargs"))
-                   (setq doom-modeline-env-command "pipenv run python --version 2>&1 | cut -d' ' -f2 | sed -n '1p' | xargs echo 'Pipenv'"))
-                  ((and doom-modeline-python-executable (executable-find doom-modeline-python-executable) (executable-find "cut") (executable-find "sed"))
-                   (setq doom-modeline-env-command (concat doom-modeline-python-executable " --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))))
+            (cond ((and (fboundp 'pipenv-project-p) (pipenv-project-p) (executable-find "pipenv")
+                        (executable-find "cut") (executable-find "sed") (executable-find "xargs"))
+                   (setq doom-modeline-env-command
+                         "pipenv run python --version 2>&1 | cut -d' ' -f2 | sed -n '1p' | xargs echo 'Pipenv'"))
+                  ((and doom-modeline-python-executable
+                        (executable-find doom-modeline-python-executable)
+                        (executable-find "cut") (executable-find "sed"))
+                   (setq doom-modeline-env-command
+                         (concat doom-modeline-python-executable " --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))))
 (add-hook 'ruby-mode-hook
           (lambda ()
-            (when (and (executable-find "ruby") (executable-find "cut") (executable-find "sed"))
-              (setq doom-modeline-env-command "ruby --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))
+            (when (and (executable-find "ruby")
+                       (executable-find "cut") (executable-find "sed"))
+              (setq doom-modeline-env-command
+                    "ruby --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))
 (add-hook 'perl-mode-hook
           (lambda ()
-            (when (and (executable-find "perl") (executable-find "cut") (executable-find "tr") (executable-find "sed"))
-              (setq doom-modeline-env-command "perl --version 2>&1 | cut -d'(' -f2 | cut -d')' -f1 | tr -d 'v' | sed -n '2p'"))))
+            (when (and (executable-find "perl") (executable-find "cut")
+                       (executable-find "tr") (executable-find "sed"))
+              (setq doom-modeline-env-command
+                    "perl --version 2>&1 | cut -d'(' -f2 | cut -d')' -f1 | tr -d 'v' | sed -n '2p'"))))
 (add-hook 'go-mode-hook
           (lambda ()
-            (when (and (executable-find "go") (executable-find "cut") (executable-find "tr") (executable-find "sed"))
-              (setq doom-modeline-env-command "go version 2>&1 | cut -d' ' -f3 | tr -d 'go' | sed -n '1p'"))))
+            (when (and (executable-find "go") (executable-find "cut")
+                       (executable-find "tr") (executable-find "sed"))
+              (setq doom-modeline-env-command
+                    "go version 2>&1 | cut -d' ' -f3 | tr -d 'go' | sed -n '1p'"))))
 (add-hook 'elixir-mode-hook
           (lambda ()
-            (when (and (executable-find "iex") (executable-find "cut") (executable-find "sed"))
-              (setq doom-modeline-env-command "iex --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))
+            (when (and (executable-find "iex")
+                       (executable-find "cut") (executable-find "sed"))
+              (setq doom-modeline-env-command
+                    "iex --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))
 (add-hook 'rust-mode-hook
           (lambda ()
-            (when (and (executable-find "rustc") (executable-find "cut") (executable-find "sed"))
-              (setq doom-modeline-env-command "rustc --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))
+            (when (and (executable-find "rustc")
+                       (executable-find "cut") (executable-find "sed"))
+              (setq doom-modeline-env-command
+                    "rustc --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))
 
 
 ;; Ensure modeline is inactive when Emacs is unfocused (and active otherwise)
