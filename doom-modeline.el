@@ -752,7 +752,7 @@ buffer where knowing the current project directory is important."
               (setq icon (doom-modeline-icon-for-file (buffer-name) :height 0.92)))
           (unless (symbolp icon)
             (propertize icon
-                        'help-echo (format "Major-mode: `%s'" major-mode)
+                        'help-echo (format "Major-mode: %s" mode-name)
                         'display '(raise -0.125))))))
 (add-hook 'find-file-hook 'doom-modeline-update-buffer-file-icon)
 (add-hook 'after-revert-hook 'doom-modeline-update-buffer-file-icon)
