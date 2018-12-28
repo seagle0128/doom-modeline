@@ -1665,11 +1665,12 @@ mouse-1: Toggle Debug on Quit"
 
 (doom-modeline-def-modeline 'project
   '(bar window-number buffer-default-directory)
-  '(misc-info major-mode))
+  '(misc-info github debug " " major-mode))
 
 (doom-modeline-def-modeline 'media
   '(bar window-number " %b  ")
   '(misc-info media-info major-mode))
+
 
 ;;
 ;; Hooks
@@ -1720,16 +1721,16 @@ mouse-1: Toggle Debug on Quit"
   "Set project mode-line."
   (doom-modeline-set-modeline 'project))
 
+
 ;;
 ;; Bootstrap
 ;;
 
 (doom-modeline-set-modeline 'main t) ; set default modeline
 
+(add-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
 (add-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
-(add-hook 'org-src-mode-hook #'doom-modeline-set-special-modeline)
 (add-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
-(add-hook 'dashboard-mode-hook #'doom-modeline-set-minimal-modeline)
 
 ;; Versions, support Python, Ruby, Perl and Golang, etc.
 (add-hook 'python-mode-hook
