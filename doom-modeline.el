@@ -1599,8 +1599,9 @@ mouse-3: Describe current input method")
                                           :v-adjust -0.0575
                                           :face 'doom-modeline-warning)
                (if doom-modeline-icon doom-modeline-vspc " ")
-               (propertize (format "%s " doom-modeline--github-notifications-number)
-                           'face 'doom-modeline-warning))
+               (propertize (number-to-string doom-modeline--github-notifications-number)
+                           'face 'doom-modeline-warning)
+               " ")
        'help-echo "Github
 mouse-1: Show notifications
 mouse-3: Fetch notifications"
