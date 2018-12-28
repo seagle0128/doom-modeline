@@ -1561,7 +1561,7 @@ mouse-3: Describe current input method")
 ;;
 
 (defvar doom-modeline--github-notifications-number 0)
-(defun doom-modeline-github-fetch-notifications ()
+(defun doom-modeline--github-fetch-notifications ()
   "Fetch github notifications."
   (if (and doom-modeline-github
            (fboundp 'async-start))
@@ -1580,12 +1580,13 @@ mouse-3: Describe current input method")
 
 (run-with-timer 30
                 doom-modeline-github-interval
-                'doom-modeline-github-fetch-notifications)
+                #'doom-modeline--github-fetch-notifications)
 
 (defun doom-modeline--github-open-notifications ()
   "Open GitHub Notifications page."
   (interactive)
-  (browse-url "https://github.com/notifications"))
+  (browse-url "https://github.com/notifications")
+  (run-with-timer 60 nil #'doom-modeline--github-fetch-notifications))
 
 (doom-modeline-def-segment github
   "The github notifications."
@@ -1594,16 +1595,26 @@ mouse-3: Describe current input method")
            (> doom-modeline--github-notifications-number 0))
       (propertize
        (concat (if doom-modeline-icon " ")
-               (doom-modeline-icon-faicon "github" :v-adjust -0.0575 :face 'doom-modeline-warning)
+               (doom-modeline-icon-faicon "github"
+                                          :v-adjust -0.0575
+                                          :face 'doom-modeline-warning)
                (if doom-modeline-icon doom-modeline-vspc " ")
-               (propertize
-                (format "%s " doom-modeline--github-notifications-number)
-                'face 'doom-modeline-warning))
-       'help-echo "mouse-1: Show github notifications"
+               (propertize (format "%s " doom-modeline--github-notifications-number)
+                           'face 'doom-modeline-warning))
+       'help-echo "Github
+mouse-1: Show notifications
+mouse-3: Fetch notifications"
        'mouse-face '(:box 1)
-       'local-map (make-mode-line-mouse-map
-                   'mouse-1
-                   #'doom-modeline--github-open-notifications))))
+       'local-map (let ((map (make-sparse-keymap)))
+                    (define-key map [mode-line mouse-1]
+                      #'doom-modeline--github-open-notifications)
+                    (define-key map [mode-line mouse-3]
+                      (lambda ()
+                        (interactive)
+                        (message "Fetching github notifications...")
+                        (doom-modeline--github-fetch-notifications)))
+                    map))))
+
 
 ;;
 ;; debug state
