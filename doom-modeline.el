@@ -766,8 +766,8 @@ Uses `all-the-icons-material' to fetch the icon."
     (doom-modeline-icon-material
      icon
      :face (if (doom-modeline--active) face)
-     :height (or height 1.0)
-     :v-adjust (or voffset -0.215))))
+     :height (or height 1.1)
+     :v-adjust (or voffset -0.225))))
 
 (defvar-local doom-modeline--buffer-file-state-icon nil)
 (defun doom-modeline-update-buffer-file-state-icon (&rest _)
@@ -776,24 +776,24 @@ Uses `all-the-icons-material' to fetch the icon."
         (cond (buffer-read-only
                (doom-modeline-buffer-file-state-icon
                 "lock"
-                'doom-modeline-warning))
+                'doom-modeline-warning
+                1.0
+                -0.215))
               ((buffer-modified-p)
                (doom-modeline-buffer-file-state-icon
                 "save"
-                'doom-modeline-buffer-modified
-                1.05
-                -0.22))
+                'doom-modeline-buffer-modified))
               ((and buffer-file-name
                     (not (file-exists-p buffer-file-name)))
                (doom-modeline-buffer-file-state-icon
                 "do_not_disturb_alt"
-                'doom-modeline-urgent))
+                'doom-modeline-urgent
+                1.0
+                -0.215))
               ((buffer-narrowed-p)
                (doom-modeline-buffer-file-state-icon
-                "unfold_less"
-                'doom-modeline-warning
-                1.1
-                -0.225)))))
+                "vertical_align_center"
+                'doom-modeline-warning)))))
 (add-hook 'find-file-hook 'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-save-hook 'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-revert-hook 'doom-modeline-update-buffer-file-state-icon)
@@ -1028,7 +1028,7 @@ Uses `all-the-icons-material' to fetch the icon."
   (concat " "
           (when icon
             (concat
-             (doom-modeline-icon-material icon :face face :height 1.1 :v-adjust (or voffset -0.2))
+             (doom-modeline-icon-material icon :face face :height 1.1 :v-adjust (or voffset -0.225))
              (if text doom-modeline-vspc)))
           (if text (propertize text 'face face))
           "  "))
