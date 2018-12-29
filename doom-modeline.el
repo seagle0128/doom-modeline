@@ -1312,6 +1312,13 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
          'face 'aw-mode-line-face))))))
 (advice-add #'aw-update :override #'doom-modeline-aw-update)
 
+;; Remove original window number of `ace-window-display-mode'.
+(add-hook 'ace-window-display-mode-hook
+          (lambda ()
+            (setq-default mode-line-format
+                          (assq-delete-all 'ace-window-display-mode
+                                           (default-value 'mode-line-format)))))
+
 (advice-add #'window-numbering-install-mode-line :override #'ignore)
 (advice-add #'window-numbering-clear-mode-line :override #'ignore)
 (advice-add #'winum--install-mode-line :override #'ignore)
@@ -1320,10 +1327,6 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
 (doom-modeline-def-segment window-number
   (let ((num (cond
               ((bound-and-true-p ace-window-display-mode)
-               (setq mode-line-format
-                     (assq-delete-all 'ace-window-display-mode
-                                      (default-value 'mode-line-format)))
-               (setq-default mode-line-format mode-line-format)
                (aw-update)
                (window-parameter (selected-window) 'ace-window-path))
               ((bound-and-true-p winum-mode)
@@ -1664,7 +1667,7 @@ mouse-1: Toggle Debug on Quit"
   '(misc-info lsp debug minor-modes input-method buffer-encoding major-mode process flycheck))
 
 (doom-modeline-def-modeline 'project
-  '(bar window-number buffer-default-directory)
+  '(bar " " buffer-default-directory)
   '(misc-info github debug " " major-mode))
 
 (doom-modeline-def-modeline 'media
