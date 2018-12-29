@@ -537,27 +537,27 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 (defun doom-modeline-icon-octicon (&rest args)
   "Display octicon via ARGS."
   (when doom-modeline-icon
-    (apply 'all-the-icons-octicon args)))
+    (apply #'all-the-icons-octicon args)))
 
 (defun doom-modeline-icon-faicon (&rest args)
   "Display font awesome icon via ARGS."
   (when doom-modeline-icon
-    (apply 'all-the-icons-faicon args)))
+    (apply #'all-the-icons-faicon args)))
 
 (defun doom-modeline-icon-material (&rest args)
   "Display material icon via ARGS."
   (when doom-modeline-icon
-    (apply 'all-the-icons-material args)))
+    (apply #'all-the-icons-material args)))
 
 (defun doom-modeline-icon-for-mode (&rest args)
   "Display icon for major mode via ARGS."
   (when doom-modeline-icon
-    (apply 'all-the-icons-icon-for-mode args)))
+    (apply #'all-the-icons-icon-for-mode args)))
 
 (defun doom-modeline-icon-for-file (&rest args)
   "Display icon for major mode via ARGS."
   (when doom-modeline-icon
-    (apply 'all-the-icons-icon-for-file args)))
+    (apply #'all-the-icons-icon-for-file args)))
 
 (defun doom-modeline--active ()
   "Whether is an active window."
