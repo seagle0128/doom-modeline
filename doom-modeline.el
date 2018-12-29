@@ -766,8 +766,8 @@ Uses `all-the-icons-material' to fetch the icon."
     (doom-modeline-icon-material
      icon
      :face (if (doom-modeline--active) face)
-     :height (or height 1.1)
-     :v-adjust (or voffset -0.225))))
+     :height (or height 1.0)
+     :v-adjust (or voffset -0.215))))
 
 (defvar-local doom-modeline--buffer-file-state-icon nil)
 (defun doom-modeline-update-buffer-file-state-icon (&rest _)
@@ -776,9 +776,7 @@ Uses `all-the-icons-material' to fetch the icon."
         (cond (buffer-read-only
                (doom-modeline-buffer-file-state-icon
                 "lock"
-                'doom-modeline-warning
-                1.0
-                -0.215))
+                'doom-modeline-warning))
               ((buffer-modified-p)
                (doom-modeline-buffer-file-state-icon
                 "save"
@@ -787,9 +785,7 @@ Uses `all-the-icons-material' to fetch the icon."
                     (not (file-exists-p buffer-file-name)))
                (doom-modeline-buffer-file-state-icon
                 "do_not_disturb_alt"
-                'doom-modeline-urgent
-                1.0
-                -0.215))
+                'doom-modeline-urgent))
               ((buffer-narrowed-p)
                (doom-modeline-buffer-file-state-icon
                 "vertical_align_center"
