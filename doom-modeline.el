@@ -186,6 +186,7 @@ It returns a file name which can be used directly as argument of
 
 (declare-function anzu--reset-status 'anzu)
 (declare-function anzu--where-is-here 'anzu)
+(declare-function async-inject-variables 'async)
 (declare-function avy-traverse 'avy)
 (declare-function avy-tree 'avy)
 (declare-function aw-update 'ace-window)
@@ -1565,14 +1566,15 @@ mouse-3: Describe current input method")
   (if (and doom-modeline-github
            (fboundp 'async-start))
       (async-start
-       (lambda ()
-         (package-initialize)
-         (require 'ghub nil t)
-         (when (fboundp 'ghub-get)
-           (ghub-get "/notifications"
-                     nil
-                     :query '((notifications . "true"))
-                     :noerror t)))
+       `(lambda ()
+          ,(async-inject-variables "\\`load-path\\'")
+          (require 'ghub nil t)
+          (when (fboundp 'ghub-get)
+            (with-timeout (10)
+              (ghub-get "/notifications"
+                        nil
+                        :query '((notifications . "true"))
+                        :noerror t))))
        (lambda (result)
          (setq doom-modeline--github-notifications-number
                (length result))))))
