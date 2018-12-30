@@ -1521,27 +1521,26 @@ mouse-1: Display Line and Column Mode Menu"
 
 (doom-modeline-def-segment input-method
   "The current input method."
-  (when (doom-modeline--active)
-    (propertize
-     (cond
-      (current-input-method
-       (concat " " current-input-method-title " "))
-      ((and (bound-and-true-p evil-local-mode)
-            (bound-and-true-p evil-input-method))
-       (concat
-        " "
-        (nth 3 (assoc default-input-method input-method-alist))
-        " "))
-      (t ""))
-     'face 'doom-modeline-buffer-major-mode
-     'help-echo (concat
-                 "Current input method: "
-                 current-input-method
-                 "\n\
+  (propertize
+   (cond
+    (current-input-method
+     (concat " " current-input-method-title " "))
+    ((and (bound-and-true-p evil-local-mode)
+          (bound-and-true-p evil-input-method))
+     (concat
+      " "
+      (nth 3 (assoc default-input-method input-method-alist))
+      " "))
+    (t ""))
+   'face (if (doom-modeline--active) 'doom-modeline-buffer-major-mode)
+   'help-echo (concat
+               "Current input method: "
+               current-input-method
+               "\n\
 mouse-2: Disable input method\n\
 mouse-3: Describe current input method")
-     'mouse-face 'mode-line-highlight
-     'local-map mode-line-input-method-map)))
+   'mouse-face 'mode-line-highlight
+   'local-map mode-line-input-method-map))
 
 
 ;;
@@ -1551,7 +1550,6 @@ mouse-3: Describe current input method")
 (doom-modeline-def-segment lsp
   "The LSP server state."
   (if (and doom-modeline-lsp
-           (doom-modeline--active)
            (bound-and-true-p lsp-mode))
       (concat (lsp-mode-line) " ")))
 
