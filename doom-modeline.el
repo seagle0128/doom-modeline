@@ -1203,21 +1203,18 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 
 (defsubst doom-modeline--symbol-overlay ()
   "Show the number of matches for symbol overlay."
-  (when (and (bound-and-true-p symbol-overlay-keywords-alist)
-             (not (bound-and-true-p symbol-overlay-temp-symbol))
-             (not (bound-and-true-p iedit-mode)))
-    (when-let* ((keyword (symbol-overlay-assoc
-                          (ignore-errors (symbol-overlay-get-symbol))))
-                (symbol (car keyword))
-                (before (symbol-overlay-get-list symbol 'car))
-                (after (symbol-overlay-get-list symbol 'cdr))
-                (count (length before)))
-      (if (symbol-overlay-assoc symbol)
-          (propertize
-           (format (concat  " %d/%d " (and (cadr keyword) "in scope "))
-                   (+ count 1)
-                   (+ count (length after)))
-           'face (if (doom-modeline--active) 'doom-modeline-panel))))))
+  (let* ((keyword (symbol-overlay-assoc
+                   (ignore-errors (symbol-overlay-get-symbol))))
+         (symbol (car keyword))
+         (before (symbol-overlay-get-list symbol 'car))
+         (after (symbol-overlay-get-list symbol 'cdr))
+         (count (length before)))
+    (if (symbol-overlay-assoc symbol)
+        (propertize
+         (format (concat  " %d/%d " (and (cadr keyword) "in scope "))
+                 (+ count 1)
+                 (+ count (length after)))
+         'face (if (doom-modeline--active) 'doom-modeline-panel)))))
 
 (defsubst doom-modeline--multiple-cursors ()
   "Show the number of multiple cursors."
