@@ -1206,8 +1206,8 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 
 (defsubst doom-modeline--symbol-overlay ()
   "Show the number of matches for symbol overlay."
-  (when (and (and (bound-and-true-p symbol-overlay-keywords-alist)
--             (not (bound-and-true-p symbol-overlay-temp-symbol))
+  (when (and (bound-and-true-p symbol-overlay-keywords-alist)
+             (not (bound-and-true-p symbol-overlay-temp-symbol))
              (not (bound-and-true-p iedit-mode)))
     (let* ((keyword (symbol-overlay-assoc
                      (ignore-errors (symbol-overlay-get-symbol))))
