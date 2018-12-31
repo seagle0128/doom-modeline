@@ -188,8 +188,7 @@ It returns a file name which can be used directly as argument of
 (defvar mc/mode-line)
 (defvar minions-mode)
 (defvar minions-mode-line-lighter)
-(defvar symbol-overlay-keywords-alist)
-(defvar symbol-overlay-temp-symbol)
+(defvar symbol-overlay-mode)
 (defvar text-scale-mode-amount)
 (defvar winum-auto-setup-mode-line)
 (defvar xah-fly-insert-state-q)
@@ -1206,18 +1205,20 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 
 (defsubst doom-modeline--symbol-overlay ()
   "Show the number of matches for symbol overlay."
-  (let* ((keyword (symbol-overlay-assoc
-                   (ignore-errors (symbol-overlay-get-symbol))))
-         (symbol (car keyword))
-         (before (symbol-overlay-get-list symbol 'car))
-         (after (symbol-overlay-get-list symbol 'cdr))
-         (count (length before)))
-    (if (symbol-overlay-assoc symbol)
-        (propertize
-         (format (concat  " %d/%d " (and (cadr keyword) "in scope "))
-                 (+ count 1)
-                 (+ count (length after)))
-         'face (if (doom-modeline--active) 'doom-modeline-panel)))))
+  (when (and (bound-and-true-p symbol-overlay-mode)
+             (not (bound-and-true-p iedit-mode)))
+    (let* ((keyword (symbol-overlay-assoc
+                     (ignore-errors (symbol-overlay-get-symbol))))
+           (symbol (car keyword))
+           (before (symbol-overlay-get-list symbol 'car))
+           (after (symbol-overlay-get-list symbol 'cdr))
+           (count (length before)))
+      (if (symbol-overlay-assoc symbol)
+          (propertize
+           (format (concat  " %d/%d " (and (cadr keyword) "in scope "))
+                   (+ count 1)
+                   (+ count (length after)))
+           'face (if (doom-modeline--active) 'doom-modeline-panel))))))
 
 (defsubst doom-modeline--multiple-cursors ()
   "Show the number of multiple cursors."
