@@ -162,6 +162,9 @@ Strongly recommend to use
 
 ;; The interval of checking github.
 (setq doom-modeline-github-interval (* 30 60))
+
+;; Whether display environment version or not.
+(setq doom-modeline-version t)
 ```
 
 ## FAQ
