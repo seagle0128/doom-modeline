@@ -78,6 +78,7 @@
 (when (>= emacs-major-version 26)
   (require 'project))
 
+
 ;;
 ;; Variables
 ;;
@@ -138,8 +139,14 @@ The icons may not be showed correctly in terminal and on Windows.")
 
 
 ;;
-;; compatibility
+;; Compatibilities
 ;;
+
+(unless (>= emacs-major-version 26)
+  (with-no-warnings
+    ;; Define `if-let*' and `when-let*' variants for 25 users.
+    (defalias 'if-let* #'if-let)
+    (defalias 'when-let* #'when-let)))
 
 ;; Don’t compact font caches during GC.
 (if (eq system-type 'windows-nt)
@@ -155,7 +162,7 @@ It returns a file name which can be used directly as argument of
 
 
 ;;
-;; externals
+;; Externals
 ;;
 
 (defvar anzu--current-position)
