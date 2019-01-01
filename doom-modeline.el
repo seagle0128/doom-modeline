@@ -812,6 +812,7 @@ Uses `all-the-icons-material' to fetch the icon."
 (advice-add #'undo-tree-redo :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'narrow-to-region :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'widen :after #'doom-modeline-update-buffer-file-state-icon)
+(advice-add #'set-buffer-modified-p :after #'doom-modeline-update-buffer-file-state-icon)
 
 (when (>= emacs-major-version 26)
   (add-variable-watcher
@@ -838,10 +839,11 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 (add-hook 'clone-indirect-buffer-hook 'doom-modeline-update-buffer-file-name)
 (advice-add #'rename-buffer :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'set-visited-file-name :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'select-window :after #'doom-modeline-update-buffer-file-name)
+;; (advice-add #'select-window :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'undo :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'undo-tree-undo :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'undo-tree-redo :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'set-buffer-modified-p :after #'doom-modeline-update-buffer-file-name)
 
 (doom-modeline-def-segment buffer-info
   "Combined information about the current buffer, including the current working
