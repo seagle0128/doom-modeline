@@ -1034,7 +1034,7 @@ mouse-1: Display minor modes menu"
 (defun doom-modeline-flycheck-icon (icon &optional text face voffset)
   "Displays an ICON with FACE, followed by TEXT.
 Uses `all-the-icons-material' to fetch the icon."
-  (concat " "
+  (concat (if vc-mode " " "  ")
           (when icon
             (concat
              (doom-modeline-icon-material icon :face face :height 1.1 :v-adjust (or voffset -0.225))
