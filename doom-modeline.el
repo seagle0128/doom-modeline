@@ -227,6 +227,7 @@ It returns a file name which can be used directly as argument of
 (declare-function flymake-goto-prev-error 'flymake)
 (declare-function flymake-reporting-backends 'flymake)
 (declare-function flymake-running-backends 'flymake)
+(declare-function flymake-show-diagnostics-buffer 'flymake)
 (declare-function iedit-find-current-occurrence-overlay 'iedit-lib)
 (declare-function iedit-prev-occurrence 'iedit-lib)
 (declare-function image-get-display-property 'image-mode)
