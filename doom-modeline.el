@@ -1159,9 +1159,9 @@ icons."
               (t (let ((sum (+ .error .warning)))
                    (if (> sum 0)
                        (doom-modeline-checker-icon "do_not_disturb_alt"
-                                                    (number-to-string sum)
-                                                    (if (> .error 0) 'doom-modeline-urgent 'doom-modeline-warning)
-                                                    -0.225)
+                                                   (number-to-string sum)
+                                                   (if (> .error 0) 'doom-modeline-urgent 'doom-modeline-warning)
+                                                   -0.225)
                      (doom-modeline-checker-icon "check" nil 'doom-modeline-info)))))
              'help-echo (concat "Flymake\n"
                                 (cond
@@ -1170,9 +1170,9 @@ icons."
                                  (all-disabled "All Checkers Disabled")
                                  (t (format "error: %d, warning: %d, note: %d
 %d/%d backends running
-mouse-1: Display warnings and errors
+mouse-1: Display minor mode menu
 mouse-2: Show help for minor mode
-mouse-3: Next warning or error
+mouse-3: Display warnings and errors
 wheel-up/wheel-down: Previous/Next warning or error"
                                             .error .warning .note
                                             (length running) (length known)))))
@@ -1185,7 +1185,7 @@ wheel-up/wheel-down: Previous/Next warning or error"
                               (interactive)
                               (describe-function 'flymake-mode)))
                           (define-key map [mode-line mouse-3]
-                            #'flycheck-next-error)
+                            #'flymake-show-diagnostics-buffer)
                           (define-key map (vector 'mode-line
                                                   mouse-wheel-down-event)
                             (lambda (event)
