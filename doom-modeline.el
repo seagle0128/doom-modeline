@@ -1081,7 +1081,9 @@ Uses `all-the-icons-material' to fetch the icon."
            (`finished  (if flycheck-current-errors
                            (let-alist (flycheck-count-errors flycheck-current-errors)
                              (doom-modeline-checker-icon "do_not_disturb_alt"
-                                                         (if .error 'doom-modeline-urgent 'doom-modeline-warning)))
+                                                         (cond (.error 'doom-modeline-urgent)
+                                                               (.warning 'doom-modeline-warning)
+                                                               (t 'doom-modeline-info))))
                          (doom-modeline-checker-icon "check" 'doom-modeline-info)))
            (`running     (doom-modeline-checker-icon "access_time" 'font-lock-doc-face))
            (`no-checker  (doom-modeline-checker-icon "sim_card_alert" 'font-lock-doc-face))
@@ -1119,11 +1121,16 @@ mouse-2: Show help for minor mode")
          (pcase status
            (`finished  (if flycheck-current-errors
                            (let-alist (flycheck-count-errors flycheck-current-errors)
-                             (let ((sum (+ (or .error 0) (or .warning 0))))
-                               (doom-modeline-checker-text (number-to-string sum)
-                                                           (if .error
-                                                               'doom-modeline-urgent
-                                                             'doom-modeline-warning))))
+                             (let ((error (or .error 0))
+                                   (warning (or .warning 0))
+                                   (info (or .info 0)))
+                               (format "%s/%s/%s"
+                                       (doom-modeline-checker-text (number-to-string error)
+                                                                   'doom-modeline-urgent)
+                                       (doom-modeline-checker-text (number-to-string warning)
+                                                                   'doom-modeline-warning)
+                                       (doom-modeline-checker-text (number-to-string info)
+                                                                   'doom-modeline-info))))
                          ""))
            (`running     "")
            (`no-checker  (doom-modeline-checker-text "-" 'font-lock-doc-face))
@@ -1136,10 +1143,10 @@ mouse-2: Show help for minor mode")
                        (concat
                         (if flycheck-current-errors
                             (let-alist (flycheck-count-errors flycheck-current-errors)
-                              (format "error: %d, warning: %d\n" (or .error 0) (or .warning 0))))
-                        "mouse-1: Display warnings and errors
-mouse-3: Next warning or error
-wheel-up/wheel-down: Previous/Next warning or error"))
+                              (format "error: %d, warning: %d, info: %d\n" (or .error 0) (or .warning 0) (or .info 0))))
+                        "mouse-1: Show all errors
+mouse-3: Next error
+wheel-up/wheel-down: Previous/next error"))
                       ('running "Running...")
                       ('no-checker "No Checker")
                       ('errored "Error")
@@ -1194,12 +1201,13 @@ wheel-up/wheel-down: Previous/Next warning or error"))
             ((null known) (doom-modeline-checker-icon "sim_card_alert" 'font-lock-doc-face))
             (all-disabled (doom-modeline-checker-icon "sim_card_alert" 'doom-modeline-urgent))
             (t (let ((.error (length (gethash :error diags-by-type)))
-                     (.warning (length (gethash :warning diags-by-type))))
-                 (if (> (+ .error .warning) 0)
+                     (.warning (length (gethash :warning diags-by-type)))
+                     (.note (length (gethash :note diags-by-type))))
+                 (if (> (+ .error .warning .note) 0)
                      (doom-modeline-checker-icon "do_not_disturb_alt"
-                                                 (if (> .error 0)
-                                                     'doom-modeline-urgent
-                                                   'doom-modeline-warning))
+                                                 (cond ((> .error 0) 'doom-modeline-urgent)
+                                                       ((> .warning 0) 'doom-modeline-warning)
+                                                       (t 'doom-modeline-info)))
                    (doom-modeline-checker-icon "check" 'doom-modeline-info)))))
            'help-echo (concat "Flymake\n"
                               (cond
@@ -1248,20 +1256,22 @@ mouse-2: Show help for minor mode"
               (some-waiting "Running..." "")
               ((null known) (doom-modeline-checker-text "-" 'font-lock-doc-face))
               (all-disabled (doom-modeline-checker-text "-" 'doom-modeline-urgent))
-              (t (let ((sum (+ .error .warning)))
-                   (if (> sum 0)
-                       (doom-modeline-checker-text (number-to-string sum)
-                                                   (if (> .error 0)
-                                                       'doom-modeline-urgent
-                                                     'doom-modeline-warning))
-                     ""))))
+              (t (if (> (+ .error .warning .note) 0)
+                     (format "%s/%s/%s"
+                             (doom-modeline-checker-text (number-to-string .error)
+                                                         'doom-modeline-urgent)
+                             (doom-modeline-checker-text (number-to-string .warning)
+                                                         'doom-modeline-warning)
+                             (doom-modeline-checker-text (number-to-string .note)
+                                                         'doom-modeline-info))
+                   "")))
              'help-echo (cond
                          (some-waiting "Running...")
                          ((null known) "No Checker")
                          (all-disabled "All Checkers Disabled")
                          (t (format "error: %d, warning: %d, note: %d
-mouse-1: Display warnings and errors
-wheel-up/wheel-down: Previous/Next warning or error"
+mouse-1: List all problems
+wheel-up/wheel-down: Previous/next problem"
                                     .error .warning .note)))
              'mouse-face 'mode-line-highlight
              'local-map (let ((map (make-sparse-keymap)))
@@ -1272,13 +1282,13 @@ wheel-up/wheel-down: Previous/Next warning or error"
                             (lambda (event)
                               (interactive "e")
                               (with-selected-window (posn-window (event-start event))
-                                (flymake-goto-prev-error 1 '(:error :warning) t))))
+                                (flymake-goto-prev-error 1 nil t))))
                           (define-key map (vector 'mode-line
                                                   mouse-wheel-up-event)
                             (lambda (event)
                               (interactive "e")
                               (with-selected-window (posn-window (event-start event))
-                                (flymake-goto-next-error 1 '(:error :warning) t))))
+                                (flymake-goto-next-error 1 nil t))))
                           map))))))
 (advice-add #'flymake--handle-report :after #'doom-modeline-update-flymake-text)
 
