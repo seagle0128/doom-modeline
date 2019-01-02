@@ -1043,7 +1043,7 @@ mouse-1: Display minor modes menu"
 ;; flycheck
 ;;
 
-(defun doom-modeline-flycheck-icon (icon &optional text face voffset)
+(defun doom-modeline-checker-icon (icon &optional text face voffset)
   "Displays an ICON with FACE, followed by TEXT.
 Uses `all-the-icons-material' to fetch the icon."
   (concat (if vc-mode " " "  ")
@@ -1063,23 +1063,28 @@ Uses `all-the-icons-material' to fetch the icon."
            (`finished (if flycheck-current-errors
                           (let-alist (flycheck-count-errors flycheck-current-errors)
                             (let ((sum (+ (or .error 0) (or .warning 0))))
-                              (doom-modeline-flycheck-icon "do_not_disturb_alt"
-                                                           (number-to-string sum)
-                                                           (if .error 'doom-modeline-urgent 'doom-modeline-warning)
-                                                           -0.225)))
-                        (doom-modeline-flycheck-icon "check" nil 'doom-modeline-info)))
-           (`running     (doom-modeline-flycheck-icon "access_time" nil 'font-lock-doc-face -0.225))
-           (`no-checker  (doom-modeline-flycheck-icon "sim_card_alert" "-" 'font-lock-doc-face))
-           (`errored     (doom-modeline-flycheck-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
-           (`interrupted (doom-modeline-flycheck-icon "pause" "Interrupted" 'font-lock-doc-face))
-           (`suspicious  (doom-modeline-flycheck-icon "priority_high" "Suspicious" 'doom-modeline-urgent))
+                              (doom-modeline-checker-icon "do_not_disturb_alt"
+                                                          (number-to-string sum)
+                                                          (if .error 'doom-modeline-urgent 'doom-modeline-warning)
+                                                          -0.225)))
+                        (doom-modeline-checker-icon "check" nil 'doom-modeline-info)))
+           (`running     (doom-modeline-checker-icon "access_time" nil 'font-lock-doc-face -0.225))
+           (`no-checker  (doom-modeline-checker-icon "sim_card_alert" "-" 'font-lock-doc-face))
+           (`errored     (doom-modeline-checker-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
+           (`interrupted (doom-modeline-checker-icon "pause" "Interrupted" 'font-lock-doc-face))
+           (`suspicious  (doom-modeline-checker-icon "priority_high" "Suspicious" 'doom-modeline-urgent))
            (_ (if vc-mode " " "  ")))
          'help-echo (concat "Flycheck\n"
                             (pcase status
-                              ('finished "mouse-1: Display warnings and errors
+                              ('finished
+                               (concat
+                                (if flycheck-current-errors
+                                    (let-alist (flycheck-count-errors flycheck-current-errors)
+                                      (format "error: %d, warning: %d\n" (or .error 0) (or .warning 0))))
+                                "mouse-1: Display warnings and errors
 mouse-2: Show help for minor mode
 mouse-3: Next warning or error
-wheel-up/wheel-down: Previous/Next warning or error")
+wheel-up/wheel-down: Previous/Next warning or error"))
                               ('running "Running...")
                               ('no-checker "No Checker")
                               ('errored "Error")
@@ -1148,16 +1153,16 @@ icons."
                 (.note (length (gethash :note diags-by-type))))
             (propertize
              (cond
-              (some-waiting (doom-modeline-flycheck-icon "access_time" nil 'font-lock-doc-face -0.225))
-              ((null known) (doom-modeline-flycheck-icon "sim_card_alert" "-" 'font-lock-doc-face))
-              (all-disabled (doom-modeline-flycheck-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
+              (some-waiting (doom-modeline-checker-icon "access_time" nil 'font-lock-doc-face -0.225))
+              ((null known) (doom-modeline-checker-icon "sim_card_alert" "-" 'font-lock-doc-face))
+              (all-disabled (doom-modeline-checker-icon "sim_card_alert" "-" 'doom-modeline-urgent))
               (t (let ((sum (+ .error .warning)))
                    (if (> sum 0)
-                       (doom-modeline-flycheck-icon "do_not_disturb_alt"
+                       (doom-modeline-checker-icon "do_not_disturb_alt"
                                                     (number-to-string sum)
                                                     (if (> .error 0) 'doom-modeline-urgent 'doom-modeline-warning)
                                                     -0.225)
-                     (doom-modeline-flycheck-icon "check" nil 'doom-modeline-info)))))
+                     (doom-modeline-checker-icon "check" nil 'doom-modeline-info)))))
              'help-echo (concat "Flymake\n"
                                 (cond
                                  (some-waiting "Running...")
@@ -1523,9 +1528,17 @@ Requires `eyebrowse-mode' to be enabled."
                             (not (persp-contain-buffer-p (current-buffer) persp)))
                        'doom-modeline-persp-buffer-not-in-persp
                      'doom-modeline-persp-name)
-             'help-echo "mouse-1: Switch perspective"
+             'help-echo "mouse-1: Switch perspective
+mouse-2: Show help for minor mode"
              'mouse-face '(:box 1)
-             'local-map (make-mode-line-mouse-map 'mouse-1 #'persp-switch))))))
+             'local-map (let ((map (make-sparse-keymap)))
+                          (define-key map [mode-line mouse-1]
+                            #'persp-switch)
+                          (define-key map [mode-line mouse-2]
+                            (lambda ()
+                              (interactive)
+                              (describe-function 'persp-mode)))
+                          map))))))
 
 (add-hook 'find-file-hook #'doom-modeline-update-persp-name)
 (add-hook 'after-revert-hook #'doom-modeline-update-persp-name)
