@@ -222,6 +222,7 @@ It returns a file name which can be used directly as argument of
 (declare-function flycheck-previous-error 'flycheck)
 (declare-function flymake--backend-state-diags 'flymake)
 (declare-function flymake--diag-type 'flymake)
+(declare-function flymake--handle-report 'flymake)
 (declare-function flymake-disabled-backends 'flymake)
 (declare-function flymake-goto-next-error 'flymake)
 (declare-function flymake-goto-prev-error 'flymake)
@@ -992,52 +993,65 @@ mouse-1: Display minor modes menu"
 ;; vcs
 ;;
 
-(defvar-local doom-modeline--vcs nil)
-(defun doom-modeline--update-vcs (&rest _)
-  "Update vsc state in mode-line."
-  (setq doom-modeline--vcs
+(defvar-local doom-modeline--vcs-icon nil)
+(defun doom-modeline--update-vcs-icon (&rest _)
+  "Update icon of vsc state in mode-line."
+  (setq doom-modeline--vcs-icon
         (when (and vc-mode buffer-file-name)
           (let* ((backend (vc-backend buffer-file-name))
                  (state   (vc-state buffer-file-name backend)))
-            (let ((face    'mode-line-inactive)
-                  (active  (doom-modeline--active))
-                  (all-the-icons-default-adjust -0.1))
-              (concat "  "
-                      (cond ((memq state '(edited added))
-                             (if active (setq face 'doom-modeline-info))
-                             (doom-modeline-icon-octicon
-                              "git-compare"
-                              :face face
-                              :v-adjust -0.05))
-                            ((eq state 'needs-merge)
-                             (if active (setq face 'doom-modeline-info))
-                             (doom-modeline-icon-octicon "git-merge" :face face))
-                            ((eq state 'needs-update)
-                             (if active (setq face 'doom-modeline-warning))
-                             (doom-modeline-icon-octicon "arrow-down" :face face))
-                            ((memq state '(removed conflict unregistered))
-                             (if active (setq face 'doom-modeline-urgent))
-                             (doom-modeline-icon-octicon "alert" :face face))
-                            (t
-                             (if active (setq face 'doom-modeline-info))
-                             (doom-modeline-icon-octicon
-                              "git-branch"
-                              :face face
-                              :v-adjust -0.05)))
-                      doom-modeline-vspc
-                      (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
-                                  'face (if active face))
-                      " "))))))
-(add-hook 'after-revert-hook #'doom-modeline--update-vcs)
-(add-hook 'after-save-hook #'doom-modeline--update-vcs)
-(add-hook 'find-file-hook #'doom-modeline--update-vcs t)
-(advice-add #'vc-refresh-state :after #'doom-modeline--update-vcs)
+            (let ((all-the-icons-default-adjust -0.1))
+              (cond ((memq state '(edited added))
+                     (doom-modeline-icon-octicon "git-compare"
+                                                 :face 'doom-modeline-info
+                                                 :v-adjust -0.05))
+                    ((eq state 'needs-merge)
+                     (doom-modeline-icon-octicon "git-merge" :face 'doom-modeline-info))
+                    ((eq state 'needs-update)
+                     (doom-modeline-icon-octicon "arrow-down" :face 'doom-modeline-warning))
+                    ((memq state '(removed conflict unregistered))
+                     (doom-modeline-icon-octicon "alert" :face 'doom-modeline-urgent))
+                    (t
+                     (doom-modeline-icon-octicon "git-branch"
+                                                 :face 'doom-modeline-info
+                                                 :v-adjust -0.05))))))))
+(add-hook 'after-revert-hook #'doom-modeline--update-vcs-icon)
+(add-hook 'after-save-hook #'doom-modeline--update-vcs-icon)
+(add-hook 'find-file-hook #'doom-modeline--update-vcs-icon t)
+(advice-add #'vc-refresh-state :after #'doom-modeline--update-vcs-icon)
+
+(defvar-local doom-modeline--vcs-text nil)
+(defun doom-modeline--update-vcs-text (&rest _)
+  "Update text of vsc state in mode-line."
+  (setq doom-modeline--vcs-text
+        (when (and vc-mode buffer-file-name)
+          (let* ((backend (vc-backend buffer-file-name))
+                 (state   (vc-state buffer-file-name backend)))
+            (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
+                        'face (cond ((eq state 'needs-update)
+                                     'doom-modeline-warning)
+                                    ((memq state '(removed conflict unregistered))
+                                     'doom-modeline-urgent)
+                                    (t 'doom-modeline-info)))))))
+(add-hook 'after-revert-hook #'doom-modeline--update-vcs-text)
+(add-hook 'after-save-hook #'doom-modeline--update-vcs-text)
+(add-hook 'find-file-hook #'doom-modeline--update-vcs-text t)
+(advice-add #'vc-refresh-state :after #'doom-modeline--update-vcs-text)
 
 (doom-modeline-def-segment vcs
   "Displays the current branch, colored based on its state."
-  (if (doom-modeline--active)
-      (or doom-modeline--vcs (doom-modeline--update-vcs))
-    ""))
+  (let ((active (doom-modeline--active)))
+    (when-let ((icon (or doom-modeline--vcs-icon (doom-modeline--update-vcs-icon)))
+               (text (or doom-modeline--vcs-text (doom-modeline--update-vcs-text))))
+      (concat "  "
+              (if active
+                  icon
+                (propertize icon 'face `(:height 1.2 :family ,(all-the-icons-icon-family icon) :inherit)))
+              doom-modeline-vspc
+              (if active
+                  text
+                (propertize text 'face 'mode-line-inactive))
+              " "))))
 
 
 ;;
