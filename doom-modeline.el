@@ -183,6 +183,7 @@ It returns a file name which can be used directly as argument of
 (defvar evil-visual-end)
 (defvar evil-visual-selection)
 (defvar flycheck-current-errors)
+(defvar flycheck-mode-menu-map)
 (defvar flymake--backend-state)
 (defvar flymake--mode-line-format)
 (defvar flymake-menu)
@@ -1091,7 +1092,7 @@ Uses `all-the-icons-material' to fetch the icon."
          'help-echo (concat "Flycheck\n"
                             (pcase status
                               ('finished
-                               "mouse-1: Display warnings and errors
+                               "mouse-1: Display minor mode menu
 mouse-2: Show help for minor mode")
                               ('running "Running...")
                               ('no-checker "No Checker")
@@ -1101,7 +1102,7 @@ mouse-2: Show help for minor mode")
          'mouse-face '(:box 1)
          'local-map (let ((map (make-sparse-keymap)))
                       (define-key map [mode-line mouse-1]
-                        #'flycheck-list-errors)
+                        flycheck-mode-menu-map)
                       (define-key map [mode-line mouse-2]
                         (lambda ()
                           (interactive)
