@@ -1130,7 +1130,7 @@ icons."
 ;;
 
 (defvar-local doom-modeline--flymake nil)
-(defun doom-modeline-update-flymake-segment ()
+(defun doom-modeline-update-flymake-segment (&rest _)
   "Update flymake segment via STATUS."
   (setq flymake--mode-line-format nil) ; remove the lighter of minor mode
   (setq doom-modeline--flymake
@@ -1200,16 +1200,20 @@ wheel-up/wheel-down: Previous/Next warning or error"
                               (with-selected-window (posn-window (event-start event))
                                 (flymake-goto-next-error 1 '(:error :warning) t))))
                           map))))))
-;; (add-hook 'flymake-diagnostic-functions #'doom-modeline-update-flymake-segment)
-;; (add-hook 'flymake-mode-hook #'doom-modeline-update-flymake-segment)
+(add-hook 'flymake-mode-hook #'doom-modeline-update-flymake-segment)
+(advice-add #'flymake--handle-report :after #'doom-modeline-update-flymake-segment)
 
 (doom-modeline-def-segment flymake
   "Displays color-coded flymake error status in the current buffer with pretty
 icons."
   (if (doom-modeline--active)
-      (doom-modeline-update-flymake-segment)
+      doom-modeline--flymake
     ""))
 
+
+;;
+;; checker: flymake/flycheck
+;;
 
 (doom-modeline-def-segment checker
   "Displays color-coded error status in the current buffer with pretty
@@ -1217,7 +1221,7 @@ icons."
   (when (doom-modeline--active)
     (cond ((and (bound-and-true-p flymake-mode)
                 (bound-and-true-p flymake--backend-state)) ; only support 26+
-           (doom-modeline-update-flymake-segment))
+           doom-modeline--flymake)
           ((bound-and-true-p flycheck-mode)
            doom-modeline--flycheck))))
 
