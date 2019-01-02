@@ -1573,21 +1573,24 @@ mouse-3: Describe current input method")
 (defvar doom-modeline--github-notifications-number 0)
 (defun doom-modeline--github-fetch-notifications ()
   "Fetch github notifications."
-  (if (and doom-modeline-github
-           (fboundp 'async-start))
-      (async-start
-       `(lambda ()
-          ,(async-inject-variables "\\`load-path\\'")
-          (require 'ghub nil t)
-          (when (fboundp 'ghub-get)
-            (with-timeout (10)
-              (ghub-get "/notifications"
-                        nil
-                        :query '((notifications . "true"))
-                        :noerror t))))
-       (lambda (result)
-         (setq doom-modeline--github-notifications-number
-               (length result))))))
+  (when (and doom-modeline-github
+             (fboundp 'async-start))
+    ;; load `async' if it's not loaded
+    (unless (fboundp 'async-inject-variables)
+      (require 'async nil t))
+    (async-start
+     `(lambda ()
+        ,(async-inject-variables "\\`load-path\\'")
+        (require 'ghub nil t)
+        (when (fboundp 'ghub-get)
+          (with-timeout (10)
+            (ghub-get "/notifications"
+                      nil
+                      :query '((notifications . "true"))
+                      :noerror t))))
+     (lambda (result)
+       (setq doom-modeline--github-notifications-number
+             (length result))))))
 
 (run-with-timer 30
                 doom-modeline-github-interval
