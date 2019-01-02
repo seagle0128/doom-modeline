@@ -41,7 +41,7 @@
 ;; - Local python/ruby version in the major-mode
 ;; - A customizable mode-line height (see doom-modeline-height)
 ;; - A minor modes segment which is compatible with minions
-;; - An error/warning count segment for flycheck
+;; - An error/warning count segment for flymake/flycheck
 ;; - A workspace number segment for eyebrowse
 ;; - A perspective name segment for persp-mode
 ;; - A window number segment for winum and window-numbering
@@ -183,6 +183,9 @@ It returns a file name which can be used directly as argument of
 (defvar evil-visual-end)
 (defvar evil-visual-selection)
 (defvar flycheck-current-errors)
+(defvar flymake--backend-state)
+(defvar flymake--mode-line-format)
+(defvar flymake-menu)
 (defvar iedit-mode)
 (defvar iedit-occurrences-overlays)
 (defvar mc/mode-line)
@@ -215,6 +218,15 @@ It returns a file name which can be used directly as argument of
 (declare-function face-remap-remove-relative 'face-remap)
 (declare-function flycheck-count-errors 'flycheck)
 (declare-function flycheck-list-errors 'flycheck)
+(declare-function flycheck-next-error 'flycheck)
+(declare-function flycheck-previous-error 'flycheck)
+(declare-function flymake--backend-state-diags 'flymake)
+(declare-function flymake--diag-type 'flymake)
+(declare-function flymake-disabled-backends 'flymake)
+(declare-function flymake-goto-next-error 'flymake)
+(declare-function flymake-goto-prev-error 'flymake)
+(declare-function flymake-reporting-backends 'flymake)
+(declare-function flymake-running-backends 'flymake)
 (declare-function iedit-find-current-occurrence-overlay 'iedit-lib)
 (declare-function iedit-prev-occurrence 'iedit-lib)
 (declare-function image-get-display-property 'image-mode)
@@ -1062,17 +1074,40 @@ Uses `all-the-icons-material' to fetch the icon."
            (`interrupted (doom-modeline-flycheck-icon "pause" "Interrupted" 'font-lock-doc-face))
            (`suspicious  (doom-modeline-flycheck-icon "priority_high" "Suspicious" 'doom-modeline-urgent))
            (_ (if vc-mode " " "  ")))
-         'help-echo (pcase status
-                      ('finished "mouse-1: Display warnings and errors")
-                      ('running "Running...")
-                      ('no-checker "No Checker")
-                      ('not-checked "Not Checked")
-                      ('errored "Error")
-                      ('interrupted "Interrupted")
-                      ('suspicious "Suspicious"))
+         'help-echo (concat "Flycheck\n"
+                            (pcase status
+                              ('finished "mouse-1: Display warnings and errors
+mouse-2: Show help for minor mode
+mouse-3: Next warning or error
+wheel-up/wheel-down: Previous/Next warning or error")
+                              ('running "Running...")
+                              ('no-checker "No Checker")
+                              ('errored "Error")
+                              ('interrupted "Interrupted")
+                              ('suspicious "Suspicious")))
          'mouse-face '(:box 1)
-         'local-map (make-mode-line-mouse-map
-                     'mouse-1 #'flycheck-list-errors))))
+         'local-map (let ((map (make-sparse-keymap)))
+                      (define-key map [mode-line mouse-1]
+                        #'flycheck-list-errors)
+                      (define-key map [mode-line mouse-2]
+                        (lambda ()
+                          (interactive)
+                          (describe-function 'flycheck-mode)))
+                      (define-key map [mode-line mouse-3]
+                        #'flycheck-next-error)
+                      (define-key map (vector 'mode-line
+                                              mouse-wheel-down-event)
+                        (lambda (event)
+                          (interactive "e")
+                          (with-selected-window (posn-window (event-start event))
+                            (flycheck-previous-error 1))))
+                      (define-key map (vector 'mode-line
+                                              mouse-wheel-up-event)
+                        (lambda (event)
+                          (interactive "e")
+                          (with-selected-window (posn-window (event-start event))
+                            (flycheck-next-error 1))))
+                      map))))
 (add-hook 'flycheck-status-changed-functions #'doom-modeline-update-flycheck-segment)
 (add-hook 'flycheck-mode-hook #'doom-modeline-update-flycheck-segment)
 
@@ -1082,6 +1117,103 @@ icons."
   (if (doom-modeline--active)
       doom-modeline--flycheck
     ""))
+
+
+;;
+;; flymake
+;;
+
+(defvar-local doom-modeline--flymake nil)
+(defun doom-modeline-update-flymake-segment ()
+  "Update flymake segment via STATUS."
+  (setq flymake--mode-line-format nil) ; remove the lighter of minor mode
+  (setq doom-modeline--flymake
+        (let* ((known (hash-table-keys flymake--backend-state))
+               (running (flymake-running-backends))
+               (disabled (flymake-disabled-backends))
+               (reported (flymake-reporting-backends))
+               (diags-by-type (make-hash-table))
+               (all-disabled (and disabled (null running)))
+               (some-waiting (cl-set-difference running reported)))
+          (maphash (lambda (_b state)
+                     (mapc (lambda (diag)
+                             (push diag
+                                   (gethash (flymake--diag-type diag)
+                                            diags-by-type)))
+                           (flymake--backend-state-diags state)))
+                   flymake--backend-state)
+
+          (let ((.error (length (gethash :error diags-by-type)))
+                (.warning (length (gethash :warning diags-by-type)))
+                (.note (length (gethash :note diags-by-type))))
+            (propertize
+             (cond
+              (some-waiting (doom-modeline-flycheck-icon "access_time" nil 'font-lock-doc-face -0.225))
+              ((null known) (doom-modeline-flycheck-icon "sim_card_alert" "-" 'font-lock-doc-face))
+              (all-disabled (doom-modeline-flycheck-icon "sim_card_alert" "Error" 'doom-modeline-urgent))
+              (t (let ((sum (+ .error .warning)))
+                   (if (> sum 0)
+                       (doom-modeline-flycheck-icon "do_not_disturb_alt"
+                                                    (number-to-string sum)
+                                                    (if (> .error 0) 'doom-modeline-urgent 'doom-modeline-warning)
+                                                    -0.225)
+                     (doom-modeline-flycheck-icon "check" nil 'doom-modeline-info)))))
+             'help-echo (concat "Flymake\n"
+                                (cond
+                                 (some-waiting "Running...")
+                                 ((null known) "No Checker")
+                                 (all-disabled "All Checkers Disabled")
+                                 (t (format "error: %d, warning: %d, note: %d
+%d/%d backends running
+mouse-1: Display warnings and errors
+mouse-2: Show help for minor mode
+mouse-3: Next warning or error
+wheel-up/wheel-down: Previous/Next warning or error"
+                                            .error .warning .note
+                                            (length running) (length known)))))
+             'mouse-face '(:box 1)
+             'local-map (let ((map (make-sparse-keymap)))
+                          (define-key map [mode-line down-mouse-1]
+                            flymake-menu)
+                          (define-key map [mode-line mouse-2]
+                            (lambda ()
+                              (interactive)
+                              (describe-function 'flymake-mode)))
+                          (define-key map [mode-line mouse-3]
+                            #'flycheck-next-error)
+                          (define-key map (vector 'mode-line
+                                                  mouse-wheel-down-event)
+                            (lambda (event)
+                              (interactive "e")
+                              (with-selected-window (posn-window (event-start event))
+                                (flymake-goto-prev-error 1 '(:error :warning) t))))
+                          (define-key map (vector 'mode-line
+                                                  mouse-wheel-up-event)
+                            (lambda (event)
+                              (interactive "e")
+                              (with-selected-window (posn-window (event-start event))
+                                (flymake-goto-next-error 1 '(:error :warning) t))))
+                          map))))))
+;; (add-hook 'flymake-diagnostic-functions #'doom-modeline-update-flymake-segment)
+;; (add-hook 'flymake-mode-hook #'doom-modeline-update-flymake-segment)
+
+(doom-modeline-def-segment flymake
+  "Displays color-coded flymake error status in the current buffer with pretty
+icons."
+  (if (doom-modeline--active)
+      (doom-modeline-update-flymake-segment)
+    ""))
+
+
+(doom-modeline-def-segment checker
+  "Displays color-coded error status in the current buffer with pretty
+icons."
+  (when (doom-modeline--active)
+    (cond ((and (bound-and-true-p flymake-mode)
+                (bound-and-true-p flymake--backend-state)) ; only support 26+
+           (doom-modeline-update-flymake-segment))
+          ((bound-and-true-p flycheck-mode)
+           doom-modeline--flycheck))))
 
 
 ;;
@@ -1575,7 +1707,7 @@ mouse-3: Describe current input method")
   "Fetch github notifications."
   (when (and doom-modeline-github
              (fboundp 'async-start))
-    ;; load `async' if it's not loaded
+    ;; load `async' if it exists but is not loaded
     (unless (fboundp 'async-inject-variables)
       (require 'async nil t))
     (async-start
@@ -1667,7 +1799,7 @@ mouse-1: Toggle Debug on Quit"
 
 (doom-modeline-def-modeline 'main
   '(bar workspace-number window-number evil-state god-state ryo-modal xah-fly-keys matches " " buffer-info remote-host buffer-position " " selection-info)
-  '(misc-info persp-name lsp github debug minor-modes input-method buffer-encoding major-mode process vcs flycheck))
+  '(misc-info persp-name lsp github debug minor-modes input-method buffer-encoding major-mode process vcs checker))
 
 (doom-modeline-def-modeline 'minimal
   '(bar matches " " buffer-info)
@@ -1675,7 +1807,7 @@ mouse-1: Toggle Debug on Quit"
 
 (doom-modeline-def-modeline 'special
   '(bar window-number evil-state god-state ryo-modal xah-fly-keys matches " " buffer-info-simple buffer-position " " selection-info)
-  '(misc-info lsp debug minor-modes input-method buffer-encoding major-mode process flycheck))
+  '(misc-info lsp debug minor-modes input-method buffer-encoding major-mode process checker))
 
 (doom-modeline-def-modeline 'project
   '(bar " " buffer-default-directory)
