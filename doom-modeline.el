@@ -4,7 +4,7 @@
 
 ;; Author: Vincent Zhang <seagle0128@gmail.com>
 ;; Homepage: https://github.com/seagle0128/doom-modeline
-;; Version: 1.4.1
+;; Version: 1.4.2
 ;; Package-Requires: ((emacs "25.1") (all-the-icons "1.0.0") (shrink-path "0.2.0") (eldoc-eval "0.1") (dash "2.11.0"))
 ;; Keywords: faces mode-line
 
@@ -54,6 +54,7 @@
 ;; - An indicator for debug state
 ;; - An indicator for LSP state
 ;; - An indicator for github notifications
+;; - An indicator for buffer position which is compatible with nyan-mode
 ;; - Truncated file name, file icon, buffer state and project name in buffer
 ;;   information segment, which is compatible with projectile and project
 ;;
@@ -1711,23 +1712,28 @@ See `mode-line-percent-position'.")
      (when (eq op 'set)
        (setq doom-modeline-percent-position val)))))
 
-(setq-default mode-line-position
-              '((line-number-mode
-                 (column-number-mode
-                  (doom-modeline-column-zero-based " %l:%c" " %l:%C")
-                  " %l")
-                 (column-number-mode (doom-modeline-column-zero-based " :%c" " :%C")))
-                (if doom-modeline-percent-position (" " doom-modeline-percent-position))
-                (:eval (when (or line-number-mode column-number-mode doom-modeline-percent-position) " "))))
-
 (doom-modeline-def-segment buffer-position
   "The buffer position information."
-  `(:propertize (concat " " mode-line-position)
-                help-echo "Buffer position\n\
+  (let ((lc '(line-number-mode
+              (column-number-mode
+               (doom-modeline-column-zero-based " %l:%c" " %l:%C")
+               " %l")
+              (column-number-mode (doom-modeline-column-zero-based " :%c" " :%C")))))
+    (if (bound-and-true-p nyan-mode)
+        (concat "  " (nyan-create) " "
+                (propertize (format-mode-line lc)
+                            'help-echo "Buffer position\n\
 mouse-1: Display Line and Column Mode Menu"
-                mouse-face (:box 1)
-                local-map ,mode-line-column-line-number-mode-map))
-
+                            'mouse-face '(:box 1)
+                            'local-map mode-line-column-line-number-mode-map))
+      `(:propertize (" "
+                     (if doom-modeline-percent-position (" " doom-modeline-percent-position))
+                     ,lc
+                     (when (or line-number-mode column-number-mode doom-modeline-percent-position) " "))
+                    help-echo "Buffer position\n\
+mouse-1: Display Line and Column Mode Menu"
+                    mouse-face (:box 1)
+                    local-map ,mode-line-column-line-number-mode-map))))
 
 ;;
 ;; evil-state

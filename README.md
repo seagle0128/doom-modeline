@@ -35,6 +35,7 @@ The `doom-modeline` was designed for minimalism, and offers:
 - An indicator for current input method
 - An indicator for `LSP` state
 - An indicator for github notifications
+- An indicator for buffer position which is compatible with `nyan-mode`
 - Truncated file name, file icon, buffer state and project name in buffer
   information segment, which is compatible with `projectile` and `project`
   
