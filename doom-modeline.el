@@ -994,6 +994,18 @@ mouse-1: Display minor modes menu"
 ;; vcs
 ;;
 
+(defun doom-modeline-vcs-icon (icon &optional text face voffset)
+  "Displays the vcs ICON with FACE and VOFFSET.
+TEXT is the alternative if it is not applicable.
+Uses `all-the-icons-octicon' to fetch the icon."
+  (if doom-modeline-icon
+      (if icon
+          (doom-modeline-icon-octicon icon :face face :v-adjust (or voffset -0.1))
+        "")
+    (if text
+        (propertize text 'face face)
+      "")))
+
 (defvar-local doom-modeline--vcs-icon nil)
 (defun doom-modeline--update-vcs-icon (&rest _)
   "Update icon of vsc state in mode-line."
@@ -1001,21 +1013,16 @@ mouse-1: Display minor modes menu"
         (when (and vc-mode buffer-file-name)
           (let* ((backend (vc-backend buffer-file-name))
                  (state   (vc-state buffer-file-name backend)))
-            (let ((all-the-icons-default-adjust -0.1))
-              (cond ((memq state '(edited added))
-                     (doom-modeline-icon-octicon "git-compare"
-                                                 :face 'doom-modeline-info
-                                                 :v-adjust -0.05))
-                    ((eq state 'needs-merge)
-                     (doom-modeline-icon-octicon "git-merge" :face 'doom-modeline-info))
-                    ((eq state 'needs-update)
-                     (doom-modeline-icon-octicon "arrow-down" :face 'doom-modeline-warning))
-                    ((memq state '(removed conflict unregistered))
-                     (doom-modeline-icon-octicon "alert" :face 'doom-modeline-urgent))
-                    (t
-                     (doom-modeline-icon-octicon "git-branch"
-                                                 :face 'doom-modeline-info
-                                                 :v-adjust -0.05))))))))
+            (cond ((memq state '(edited added))
+                   (doom-modeline-vcs-icon "git-compare" "*" 'doom-modeline-info -0.05))
+                  ((eq state 'needs-merge)
+                   (doom-modeline-vcs-icon "git-merge" "?" 'doom-modeline-info))
+                  ((eq state 'needs-update)
+                   (doom-modeline-vcs-icon "arrow-down" "!" 'doom-modeline-warning))
+                  ((memq state '(removed conflict unregistered))
+                   (doom-modeline-vcs-icon "alert" "!" 'doom-modeline-urgent))
+                  (t
+                   (doom-modeline-vcs-icon "git-branch" "@" 'doom-modeline-info -0.05)))))))
 (add-hook 'after-revert-hook #'doom-modeline--update-vcs-icon)
 (add-hook 'after-save-hook #'doom-modeline--update-vcs-icon)
 (add-hook 'find-file-hook #'doom-modeline--update-vcs-icon t)
@@ -1062,7 +1069,7 @@ mouse-1: Display minor modes menu"
 ;; flycheck
 
 (defun doom-modeline-checker-icon (icon &optional text face voffset)
-  "Displays an ICON with FACE and VOFFSET.
+  "Displays the checker ICON with FACE and VOFFSET.
 TEXT is the alternative if it is not applicable.
 Uses `all-the-icons-material' to fetch the icon."
   (if doom-modeline-icon
