@@ -188,8 +188,21 @@ Strongly recommend to use
     (setq find-file-visit-truename t)
     ```
 
-    If the file is controlled by vc, refer to `vc-follow-symlinks`.
+    If the file is controlled by vc, refer to the documentation of
+    `vc-follow-symlinks`.
 
 1. Can I add my mode-line segments myself? How to do that?
 
    Of course. Just add the segments into `global-mode-string`.
+
+1. Why doesn't change of branch reflect in modeline?
+
+   Actually it's related to `magit` and `vc-mode`.
+   - Workaround:
+     - Revert the buffers manually.
+     - `(setq auto-revert-check-vc-info t)` brings the performance issue.
+   - Refer to:
+     - [The mode-line information isn’t always
+       up-to-date](https://magit.vc/manual/magit/The-mode_002dline-information-isn_0027t-always-up_002dto_002ddate.html)
+     - [Maybe provide an alternative to VC's mode-line
+       information](https://github.com/magit/magit/issues/2687)
