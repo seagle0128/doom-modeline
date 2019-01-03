@@ -1230,8 +1230,8 @@ wheel-up/wheel-down: Previous/next error"))
                                ((null known) "No Checker")
                                (all-disabled "All Checkers Disabled")
                                (t (format "%d/%d backends running
-                               mouse-1: Display minor mode menu
-                               mouse-2: Show help for minor mode"
+mouse-1: Display minor mode menu
+mouse-2: Show help for minor mode"
                                           (length running) (length known)))))
            'mouse-face '(:box 1)
            'local-map (let ((map (make-sparse-keymap)))
