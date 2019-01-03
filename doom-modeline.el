@@ -1727,8 +1727,8 @@ mouse-1: Display Line and Column Mode Menu"
                             'mouse-face '(:box 1)
                             'local-map mode-line-column-line-number-mode-map))
       `(:propertize (" "
-                     (if doom-modeline-percent-position (" " doom-modeline-percent-position))
                      ,lc
+                     (if doom-modeline-percent-position (" " doom-modeline-percent-position))
                      (when (or line-number-mode column-number-mode doom-modeline-percent-position) " "))
                     help-echo "Buffer position\n\
 mouse-1: Display Line and Column Mode Menu"
