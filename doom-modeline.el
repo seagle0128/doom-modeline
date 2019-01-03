@@ -1052,15 +1052,19 @@ Uses `all-the-icons-octicon' to fetch the icon."
   (let ((active (doom-modeline--active)))
     (when-let ((icon (or doom-modeline--vcs-icon (doom-modeline--update-vcs-icon)))
                (text (or doom-modeline--vcs-text (doom-modeline--update-vcs-text))))
-      (concat "  "
-              (if active
-                  icon
-                (propertize icon 'face `(:height 1.2 :family ,(all-the-icons-icon-family icon) :inherit)))
-              doom-modeline-vspc
-              (if active
-                  text
-                (propertize text 'face 'mode-line-inactive))
-              " "))))
+      (concat
+       "  "
+       (if active
+           (concat icon doom-modeline-vspc text)
+         (concat
+          (propertize icon
+                      'face
+                      (if doom-modeline-icon
+                          `(:height 1.2 :family ,(all-the-icons-icon-family icon) :inherit)
+                        'mode-line-inactive))
+          doom-modeline-vspc
+          (propertize text 'face 'mode-line-inactive)))
+       " "))))
 
 
 ;;
@@ -1326,7 +1330,7 @@ icons."
           (propertize icon
                       'face
                       (if doom-modeline-icon
-                          `(:height 1.3 :family ,(all-the-icons-icon-family icon))
+                          `(:height 1.3 :family ,(all-the-icons-icon-family icon :inherit))
                         'mode-line-inactive))
           doom-modeline-vspc
           (propertize text 'face 'mode-line-inactive)))
