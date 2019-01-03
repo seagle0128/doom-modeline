@@ -193,3 +193,8 @@ Strongly recommend to use
 1. Can I add my mode-line segments myself? How to do that?
 
    Of course. Just add the segments into `global-mode-string`.
+
+1. The VC indicator is not updated after I switched branches. Is this a bug?
+
+   Not really. Check out [this issue](https://github.com/seagle0128/doom-modeline/issues/76#issuecomment-449937004) for the details,
+   but in a nutshell, updating the indicator constantly can be too slow. You have to reopen or revert the buffer.
