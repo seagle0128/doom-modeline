@@ -237,6 +237,7 @@ It returns a file name which can be used directly as argument of
 (declare-function lsp-mode-line 'lsp-mode)
 (declare-function magit-toplevel 'magit-git)
 (declare-function minions-minor-modes-menu 'minions)
+(declare-function nyan-create 'nyan-mode)
 (declare-function persp-add-buffer 'persp-mode)
 (declare-function persp-contain-buffer-p 'persp-mode)
 (declare-function persp-remove-buffer 'persp-mode)
