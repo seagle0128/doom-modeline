@@ -781,10 +781,10 @@ buffer where knowing the current project directory is important."
             (propertize icon
                         'help-echo (format "Major-mode: %s" mode-name)
                         'display '(raise -0.125))))))
-(add-hook 'find-file-hook 'doom-modeline-update-buffer-file-icon)
-(add-hook 'after-revert-hook 'doom-modeline-update-buffer-file-icon)
-(add-hook 'after-change-major-mode-hook 'doom-modeline-update-buffer-file-icon)
-(add-hook 'clone-indirect-buffer-hook 'doom-modeline-update-buffer-file-icon)
+(add-hook 'find-file-hook #'doom-modeline-update-buffer-file-icon)
+(add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-icon)
+(add-hook 'after-change-major-mode-hook #'doom-modeline-update-buffer-file-icon)
+(add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-icon)
 
 (defun doom-modeline-buffer-file-state-icon (icon &optional face height voffset)
   "Displays an ICON with FACE, HEIGHT and VOFFSET.
@@ -817,12 +817,12 @@ Uses `all-the-icons-material' to fetch the icon."
                (doom-modeline-buffer-file-state-icon
                 "vertical_align_center"
                 'doom-modeline-warning)))))
-(add-hook 'find-file-hook 'doom-modeline-update-buffer-file-state-icon)
-(add-hook 'after-save-hook 'doom-modeline-update-buffer-file-state-icon)
-(add-hook 'after-revert-hook 'doom-modeline-update-buffer-file-state-icon)
-(add-hook 'read-only-mode-hook 'doom-modeline-update-buffer-file-state-icon)
-(add-hook 'after-change-functions 'doom-modeline-update-buffer-file-state-icon)
-(add-hook 'clone-indirect-buffer-hook 'doom-modeline-update-buffer-file-state-icon)
+(add-hook 'find-file-hook #'doom-modeline-update-buffer-file-state-icon)
+(add-hook 'after-save-hook #'doom-modeline-update-buffer-file-state-icon)
+(add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-state-icon)
+(add-hook 'read-only-mode-hook #'doom-modeline-update-buffer-file-state-icon)
+(add-hook 'after-change-functions #'doom-modeline-update-buffer-file-state-icon)
+(add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'undo :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'undo-tree-undo :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'undo-tree-redo :after #'doom-modeline-update-buffer-file-state-icon)
@@ -849,11 +849,11 @@ Uses `all-the-icons-material' to fetch the icon."
                       'help-echo "Buffer name
 mouse-1: Previous buffer\nmouse-3: Next buffer"
                       'local-map mode-line-buffer-identification-keymap))))
-(add-hook 'find-file-hook 'doom-modeline-update-buffer-file-name)
-(add-hook 'after-save-hook 'doom-modeline-update-buffer-file-name)
-(add-hook 'after-revert-hook 'doom-modeline-update-buffer-file-name)
-(add-hook 'after-change-functions 'doom-modeline-update-buffer-file-name)
-(add-hook 'clone-indirect-buffer-hook 'doom-modeline-update-buffer-file-name)
+(add-hook 'find-file-hook #'doom-modeline-update-buffer-file-name)
+(add-hook 'after-save-hook #'doom-modeline-update-buffer-file-name)
+(add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-name)
+(add-hook 'after-change-functions #'doom-modeline-update-buffer-file-name)
+(add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-name)
 (advice-add #'rename-buffer :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'set-visited-file-name :after #'doom-modeline-update-buffer-file-name)
 ;; (advice-add #'select-window :after #'doom-modeline-update-buffer-file-name)
@@ -1551,8 +1551,8 @@ Returns \"\" to not break --no-window-system."
        (doom-modeline-refresh-bars val doom-modeline-height)))))
 
 (add-hook 'after-setting-font-hook
-          '(lambda ()
-             (doom-modeline-refresh-bars)))
+          (lambda ()
+            (doom-modeline-refresh-bars)))
 
 
 ;;
