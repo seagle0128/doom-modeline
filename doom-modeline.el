@@ -4,7 +4,7 @@
 
 ;; Author: Vincent Zhang <seagle0128@gmail.com>
 ;; Homepage: https://github.com/seagle0128/doom-modeline
-;; Version: 1.4.2
+;; Version: 1.4.3
 ;; Package-Requires: ((emacs "25.1") (all-the-icons "1.0.0") (shrink-path "0.2.0") (eldoc-eval "0.1") (dash "2.11.0"))
 ;; Keywords: faces mode-line
 
@@ -1850,10 +1850,11 @@ mouse-3: Describe current input method")
         (require 'ghub nil t)
         (when (fboundp 'ghub-get)
           (with-timeout (10)
-            (ghub-get "/notifications"
-                      nil
-                      :query '((notifications . "true"))
-                      :noerror t))))
+            (ignore-errors
+              (ghub-get "/notifications"
+                        nil
+                        :query '((notifications . "true"))
+                        :noerror t)))))
      (lambda (result)
        (setq doom-modeline--github-notifications-number
              (length result))))))
