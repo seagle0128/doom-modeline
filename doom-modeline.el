@@ -1859,9 +1859,26 @@ mouse-3: Describe current input method")
        (setq doom-modeline--github-notifications-number
              (length result))))))
 
-(run-with-timer 30
-                doom-modeline-github-interval
-                #'doom-modeline--github-fetch-notifications)
+(defvar doom-modeline--github-timer nil)
+(defun doom-modeline-github-timer ()
+  "Start/Stop the timer for github fetching."
+  (if (timerp doom-modeline--github-timer)
+      (cancel-timer doom-modeline--github-timer))
+  (setq doom-modeline--github-timer
+        (and doom-modeline-github
+             (run-with-timer 30
+                             doom-modeline-github-interval
+                             #'doom-modeline--github-fetch-notifications))))
+
+(when (>= emacs-major-version 26)
+  (add-variable-watcher
+   'doom-modeline-github
+   (lambda (_sym val op _where)
+     (when (eq op 'set)
+       (setq doom-modeline-github val)
+       (doom-modeline-github-timer)))))
+
+(doom-modeline-github-timer)
 
 (defun doom-modeline--github-open-notifications ()
   "Open GitHub Notifications page."
