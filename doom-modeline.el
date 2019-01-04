@@ -1331,7 +1331,7 @@ icons."
           (propertize icon
                       'face
                       (if doom-modeline-icon
-                          `(:height 1.3 :family ,(all-the-icons-icon-family icon :inherit))
+                          `(:height 1.3 :family ,(all-the-icons-icon-family icon) :inherit)
                         'mode-line-inactive))
           doom-modeline-vspc
           (propertize text 'face 'mode-line-inactive)))
