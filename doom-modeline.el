@@ -1853,10 +1853,14 @@ mouse-3: Describe current input method")
         (when (fboundp 'ghub-get)
           (with-timeout (10)
             (ignore-errors
-              (ghub-get "/notifications"
-                        nil
-                        :query '((notifications . "true"))
-                        :noerror t)))))
+              (if (ghub--token ghub-default-host
+                               (ghub--username ghub-default-host)
+                               'ghub
+                               t)
+                  (ghub-get "/notifications"
+                            nil
+                            :query '((notifications . "true"))
+                            :noerror t))))))
      (lambda (result)
        (setq doom-modeline--github-notifications-number
              (length result))))))
