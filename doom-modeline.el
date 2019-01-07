@@ -1124,7 +1124,7 @@ mouse-2: Show help for minor mode")
                               ('suspicious "Suspicious")))
          'mouse-face '(:box 1)
          'local-map (let ((map (make-sparse-keymap)))
-                      (define-key map [mode-line mouse-1]
+                      (define-key map [mode-line down-mouse-1]
                         flycheck-mode-menu-map)
                       (define-key map [mode-line mouse-2]
                         (lambda ()
