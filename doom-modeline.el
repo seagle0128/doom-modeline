@@ -1727,7 +1727,8 @@ See `mode-line-percent-position'.")
                (doom-modeline-column-zero-based " %l:%c" " %l:%C")
                " %l")
               (column-number-mode (doom-modeline-column-zero-based " :%c" " :%C")))))
-    (if (bound-and-true-p nyan-mode)
+    (if (and (bound-and-true-p nyan-mode)
+             (doom-modeline--active))
         (concat "  " (nyan-create) " "
                 (propertize (format-mode-line lc)
                             'help-echo "Buffer position\n\
@@ -1748,7 +1749,8 @@ mouse-1: Display Line and Column Mode Menu"
 ;;
 (doom-modeline-def-segment parrot
   "The party parrot animated icon. Requires `parrot-mode' to be enabled."
-  (when (bound-and-true-p parrot-mode)
+  (when (and (bound-and-true-p parrot-mode)
+             (doom-modeline--active))
     (concat "  " (parrot-create) " ")))
 
 ;;
