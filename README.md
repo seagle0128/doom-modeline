@@ -103,7 +103,8 @@ In `init.el`,
 ```
 
 This package requires the fonts included with `all-the-icons` to be installed.
-Run `M-x all-the-icons-install-fonts` to do so.
+Run `M-x all-the-icons-install-fonts` to do so. Please refer to the
+[installation guide](https://github.com/domtronn/all-the-icons.el#installation).
 
 Strongly recommend to use
 [doom-themes](https://github.com/hlissner/emacs-doom-themes) at the same time.
@@ -140,7 +141,6 @@ Strongly recommend to use
 (setq doom-modeline-python-executable "python")
 
 ;; Whether show `all-the-icons' or not (if nil nothing will be showed).
-;; The icons may not be showed correctly on Windows. Disable to make it work.
 (setq doom-modeline-icon t)
 
 ;; Whether show the icon for major mode. It respects `doom-modeline-icon'.
