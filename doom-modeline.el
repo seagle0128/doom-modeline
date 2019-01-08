@@ -55,6 +55,7 @@
 ;; - An indicator for LSP state
 ;; - An indicator for github notifications
 ;; - An indicator for buffer position which is compatible with nyan-mode
+;; - An indicator for party parrot
 ;; - Truncated file name, file icon, buffer state and project name in buffer
 ;;   information segment, which is compatible with projectile and project
 ;;
@@ -238,6 +239,7 @@ It returns a file name which can be used directly as argument of
 (declare-function magit-toplevel 'magit-git)
 (declare-function minions-minor-modes-menu 'minions)
 (declare-function nyan-create 'nyan-mode)
+(declare-function parrot-create 'parrot)
 (declare-function persp-add-buffer 'persp-mode)
 (declare-function persp-contain-buffer-p 'persp-mode)
 (declare-function persp-remove-buffer 'persp-mode)
@@ -1742,6 +1744,14 @@ mouse-1: Display Line and Column Mode Menu"
                     local-map ,mode-line-column-line-number-mode-map))))
 
 ;;
+;; party parrot
+;;
+(doom-modeline-def-segment parrot
+  "The party parrot animated icon. Requires `parrot-mode' to be enabled."
+  (when (bound-and-true-p parrot-mode)
+    (concat "  " (parrot-create) " ")))
+
+;;
 ;; evil-state
 ;;
 
@@ -1956,7 +1966,7 @@ mouse-1: Toggle Debug on Quit"
 ;;
 
 (doom-modeline-def-modeline 'main
-  '(bar workspace-number window-number evil-state god-state ryo-modal xah-fly-keys matches " " buffer-info remote-host buffer-position " " selection-info)
+  '(bar workspace-number window-number evil-state god-state ryo-modal xah-fly-keys matches " " buffer-info remote-host buffer-position parrot " " selection-info)
   '(misc-info persp-name lsp github debug minor-modes input-method buffer-encoding major-mode process vcs checker))
 
 (doom-modeline-def-modeline 'minimal
@@ -1964,7 +1974,7 @@ mouse-1: Toggle Debug on Quit"
   '(media-info major-mode))
 
 (doom-modeline-def-modeline 'special
-  '(bar window-number evil-state god-state ryo-modal xah-fly-keys matches " " buffer-info-simple buffer-position " " selection-info)
+  '(bar window-number evil-state god-state ryo-modal xah-fly-keys matches " " buffer-info-simple buffer-position parrot " " selection-info)
   '(misc-info lsp debug minor-modes input-method buffer-encoding major-mode process checker))
 
 (doom-modeline-def-modeline 'project
