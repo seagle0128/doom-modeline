@@ -141,6 +141,10 @@ Strongly recommend to use
 
 ;; Whether show `all-the-icons' or not (if nil nothing will be showed).
 ;; The icons may not be showed correctly on Windows. Disable to make it work.
+;; Here is a solution for the problem of icons disappearance on Windows 10: 
+;; 1. Run the command "M-x all-the-icons-install-fonts" in emacs; 
+;; 2. Emacs will prompt for a download directory for you to download the ttf fonts files; 
+;; 3. In the directory you had selected, double click the ttf font files to install them manually.   
 (setq doom-modeline-icon t)
 
 ;; Whether show the icon for major mode. It respects `doom-modeline-icon'.
