@@ -589,6 +589,10 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   (when doom-modeline-icon
     (apply #'all-the-icons-icon-for-file args)))
 
+(defun doom-modeline-icon-height (height)
+  "Calculate the actual HEIGHT of the icon."
+  (* (/ height 1.2) all-the-icons-scale-factor))
+
 (defun doom-modeline--active ()
   "Whether is an active window."
   (eq (selected-window) doom-modeline-current-window))
@@ -777,9 +781,10 @@ buffer where knowing the current project directory is important."
 (defun doom-modeline-update-buffer-file-icon (&rest _)
   "Update file icon in mode-line."
   (setq doom-modeline--buffer-file-icon
-        (let ((icon (doom-modeline-icon-for-mode major-mode :height 0.92)))
+        (let* ((height (/ all-the-icons-scale-factor 1.3))
+               (icon (doom-modeline-icon-for-mode major-mode :height height)))
           (if (symbolp icon)
-              (setq icon (doom-modeline-icon-for-file (buffer-name) :height 0.92)))
+              (setq icon (doom-modeline-icon-for-file (buffer-name) :height height)))
           (unless (symbolp icon)
             (propertize icon
                         'help-echo (format "Major-mode: %s" mode-name)
@@ -839,6 +844,14 @@ Uses `all-the-icons-material' to fetch the icon."
    (lambda (_sym val op _where)
      (when (eq op 'set)
        (setq buffer-read-only val)
+       (doom-modeline-update-buffer-file-state-icon))))
+
+  (add-variable-watcher
+   'all-the-icons-scale-factor
+   (lambda (_sym val op _where)
+     (when (eq op 'set)
+       (setq all-the-icons-scale-factor val)
+       (doom-modeline-update-buffer-file-icon)
        (doom-modeline-update-buffer-file-state-icon)))))
 
 (defvar-local doom-modeline--buffer-file-name nil)
@@ -878,7 +891,11 @@ directory, the file name, and its state (modified, read-only or non-existent)."
           (if (and active doom-modeline-major-mode-color-icon)
               icon
             (propertize icon
-                        'face `(:height 1.1 :family ,(all-the-icons-icon-family icon) :inherit)))
+                        'face `(:height
+                                ,(doom-modeline-icon-height 1.1)
+                                :family
+                                ,(all-the-icons-icon-family icon)
+                                :inherit)))
           doom-modeline-vspc)))
 
      ;; state icon
@@ -889,7 +906,11 @@ directory, the file name, and its state (modified, read-only or non-existent)."
           (if active
               icon
             (propertize icon
-                        'face `(:height 1.3 :family ,(all-the-icons-icon-family icon) :inherit)))
+                        'face `(:height
+                                ,(doom-modeline-icon-height 1.3)
+                                :family
+                                ,(all-the-icons-icon-family icon)
+                                :inherit)))
           doom-modeline-vspc)))
 
      ;; buffer file name
@@ -1064,7 +1085,11 @@ Uses `all-the-icons-octicon' to fetch the icon."
           (propertize icon
                       'face
                       (if doom-modeline-icon
-                          `(:height 1.2 :family ,(all-the-icons-icon-family icon) :inherit)
+                          `(:height
+                            ,(doom-modeline-icon-height 1.2)
+                            :family
+                            ,(all-the-icons-icon-family icon)
+                            :inherit)
                         'mode-line-inactive))
           doom-modeline-vspc
           (propertize text 'face 'mode-line-inactive)))
@@ -1334,7 +1359,11 @@ icons."
           (propertize icon
                       'face
                       (if doom-modeline-icon
-                          `(:height 1.3 :family ,(all-the-icons-icon-family icon) :inherit)
+                          `(:height
+                            ,(doom-modeline-icon-height 1.3)
+                            :family
+                            ,(all-the-icons-icon-family icon)
+                            :inherit)
                         'mode-line-inactive))
           doom-modeline-vspc
           (propertize text 'face 'mode-line-inactive)))
