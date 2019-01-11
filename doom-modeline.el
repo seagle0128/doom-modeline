@@ -76,6 +76,7 @@
 (require 'eldoc-eval)
 (require 'shrink-path)
 (require 'subr-x)
+(require 'doom-version-parser)
 (when (>= emacs-major-version 26)
   (require 'project))
 
@@ -538,7 +539,10 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
 ;; Show version string for multi-version managers like rvm, rbenv, pyenv, etc.
 (defvar-local doom-modeline-env-version nil)
-(defvar-local doom-modeline-env-command nil)
+
+(defvar-local doom-modeline-env-command nil "A program that we're looking to extract version information from. Ex: \"ruby\"")
+(defvar-local doom-modeline-env-command-args nil "A list of arguments to pass to `doom-modeline-env-command` to extract the version from. Ex: '(\"--version\") ")
+(defvar-local doom-modeline-env-parser nil "A function that returns version number from a programs --version (or similar) command. Ex: 'doom-version-parser--ruby")
 (add-hook 'find-file-hook #'doom-modeline-update-env)
 (with-no-warnings
   (if (boundp 'after-focus-change-function)
@@ -546,13 +550,16 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
     (add-hook 'focus-in-hook #'doom-modeline-update-env)))
 (defun doom-modeline-update-env ()
   "Update environment info on mode-line."
-  (when (and doom-modeline-version doom-modeline-env-command)
-    (let ((default-directory (doom-modeline-project-root))
-          (s (shell-command-to-string doom-modeline-env-command)))
-      (setq doom-modeline-env-version (if (string-match "[ \t\n\r]+\\'" s)
-                                          (replace-match "" t t s)
-                                        s)))))
-
+  (when (and doom-modeline-version
+             doom-modeline-env-command
+             (executable-find doom-modeline-env-command)
+             doom-modeline-env-command-args
+             doom-modeline-env-parser)
+    (let ((default-directory (doom-modeline-project-root)))
+      (doom-version-parser--get doom-modeline-env-command
+                                doom-modeline-env-command-args
+                                (lambda (prog-version)
+                                  (setq doom-modeline-env-version (funcall doom-modeline-env-parser prog-version)))))))
 
 ;;
 ;; Modeline helpers
@@ -2039,45 +2046,41 @@ mouse-1: Toggle Debug on Quit"
 ;; Versions, support Python, Ruby, Perl and Golang, etc.
 (add-hook 'python-mode-hook
           (lambda ()
-            (cond ((and (fboundp 'pipenv-project-p) (pipenv-project-p) (executable-find "pipenv")
-                        (executable-find "cut") (executable-find "sed") (executable-find "xargs"))
-                   (setq doom-modeline-env-command
-                         "pipenv run python --version 2>&1 | cut -d' ' -f2 | sed -n '1p' | xargs echo 'Pipenv'"))
+            (cond ((and (fboundp 'pipenv-project-p) (pipenv-project-p) (executable-find "pipenv"))
+                   (setq doom-modeline-env-parser 'doom-version-parser--python)
+                   (setq doom-modeline-env-command "pipenv")
+                   (setq doom-modeline-env-command-args '("run" "python" "--version")))
                   ((and doom-modeline-python-executable
-                        (executable-find doom-modeline-python-executable)
-                        (executable-find "cut") (executable-find "sed"))
-                   (setq doom-modeline-env-command
-                         (concat doom-modeline-python-executable " --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))))
+                        (executable-find doom-modeline-python-executable))
+                   (setq doom-modeline-env-parser 'doom-version-parser--python)
+                   (setq doom-modeline-env-command doom-modeline-python-executable)
+                   (setq doom-modeline-env-command-args '("--version"))))))
 (add-hook 'ruby-mode-hook
           (lambda ()
-            (when (and (executable-find "ruby")
-                       (executable-find "cut") (executable-find "sed"))
-              (setq doom-modeline-env-command
-                    "ruby --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))
+            (setq doom-modeline-env-command "ruby")
+            (setq doom-modeline-env-command-args '("--version"))
+            (setq doom-modeline-env-parser 'doom-version-parser--ruby)))
 (add-hook 'perl-mode-hook
           (lambda ()
-            (when (and (executable-find "perl") (executable-find "cut")
-                       (executable-find "tr") (executable-find "sed"))
-              (setq doom-modeline-env-command
-                    "perl --version 2>&1 | cut -d'(' -f2 | cut -d')' -f1 | tr -d 'v' | sed -n '2p'"))))
+            (setq doom-modeline-env-command "perl")
+            (setq doom-modeline-env-command-args '("--version"))
+            (setq doom-modeline-env-parser 'doom-version-parser--perl)))
 (add-hook 'go-mode-hook
           (lambda ()
-            (when (and (executable-find "go") (executable-find "cut")
-                       (executable-find "tr") (executable-find "sed"))
-              (setq doom-modeline-env-command
-                    "go version 2>&1 | cut -d' ' -f3 | tr -d 'go' | sed -n '1p'"))))
+            (setq doom-modeline-env-command "go")
+            (setq doom-modeline-env-command-args '("version"))
+            (setq doom-modeline-env-parser 'doom-version-parser--go)))
+
 (add-hook 'elixir-mode-hook
           (lambda ()
-            (when (and (executable-find "iex")
-                       (executable-find "cut") (executable-find "sed"))
-              (setq doom-modeline-env-command
-                    "iex --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))
+            (setq doom-modeline-env-command "iex")
+            (setq doom-modeline-env-command-args '("--version"))
+            (setq doom-modeline-env-parser 'doom-version-parser--elixir)))
 (add-hook 'rust-mode-hook
           (lambda ()
-            (when (and (executable-find "rustc")
-                       (executable-find "cut") (executable-find "sed"))
-              (setq doom-modeline-env-command
-                    "rustc --version 2>&1 | cut -d' ' -f2 | sed -n '1p'"))))
+            (setq doom-modeline-env-command "rustc")
+            (setq doom-modeline-env-command-args '("--version"))
+            (setq doom-modeline-env-parser 'doom-version-parser--rustc)))
 
 
 ;; Ensure modeline is inactive when Emacs is unfocused (and active otherwise)
