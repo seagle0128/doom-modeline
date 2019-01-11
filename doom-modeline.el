@@ -2047,11 +2047,16 @@ mouse-1: Toggle Debug on Quit"
     ;; of Emacs, someone give the man a modeline!
     (dolist (bname '("*scratch*" "*Messages*"))
       (with-current-buffer bname
-        (doom-modeline-set-modeline 'main)))))
+        (doom-modeline-set-main-modeline)))))
+
+;;;###autoload
+(defun doom-modeline-set-main-modeline ()
+  "Set main mode-line."
+  (doom-modeline-set-modeline 'main))
 
 ;;;###autoload
 (defun doom-modeline-set-minimal-modeline ()
-  "Set sepcial mode-line."
+  "Set minimal mode-line."
   (doom-modeline-set-modeline 'minimal))
 
 ;;;###autoload
