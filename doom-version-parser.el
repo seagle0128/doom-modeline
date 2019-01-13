@@ -79,12 +79,12 @@
   "Start a sub process using PROG and apply the ARGS to the sub process.
 Once it recieves information from STDOUT, it closes off the subprocess and
 passes on the information into the CALLBACK.
-  Example:
-    (doom-version-parser--get
-       \"ruby\"
-       '(\"version\")
-       (lambda (line)
-         (message (doom-modeline-parser--ruby line)))"
+Example:
+  (doom-version-parser--get
+     \"ruby\"
+     '(\"version\")
+     (lambda (line)
+        (message (doom-modeline-parser--ruby line)))"
   (let ((proc (apply 'start-process
                      (append ;; Flaten process-args into a single list so we can handle variadic length args
                       (list "doom-modeline-prog" "doom-modeline-prog" prog)
