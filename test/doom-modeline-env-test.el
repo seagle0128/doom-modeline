@@ -1,4 +1,4 @@
-;;; doom-version-parser-test.el --- Unit tests for doom-version-parser -*- lexical-binding: t; -*-
+;;; doom-modeline-env-test.el --- Unit tests for doom-modeline-env -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2019 Justin Barclay
 
@@ -23,33 +23,36 @@
 
 ;;; Commentary:
 ;;
-;;  Unit tests for doom-version-parser
+;;  Unit tests for doom-modeline-env
 ;;
 
 ;;; Code:
-(ert-deftest doom-version-parser--ruby/parse-ruby-version-string ()
+
+(require 'doom-modeline-env)
+
+(ert-deftest doom-modeline-env--ruby/parse-ruby-version-string ()
   (should
-   (string= (doom-version-parser--ruby "ruby 2.3.3p222 (2016-11-21 revision 56859) [x86_64-darwin16]")
+   (string= (doom-modeline-env--ruby "ruby 2.3.3p222 (2016-11-21 revision 56859) [x86_64-darwin16]")
             "2.3.3")))
 
-(ert-deftest doom-version-parser--elixir/parse-elixr-version-string ()
+(ert-deftest doom-modeline-env--elixir/parse-elixr-version-string ()
   (should
-   (string= (doom-version-parser--elixir "IEx 1.7.4 (compiled with Erlang/OTP 21)")
+   (string= (doom-modeline-env--elixir "IEx 1.7.4 (compiled with Erlang/OTP 21)")
             "1.7.4")))
 
-(ert-deftest doom-version-parser--rustc/parse-rustc-version-string ()
+(ert-deftest doom-modeline-env--rustc/parse-rustc-version-string ()
   (should
-   (string= (doom-version-parser--rustc "rustc 1.32.0-nightly (14997d56a 2018-12-05)")
+   (string= (doom-modeline-env--rustc "rustc 1.32.0-nightly (14997d56a 2018-12-05)")
             "1.32.0")))
 
-(ert-deftest doom-version-parser--go/parse-go-version-string ()
+(ert-deftest doom-modeline-env--go/parse-go-version-string ()
   (should
-   (string= (doom-version-parser--go "go version go1.11.4 darwin/amd64")
+   (string= (doom-modeline-env--go "go version go1.11.4 darwin/amd64")
             "1.11.4")))
 
-(ert-deftest doom-version-parser--perl/parse-perl-version-string ()
+(ert-deftest doom-modeline-env--perl/parse-perl-version-string ()
   (should
-   (string= (doom-version-parser--perl
+   (string= (doom-modeline-env--perl
              "This is perl 5, version 18, subversion 2 (v5.18.2) built for darwin-thread-multi-2level
 (with 2 registered patches, see perl -V for more detail)
 
@@ -63,9 +66,9 @@ this system using \"man perl\" or \"perldoc perl\".  If you have access to the
 Internet, point your browser at http://www.perl.org/, the Perl Home Page.")
             "5.18.2")))
 
-(ert-deftest doom-version-parser--python/parse-python-version-string ()
+(ert-deftest doom-modeline-env--python/parse-python-version-string ()
   (should
-   (string= (doom-version-parser--python "Python 2.7.15")
+   (string= (doom-modeline-env--python "Python 2.7.15")
             "2.7.15")))
 
-;;; doom-version-parser-test.el ends here
+;;; doom-modeline-env-test.el ends here

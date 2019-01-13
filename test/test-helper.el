@@ -32,8 +32,6 @@
 
 (add-to-list 'load-path (expand-file-name "."))
 
-(require 'doom-modeline)
-
 (defun strip-text-properties(txt)
   "Strip text properties of TXT."
   (set-text-properties 0 (length txt) nil txt)

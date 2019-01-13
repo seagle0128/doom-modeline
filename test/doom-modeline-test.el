@@ -31,6 +31,8 @@
 
 ;;; Code:
 
+(require 'doom-modeline)
+
 (ert-deftest doom-modeline--buffer-file-name/truncate-upto-project ()
   (let ((default-directory "/home/user/project/")
         (file-path "/home/user/project/relative/test.txt")

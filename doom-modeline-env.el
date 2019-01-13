@@ -1,4 +1,4 @@
-;;; doom-version-parser.el --- A version parser for doom-modeline -*- lexical-binding: t -*-
+;;; doom-modeline-env.el --- A environment parser for doom-modeline -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2019 Justin Barclay, Vincent Zhang
 
@@ -29,19 +29,19 @@
 
 (require 'subr-x)
 
-(defun doom-version-parser--ruby (line)
+(defun doom-modeline-env--ruby (line)
   "Parse Ruby version from LINE."
   (car (split-string
         (cadr
          (split-string line))
         "p")))
 
-(defun doom-version-parser--elixir (line)
+(defun doom-modeline-env--elixir (line)
   "Parse Elixir version from LINE."
   (cadr
    (split-string line)))
 
-(defun doom-version-parser--rustc (line)
+(defun doom-modeline-env--rustc (line)
   "Parse Rust version from LINE."
   (car
    (split-string
@@ -49,7 +49,7 @@
      (split-string line))
     "-")))
 
-(defun doom-version-parser--go (line)
+(defun doom-modeline-env--go (line)
   "Parse Go version from LINE."
   (cadr
    (split-string
@@ -59,7 +59,7 @@
        line)))
     "go")))
 
-(defun doom-version-parser--perl (line)
+(defun doom-modeline-env--perl (line)
   "Parse Perl version from LINE."
   (cadr
    (split-string
@@ -70,17 +70,17 @@
       ")"))
     "v")))
 
-(defun doom-version-parser--python (line)
+(defun doom-modeline-env--python (line)
   "Parse Python version from LINE."
   (cadr
    (split-string line)))
 
-(defun doom-version-parser--get (prog args callback)
+(defun doom-modeline-env--get (prog args callback)
   "Start a sub process using PROG and apply the ARGS to the sub process.
 Once it recieves information from STDOUT, it closes off the subprocess and
 passes on the information into the CALLBACK.
 Example:
-  (doom-version-parser--get
+  (doom-modeline-env--get
      \"ruby\"
      '(\"version\")
      (lambda (line)
@@ -101,6 +101,6 @@ Example:
        (funcall parser line)))
     nil))
 
-(provide 'doom-version-parser)
+(provide 'doom-modeline-env)
 
-;;; doom-version-parser.el ends here
+;;; doom-modeline-env.el ends here

@@ -38,7 +38,7 @@
 ;; - A match count panel (for anzu, iedit, multiple-cursors, symbol-overlay,
 ;;   evil-search and evil-substitute)
 ;; - An indicator for recording a macro
-;; - Local python/ruby version in the major-mode
+;; - Current environment version (e.g. python, ruby, go, etc.) in the major-mode
 ;; - A customizable mode-line height (see doom-modeline-height)
 ;; - A minor modes segment which is compatible with minions
 ;; - An error/warning count segment for flymake/flycheck
@@ -77,9 +77,9 @@
 (require 'eldoc-eval)
 (require 'shrink-path)
 (require 'subr-x)
-(require 'doom-version-parser)
 (when (>= emacs-major-version 26)
   (require 'project))
+(require 'doom-modeline-env)
 
 
 ;;
@@ -544,7 +544,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
 (defvar-local doom-modeline-env-command nil "A program that we're looking to extract version information from. Ex: \"ruby\"")
 (defvar-local doom-modeline-env-command-args nil "A list of arguments to pass to `doom-modeline-env-command` to extract the version from. Ex: '(\"--version\") ")
-(defvar-local doom-modeline-env-parser nil "A function that returns version number from a programs --version (or similar) command. Ex: 'doom-version-parser--ruby")
+(defvar-local doom-modeline-env-parser nil "A function that returns version number from a programs --version (or similar) command. Ex: 'doom-modeline-env--ruby")
 (add-hook 'find-file-hook #'doom-modeline-update-env)
 (with-no-warnings
   (if (boundp 'after-focus-change-function)
@@ -561,10 +561,10 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
              doom-modeline-env-command-args
              doom-modeline-env-parser)
     (let ((default-directory (doom-modeline-project-root)))
-      (doom-version-parser--get doom-modeline-env-command
-                                doom-modeline-env-command-args
-                                (lambda (prog-version)
-                                  (setq doom-modeline-env-version (funcall doom-modeline-env-parser prog-version)))))))
+      (doom-modeline-env--get doom-modeline-env-command
+                              doom-modeline-env-command-args
+                              (lambda (prog-version)
+                                (setq doom-modeline-env-version (funcall doom-modeline-env-parser prog-version)))))))
 
 ;;
 ;; Modeline helpers
@@ -1579,6 +1579,19 @@ Returns \"\" to not break --no-window-system."
         doom-modeline--bar-inactive)
     ""))
 
+(defun doom-modeline-refresh-bars (&optional width height)
+  "Refresh mode-line bars with `WIDTH' and `HEIGHT'."
+  (setq doom-modeline--bar-active
+        (doom-modeline--make-xpm 'doom-modeline-bar
+                                 (or width doom-modeline-bar-width)
+                                 (max (or height doom-modeline-height)
+                                      (frame-char-height)))
+        doom-modeline--bar-inactive
+        (doom-modeline--make-xpm 'doom-modeline-inactive-bar
+                                 (or width doom-modeline-bar-width)
+                                 (max (or height doom-modeline-height)
+                                      (frame-char-height)))))
+
 (when (>= emacs-major-version 26)
   (add-variable-watcher
    'doom-modeline-height
@@ -2031,19 +2044,6 @@ mouse-1: Toggle Debug on Quit"
 ;; Hooks
 ;;
 
-(defun doom-modeline-refresh-bars (&optional width height)
-  "Refresh mode-line bars with `WIDTH' and `HEIGHT'."
-  (setq doom-modeline--bar-active
-        (doom-modeline--make-xpm 'doom-modeline-bar
-                                 (or width doom-modeline-bar-width)
-                                 (max (or height doom-modeline-height)
-                                      (frame-char-height)))
-        doom-modeline--bar-inactive
-        (doom-modeline--make-xpm 'doom-modeline-inactive-bar
-                                 (or width doom-modeline-bar-width)
-                                 (max (or height doom-modeline-height)
-                                      (frame-char-height)))))
-
 ;;;###autoload
 (defun doom-modeline-init ()
   "Initialize doom mode-line."
@@ -2096,40 +2096,40 @@ mouse-1: Toggle Debug on Quit"
 (add-hook 'python-mode-hook
           (lambda ()
             (cond ((and (fboundp 'pipenv-project-p) (pipenv-project-p) (executable-find "pipenv"))
-                   (setq doom-modeline-env-parser 'doom-version-parser--python)
+                   (setq doom-modeline-env-parser 'doom-modeline-env--python)
                    (setq doom-modeline-env-command "pipenv")
                    (setq doom-modeline-env-command-args '("run" "python" "--version")))
                   ((and doom-modeline-python-executable
                         (executable-find doom-modeline-python-executable))
-                   (setq doom-modeline-env-parser 'doom-version-parser--python)
+                   (setq doom-modeline-env-parser 'doom-modeline-env--python)
                    (setq doom-modeline-env-command doom-modeline-python-executable)
                    (setq doom-modeline-env-command-args '("--version"))))))
 (add-hook 'ruby-mode-hook
           (lambda ()
             (setq doom-modeline-env-command "ruby")
             (setq doom-modeline-env-command-args '("--version"))
-            (setq doom-modeline-env-parser 'doom-version-parser--ruby)))
+            (setq doom-modeline-env-parser 'doom-modeline-env--ruby)))
 (add-hook 'perl-mode-hook
           (lambda ()
             (setq doom-modeline-env-command "perl")
             (setq doom-modeline-env-command-args '("--version"))
-            (setq doom-modeline-env-parser 'doom-version-parser--perl)))
+            (setq doom-modeline-env-parser 'doom-modeline-env--perl)))
 (add-hook 'go-mode-hook
           (lambda ()
             (setq doom-modeline-env-command "go")
             (setq doom-modeline-env-command-args '("version"))
-            (setq doom-modeline-env-parser 'doom-version-parser--go)))
+            (setq doom-modeline-env-parser 'doom-modeline-env--go)))
 
 (add-hook 'elixir-mode-hook
           (lambda ()
             (setq doom-modeline-env-command "iex")
             (setq doom-modeline-env-command-args '("--version"))
-            (setq doom-modeline-env-parser 'doom-version-parser--elixir)))
+            (setq doom-modeline-env-parser 'doom-modeline-env--elixir)))
 (add-hook 'rust-mode-hook
           (lambda ()
             (setq doom-modeline-env-command "rustc")
             (setq doom-modeline-env-command-args '("--version"))
-            (setq doom-modeline-env-parser 'doom-version-parser--rustc)))
+            (setq doom-modeline-env-parser 'doom-modeline-env--rustc)))
 
 
 ;; Ensure modeline is inactive when Emacs is unfocused (and active otherwise)

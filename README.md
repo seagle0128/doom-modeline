@@ -19,7 +19,7 @@ The `doom-modeline` was designed for minimalism, and offers:
 - A match count panel (for `anzu`, `iedit`, `multiple-cursors`, `symbol-overlay`,
   `evil-search` and `evil-substitute`)
 - An indicator for recording a macro
-- Local `python`/`ruby`/`perl`/`go`/`elixir` version in the major-mode
+- Current environment version (e.g. `python`, `ruby`, `go`, etc.) in the major-mode
 - A customizable mode-line height (see `doom-modeline-height`)
 - A minor modes segment which is compatible with `minions`
 - An error/warning count segment for `flymake`/`flycheck`
