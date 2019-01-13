@@ -92,7 +92,8 @@ Example:
         (parser callback))
     (set-process-filter proc
                         (lambda (_proc line)
-                          (funcall parser line)))))
+                          (ignore-errors
+                            (funcall parser line))))))
 
 (provide 'doom-modeline-env)
 
