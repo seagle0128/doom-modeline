@@ -2,7 +2,8 @@
 
 ;; Copyright (C) 2019 Justin Barclay, Vincent Zhang
 
-;; Version: 1.4.5
+;; This file is not part of GNU Emacs.
+
 ;;
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
