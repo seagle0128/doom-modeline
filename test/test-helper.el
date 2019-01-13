@@ -30,7 +30,9 @@
 ;;
 ;;; Code:
 
-(require 'doom-modeline (expand-file-name "doom-modeline.el"))
+(add-to-list 'load-path (expand-file-name "."))
+
+(require 'doom-modeline)
 
 (defun strip-text-properties(txt)
   "Strip text properties of TXT."
