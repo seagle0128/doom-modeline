@@ -82,24 +82,17 @@ passes on the information into the CALLBACK.
 Example:
   (doom-modeline-env--get
      \"ruby\"
-     '(\"version\")
+     '(\"--version\")
      (lambda (line)
         (message (doom-modeline-parser--ruby line)))"
   (let ((proc (apply 'start-process
                      (append ;; Flaten process-args into a single list so we can handle variadic length args
-                      (list "doom-modeline-prog" "doom-modeline-prog" prog)
+                      (list "doom-modeline-env" nil prog)
                       args)))
         (parser callback))
-    (set-process-filter
-     proc
-     (lambda (proc1 line)
-       (defvar old-buffer-query-functions kill-buffer-query-functions) ;; Store old query function
-       (setq kill-buffer-query-functions nil) ;; No need to query user when we kill this buffer and process
-       (kill-process proc1) ;; Clean up after ourselves
-       (kill-buffer "doom-modeline-prog")
-       (setq kill-buffer-query-functions old-buffer-query-functions) ;; let's restore everthing
-       (funcall parser line)))
-    nil))
+    (set-process-filter proc
+                        (lambda (_proc line)
+                          (funcall parser line)))))
 
 (provide 'doom-modeline-env)
 

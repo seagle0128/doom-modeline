@@ -540,19 +540,19 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
          (add-function :after after-focus-change-function #'doom-modeline-refresh-frame))))
 
 ;; Show version string for multi-version managers like rvm, rbenv, pyenv, etc.
-(defvar-local doom-modeline-env-version nil)
+(defvar-local doom-modeline-env-version nil
+  "The version to display with major-mode in mode-line.
+Example: \"2.6.0\"")
+(defvar-local doom-modeline-env-command nil
+  "A program that we're looking to extract version information from.
+Example: \"ruby\"")
+(defvar-local doom-modeline-env-command-args nil
+  "A list of arguments to pass to `doom-modeline-env-command` to extract the version from.
+Example: '(\"--version\") ")
+(defvar-local doom-modeline-env-parser nil
+  "A function that returns version number from a programs --version (or similar) command.
+Example: 'doom-modeline-env--ruby")
 
-(defvar-local doom-modeline-env-command nil "A program that we're looking to extract version information from. Ex: \"ruby\"")
-(defvar-local doom-modeline-env-command-args nil "A list of arguments to pass to `doom-modeline-env-command` to extract the version from. Ex: '(\"--version\") ")
-(defvar-local doom-modeline-env-parser nil "A function that returns version number from a programs --version (or similar) command. Ex: 'doom-modeline-env--ruby")
-(add-hook 'find-file-hook #'doom-modeline-update-env)
-(with-no-warnings
-  (if (boundp 'after-focus-change-function)
-      (add-function :after after-focus-change-function
-                    (lambda ()
-                      (if (frame-focus-state)
-                          (doom-modeline-update-env))))
-    (add-hook 'focus-in-hook #'doom-modeline-update-env)))
 (defun doom-modeline-update-env ()
   "Update environment info on mode-line."
   (when (and doom-modeline-version
@@ -564,7 +564,18 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
       (doom-modeline-env--get doom-modeline-env-command
                               doom-modeline-env-command-args
                               (lambda (prog-version)
-                                (setq doom-modeline-env-version (funcall doom-modeline-env-parser prog-version)))))))
+                                (setq doom-modeline-env-version
+                                      (funcall doom-modeline-env-parser prog-version)))))))
+
+(add-hook 'find-file-hook #'doom-modeline-update-env)
+(with-no-warnings
+  (if (boundp 'after-focus-change-function)
+      (add-function :after after-focus-change-function
+                    (lambda ()
+                      (if (frame-focus-state)
+                          (doom-modeline-update-env))))
+    (add-hook 'focus-in-hook #'doom-modeline-update-env)))
+
 
 ;;
 ;; Modeline helpers
