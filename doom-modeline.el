@@ -811,7 +811,6 @@ buffer where knowing the current project directory is important."
                         'help-echo (format "Major-mode: %s" mode-name)
                         'display '(raise -0.125))))))
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-icon)
-(add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-icon)
 (add-hook 'after-change-major-mode-hook #'doom-modeline-update-buffer-file-icon)
 (add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-icon)
 
@@ -848,7 +847,6 @@ Uses `all-the-icons-material' to fetch the icon."
                 'doom-modeline-warning)))))
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-save-hook #'doom-modeline-update-buffer-file-state-icon)
-(add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'read-only-mode-hook #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-change-functions #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-state-icon)
@@ -888,7 +886,6 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
                       'local-map mode-line-buffer-identification-keymap))))
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'after-save-hook #'doom-modeline-update-buffer-file-name)
-(add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'after-change-functions #'doom-modeline-update-buffer-file-name)
 (add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-name)
 (advice-add #'rename-buffer :after #'doom-modeline-update-buffer-file-name)
@@ -1070,9 +1067,8 @@ Uses `all-the-icons-octicon' to fetch the icon."
                    (doom-modeline-vcs-icon "alert" "!" 'doom-modeline-urgent))
                   (t
                    (doom-modeline-vcs-icon "git-branch" "@" 'doom-modeline-info -0.05)))))))
-(add-hook 'after-revert-hook #'doom-modeline--update-vcs-icon)
-(add-hook 'after-save-hook #'doom-modeline--update-vcs-icon)
 (add-hook 'find-file-hook #'doom-modeline--update-vcs-icon t)
+(add-hook 'after-save-hook #'doom-modeline--update-vcs-icon)
 (advice-add #'vc-refresh-state :after #'doom-modeline--update-vcs-icon)
 
 (defvar-local doom-modeline--vcs-text nil)
@@ -1088,9 +1084,8 @@ Uses `all-the-icons-octicon' to fetch the icon."
                                     ((memq state '(removed conflict unregistered))
                                      'doom-modeline-urgent)
                                     (t 'doom-modeline-info)))))))
-(add-hook 'after-revert-hook #'doom-modeline--update-vcs-text)
-(add-hook 'after-save-hook #'doom-modeline--update-vcs-text)
 (add-hook 'find-file-hook #'doom-modeline--update-vcs-text t)
+(add-hook 'after-save-hook #'doom-modeline--update-vcs-text)
 (advice-add #'vc-refresh-state :after #'doom-modeline--update-vcs-text)
 
 (doom-modeline-def-segment vcs
@@ -1724,7 +1719,6 @@ mouse-2: Show help for minor mode"
                           map))))))
 
 (add-hook 'find-file-hook #'doom-modeline-update-persp-name)
-(add-hook 'after-revert-hook #'doom-modeline-update-persp-name)
 (add-hook 'persp-activated-functions #'doom-modeline-update-persp-name)
 (add-hook 'persp-renamed-functions #'doom-modeline-update-persp-name)
 (advice-add #'select-window :after #'doom-modeline-update-persp-name)
