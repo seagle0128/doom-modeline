@@ -2044,7 +2044,7 @@ mouse-1: Toggle Debug on Quit"
 (doom-modeline-def-segment pdf-pages
   (when (eq major-mode 'pdf-view-mode)
     (format "  P%d/%d "
-            (pdf-view-current-page)
+            (eval `(pdf-view-current-page))
             (pdf-cache-number-of-pages))))
 
 
