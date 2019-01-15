@@ -4,7 +4,7 @@
 
 ;; Author: Vincent Zhang <seagle0128@gmail.com>
 ;; Homepage: https://github.com/seagle0128/doom-modeline
-;; Version: 1.5.1
+;; Version: 1.5.2
 ;; Package-Requires: ((emacs "25.1") (all-the-icons "1.0.0") (shrink-path "0.2.0") (eldoc-eval "0.1") (dash "2.11.0"))
 ;; Keywords: faces mode-line
 
@@ -56,6 +56,7 @@
 ;; - An indicator for github notifications
 ;; - An indicator for buffer position which is compatible with nyan-mode
 ;; - An indicator for party parrot
+;; - An indicator for PDF page number
 ;; - Truncated file name, file icon, buffer state and project name in buffer
 ;;   information segment, which is compatible with projectile and project
 ;;
@@ -901,6 +902,8 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 directory, the file name, and its state (modified, read-only or non-existent)."
   (let ((active (doom-modeline--active)))
     (concat
+     " "
+
      ;; major mode icon
      (when (and doom-modeline-icon doom-modeline-major-mode-icon)
        (when-let ((icon (or doom-modeline--buffer-file-icon
@@ -941,7 +944,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 (doom-modeline-def-segment buffer-info-simple
   "Display only the current buffer's name, but with fontification."
   (propertize
-   "%b"
+   " %b "
    'face (cond ((and buffer-file-name (buffer-modified-p))
                 'doom-modeline-buffer-modified)
                ((doom-modeline--active) 'doom-modeline-buffer-file))))
@@ -1411,7 +1414,8 @@ lines are selected, or the NxM dimensions of a block selection."
           (cons (region-beginning) (region-end)))
       (propertize
        (let ((lines (count-lines beg (min end (point-max)))))
-         (concat (cond ((or (bound-and-true-p rectangle-mark-mode)
+         (concat " "
+                 (cond ((or (bound-and-true-p rectangle-mark-mode)
                             (and (bound-and-true-p evil-visual-selection)
                                  (eq 'block evil-visual-selection)))
                         (let ((cols (abs (- (doom-modeline-column end)
@@ -1424,7 +1428,8 @@ lines are selected, or the NxM dimensions of a block selection."
                         (format "%dC %dL" (- end beg) lines))
                        ((format "%dC" (- end beg))))
                  (when doom-modeline-enable-word-count
-                   (format " %dW" (count-words beg end)))))
+                   (format " %dW" (count-words beg end)))
+                 " "))
        'face 'doom-modeline-highlight))))
 
 
@@ -1535,6 +1540,15 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
              " ")
      'face (if (doom-modeline--active) 'doom-modeline-panel))))
 
+(defsubst doom-modeline--buffer-size ()
+  "Show buffer size."
+  (if (and buffer-file-name size-indication-mode)
+      (propertize " %I "
+                  'help-echo "Buffer size\n\
+mouse-1: Display Line and Column Mode Menu"
+                  'mouse-face '(:box 1)
+                  'local-map mode-line-column-line-number-mode-map)))
+
 (doom-modeline-def-segment matches
   "Displays: 1. the currently recording macro, 2. A current/total for the
 current search term (with `anzu'), 3. The number of substitutions being conducted
@@ -1548,13 +1562,11 @@ of active `multiple-cursors'."
                       (doom-modeline--symbol-overlay)
                       (doom-modeline--multiple-cursors))))
     (or (and (not (equal meta "")) meta)
-        (if (and buffer-file-name size-indication-mode)
-            (propertize " %I "
-                        'help-echo "Buffer size\n\
-mouse-1: Display Line and Column Mode Menu"
-                        'mouse-face '(:box 1)
-                        'local-map mode-line-column-line-number-mode-map)))))
+        (doom-modeline--buffer-size))))
 
+(doom-modeline-def-segment buffer-size
+  "Display buffer size"
+  (doom-modeline--buffer-size))
 
 ;;
 ;; media-info
@@ -1742,7 +1754,7 @@ mouse-2: Show help for minor mode"
   "Mode line construct for miscellaneous information.
 By default, this shows the information specified by `global-mode-string'."
   (if (doom-modeline--active)
-      mode-line-misc-info))
+      '(" " mode-line-misc-info)))
 
 
 ;;
@@ -2021,28 +2033,43 @@ mouse-1: Toggle Debug on Quit"
 
 
 ;;
+;; pdf pages
+;;
+
+(doom-modeline-def-segment pdf-pages
+  (when (eq major-mode 'pdf-view-mode)
+    (format "  P%d/%d "
+            (pdf-view-current-page)
+            (pdf-cache-number-of-pages))))
+
+
+;;
 ;; Mode lines
 ;;
 
 (doom-modeline-def-modeline 'main
-  '(bar workspace-number window-number evil-state god-state ryo-modal xah-fly-keys matches " " buffer-info remote-host buffer-position parrot " " selection-info)
+  '(bar workspace-number window-number evil-state god-state ryo-modal xah-fly-keys matches buffer-info remote-host buffer-position parrot selection-info)
   '(misc-info persp-name lsp github debug minor-modes input-method buffer-encoding major-mode process vcs checker))
 
 (doom-modeline-def-modeline 'minimal
   '(bar matches " " buffer-info)
-  '(media-info major-mode))
+  '(media-info major-mode " "))
 
 (doom-modeline-def-modeline 'special
-  '(bar window-number evil-state god-state ryo-modal xah-fly-keys matches " " buffer-info-simple buffer-position parrot " " selection-info)
+  '(bar window-number evil-state god-state ryo-modal xah-fly-keys matches buffer-info-simple buffer-position parrot selection-info)
   '(misc-info lsp debug minor-modes input-method buffer-encoding major-mode process checker))
 
 (doom-modeline-def-modeline 'project
   '(bar " " buffer-default-directory)
-  '(misc-info github debug " " major-mode))
+  '(misc-info github debug " " major-mode " "))
 
 (doom-modeline-def-modeline 'media
-  '(bar window-number " %b  ")
-  '(misc-info media-info major-mode))
+  '(bar window-number buffer-size buffer-info)
+  '(misc-info media-info major-mode vcs " "))
+
+(doom-modeline-def-modeline 'pdf
+  '(bar window-number buffer-size buffer-info pdf-pages)
+  '(misc-info " " major-mode vcs " "))
 
 
 ;;
@@ -2086,6 +2113,11 @@ mouse-1: Toggle Debug on Quit"
   "Set project mode-line."
   (doom-modeline-set-modeline 'project))
 
+;;;###autoload
+(defun doom-modeline-set-pdf-modeline ()
+  "Set pdf mode-line."
+  (doom-modeline-set-modeline 'pdf))
+
 
 ;;
 ;; Bootstrap
@@ -2096,6 +2128,7 @@ mouse-1: Toggle Debug on Quit"
 (add-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
 (add-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
 (add-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
+(add-hook 'pdf-tools-enabled-hook #'doom-modeline-set-pdf-modeline)
 
 ;; Versions, support Python, Ruby, Perl and Golang, etc.
 (add-hook 'python-mode-hook
