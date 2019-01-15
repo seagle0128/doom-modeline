@@ -1920,6 +1920,10 @@ mouse-3: Describe current input method")
 ;;
 
 (defvar doom-modeline--github-notifications-number 0)
+(defvar doom-modeline-before-github-fetch-notification-hook nil
+  "Hooks before fetching github notifications.
+Example:
+  (add-hook 'doom-modeline-before-github-fetch-notification-hook #'auth-source-pass-enable)")
 (defun doom-modeline--github-fetch-notifications ()
   "Fetch github notifications."
   (when (and doom-modeline-github
@@ -1929,7 +1933,8 @@ mouse-3: Describe current input method")
       (require 'async nil t))
     (async-start
      `(lambda ()
-        ,(async-inject-variables "\\`load-path\\'")
+        ,(async-inject-variables "\\`\\(load-path\\|auth-sources\\)\\'")
+        (run-hooks 'doom-modeline-before-github-fetch-notification-hook)
         (require 'ghub nil t)
         (when (fboundp 'ghub-get)
           (with-timeout (10)
