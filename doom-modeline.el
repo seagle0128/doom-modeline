@@ -1935,7 +1935,7 @@ Example:
       (require 'async nil t))
     (async-start
      `(lambda ()
-        ,(async-inject-variables "\\`\\(load-path\\|auth-sources\\)\\'")
+        ,(async-inject-variables "\\`\\(load-path\\|auth-sources\\|doom-modeline-before-github-fetch-notification-hook\\)\\'")
         (run-hooks 'doom-modeline-before-github-fetch-notification-hook)
         (require 'ghub nil t)
         (when (fboundp 'ghub-get)
