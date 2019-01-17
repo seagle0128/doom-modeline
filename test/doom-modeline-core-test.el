@@ -1,4 +1,4 @@
-;;; doom-modeline-test.el --- Unit tests for doom-modeline -*- lexical-binding: t; -*-
+;;; doom-modeline-core-test.el --- Unit tests for doom-modeline -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2018-2019 Vincent Zhang
 
@@ -31,7 +31,7 @@
 
 ;;; Code:
 
-(require 'doom-modeline)
+(require 'doom-modeline-core)
 
 (ert-deftest doom-modeline--buffer-file-name/truncate-upto-project ()
   (let ((default-directory "/home/user/project/")
@@ -107,4 +107,4 @@
                  (doom-modeline--buffer-file-name-relative file-path true-file-path 'include-project))
                 "project/relative/test.txt")))))
 
-;;; doom-modeline-test.el ends here
+;;; doom-modeline-core-test.el ends here
