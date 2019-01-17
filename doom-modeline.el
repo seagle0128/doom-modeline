@@ -64,11 +64,11 @@
 ;; From melpa, `M-x package-install RET doom-modeline RET`.
 ;; In `init.el`,
 ;; (require 'doom-modeline)
-;; (doom-modeline-init)
+;; (doom-modeline-mode 1)
 ;; or
 ;; (use-package doom-modeline
 ;;   :ensure t
-;;   :hook (after-init . doom-modeline-init))
+;;   :hook (after-init . doom-modeline-mode))
 ;;
 
 ;;; Code:
@@ -107,25 +107,20 @@
 
 
 ;;
-;; Hooks
+;; Interfaces
 ;;
 
 ;;;###autoload
 (defun doom-modeline-init ()
   "Initialize doom mode-line."
-  ;; Create bars
-  (doom-modeline-refresh-bars)
-  (unless after-init-time
-    ;; These buffers are already created and don't get modelines. For the love
-    ;; of Emacs, someone give the man a modeline!
-    (dolist (bname '("*scratch*" "*Messages*"))
-      (with-current-buffer bname
-        (doom-modeline-set-main-modeline)))))
+  (doom-modeline-mode 1))
+(make-obsolete 'doom-modeline-init 'doom-modeline-mode "1.6.0")
 
 ;;;###autoload
-(defun doom-modeline-set-main-modeline ()
-  "Set main mode-line."
-  (doom-modeline-set-modeline 'main))
+(defun doom-modeline-set-main-modeline (&optional default)
+  "Set main mode-line.
+If DEFAULT is non-nil, set the default mode-line for all buffers."
+  (doom-modeline-set-modeline 'main default))
 
 ;;;###autoload
 (defun doom-modeline-set-minimal-modeline ()
@@ -154,15 +149,40 @@
 
 
 ;;
-;; Bootstrap
+;; Mode
 ;;
 
-(doom-modeline-set-modeline 'main t) ; set default modeline
+(defvar doom-modeline--default-mode-line mode-line-format)
 
-(add-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
-(add-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
-(add-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
-(add-hook 'pdf-tools-enabled-hook #'doom-modeline-set-pdf-modeline)
+;;;###autoload
+(define-minor-mode doom-modeline-mode
+  "Toggle doom-modeline on or off."
+  :group 'doom-modeline
+  :global t
+  :lighter nil
+  (if doom-modeline-mode
+      (progn
+        (doom-modeline-refresh-bars)    ; create bars
+        (doom-modeline-set-main-modeline t) ; set default mode-line.
+        (unless after-init-time
+          ;; These buffers are already created and don't get modelines. For the love
+          ;; of Emacs, someone give the man a modeline!
+          (dolist (bname '("*scratch*" "*Messages*"))
+            (with-current-buffer bname
+              (doom-modeline-set-main-modeline))))
+        ;; Add hooks
+        (add-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
+        (add-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
+        (add-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
+        (add-hook 'pdf-tools-enabled-hook #'doom-modeline-set-pdf-modeline))
+    (progn
+      ;; Restore mode-line
+      (setq-default mode-line-format doom-modeline--default-mode-line)
+      ;; Remove hooks
+      (remove-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
+      (remove-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
+      (remove-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
+      (remove-hook 'pdf-tools-enabled-hook #'doom-modeline-set-pdf-modeline))))
 
 (provide 'doom-modeline)
 
