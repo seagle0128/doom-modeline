@@ -110,7 +110,7 @@ The icons may not be showed correctly in terminal and on Windows.")
 (defvar doom-modeline-lsp t
   "Whether display `lsp' state or not. Non-nil to display in mode-line.")
 
-(defvar doom-modeline-github t
+(defvar doom-modeline-github nil
   "Whether display github notifications or not. Requires `ghub' package.")
 
 (defvar doom-modeline-github-interval (* 30 60)
