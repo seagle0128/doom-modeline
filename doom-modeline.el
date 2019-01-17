@@ -221,6 +221,7 @@ It returns a file name which can be used directly as argument of
 (declare-function evil-visual-state-p 'evil-states)
 (declare-function eyebrowse--get 'eyebrowse)
 (declare-function face-remap-remove-relative 'face-remap)
+(declare-function flycheck-buffer 'flycheck)
 (declare-function flycheck-count-errors 'flycheck)
 (declare-function flycheck-list-errors 'flycheck)
 (declare-function flycheck-next-error 'flycheck)
@@ -234,6 +235,7 @@ It returns a file name which can be used directly as argument of
 (declare-function flymake-reporting-backends 'flymake)
 (declare-function flymake-running-backends 'flymake)
 (declare-function flymake-show-diagnostics-buffer 'flymake)
+(declare-function flymake-start 'flymake)
 (declare-function iedit-find-current-occurrence-overlay 'iedit-lib)
 (declare-function iedit-prev-occurrence 'iedit-lib)
 (declare-function image-get-display-property 'image-mode)
@@ -242,6 +244,7 @@ It returns a file name which can be used directly as argument of
 (declare-function minions-minor-modes-menu 'minions)
 (declare-function nyan-create 'nyan-mode)
 (declare-function parrot-create 'parrot)
+(declare-function pdf-cache-number-of-pages 'pdf-cache)
 (declare-function persp-add-buffer 'persp-mode)
 (declare-function persp-contain-buffer-p 'persp-mode)
 (declare-function persp-remove-buffer 'persp-mode)
@@ -252,6 +255,7 @@ It returns a file name which can be used directly as argument of
 (declare-function symbol-overlay-assoc 'symbol-overlay)
 (declare-function symbol-overlay-get-list 'symbol-overlay)
 (declare-function symbol-overlay-get-symbol 'symbol-overlay)
+(declare-function symbol-overlay-rename 'symbol-overlay)
 (declare-function undo-tree-redo 'undo-tree)
 (declare-function undo-tree-undo 'undo-tree)
 (declare-function window-numbering-clear-mode-line 'window-numbering)
@@ -921,6 +925,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 (advice-add #'undo-tree-undo :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'undo-tree-redo :after #'doom-modeline-update-buffer-file-name)
 ;; (advice-add #'set-buffer-modified-p :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'symbol-overlay-rename :after #'doom-modeline-update-buffer-file-name)
 
 (doom-modeline-def-segment buffer-info
   "Combined information about the current buffer, including the current working
