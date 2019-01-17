@@ -52,6 +52,9 @@ The `doom-modeline` was designed for minimalism, and offers:
 ![macro](https://user-images.githubusercontent.com/140797/49694199-cc056b80-fbc0-11e8-9bb1-533b1e64da66.png
 "Macro")
 
+![no_icons](https://user-images.githubusercontent.com/140797/51301117-0805d900-1a69-11e9-957d-b4c7a70a1cf8.png
+"No Icons")
+
 ![color_icon_cpp](https://user-images.githubusercontent.com/140797/50414928-3c63ec00-0853-11e9-9b26-6a1df278d332.png
 "Color C++ icon")
 
@@ -81,6 +84,9 @@ The `doom-modeline` was designed for minimalism, and offers:
 
 ![debug](https://user-images.githubusercontent.com/140797/50302008-c57dca80-04c3-11e9-8578-50154ef4f9f0.png
 "Debug state")
+
+![nyan_parrot](https://user-images.githubusercontent.com/140797/51301061-da209480-1a68-11e9-9f64-905d889df9d6.png
+"Nyan and Parrot")
 
 ## Install
 
