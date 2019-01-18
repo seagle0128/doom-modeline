@@ -63,6 +63,7 @@
 (defvar mc/mode-line)
 (defvar minions-mode)
 (defvar minions-mode-line-lighter)
+(defvar persp-nil-name)
 (defvar symbol-overlay-keywords-alist)
 (defvar symbol-overlay-temp-symbol)
 (defvar text-scale-mode-amount)
@@ -1143,24 +1144,26 @@ Requires `eyebrowse-mode' to be enabled."
                    (bound-and-true-p persp-mode)
                    (fboundp 'safe-persp-name)
                    (fboundp 'get-current-persp))
-          (let ((persp (get-current-persp)))
-            (propertize
-             (format " #%s " (safe-persp-name persp))
-             'face (if (and persp
-                            (not (persp-contain-buffer-p (current-buffer) persp)))
-                       'doom-modeline-persp-buffer-not-in-persp
-                     'doom-modeline-persp-name)
-             'help-echo "mouse-1: Switch perspective
+          (let* ((persp (get-current-persp))
+                 (name (safe-persp-name persp)))
+            (unless (string-equal persp-nil-name name)
+              (propertize
+               (format " #%s " name)
+               'face (if (and persp
+                              (not (persp-contain-buffer-p (current-buffer) persp)))
+                         'doom-modeline-persp-buffer-not-in-persp
+                       'doom-modeline-persp-name)
+               'help-echo "mouse-1: Switch perspective
 mouse-2: Show help for minor mode"
-             'mouse-face '(:box 1)
-             'local-map (let ((map (make-sparse-keymap)))
-                          (define-key map [mode-line mouse-1]
-                            #'persp-switch)
-                          (define-key map [mode-line mouse-2]
-                            (lambda ()
-                              (interactive)
-                              (describe-function 'persp-mode)))
-                          map))))))
+               'mouse-face 'mode-line-highlight
+               'local-map (let ((map (make-sparse-keymap)))
+                            (define-key map [mode-line mouse-1]
+                              #'persp-switch)
+                            (define-key map [mode-line mouse-2]
+                              (lambda ()
+                                (interactive)
+                                (describe-function 'persp-mode)))
+                            map)))))))
 
 (add-hook 'find-file-hook #'doom-modeline-update-persp-name)
 (add-hook 'persp-activated-functions #'doom-modeline-update-persp-name)
