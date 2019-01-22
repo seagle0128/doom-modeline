@@ -269,6 +269,17 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 (advice-add #'undo-tree-redo :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'symbol-overlay-rename :after #'doom-modeline-update-buffer-file-name)
 
+(when (>= emacs-major-version 26)
+  (add-variable-watcher
+   'doom-modeline-buffer-file-name-style
+   (lambda (_sym val op _where)
+     (when (eq op 'set)
+       (setq doom-modeline-buffer-file-name-style val)
+       (dolist (buf (buffer-list))
+         (with-current-buffer buf
+           (if buffer-file-name
+               (doom-modeline-update-buffer-file-name))))))))
+
 (doom-modeline-def-segment buffer-info
   "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
