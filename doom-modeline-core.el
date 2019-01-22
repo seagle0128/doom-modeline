@@ -148,6 +148,14 @@ The icons may not be showed correctly in terminal and on Windows.")
   '((t (:inherit (mode-line-buffer-id bold))))
   "Face used for the minor-modes segment in the mode-line.")
 
+(defface doom-modeline-project-parent-dir
+  '((t (:inherit (font-lock-comment-face bold))))
+  "Face used for the project parent directory of the mode-line buffer path.")
+
+(defface doom-modeline-project-dir
+  '((t (:inherit (font-lock-string-face bold))))
+  "Face used for the project directory of the mode-line buffer path.")
+
 (defface doom-modeline-project-root-dir
   '((t (:inherit (mode-line-emphasis bold))))
   "Face used for the project part of the mode-line buffer path.")
@@ -571,43 +579,39 @@ Example:
   (let ((project-root (doom-modeline-project-root))
         (active (doom-modeline--active))
         (modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified)))
-    (let ((sp-faces       (or modified-faces (if active 'font-lock-comment-face)))
-          (project-faces  (or modified-faces (if active 'font-lock-string-face)))
+    (let ((sp-faces       (or modified-faces (if active 'doom-modeline-project-parent-dir)))
+          (project-faces  (or modified-faces (if active 'doom-modeline-project-dir)))
           (relative-faces (or modified-faces (if active 'doom-modeline-buffer-path)))
           (file-faces     (or modified-faces (if active 'doom-modeline-buffer-file))))
-      (let ((sp-props       `(,@(if sp-faces       `(:inherit ,sp-faces))      ,@(if active '(:weight bold))))
-            (project-props  `(,@(if project-faces  `(:inherit ,project-faces)) ,@(if active '(:weight bold))))
-            (relative-props `(,@(if relative-faces `(:inherit ,relative-faces))))
-            (file-props     `(,@(if file-faces     `(:inherit ,file-faces)))))
-        (concat
-         ;; project root parent
-         (unless hide-project-root-parent
-           (when-let (root-path-parent
-                      (file-name-directory (directory-file-name project-root)))
-             (propertize
-              (if (and truncate-project-root-parent
-                       (not (string-empty-p root-path-parent))
-                       (not (string= root-path-parent "/")))
-                  (shrink-path--dirs-internal root-path-parent t)
-                (abbreviate-file-name root-path-parent))
-              'face sp-props)))
-         ;; project
-         (propertize
-          (concat (file-name-nondirectory (directory-file-name project-root)) "/")
-          'face project-props)
-         ;; relative path
-         (propertize
-          (when-let (relative-path (file-relative-name
-                                    (or (file-name-directory file-path) "./")
-                                    project-root))
-            (if (string= relative-path "./")
-                ""
-              (if truncate-project-relative-path
-                  (substring (shrink-path--dirs-internal relative-path t) 1)
-                relative-path)))
-          'face relative-props)
-         ;; file name
-         (propertize (file-name-nondirectory file-path) 'face file-props))))))
+      (concat
+       ;; project root parent
+       (unless hide-project-root-parent
+         (when-let (root-path-parent
+                    (file-name-directory (directory-file-name project-root)))
+           (propertize
+            (if (and truncate-project-root-parent
+                     (not (string-empty-p root-path-parent))
+                     (not (string= root-path-parent "/")))
+                (shrink-path--dirs-internal root-path-parent t)
+              (abbreviate-file-name root-path-parent))
+            'face sp-faces)))
+       ;; project
+       (propertize
+        (concat (file-name-nondirectory (directory-file-name project-root)) "/")
+        'face project-faces)
+       ;; relative path
+       (propertize
+        (when-let (relative-path (file-relative-name
+                                  (or (file-name-directory file-path) "./")
+                                  project-root))
+          (if (string= relative-path "./")
+              ""
+            (if truncate-project-relative-path
+                (substring (shrink-path--dirs-internal relative-path t) 1)
+              relative-path)))
+        'face relative-faces)
+       ;; file name
+       (propertize (file-name-nondirectory file-path) 'face file-faces)))))
 
 (provide 'doom-modeline-core)
 
