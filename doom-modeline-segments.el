@@ -1429,29 +1429,30 @@ Example:
   (if (and doom-modeline-github
            (doom-modeline--active)
            (> doom-modeline--github-notifications-number 0))
-      (concat " "
-              (if doom-modeline-icon
-                  (doom-modeline-icon-faicon "github"
-                                             :v-adjust -0.0575
-                                             :face 'doom-modeline-warning)
-                (propertize "#" 'face '(:inherit (doom-modeline-warning italic))))
-              doom-modeline-vspc
-              (propertize (number-to-string doom-modeline--github-notifications-number)
-                          'face '(:inherit (warning italic))
-                          'help-echo "Github Notifications
+      (propertize
+       (concat " "
+               (if doom-modeline-icon
+                   (doom-modeline-icon-faicon "github"
+                                              :v-adjust -0.0575
+                                              :face 'doom-modeline-warning)
+                 (propertize "#" 'face '(:inherit (doom-modeline-warning italic))))
+               doom-modeline-vspc
+               (propertize (number-to-string doom-modeline--github-notifications-number)
+                           'face '(:inherit (warning italic)))
+               " ")
+       'help-echo "Github Notifications
 mouse-1: Show notifications
 mouse-3: Fetch notifications"
-                          'mouse-face 'mode-line-highlight
-                          'local-map (let ((map (make-sparse-keymap)))
-                                       (define-key map [mode-line mouse-1]
-                                         #'doom-modeline--github-open-notifications)
-                                       (define-key map [mode-line mouse-3]
-                                         (lambda ()
-                                           (interactive)
-                                           (message "Fetching github notifications...")
-                                           (doom-modeline--github-fetch-notifications)))
-                                       map))
-              " ")))
+       'mouse-face '(:box 1)
+       'local-map (let ((map (make-sparse-keymap)))
+                    (define-key map [mode-line mouse-1]
+                      #'doom-modeline--github-open-notifications)
+                    (define-key map [mode-line mouse-3]
+                      (lambda ()
+                        (interactive)
+                        (message "Fetching github notifications...")
+                        (doom-modeline--github-fetch-notifications)))
+                    map))))
 
 
 ;;
