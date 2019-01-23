@@ -69,6 +69,7 @@
 (defvar text-scale-mode-amount)
 (defvar winum-auto-setup-mode-line)
 (defvar xah-fly-insert-state-q)
+(defvar mu4e-alert-mode-line)
 
 (declare-function anzu--reset-status 'anzu)
 (declare-function anzu--where-is-here 'anzu)
@@ -1492,6 +1493,32 @@ mouse-1: Toggle Debug on Quit"
     (format "  P%d/%d "
             (eval `(pdf-view-current-page))
             (pdf-cache-number-of-pages))))
+
+
+;;
+;; mu4e-alert notifications
+;;
+
+(defun doom-modeline-mu4e-formatter (mail-count)
+  "Doom mode-line's `mu4e-alert' formatter.
+MAIL-COUNT is the count of mails for which the string is to displayed"
+  (when (not (zerop mail-count))
+    (concat
+     (propertize
+      (format "%s" mail-count)
+      'display '(raise 0.09)
+      'face '(:height 0.85)
+      'help-echo (if (= mail-count 1)
+                     "You have an unread email"
+                   (format "You have %s unread emails" mail-count)))
+
+     ;; add a little space for padding
+     (propertize " " 'display '(space-width 0.6)))))
+
+(doom-modeline-def-segment mu4e
+  (when doom-modeline-mu4e
+    ;; this is the result of the mu4e formatter
+    mu4e-alert-mode-line))
 
 (provide 'doom-modeline-segments)
 
