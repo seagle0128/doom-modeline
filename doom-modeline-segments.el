@@ -63,6 +63,7 @@
 (defvar mc/mode-line)
 (defvar minions-mode)
 (defvar minions-mode-line-lighter)
+(defvar nyan-minimum-window-width)
 (defvar persp-nil-name)
 (defvar symbol-overlay-keywords-alist)
 (defvar symbol-overlay-temp-symbol)
@@ -1243,7 +1244,8 @@ See `mode-line-percent-position'.")
                " %l")
               (column-number-mode (doom-modeline-column-zero-based " :%c" " :%C")))))
     (if (and (bound-and-true-p nyan-mode)
-             (doom-modeline--active))
+             (doom-modeline--active)
+             (>= (window-width) nyan-minimum-window-width))
         (concat "  " (nyan-create) " "
                 (propertize (format-mode-line lc)
                             'help-echo "Buffer position\n\
