@@ -344,10 +344,16 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 (eldoc-in-minibuffer-mode 1)
 
 ;; Keep `doom-modeline-current-window' up-to-date
-(defvar doom-modeline-current-window (frame-selected-window))
+(defun doom-modeline--get-current-window ()
+  "Get the current window but should exclude the child windows."
+  (if (and (fboundp 'frame-parent) (frame-parent))
+      (frame-selected-window (frame-parent))
+    (frame-selected-window)))
+
+(defvar doom-modeline-current-window (doom-modeline--get-current-window))
 (defun doom-modeline-set-selected-window (&rest _)
   "Set `doom-modeline-current-window' appropriately."
-  (when-let ((win (frame-selected-window)))
+  (when-let ((win (doom-modeline--get-current-window)))
     (unless (minibuffer-window-active-p win)
       (setq doom-modeline-current-window win)
       (force-mode-line-update))))
