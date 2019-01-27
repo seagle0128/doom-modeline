@@ -163,7 +163,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   (if doom-modeline-mode
       (progn
         (doom-modeline-refresh-bars)    ; create bars
-        (doom-modeline-set-main-modeline t) ; set default mode-line.
+        (doom-modeline-set-main-modeline t) ; set default mode-line
         (unless after-init-time
           ;; These buffers are already created and don't get modelines. For the love
           ;; of Emacs, someone give the man a modeline!

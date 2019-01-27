@@ -22,7 +22,7 @@
 ;;
 ;;; Commentary:
 ;;
-;; Parse programming environment version.
+;; Parse programming environment.
 ;;
 
 ;;; Code:
