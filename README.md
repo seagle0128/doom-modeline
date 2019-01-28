@@ -213,3 +213,17 @@ Strongly recommend to use
        up-to-date](https://magit.vc/manual/magit/The-mode_002dline-information-isn_0027t-always-up_002dto_002ddate.html)
      - [Maybe provide an alternative to VC's mode-line
        information](https://github.com/magit/magit/issues/2687)
+
+1. How can I define my own mode-line?
+
+   Use `doom-modeline-def-modeline` to define your own mode-line and set it as
+   default.
+
+   For example:
+
+   ```emacs-lisp
+   (doom-modeline-def-modeline 'my-simple-line
+     '(bar matches buffer-info remote-host buffer-position parrot selection-info)
+     '(misc-info minor-modes input-method buffer-encoding major-mode process vcs checker))
+   (doom-modeline-set-modeline 'my-simple-line 'default)
+   ```
