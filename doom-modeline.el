@@ -83,7 +83,7 @@
 
 (doom-modeline-def-modeline 'main
   '(bar workspace-number window-number evil-state god-state ryo-modal xah-fly-keys matches buffer-info remote-host buffer-position parrot selection-info)
-  '(misc-info persp-name lsp github debug minor-modes input-method buffer-encoding major-mode process vcs checker))
+  '(misc-info persp-name lsp mu4e github debug minor-modes input-method buffer-encoding major-mode process vcs checker))
 
 (doom-modeline-def-modeline 'minimal
   '(bar matches " " buffer-info)
@@ -95,7 +95,7 @@
 
 (doom-modeline-def-modeline 'project
   '(bar " " buffer-default-directory)
-  '(misc-info github debug " " major-mode " "))
+  '(misc-info mu4e github debug " " major-mode " "))
 
 (doom-modeline-def-modeline 'media
   '(bar window-number buffer-size buffer-info)
@@ -153,6 +153,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 ;;
 
 (defvar doom-modeline--default-mode-line mode-line-format)
+(defvar mu4e-alert-modeline-formatter)
+(declare-function mu4e-alert-default-mode-line-formatter 'mu4e-alert)
 
 ;;;###autoload
 (define-minor-mode doom-modeline-mode
@@ -174,7 +176,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (add-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
         (add-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
         (add-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
-        (add-hook 'pdf-tools-enabled-hook #'doom-modeline-set-pdf-modeline))
+        (add-hook 'pdf-tools-enabled-hook #'doom-modeline-set-pdf-modeline)
+        (setq mu4e-alert-modeline-formatter #'identity))
     (progn
       ;; Restore mode-line
       (setq-default mode-line-format doom-modeline--default-mode-line)
@@ -182,7 +185,9 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
       (remove-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
       (remove-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
       (remove-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
-      (remove-hook 'pdf-tools-enabled-hook #'doom-modeline-set-pdf-modeline))))
+      (remove-hook 'pdf-tools-enabled-hook #'doom-modeline-set-pdf-modeline)
+      (setq mu4e-alert-modeline-formatter
+            #'mu4e-alert-default-mode-line-formatter))))
 
 (provide 'doom-modeline)
 
