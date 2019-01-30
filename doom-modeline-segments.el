@@ -1512,7 +1512,8 @@ mouse-1: Toggle Debug on Quit"
     (setq global-mode-string (delete '(:eval mu4e-alert-mode-line)
                                      global-mode-string))
     (propertize
-     (number-to-string mu4e-alert-mode-line)
+     (concat " " (number-to-string mu4e-alert-mode-line) " ")
+     'face '(:inherit (italic))
      'help-echo (if (= mu4e-alert-mode-line 1)
                     "You have an unread email"
                   (format "You have %s unread emails" mu4e-alert-mode-line)))))
