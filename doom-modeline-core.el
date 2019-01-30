@@ -119,6 +119,9 @@ The icons may not be showed correctly in terminal and on Windows.")
 (defvar doom-modeline-version t
   "Whether display environment version or not.")
 
+(defvar doom-modeline-mu4e t
+  "Whether display mu4e notifications or not. Requires `mu4e-alert' package.")
+
 
 ;;
 ;; Custom faces
