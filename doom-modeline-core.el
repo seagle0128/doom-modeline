@@ -184,7 +184,10 @@ The icons may not be showed correctly in terminal and on Windows.")
   `((t (:inherit (error bold))))
   "Face for errors in the modeline. Used by `*flycheck'")
 
-;; Bar
+(defface doom-modeline-unread-number
+  `((t (:inherit (italic))))
+  "Face for unread number in the modeline. Used by `github', `mu4e', etc.")
+
 (defface doom-modeline-bar '((t (:inherit highlight)))
   "The face used for the left-most bar on the mode-line of an active window.")
 

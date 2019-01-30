@@ -1438,10 +1438,10 @@ Example:
                    (doom-modeline-icon-faicon "github"
                                               :v-adjust -0.0575
                                               :face 'doom-modeline-warning)
-                 (propertize "#" 'face '(:inherit (doom-modeline-warning italic))))
+                 (propertize "#" 'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
                doom-modeline-vspc
                (propertize (number-to-string doom-modeline--github-notifications-number)
-                           'face '(:inherit (warning italic)))
+                           'face '(:inherit (warning doom-modeline-unread-number)))
                " ")
        'help-echo "Github Notifications
 mouse-1: Show notifications
@@ -1513,7 +1513,7 @@ mouse-1: Toggle Debug on Quit"
                                      global-mode-string))
     (propertize
      (concat " " (number-to-string mu4e-alert-mode-line) " ")
-     'face '(:inherit (italic))
+     'face 'doom-modeline-unread-number
      'help-echo (if (= mu4e-alert-mode-line 1)
                     "You have an unread email"
                   (format "You have %s unread emails" mu4e-alert-mode-line)))))
