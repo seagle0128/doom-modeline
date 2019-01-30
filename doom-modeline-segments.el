@@ -1506,6 +1506,7 @@ mouse-1: Toggle Debug on Quit"
 (doom-modeline-def-segment mu4e
   (when (and doom-modeline-mu4e
              (doom-modeline--active)
+             (bound-and-true-p mu4e-alert-mode-line)
              ;; we'll do our own formatting so just need to test for zero
              (> mu4e-alert-mode-line 0))
     ;; remove mu4e-alert's global modeline string setting
