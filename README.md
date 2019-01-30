@@ -35,6 +35,7 @@ The `doom-modeline` was designed for minimalism, and offers:
 - An indicator for current input method
 - An indicator for `LSP` state
 - An indicator for github notifications
+- An indicator for unread emails with `mu4e-alert`.
 - An indicator for buffer position which is compatible with `nyan-mode`
 - An indicator for party parrot
 - An indicator for PDF page number
@@ -173,6 +174,9 @@ Strongly recommend to use
 
 ;; Whether display environment version or not.
 (setq doom-modeline-version t)
+
+;; Whether display mu4e notifications or not. Requires `mu4e-alert' package.
+(setq doom-modeline-mu4e t)
 ```
 
 ## FAQ
