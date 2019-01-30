@@ -185,7 +185,7 @@ The icons may not be showed correctly in terminal and on Windows.")
   "Face for errors in the modeline. Used by `*flycheck'")
 
 (defface doom-modeline-unread-number
-  `((t (:inherit (italic))))
+  `((t (:inherit italic)))
   "Face for unread number in the modeline. Used by `github', `mu4e', etc.")
 
 (defface doom-modeline-bar '((t (:inherit highlight)))
