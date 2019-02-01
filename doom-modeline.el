@@ -92,7 +92,7 @@
 
 (doom-modeline-def-modeline 'special
   '(bar window-number evil-state god-state ryo-modal xah-fly-keys matches buffer-info-simple buffer-position parrot selection-info)
-  '(misc-info lsp debug minor-modes input-method buffer-encoding major-mode process checker))
+  '(misc-info lsp debug minor-modes input-method irc-buffers buffer-encoding major-mode process checker))
 
 (doom-modeline-def-modeline 'project
   '(bar " " buffer-default-directory)
