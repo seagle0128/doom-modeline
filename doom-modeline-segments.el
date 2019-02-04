@@ -1559,6 +1559,23 @@ we don't want to remove that so we just return the original."
     ;; add a space at the end to pad against the following segment
     (concat " " (doom-modeline--tracking-buffers tracking-buffers) " ")))
 
+(doom-modeline-def-segment irc
+  "A notification icon for any unread irc buffer."
+  (when (and doom-modeline-irc
+             (boundp 'tracking-mode-line-buffers)
+             (> (length tracking-buffers) 0)
+             (doom-modeline--active))
+    (concat
+     " "
+     (propertize (doom-modeline-icon-material "sms"
+                                              :height 0.9
+                                              :face 'doom-modeline-warning)
+                 'help-echo (format "IRC Notifications: %s"
+                                    (doom-modeline--tracking-buffers
+                                     tracking-buffers))
+                 'display '(raise -0.17))
+     " ")))
+
 (provide 'doom-modeline-segments)
 
 ;;; doom-modeline-segments.el ends here
