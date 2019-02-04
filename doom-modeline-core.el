@@ -122,6 +122,11 @@ The icons may not be showed correctly in terminal and on Windows.")
 (defvar doom-modeline-mu4e t
   "Whether display mu4e notifications or not. Requires `mu4e-alert' package.")
 
+(defvar doom-modeline-irc t
+  "Whether display irc notifications or not. Requires `circe' package.")
+
+(defvar doom-modeline-irc-stylize 'identity
+  "Function to stylize the irc buffer names.")
 
 ;;
 ;; Custom faces

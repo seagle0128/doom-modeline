@@ -84,7 +84,7 @@
 
 (doom-modeline-def-modeline 'main
   '(bar workspace-number window-number evil-state god-state ryo-modal xah-fly-keys matches buffer-info remote-host buffer-position parrot selection-info)
-  '(misc-info persp-name lsp mu4e github debug minor-modes input-method buffer-encoding major-mode process vcs checker))
+  '(misc-info persp-name lsp irc mu4e github debug minor-modes input-method buffer-encoding major-mode process vcs checker))
 
 (doom-modeline-def-modeline 'minimal
   '(bar matches " " buffer-info)
@@ -92,7 +92,7 @@
 
 (doom-modeline-def-modeline 'special
   '(bar window-number evil-state god-state ryo-modal xah-fly-keys matches buffer-info-simple buffer-position parrot selection-info)
-  '(misc-info lsp debug minor-modes input-method buffer-encoding major-mode process checker))
+  '(misc-info lsp debug minor-modes input-method irc-buffers buffer-encoding major-mode process checker))
 
 (doom-modeline-def-modeline 'project
   '(bar " " buffer-default-directory)

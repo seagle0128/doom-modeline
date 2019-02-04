@@ -71,6 +71,7 @@
 (defvar winum-auto-setup-mode-line)
 (defvar xah-fly-insert-state-q)
 (defvar mu4e-alert-mode-line)
+(defvar tracking-buffers)
 
 (declare-function anzu--reset-status 'anzu)
 (declare-function anzu--where-is-here 'anzu)
@@ -130,6 +131,7 @@
 (declare-function winum--clear-mode-line 'winum)
 (declare-function winum--install-mode-line 'winum)
 (declare-function winum-get-number-string 'winum)
+(declare-function tracking-shorten 'tracking)
 
 
 ;;
@@ -1518,6 +1520,61 @@ mouse-1: Toggle Debug on Quit"
      'help-echo (if (= mu4e-alert-mode-line 1)
                     "You have an unread email"
                   (format "You have %s unread emails" mu4e-alert-mode-line)))))
+
+
+;;
+;; irc notifications
+;;
+
+(defun doom-modeline--shorten-irc (name)
+  "Wrapper for `tracking-shorten' that only takes one NAME.
+
+One key difference is that when `tracking-shorten' returns nil we
+will instead return the original value of name. This is necessary
+in cases where the user has stylized the name to be an icon and
+we don't want to remove that so we just return the original."
+  (or (car (tracking-shorten (list name)))
+      name))
+
+(defun doom-modeline--tracking-buffers (buffers)
+  "Logic to convert some irc BUFFERS to their font-awesome icon."
+  (mapconcat
+   (lambda (b)
+     (propertize
+      (doom-modeline--shorten-irc (funcall doom-modeline-irc-stylize b))
+      'face '(:inherit (warning doom-modeline-unread-number))
+      'help-echo b))
+   buffers
+   ;; `space-width' only affects the width of the spaces here, so we can tighten
+   ;; it to be a bit more compact
+   (propertize " · " 'display '(space-width 0.4))))
+
+;; create a modeline segment that contains all the irc tracked buffers
+(doom-modeline-def-segment irc-buffers
+  "The list of shortened, unread irc buffers."
+  (when (and doom-modeline-irc
+             (boundp 'tracking-mode-line-buffers)
+             (doom-modeline--active)
+             (derived-mode-p 'circe-mode))
+    ;; add a space at the end to pad against the following segment
+    (concat " " (doom-modeline--tracking-buffers tracking-buffers) " ")))
+
+(doom-modeline-def-segment irc
+  "A notification icon for any unread irc buffer."
+  (when (and doom-modeline-irc
+             (boundp 'tracking-mode-line-buffers)
+             (> (length tracking-buffers) 0)
+             (doom-modeline--active))
+    (concat
+     " "
+     (propertize (doom-modeline-icon-material "sms"
+                                              :height 0.9
+                                              :face 'doom-modeline-warning)
+                 'help-echo (format "IRC Notifications: %s"
+                                    (doom-modeline--tracking-buffers
+                                     tracking-buffers))
+                 'display '(raise -0.17))
+     " ")))
 
 (provide 'doom-modeline-segments)
 
