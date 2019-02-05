@@ -83,28 +83,28 @@
 ;;
 
 (doom-modeline-def-modeline 'main
-  '(bar workspace-number window-number evil-state god-state ryo-modal xah-fly-keys matches buffer-info remote-host buffer-position parrot selection-info)
-  '(misc-info persp-name lsp irc mu4e github debug minor-modes input-method buffer-encoding major-mode process vcs checker))
+  '(bar workspace-number window-number evil-state god-state ryo-modal xah-fly-keys matches spacer buffer-info remote-host buffer-position parrot selection-info)
+  '(misc-info persp-name lsp spacer irc spacer mu4e spacer spacer github spacer debug minor-modes input-method buffer-encoding major-mode process spacer vcs spacer checker))
 
 (doom-modeline-def-modeline 'minimal
-  '(bar matches " " buffer-info)
-  '(media-info major-mode " "))
+  '(bar matches spacer buffer-info)
+  '(media-info major-mode spacer))
 
 (doom-modeline-def-modeline 'special
   '(bar window-number evil-state god-state ryo-modal xah-fly-keys matches buffer-info-simple buffer-position parrot selection-info)
-  '(misc-info lsp debug minor-modes input-method irc-buffers buffer-encoding major-mode process checker))
+  '(misc-info lsp debug minor-modes input-method irc-buffers spacer buffer-encoding major-mode process checker))
 
 (doom-modeline-def-modeline 'project
-  '(bar " " buffer-default-directory)
-  '(misc-info mu4e github debug " " major-mode " "))
+  '(bar spacer buffer-default-directory)
+  '(misc-info spacer mu4e spacer github spacer debug spacer major-mode spacer))
 
 (doom-modeline-def-modeline 'media
   '(bar window-number buffer-size buffer-info)
-  '(misc-info media-info major-mode vcs " "))
+  '(misc-info media-info major-mode vcs spacer))
 
 (doom-modeline-def-modeline 'pdf
   '(bar window-number buffer-size buffer-info pdf-pages)
-  '(misc-info " " major-mode vcs " "))
+  '(misc-info spacer major-mode vcs spacer))
 
 
 ;;

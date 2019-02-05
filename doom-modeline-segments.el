@@ -135,6 +135,16 @@
 
 
 ;;
+;; spacer / padding segment
+;;
+
+(doom-modeline-def-segment spacer
+  "Displays a space as padding between segments. This allows for
+customization of horizontal spacing."
+  (propertize " " 'display '(space-width 1.0)))
+
+
+;;
 ;; buffer information
 ;;
 
@@ -289,7 +299,6 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 directory, the file name, and its state (modified, read-only or non-existent)."
   (let ((active (doom-modeline--active)))
     (concat
-     " "
 
      ;; major mode icon
      (when (and doom-modeline-icon doom-modeline-major-mode-icon)
@@ -491,8 +500,6 @@ Uses `all-the-icons-octicon' to fetch the icon."
   (let ((active (doom-modeline--active)))
     (when-let ((icon (or doom-modeline--vcs-icon (doom-modeline--update-vcs-icon)))
                (text (or doom-modeline--vcs-text (doom-modeline-update-vcs-text))))
-      (concat
-       "  "
        (if active
            (concat icon doom-modeline-vspc text)
          (concat
@@ -506,8 +513,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
                             :inherit)
                         'mode-line-inactive))
           doom-modeline-vspc
-          (propertize text 'face 'mode-line-inactive)))
-       " "))))
+          (propertize text 'face 'mode-line-inactive))))))
 
 
 ;;
@@ -1435,16 +1441,15 @@ Example:
            (doom-modeline--active)
            (> doom-modeline--github-notifications-number 0))
       (propertize
-       (concat " "
-               (if doom-modeline-icon
-                   (doom-modeline-icon-faicon "github"
-                                              :v-adjust -0.0575
-                                              :face 'doom-modeline-warning)
-                 (propertize "#" 'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
-               doom-modeline-vspc
-               (propertize (number-to-string doom-modeline--github-notifications-number)
-                           'face '(:inherit (warning doom-modeline-unread-number)))
-               " ")
+       (concat
+        (if doom-modeline-icon
+            (doom-modeline-icon-faicon "github"
+                                       :v-adjust -0.0575
+                                       :face 'doom-modeline-warning)
+          (propertize "#" 'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
+        doom-modeline-vspc
+        (propertize (number-to-string doom-modeline--github-notifications-number)
+                    'face '(:inherit (warning doom-modeline-unread-number))))
        'help-echo "Github Notifications
 mouse-1: Show notifications
 mouse-3: Fetch notifications"
@@ -1515,7 +1520,7 @@ mouse-1: Toggle Debug on Quit"
     (setq global-mode-string (delete '(:eval mu4e-alert-mode-line)
                                      global-mode-string))
     (propertize
-     (concat " " (number-to-string mu4e-alert-mode-line) " ")
+     (number-to-string mu4e-alert-mode-line)
      'face 'doom-modeline-unread-number
      'help-echo (if (= mu4e-alert-mode-line 1)
                     "You have an unread email"
@@ -1557,7 +1562,7 @@ we don't want to remove that so we just return the original."
              (doom-modeline--active)
              (derived-mode-p 'circe-mode))
     ;; add a space at the end to pad against the following segment
-    (concat " " (doom-modeline--tracking-buffers tracking-buffers) " ")))
+    (doom-modeline--tracking-buffers tracking-buffers)))
 
 (doom-modeline-def-segment irc
   "A notification icon for any unread irc buffer."
@@ -1565,16 +1570,13 @@ we don't want to remove that so we just return the original."
              (boundp 'tracking-mode-line-buffers)
              (> (length tracking-buffers) 0)
              (doom-modeline--active))
-    (concat
-     " "
-     (propertize (doom-modeline-icon-material "sms"
-                                              :height 0.9
-                                              :face 'doom-modeline-warning)
-                 'help-echo (format "IRC Notifications: %s"
-                                    (doom-modeline--tracking-buffers
-                                     tracking-buffers))
-                 'display '(raise -0.17))
-     " ")))
+    (propertize (doom-modeline-icon-material "sms"
+                                             :height 0.9
+                                             :face 'doom-modeline-warning)
+                'help-echo (format "IRC Notifications: %s"
+                                   (doom-modeline--tracking-buffers
+                                    tracking-buffers))
+                'display '(raise -0.17))))
 
 (provide 'doom-modeline-segments)
 
