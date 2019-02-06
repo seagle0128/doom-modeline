@@ -224,10 +224,17 @@ Strongly recommend to use
    default.
 
    For example:
+   1. Define your custom doom-modeline
 
    ```emacs-lisp
    (doom-modeline-def-modeline 'my-simple-line
      '(bar matches buffer-info remote-host buffer-position parrot selection-info)
      '(misc-info minor-modes input-method buffer-encoding major-mode process vcs checker))
-   (doom-modeline-set-modeline 'my-simple-line 'default)
+   ```
+   2. Set it to default using the `doom-modeline-mode-hook`:
+   ```emacs-lisp
+   (defun setup-custom-doom-modeline ()
+     (doom-modeline-set-modeline 'my-simple-line 'default)) 
+
+   (add-hook 'doom-modeline-mode-hook 'setup-custom-doom-modeline)
    ```
