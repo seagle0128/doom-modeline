@@ -413,7 +413,9 @@ mouse-3: Toggle minor modes"
   "The process info."
   (if (doom-modeline--active)
       mode-line-process
-    (propertize  mode-line-process 'face 'mode-line-inactive)))
+    (propertize
+     (format-mode-line '("" mode-line-process))
+     'face 'mode-line-inactive)))
 
 
 ;;
@@ -437,7 +439,7 @@ mouse-1: Display minor modes menu"
                                    'mouse-1 #'minions-minor-modes-menu))
            " ")
         (propertize
-         (concat (format-mode-line `(:propertize ("" minor-mode-alist))) " ")
+         (concat (format-mode-line '("" minor-mode-alist)) " ")
          'face (if active
                    'doom-modeline-buffer-minor-mode
                  'mode-line-inactive))))))
