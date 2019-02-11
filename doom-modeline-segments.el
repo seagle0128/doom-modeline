@@ -141,7 +141,9 @@
 (doom-modeline-def-segment buffer-default-directory
   "Displays `default-directory'. This is for special buffers like the scratch
 buffer where knowing the current project directory is important."
-  (let ((face (if (doom-modeline--active) 'doom-modeline-buffer-path)))
+  (let ((face (if (doom-modeline--active)
+                  'doom-modeline-buffer-path
+                'mode-line-inactive)))
     (concat (if (display-graphic-p) " ")
             (doom-modeline-icon-octicon
              "file-directory"
@@ -185,7 +187,7 @@ Uses `all-the-icons-material' to fetch the icon."
       (when icon
         (doom-modeline-icon-material
          icon
-         :face (if (doom-modeline--active) face)
+         :face face
          :height (or height 1.1)
          :v-adjust (or voffset -0.225)))
     (when text
@@ -257,7 +259,9 @@ Uses `all-the-icons-material' to fetch the icon."
         (if buffer-file-name
             (doom-modeline-buffer-file-name)
           (propertize "%b"
-                      'face (if (doom-modeline--active) 'doom-modeline-buffer-file)
+                      'face (if (doom-modeline--active)
+                                'doom-modeline-buffer-file
+                              'mode-line-inactive)
                       'help-echo "Buffer name
 mouse-1: Previous buffer\nmouse-3: Next buffer"
                       'local-map mode-line-buffer-identification-keymap))))
@@ -289,7 +293,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 directory, the file name, and its state (modified, read-only or non-existent)."
   (let ((active (doom-modeline--active)))
     (concat
-     " "
+     (propertize " " 'face (if active 'mode-line 'mode-line-inactive))
 
      ;; major mode icon
      (when (and doom-modeline-icon doom-modeline-major-mode-icon)
@@ -303,8 +307,8 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                                 ,(doom-modeline-icon-height 1.1)
                                 :family
                                 ,(all-the-icons-icon-family icon)
-                                :inherit)))
-          doom-modeline-vspc)))
+                                :inherit 'mode-line-inactive)))
+          (if active doom-modeline-vspc doom-modeline-inactive-vspc))))
 
      ;; state icon
      (when-let ((icon (or doom-modeline--buffer-file-state-icon
@@ -319,9 +323,9 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                             ,(doom-modeline-icon-height 1.3)
                             :family
                             ,(all-the-icons-icon-family icon)
-                            :inherit)
+                            :inherit 'mode-line-inactive)
                         'mode-line-inactive)))
-        doom-modeline-vspc))
+        (if active doom-modeline-vspc doom-modeline-inactive-vspc)))
 
      ;; buffer file name
      (when-let ((name (or doom-modeline--buffer-file-name
@@ -336,7 +340,8 @@ directory, the file name, and its state (modified, read-only or non-existent)."
    " %b "
    'face (cond ((and buffer-file-name (buffer-modified-p))
                 'doom-modeline-buffer-modified)
-               ((doom-modeline--active) 'doom-modeline-buffer-file))))
+               ((doom-modeline--active) 'doom-modeline-buffer-file)
+               (t 'mode-line-inactive))))
 
 ;;
 (doom-modeline-def-segment buffer-encoding
@@ -347,10 +352,12 @@ directory, the file name, and its state (modified, read-only or non-existent)."
              (1 " RLF")
              (2 " CR"))
            (let ((sys (coding-system-plist buffer-file-coding-system)))
-             (cond ((memq (plist-get sys :category) '(coding-category-undecided coding-category-utf-8))
+             (cond ((memq (plist-get sys :category)
+                          '(coding-category-undecided coding-category-utf-8))
                     " UTF-8 ")
                    (t (upcase (symbol-name (plist-get sys :name))))))
            " ")
+   'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
    'help-echo 'mode-line-mule-info-help-echo
    'mouse-face '(:box 1)
    'local-map mode-line-coding-system-map))
@@ -364,7 +371,9 @@ directory, the file name, and its state (modified, read-only or non-existent)."
   "Hostname for remote buffers."
   (when default-directory
     (when-let ((host (file-remote-p default-directory 'host)))
-      (concat "@" host))))
+      (propertize
+       (concat "@" host)
+       'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)))))
 
 
 ;;
@@ -391,7 +400,9 @@ mouse-3: Toggle minor modes"
                      " (%+d)"
                    " (%-d)")
                  text-scale-mode-amount)))
-   'face (if (doom-modeline--active) 'doom-modeline-buffer-major-mode)))
+   'face (if (doom-modeline--active)
+             'doom-modeline-buffer-major-mode
+           'mode-line-inactive)))
 
 
 ;;
@@ -400,7 +411,9 @@ mouse-3: Toggle minor modes"
 
 (doom-modeline-def-segment process
   "The process info."
-  mode-line-process)
+  (if (doom-modeline--active)
+      mode-line-process
+    (propertize mode-line-process 'face 'mode-line-inactive)))
 
 
 ;;
@@ -414,7 +427,9 @@ mouse-3: Toggle minor modes"
           (concat
            " "
            (propertize minions-mode-line-lighter
-                       'face (if active 'doom-modeline-buffer-minor-mode)
+                       'face (if active
+                                 'doom-modeline-buffer-minor-mode
+                               'mode-line-inactive)
                        'help-echo "Minions
 mouse-1: Display minor modes menu"
                        'mouse-face 'mode-line-highlight
@@ -423,7 +438,9 @@ mouse-1: Display minor modes menu"
            " ")
         (propertize
          (concat (format-mode-line `(:propertize ("" minor-mode-alist))) " ")
-         'face (if active 'doom-modeline-buffer-minor-mode))))))
+         'face (if active
+                   'doom-modeline-buffer-minor-mode
+                 'mode-line-inactive))))))
 
 
 ;;
@@ -492,7 +509,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
     (when-let ((icon (or doom-modeline--vcs-icon (doom-modeline--update-vcs-icon)))
                (text (or doom-modeline--vcs-text (doom-modeline-update-vcs-text))))
       (concat
-       "  "
+       (propertize "  " 'face (if active 'mode-line 'mode-line-inactive))
        (if active
            (concat icon doom-modeline-vspc text)
          (concat
@@ -503,11 +520,11 @@ Uses `all-the-icons-octicon' to fetch the icon."
                             ,(doom-modeline-icon-height 1.2)
                             :family
                             ,(all-the-icons-icon-family icon)
-                            :inherit)
+                            :inherit 'mode-line-inactive)
                         'mode-line-inactive))
-          doom-modeline-vspc
+          doom-modeline-inactive-vspc
           (propertize text 'face 'mode-line-inactive)))
-       " "))))
+       (propertize " " 'face (if active 'mode-line 'mode-line-inactive))))))
 
 
 ;;
@@ -790,7 +807,8 @@ icons."
     (let ((icon (car seg))
           (text (cdr seg)))
       (concat
-       (if vc-mode " " "  ")
+       (propertize (if vc-mode " " "  ")
+                   'face (if active 'mode-line 'mode-line-inactive))
        (if active
            (concat icon
                    (when (and icon text) doom-modeline-vspc)
@@ -804,12 +822,11 @@ icons."
                               ,(doom-modeline-icon-height 1.3)
                               :family
                               ,(all-the-icons-icon-family icon)
-                              :inherit)
+                              :inherit 'mode-line-inactive)
                           'mode-line-inactive)))
-          (when (and icon text) doom-modeline-vspc)
-          (when text
-            (propertize text 'face 'mode-line-inactive))))
-       "  "))))
+          (when (and icon text) doom-modeline-inactive-vspc)
+          (when text (propertize text 'face 'mode-line-inactive))))
+       (propertize "  " 'face (if active 'mode-line 'mode-line-inactive))))))
 
 
 ;;
@@ -919,7 +936,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
               (format " %s+ " total))
              (t
               (format " %s/%d " here total))))
-     'face (if (doom-modeline--active) 'doom-modeline-panel))))
+     'face (if (doom-modeline--active) 'doom-modeline-panel 'mode-line-inactive))))
 
 (defsubst doom-modeline--evil-substitute ()
   "Show number of matches for evil-ex substitutions and highlights in real time."
@@ -935,7 +952,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
        (if pattern
            (format " %s matches " (how-many pattern (car range) (cdr range)))
          " - "))
-     'face (if (doom-modeline--active) 'doom-modeline-panel))))
+     'face (if (doom-modeline--active) 'doom-modeline-panel 'mode-line-inactive))))
 
 (defun doom-modeline-themes--overlay-sort (a b)
   "Sort overlay A and B."
@@ -959,7 +976,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
                       -1)
                  "-")
                length))
-     'face (if (doom-modeline--active) 'doom-modeline-panel))))
+     'face (if (doom-modeline--active) 'doom-modeline-panel 'mode-line-inactive))))
 
 (defsubst doom-modeline--symbol-overlay ()
   "Show the number of matches for symbol overlay."
@@ -977,7 +994,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
            (format (concat  " %d/%d " (and (cadr keyword) "in scope "))
                    (+ count 1)
                    (+ count (length after)))
-           'face (if (doom-modeline--active) 'doom-modeline-panel))))))
+           'face (if (doom-modeline--active) 'doom-modeline-panel 'mode-line-inactive))))))
 
 (defsubst doom-modeline--multiple-cursors ()
   "Show the number of multiple cursors."
@@ -986,13 +1003,14 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
      (concat (car mc/mode-line)
              (eval (cadadr mc/mode-line))
              " ")
-     'face (if (doom-modeline--active) 'doom-modeline-panel))))
+     'face (if (doom-modeline--active) 'doom-modeline-panel 'mode-line-inactive))))
 
 (defsubst doom-modeline--buffer-size ()
   "Show buffer size."
   (if (and buffer-file-name size-indication-mode)
       (propertize " %I "
-                  'help-echo "Buffer size\n\
+                  'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
+                  'help-echo "Buffer size
 mouse-1: Display Line and Column Mode Menu"
                   'mouse-face '(:box 1)
                   'local-map mode-line-column-line-number-mode-map)))
@@ -1027,7 +1045,9 @@ of active `multiple-cursors'."
          (cl-destructuring-bind (width . height)
              (when (fboundp 'image-size)
                (image-size (image-get-display-property) :pixels))
-           (format "  %dx%d  " width height)))))
+           (propertize
+            (format "  %dx%d  " width height)
+            'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive))))))
 
 
 ;;
@@ -1122,8 +1142,8 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
     (if (< 0 (length num))
         (propertize (format " %s " num)
                     'face (if (doom-modeline--active)
-                              'doom-modeline-buffer-major-mode))
-      "")))
+                              'doom-modeline-buffer-major-mode
+                            'mode-line-inactive)))))
 
 
 ;;
@@ -1142,8 +1162,9 @@ Requires `eyebrowse-mode' to be enabled."
                     (when num (int-to-string num)))))
         (assq-delete-all 'eyebrowse-mode mode-line-misc-info)
         (propertize (format " %s " str) 'face
-                    (if (doom-modeline--active) 'doom-modeline-buffer-major-mode)))
-    ""))
+                    (if (doom-modeline--active)
+                        'doom-modeline-buffer-major-mode
+                      'mode-line-inactive)))))
 
 
 ;;
@@ -1192,8 +1213,7 @@ mouse-2: Show help for minor mode"
 (doom-modeline-def-segment persp-name
   "The current perspective name."
   (if (doom-modeline--active)
-      doom-modeline--persp-name
-    ""))
+      doom-modeline--persp-name))
 
 
 ;;
@@ -1241,13 +1261,14 @@ See `mode-line-percent-position'.")
 
 (doom-modeline-def-segment buffer-position
   "The buffer position information."
-  (let ((lc '(line-number-mode
+  (let ((active (doom-modeline--active))
+        (lc '(line-number-mode
               (column-number-mode
                (doom-modeline-column-zero-based " %l:%c" " %l:%C")
                " %l")
               (column-number-mode (doom-modeline-column-zero-based " :%c" " :%C")))))
     (if (and (bound-and-true-p nyan-mode)
-             (doom-modeline--active)
+             active
              (>= (window-width) nyan-minimum-window-width))
         (concat "  " (nyan-create) " "
                 (propertize (format-mode-line lc)
@@ -1255,14 +1276,19 @@ See `mode-line-percent-position'.")
 mouse-1: Display Line and Column Mode Menu"
                             'mouse-face '(:box 1)
                             'local-map mode-line-column-line-number-mode-map))
-      `(:propertize (" "
-                     ,lc
-                     (if doom-modeline-percent-position (" " doom-modeline-percent-position))
-                     (when (or line-number-mode column-number-mode doom-modeline-percent-position) " "))
-                    help-echo "Buffer position\n\
+      (propertize
+       (concat " "
+               (format-mode-line lc)
+               (if doom-modeline-percent-position
+                   (format-mode-line '(" " doom-modeline-percent-position "%%")))
+               (if (or line-number-mode
+                       column-number-mode doom-modeline-percent-position)
+                   " "))
+       'face (if active 'mode-line 'mode-line-inactive)
+       'help-echo "Buffer position\n\
 mouse-1: Display Line and Column Mode Menu"
-                    mouse-face (:box 1)
-                    local-map ,mode-line-column-line-number-mode-map))))
+       'mouse-face '(:box 1)
+       'local-map mode-line-column-line-number-mode-map))))
 
 ;;
 ;; party parrot
@@ -1289,7 +1315,8 @@ mouse-1: Display Line and Column Mode Menu"
                             ((evil-motion-state-p) 'doom-modeline-evil-motion-state)
                             ((evil-visual-state-p) 'doom-modeline-evil-visual-state)
                             ((evil-operator-state-p) 'doom-modeline-evil-operator-state)
-                            ((evil-replace-state-p) 'doom-modeline-evil-replace-state)))))))
+                            ((evil-replace-state-p) 'doom-modeline-evil-replace-state))
+                    'mode-line-inactive)))))
 
 
 ;;
@@ -1300,7 +1327,8 @@ mouse-1: Display Line and Column Mode Menu"
   "The current god state. Requires `god-mode' to be enabled."
   (when (bound-and-true-p god-local-mode)
     (propertize " <G> " 'face (if (doom-modeline--active)
-                                  'doom-modeline-evil-normal-state))))
+                                  'doom-modeline-evil-normal-state
+                                'mode-line-inactive))))
 
 
 ;;
@@ -1311,7 +1339,8 @@ mouse-1: Display Line and Column Mode Menu"
   "The current ryo-modal state. Requires `ryo-modal-mode' to be enabled."
   (when (bound-and-true-p ryo-modal-mode)
     (propertize " <R> " 'face (if (doom-modeline--active)
-                                  'doom-modeline-evil-normal-state))))
+                                  'doom-modeline-evil-normal-state
+                                'mode-line-inactive))))
 
 
 ;;
@@ -1325,7 +1354,8 @@ mouse-1: Display Line and Column Mode Menu"
                     " <I> "
                   " <C> ")
                 'face (if (doom-modeline--active)
-                          'doom-modeline-evil-normal-state))))
+                          'doom-modeline-evil-normal-state
+                        'mode-line-inactive))))
 
 ;;
 ;; input method
@@ -1344,7 +1374,9 @@ mouse-1: Display Line and Column Mode Menu"
       (nth 3 (assoc default-input-method input-method-alist))
       " "))
     (t ""))
-   'face (if (doom-modeline--active) 'doom-modeline-buffer-major-mode)
+   'face (if (doom-modeline--active)
+             'doom-modeline-buffer-major-mode
+           'mode-line-inactive)
    'help-echo (concat
                "Current input method: "
                current-input-method
@@ -1362,6 +1394,7 @@ mouse-3: Describe current input method")
 (doom-modeline-def-segment lsp
   "The LSP server state."
   (if (and doom-modeline-lsp
+           (doom-modeline--active)
            (bound-and-true-p lsp-mode))
       (concat (lsp-mode-line) " ")))
 
@@ -1496,9 +1529,13 @@ mouse-1: Toggle Debug on Quit"
 
 (doom-modeline-def-segment pdf-pages
   (when (eq major-mode 'pdf-view-mode)
-    (format "  P%d/%d "
-            (eval `(pdf-view-current-page))
-            (pdf-cache-number-of-pages))))
+    (propertize
+     (format "  P%d/%d "
+             (eval `(pdf-view-current-page))
+             (pdf-cache-number-of-pages))
+     'face (if (doom-modeline--active)
+               'mode-line
+             'mode-line-inactive))))
 
 
 ;;

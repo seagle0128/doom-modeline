@@ -174,8 +174,8 @@ The icons may not be showed correctly in terminal and on Windows.")
 
 (defface doom-modeline-panel
   '((t (:inherit mode-line-highlight)))
-  "Face for 'X out of Y' segments, such as `doom-modeline--anzu',
-`doom-modeline--evil-substitute' and`iedit'")
+  "Face for 'X out of Y' segments, such as `anzu', `evil-substitute'
+ and`iedit', etc.")
 
 (defface doom-modeline-info
   `((t (:inherit (success bold))))
@@ -301,9 +301,10 @@ Example:
         (let ((rhs-str (format-mode-line (cons "" rhs-forms))))
           (list lhs-forms
                 (propertize
-                 " " 'display
-                 `((space :align-to (- (+ right right-fringe right-margin)
-                                       ,(+ 1 (string-width rhs-str))))))
+                 " "
+                 'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
+                 'display `((space :align-to (- (+ right right-fringe right-margin)
+                                                ,(+ 1 (string-width rhs-str))))))
                 rhs-str)))
       (concat "Modeline:\n"
               (format "  %s\n  %s"
@@ -422,6 +423,10 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 (defvar doom-modeline-vspc
   (propertize " " 'face 'variable-pitch)
   "Text style with icons in mode-line.")
+
+(defvar doom-modeline-inactive-vspc
+  (propertize " " 'face '(:inherit (variable-pitch mode-line-inactive)))
+  "Text style with icons in inactive mode-line.")
 
 (defun doom-modeline-icon-octicon (&rest args)
   "Display octicon via ARGS."
