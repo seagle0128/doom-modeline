@@ -307,7 +307,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                                 ,(doom-modeline-icon-height 1.1)
                                 :family
                                 ,(all-the-icons-icon-family icon)
-                                :inherit 'mode-line-inactive)))
+                                :inherit mode-line-inactive)))
           (if active doom-modeline-vspc doom-modeline-inactive-vspc))))
 
      ;; state icon
@@ -323,7 +323,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                             ,(doom-modeline-icon-height 1.3)
                             :family
                             ,(all-the-icons-icon-family icon)
-                            :inherit 'mode-line-inactive)
+                            :inherit mode-line-inactive)
                         'mode-line-inactive)))
         (if active doom-modeline-vspc doom-modeline-inactive-vspc)))
 
@@ -413,7 +413,7 @@ mouse-3: Toggle minor modes"
   "The process info."
   (if (doom-modeline--active)
       mode-line-process
-    (propertize mode-line-process 'face 'mode-line-inactive)))
+    (propertize  mode-line-process 'face 'mode-line-inactive)))
 
 
 ;;
@@ -520,7 +520,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
                             ,(doom-modeline-icon-height 1.2)
                             :family
                             ,(all-the-icons-icon-family icon)
-                            :inherit 'mode-line-inactive)
+                            :inherit mode-line-inactive)
                         'mode-line-inactive))
           doom-modeline-inactive-vspc
           (propertize text 'face 'mode-line-inactive)))
@@ -822,7 +822,7 @@ icons."
                               ,(doom-modeline-icon-height 1.3)
                               :family
                               ,(all-the-icons-icon-family icon)
-                              :inherit 'mode-line-inactive)
+                              :inherit mode-line-inactive)
                           'mode-line-inactive)))
           (when (and icon text) doom-modeline-inactive-vspc)
           (when text (propertize text 'face 'mode-line-inactive))))
