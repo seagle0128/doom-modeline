@@ -298,7 +298,8 @@ directory, the file name, and its state (modified, read-only or non-existent)."
      ;; major mode icon
      (when (and doom-modeline-icon doom-modeline-major-mode-icon)
        (when-let ((icon (or doom-modeline--buffer-file-icon
-                            (doom-modeline-update-buffer-file-icon))))
+                            (doom-modeline-update-buffer-file-icon)))
+                  (face (if active 'mode-line 'mode-line-inactive)))
          (concat
           (if (and active doom-modeline-major-mode-color-icon)
               icon
@@ -307,7 +308,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                                 ,(doom-modeline-icon-height 1.1)
                                 :family
                                 ,(all-the-icons-icon-family icon)
-                                :inherit mode-line-inactive)))
+                                :inherit ,face)))
           (if active doom-modeline-vspc doom-modeline-inactive-vspc))))
 
      ;; state icon
