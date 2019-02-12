@@ -841,10 +841,6 @@ icons."
   (save-excursion (goto-char pos)
                   (current-column)))
 
-(defvar-local doom-modeline-enable-word-count nil
-  "If non-nil, a word count will be added to the selection-info modeline
-segment.")
-
 (doom-modeline-def-segment selection-info
   "Information about the current selection, such as how many characters and
 lines are selected, or the NxM dimensions of a block selection."
