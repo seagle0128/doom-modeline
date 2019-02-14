@@ -1431,6 +1431,7 @@ Example:
                             :query '((notifications . "true"))
                             :noerror t))))))
      (lambda (result)
+       (message "")                     ; suppress message
        (setq doom-modeline--github-notifications-number
              (length result))))))
 
@@ -1455,12 +1456,6 @@ Example:
 
 (doom-modeline-github-timer)
 
-(defun doom-modeline--github-open-notifications ()
-  "Open GitHub Notifications page."
-  (interactive)
-  (browse-url "https://github.com/notifications")
-  (run-with-timer 60 nil #'doom-modeline--github-fetch-notifications))
-
 (doom-modeline-def-segment github
   "The github notifications."
   (if (and doom-modeline-github
@@ -1483,9 +1478,14 @@ mouse-3: Fetch notifications"
        'mouse-face '(:box 1)
        'local-map (let ((map (make-sparse-keymap)))
                     (define-key map [mode-line mouse-1]
-                      #'doom-modeline--github-open-notifications)
+                      (lambda ()
+                        "Open github notifications page."
+                        (interactive)
+                        (browse-url "https://github.com/notifications")
+                        (run-with-timer 60 nil #'doom-modeline--github-fetch-notifications)))
                     (define-key map [mode-line mouse-3]
                       (lambda ()
+                        "Fetching github notifications."
                         (interactive)
                         (message "Fetching github notifications...")
                         (doom-modeline--github-fetch-notifications)))
