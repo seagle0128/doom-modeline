@@ -905,12 +905,6 @@ lines are selected, or the NxM dimensions of a block selection."
 
 (advice-add #'anzu--where-is-here :override #'doom-modeline-fix-anzu-count)
 
-;; Avoid anzu conflicts across buffers
-;; (mapc #'make-variable-buffer-local
-;;       '(anzu--total-matched anzu--current-position anzu--state
-;;                             anzu--cached-count anzu--cached-positions anzu--last-command
-;;                             anzu--last-isearch-string anzu--overflow-p))
-
 ;; Ensure anzu state is cleared when searches & iedit are done
 (with-eval-after-load 'anzu
   (add-hook 'isearch-mode-end-hook #'anzu--reset-status t)
@@ -1204,10 +1198,6 @@ mouse-2: Show help for minor mode"
 (add-hook 'persp-activated-functions #'doom-modeline-update-persp-name)
 (add-hook 'persp-renamed-functions #'doom-modeline-update-persp-name)
 (advice-add #'select-window :after #'doom-modeline-update-persp-name)
-;; (advice-add #'persp-window-switch :after #'doom-modeline-update-persp-name)
-;; (advice-add #'persp-frame-switch :after #'doom-modeline-update-persp-name)
-;; (advice-add #'persp-add-buffer :after #'doom-modeline-update-persp-name)
-;; (advice-add #'persp-remove-buffer :after #'doom-modeline-update-persp-name)
 
 (doom-modeline-def-segment persp-name
   "The current perspective name."
