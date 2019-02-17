@@ -766,19 +766,20 @@ mouse-2: Show help for minor mode"
                    (some-waiting "Running..." "")
                    ((null known) (doom-modeline-checker-text "-" 'font-lock-doc-face))
                    (all-disabled (doom-modeline-checker-text "-" 'doom-modeline-urgent))
-                   (t (when (> (+ .error .warning .note) 0)
-                        (if doom-modeline-checker-simple-format
-                            (doom-modeline-checker-text (number-to-string (+ .error .warning .note))
-                                                        (cond ((> .error 0) 'doom-modeline-urgent)
-                                                              ((> .warning 0) 'doom-modeline-warning)
-                                                              (t 'doom-modeline-info)))
-                          (format "%s/%s/%s"
-                                  (doom-modeline-checker-text (number-to-string .error)
-                                                              'doom-modeline-urgent)
-                                  (doom-modeline-checker-text (number-to-string .warning)
-                                                              'doom-modeline-warning)
-                                  (doom-modeline-checker-text (number-to-string .note)
-                                                              'doom-modeline-info))))))))
+                   (t (let ((num (+ .error .warning .note)))
+                        (when (> num 0)
+                          (if doom-modeline-checker-simple-format
+                              (doom-modeline-checker-text (number-to-string num)
+                                                          (cond ((> .error 0) 'doom-modeline-urgent)
+                                                                ((> .warning 0) 'doom-modeline-warning)
+                                                                (t 'doom-modeline-info)))
+                            (format "%s/%s/%s"
+                                    (doom-modeline-checker-text (number-to-string .error)
+                                                                'doom-modeline-urgent)
+                                    (doom-modeline-checker-text (number-to-string .warning)
+                                                                'doom-modeline-warning)
+                                    (doom-modeline-checker-text (number-to-string .note)
+                                                                'doom-modeline-info)))))))))
               (propertize
                text
                'help-echo (cond
