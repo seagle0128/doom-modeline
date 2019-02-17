@@ -107,6 +107,9 @@ The icons may not be showed correctly in terminal and on Windows.")
 (defvar doom-modeline-enable-word-count nil
   "If non-nil, a word count will be added to the selection-info modeline segment.")
 
+(defvar doom-modeline-checker-simple-format t
+  "If non-nil, only display one number for checker information if applicable.")
+
 (defvar doom-modeline-persp-name t
   "Whether display perspective name or not. Non-nil to display in mode-line.")
 

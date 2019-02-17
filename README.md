@@ -163,6 +163,9 @@ Strongly recommend to use
 ;; If non-nil, a word count will be added to the selection-info modeline segment.
 (setq doom-modeline-enable-word-count nil)
 
+;; If non-nil, only display one number for checker information if applicable.
+(setq doom-modeline-checker-simple-format t)
+  
 ;; Whether display perspective name or not. Non-nil to display in mode-line.
 (setq doom-modeline-persp-name t)
 
