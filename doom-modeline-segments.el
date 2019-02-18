@@ -392,8 +392,8 @@ mouse-2: Show help for major mode\n\
 mouse-3: Toggle minor modes"
                           mouse-face mode-line-highlight
                           local-map ,mode-line-major-mode-keymap))
-           (when (and doom-modeline-version doom-modeline-env-version)
-             (format " %s" doom-modeline-env-version))
+           (when (and doom-modeline-env-version doom-modeline-env--version)
+             (format " %s" doom-modeline-env--version))
            (and (boundp 'text-scale-mode-amount)
                 (/= text-scale-mode-amount 0)
                 (format

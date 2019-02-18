@@ -179,7 +179,7 @@ Strongly recommend to use
 (setq doom-modeline-github-interval (* 30 60))
 
 ;; Whether display environment version or not.
-(setq doom-modeline-version t)
+(setq doom-modeline-env-version t)
 
 ;; Whether display mu4e notifications or not. Requires `mu4e-alert' package.
 (setq doom-modeline-mu4e t)

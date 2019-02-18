@@ -122,8 +122,9 @@ The icons may not be showed correctly in terminal and on Windows.")
 (defvar doom-modeline-github-interval (* 30 60)
   "The interval of checking github.")
 
-(defvar doom-modeline-version t
+(defvar doom-modeline-env-version t
   "Whether display environment version or not.")
+(define-obsolete-variable-alias 'doom-modeline-version 'doom-modeline-env-version "1.7.4")
 
 (defvar doom-modeline-mu4e t
   "Whether display mu4e notifications or not. Requires `mu4e-alert' package.")
