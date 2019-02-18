@@ -166,6 +166,8 @@ buffer where knowing the current project directory is important."
                             (file-name-nondirectory buffer-file-name)
                             :height height)
                          (doom-modeline-icon-for-mode major-mode :height height))))
+            (if (symbolp icon)
+                (setq icon (doom-modeline-icon-for-mode 'fundamental-mode :height height)))
             (unless (symbolp icon)
               (propertize icon
                           'help-echo (format "Major-mode: %s" mode-name)
