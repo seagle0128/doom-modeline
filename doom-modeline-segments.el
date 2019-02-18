@@ -160,7 +160,9 @@ buffer where knowing the current project directory is important."
   (setq doom-modeline--buffer-file-icon
         (when (and doom-modeline-icon doom-modeline-major-mode-icon)
           (let* ((height (/ all-the-icons-scale-factor 1.3))
-                 (icon (doom-modeline-icon-for-file (buffer-name) :height height)))
+                 (icon (if buffer-file-name
+                           (doom-modeline-icon-for-file buffer-file-name :height height)
+                         (doom-modeline-icon-for-mode major-mode :height height))))
             (unless (symbolp icon)
               (propertize icon
                           'help-echo (format "Major-mode: %s" mode-name)
