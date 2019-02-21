@@ -230,7 +230,7 @@ Strongly recommend to use
    default.
 
    For example:
-   1. Define your custom doom-modeline
+   - Define your custom doom-modeline
 
    ```emacs-lisp
    (doom-modeline-def-modeline 'my-simple-line
@@ -238,7 +238,7 @@ Strongly recommend to use
      '(misc-info minor-modes input-method buffer-encoding major-mode process vcs checker))
    ```
 
-   1. Set it to default using the `doom-modeline-mode-hook`:
+   - Set it to default using the `doom-modeline-mode-hook`:
 
    ```emacs-lisp
    (defun setup-custom-doom-modeline ()
