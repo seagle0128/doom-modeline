@@ -237,10 +237,12 @@ Strongly recommend to use
      '(bar matches buffer-info remote-host buffer-position parrot selection-info)
      '(misc-info minor-modes input-method buffer-encoding major-mode process vcs checker))
    ```
-   2. Set it to default using the `doom-modeline-mode-hook`:
+
+   1. Set it to default using the `doom-modeline-mode-hook`:
+
    ```emacs-lisp
    (defun setup-custom-doom-modeline ()
-     (doom-modeline-set-modeline 'my-simple-line 'default)) 
+     (doom-modeline-set-modeline 'my-simple-line 'default))
 
    (add-hook 'doom-modeline-mode-hook 'setup-custom-doom-modeline)
    ```
