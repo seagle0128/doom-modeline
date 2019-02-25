@@ -444,7 +444,12 @@ mouse-1: Display minor modes menu"
                                    'mouse-1 #'minions-minor-modes-menu))
            " ")
         (propertize
-         (concat (format-mode-line '("" minor-mode-alist)) " ")
+         (concat
+          (replace-regexp-in-string (regexp-quote "%")
+                                    "%%%%"
+                                    (format-mode-line '("" minor-mode-alist))
+                                    t t)
+          " ")
          'face (if active
                    'doom-modeline-buffer-minor-mode
                  'mode-line-inactive))))))
