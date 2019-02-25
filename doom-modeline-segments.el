@@ -204,7 +204,7 @@ Uses `all-the-icons-material' to fetch the icon."
         (cond (buffer-read-only
                (doom-modeline-buffer-file-state-icon
                 "lock"
-                "%1+"
+                "%1*"
                 'doom-modeline-warning))
               ((buffer-modified-p)
                (doom-modeline-buffer-file-state-icon
