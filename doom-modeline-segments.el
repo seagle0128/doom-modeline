@@ -1228,7 +1228,10 @@ mouse-2: Show help for minor mode"
   "Mode line construct for miscellaneous information.
 By default, this shows the information specified by `global-mode-string'."
   (if (doom-modeline--active)
-      '("" mode-line-misc-info)))
+      (replace-regexp-in-string (regexp-quote "%")
+                                "%%%%"
+                                (format-mode-line mode-line-misc-info)
+                                t t)))
 
 
 ;;
