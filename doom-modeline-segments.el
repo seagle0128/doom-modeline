@@ -109,7 +109,8 @@
 (declare-function iedit-find-current-occurrence-overlay 'iedit-lib)
 (declare-function iedit-prev-occurrence 'iedit-lib)
 (declare-function image-get-display-property 'image-mode)
-(declare-function lsp-mode-line 'lsp-mode)
+(declare-function lsp-workspaces 'lsp-mode)
+(declare-function lsp--workspace-print 'lsp-mode)
 (declare-function magit-toplevel 'magit-git)
 (declare-function minions-minor-modes-menu 'minions)
 (declare-function nyan-create 'nyan-mode)
@@ -1408,7 +1409,23 @@ mouse-3: Describe current input method")
   (if (and doom-modeline-lsp
            (doom-modeline--active)
            (bound-and-true-p lsp-mode))
-      (concat (lsp-mode-line) " ")))
+      (concat
+       " "
+       (let ((icon (if doom-modeline-icon
+                       (doom-modeline-icon-faicon "rocket" :v-adjust -0.0575)
+                     "LSP"))
+             (workspaces (lsp-workspaces)))
+         (propertize icon
+                     'face (let ((face (if workspaces 'success 'warning)))
+                             (if doom-modeline-icon
+                                 `(:height 1.1 :family ,(all-the-icons-icon-family icon) :inherit ,face)
+                               face))
+                     'help-echo (if workspaces
+                                    (concat "LSP Connected "
+                                            (string-join (--map (format "[%s]" (lsp--workspace-print it))
+                                                                workspaces)))
+                                  "LSP Disconnected")))
+       " ")))
 
 
 ;;
