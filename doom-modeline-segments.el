@@ -1705,7 +1705,7 @@ we don't want to remove that so we just return the original."
                   ((> percentage-number 25)
                    (if doom-modeline-icon
                        (doom-modeline-icon-faicon "battery-quarter" :height 1.1 :v-adjust -0.0575 :face face)
-                     (propertize "!" 'face face)))
+                     (propertize "-" 'face face)))
                   (t
                    (if doom-modeline-icon
                        (doom-modeline-icon-faicon "battery-empty" :height 1.1 :v-adjust -0.0575 :face face)
