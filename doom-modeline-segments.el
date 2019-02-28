@@ -1502,7 +1502,7 @@ Example:
            (propertize "#" 'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
          doom-modeline-vspc
          (propertize (number-to-string doom-modeline--github-notifications-number)
-                     'face '(:inherit (warning doom-modeline-unread-number))))
+                     'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
         'help-echo "Github Notifications
 mouse-1: Show notifications
 mouse-3: Fetch notifications"
@@ -1581,12 +1581,25 @@ mouse-1: Toggle Debug on Quit"
              (> mu4e-alert-mode-line 0))
     ;; remove mu4e-alert's global modeline string setting
     (setq global-mode-string (delete '(:eval mu4e-alert-mode-line) global-mode-string))
-    (propertize
-     (concat " " (number-to-string mu4e-alert-mode-line) " ")
-     'face 'doom-modeline-unread-number
-     'help-echo (if (= mu4e-alert-mode-line 1)
-                    "You have an unread email"
-                  (format "You have %s unread emails" mu4e-alert-mode-line)))))
+    (concat
+     " "
+     (propertize
+      (concat
+       (if doom-modeline-icon
+           (doom-modeline-icon-material "mail"
+                                        :height 1.1
+                                        :v-adjust -0.225
+                                        :face 'doom-modeline-warning)
+         (propertize "#"
+                     'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
+       doom-modeline-vspc
+       (propertize (number-to-string mu4e-alert-mode-line)
+                   'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
+      'mouse-face 'mode-line
+      'help-echo (if (= mu4e-alert-mode-line 1)
+                     "You have an unread email"
+                   (format "You have %s unread emails" mu4e-alert-mode-line)))
+     " ")))
 
 
 ;;
@@ -1620,8 +1633,8 @@ we don't want to remove that so we just return the original."
 (doom-modeline-def-segment irc-buffers
   "The list of shortened, unread irc buffers."
   (when (and doom-modeline-irc
-             (boundp 'tracking-mode-line-buffers)
              (doom-modeline--active)
+             (boundp 'tracking-mode-line-buffers)
              (derived-mode-p 'circe-mode))
     ;; add a space at the end to pad against the following segment
     (concat " " (doom-modeline--tracking-buffers tracking-buffers) " ")))
@@ -1635,14 +1648,16 @@ we don't want to remove that so we just return the original."
     (concat
      " "
      (propertize (if doom-modeline-icon
-                     (doom-modeline-icon-material "sms"
-                                                  :height 0.9
+                     (doom-modeline-icon-material "message"
+                                                  :height 1.1
+                                                  :v-adjust -0.225
                                                   :face 'doom-modeline-warning)
-                   (propertize "IRC" 'face 'doom-modeline-warning))
+                   (propertize "#"
+                               'face '(:inherit (doom-modeline-warning
+                                                 doom-modeline-unread-number))))
                  'help-echo (format "IRC Notifications: %s"
                                     (doom-modeline--tracking-buffers
-                                     tracking-buffers))
-                 'display '(raise -0.17))
+                                     tracking-buffers)))
      " ")))
 
 (provide 'doom-modeline-segments)
