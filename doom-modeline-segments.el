@@ -931,6 +931,7 @@ lines are selected, or the NxM dimensions of a block selection."
 
 (advice-add #'anzu--where-is-here :override #'doom-modeline-fix-anzu-count)
 
+(setq anzu-cons-mode-line-p nil) ; manage modeline segment ourselves
 ;; Ensure anzu state is cleared when searches & iedit are done
 (with-eval-after-load 'anzu
   (add-hook 'isearch-mode-end-hook #'anzu--reset-status t)
@@ -941,7 +942,6 @@ lines are selected, or the NxM dimensions of a block selection."
   "Show the match index and total number thereof.
 Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 `evil-search'."
-  (setq anzu-cons-mode-line-p nil)
   (when (and (bound-and-true-p anzu--state)
              (not (bound-and-true-p iedit-mode)))
     (propertize
