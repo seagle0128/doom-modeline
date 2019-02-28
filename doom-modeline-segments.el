@@ -1736,6 +1736,7 @@ we don't want to remove that so we just return the original."
              (doom-modeline-icon-material "battery_unknown" :height 1.1 :v-adjust -0.225 :face 'error)
            (propertize "N/A" 'face 'error)))
        " "))))
+(add-hook 'fancy-battery-mode-hook #'force-mode-line-update)
 
 (provide 'doom-modeline-segments)
 
