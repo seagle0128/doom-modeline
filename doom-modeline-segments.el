@@ -1580,30 +1580,31 @@ mouse-1: Toggle Debug on Quit"
 (doom-modeline-def-segment mu4e
   (when (and doom-modeline-mu4e
              (doom-modeline--active)
-             (bound-and-true-p mu4e-alert-mode-line)
-             ;; we'll do our own formatting so just need to test for zero
-             (> mu4e-alert-mode-line 0))
+             (bound-and-true-p mu4e-alert-mode-line))
     ;; remove mu4e-alert's global modeline string setting
     (setq global-mode-string (delete '(:eval mu4e-alert-mode-line) global-mode-string))
-    (concat
-     " "
-     (propertize
-      (concat
-       (if doom-modeline-icon
-           (doom-modeline-icon-material "mail"
-                                        :height 1.1
-                                        :v-adjust -0.225
-                                        :face 'doom-modeline-warning)
-         (propertize "#"
-                     'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
-       doom-modeline-vspc
-       (propertize (number-to-string mu4e-alert-mode-line)
-                   'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
-      'mouse-face 'mode-line
-      'help-echo (if (= mu4e-alert-mode-line 1)
-                     "You have an unread email"
-                   (format "You have %s unread emails" mu4e-alert-mode-line)))
-     " ")))
+
+    ;; don't display if the unread mails count is zero
+    (if (> mu4e-alert-mode-line 0)
+        (concat
+         " "
+         (propertize
+          (concat
+           (if doom-modeline-icon
+               (doom-modeline-icon-material "mail"
+                                            :height 1.1
+                                            :v-adjust -0.225
+                                            :face 'doom-modeline-warning)
+             (propertize "#"
+                         'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
+           doom-modeline-vspc
+           (propertize (number-to-string mu4e-alert-mode-line)
+                       'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
+          'mouse-face 'mode-line
+          'help-echo (if (= mu4e-alert-mode-line 1)
+                         "You have an unread email"
+                       (format "You have %s unread emails" mu4e-alert-mode-line)))
+         " "))))
 
 
 ;;
