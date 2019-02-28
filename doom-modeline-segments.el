@@ -365,7 +365,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
            " ")
    'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
    'help-echo 'mode-line-mule-info-help-echo
-   'mouse-face '(:box 1)
+   'mouse-face 'mode-line
    'local-map mode-line-coding-system-map))
 
 
@@ -592,7 +592,7 @@ mouse-2: Show help for minor mode")
                                 ('errored "Error")
                                 ('interrupted "Interrupted")
                                 ('suspicious "Suspicious")))
-           'mouse-face '(:box 1)
+           'mouse-face 'mode-line
            'local-map (let ((map (make-sparse-keymap)))
                         (define-key map [mode-line down-mouse-1]
                           flycheck-mode-menu-map)
@@ -728,7 +728,7 @@ wheel-up/wheel-down: Previous/next error"))
 mouse-1: Display minor mode menu
 mouse-2: Show help for minor mode"
                                             (length running) (length known)))))
-             'mouse-face '(:box 1)
+             'mouse-face 'mode-line
              'local-map (let ((map (make-sparse-keymap)))
                           (define-key map [mode-line down-mouse-1]
                             flymake-menu)
@@ -1026,7 +1026,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
                   'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
                   'help-echo "Buffer size
 mouse-1: Display Line and Column Mode Menu"
-                  'mouse-face '(:box 1)
+                  'mouse-face 'mode-line
                   'local-map mode-line-column-line-number-mode-map)))
 
 (doom-modeline-def-segment matches
@@ -1287,7 +1287,7 @@ See `mode-line-percent-position'.")
                 (propertize (format-mode-line lc)
                             'help-echo "Buffer position\n\
 mouse-1: Display Line and Column Mode Menu"
-                            'mouse-face '(:box 1)
+                            'mouse-face 'mode-line
                             'local-map mode-line-column-line-number-mode-map))
       (propertize
        (concat " "
@@ -1300,7 +1300,7 @@ mouse-1: Display Line and Column Mode Menu"
        'face (if active 'mode-line 'mode-line-inactive)
        'help-echo "Buffer position\n\
 mouse-1: Display Line and Column Mode Menu"
-       'mouse-face '(:box 1)
+       'mouse-face 'mode-line
        'local-map mode-line-column-line-number-mode-map))))
 
 ;;
@@ -1491,35 +1491,37 @@ Example:
   (if (and doom-modeline-github
            (doom-modeline--active)
            (> doom-modeline--github-notifications-number 0))
-      (propertize
-       (concat " "
-               (if doom-modeline-icon
-                   (doom-modeline-icon-faicon "github"
-                                              :v-adjust -0.0575
-                                              :face 'doom-modeline-warning)
-                 (propertize "#" 'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
-               doom-modeline-vspc
-               (propertize (number-to-string doom-modeline--github-notifications-number)
-                           'face '(:inherit (warning doom-modeline-unread-number)))
-               " ")
-       'help-echo "Github Notifications
+      (concat
+       " "
+       (propertize
+        (concat
+         (if doom-modeline-icon
+             (doom-modeline-icon-faicon "github"
+                                        :v-adjust -0.0575
+                                        :face 'doom-modeline-warning)
+           (propertize "#" 'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
+         doom-modeline-vspc
+         (propertize (number-to-string doom-modeline--github-notifications-number)
+                     'face '(:inherit (warning doom-modeline-unread-number))))
+        'help-echo "Github Notifications
 mouse-1: Show notifications
 mouse-3: Fetch notifications"
-       'mouse-face '(:box 1)
-       'local-map (let ((map (make-sparse-keymap)))
-                    (define-key map [mode-line mouse-1]
-                      (lambda ()
-                        "Open github notifications page."
-                        (interactive)
-                        (browse-url "https://github.com/notifications")
-                        (run-with-timer 60 nil #'doom-modeline--github-fetch-notifications)))
-                    (define-key map [mode-line mouse-3]
-                      (lambda ()
-                        "Fetching github notifications."
-                        (interactive)
-                        (message "Fetching github notifications...")
-                        (doom-modeline--github-fetch-notifications)))
-                    map))))
+        'mouse-face 'mode-line
+        'local-map (let ((map (make-sparse-keymap)))
+                     (define-key map [mode-line mouse-1]
+                       (lambda ()
+                         "Open github notifications page."
+                         (interactive)
+                         (browse-url "https://github.com/notifications")
+                         (run-with-timer 60 nil #'doom-modeline--github-fetch-notifications)))
+                     (define-key map [mode-line mouse-3]
+                       (lambda ()
+                         "Fetching github notifications."
+                         (interactive)
+                         (message "Fetching github notifications...")
+                         (doom-modeline--github-fetch-notifications)))
+                     map))
+       " ")))
 
 
 ;;
@@ -1538,7 +1540,7 @@ mouse-3: Fetch notifications"
           (propertize "!" 'face 'doom-modeline-urgent))
         'help-echo "Debug on Error
 mouse-1: Toggle Debug on Error"
-        'mouse-face '(:box 1)
+        'mouse-face 'mode-line
         'local-map (make-mode-line-mouse-map 'mouse-1 #'toggle-debug-on-error)))
      (when debug-on-quit
        (propertize
@@ -1547,7 +1549,7 @@ mouse-1: Toggle Debug on Error"
           (propertize "!" 'face 'doom-modeline-warning))
         'help-echo "Debug on Quit
 mouse-1: Toggle Debug on Quit"
-        'mouse-face '(:box 1)
+        'mouse-face 'mode-line
         'local-map (make-mode-line-mouse-map 'mouse-1 #'toggle-debug-on-quit)))
      (and (or debug-on-error debug-on-quit) " "))))
 
