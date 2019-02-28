@@ -155,7 +155,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
 (defvar doom-modeline--default-mode-line mode-line-format)
 
-(defvar mu4e-alert-modeline-formatter nil)
+(unless (featurep 'mu4e-alert)
+  (defvar mu4e-alert-modeline-formatter #'ignore))
 (defvar doom-modeline--mu4e-alert-modeline-formatter mu4e-alert-modeline-formatter)
 
 ;;;###autoload
