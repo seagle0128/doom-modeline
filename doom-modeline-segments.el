@@ -1683,8 +1683,6 @@ we don't want to remove that so we just return the original."
                   (charging? 'fancy-battery-charging)
                   ((< percentage-number 10) 'fancy-battery-critical)
                   ((< percentage-number 25) 'fancy-battery-discharging)
-                  ((< percentage-number 50) 'mode-line)
-                  ((< percentage-number 75) 'mode-line)
                   ((< percentage-number 95) 'mode-line)
                   (t 'fancy-battery-charging)))
            (icon (cond
@@ -1696,15 +1694,15 @@ we don't want to remove that so we just return the original."
                    (if doom-modeline-icon
                        (doom-modeline-icon-faicon "battery-full" :height 1.1 :v-adjust -0.0575 :face face)
                      (propertize "-" 'face face)))
-                  ((> percentage-number 75)
+                  ((> percentage-number 50)
                    (if doom-modeline-icon
                        (doom-modeline-icon-faicon "battery-three-quarters" :height 1.1 :v-adjust -0.0575 :face face)
                      (propertize "-" 'face face)))
-                  ((> percentage-number 50)
+                  ((> percentage-number 30)
                    (if doom-modeline-icon
                        (doom-modeline-icon-faicon "battery-half" :height 1.1 :v-adjust -0.0575 :face face)
                      (propertize "-" 'face face)))
-                  ((> percentage-number 25)
+                  ((> percentage-number 15)
                    (if doom-modeline-icon
                        (doom-modeline-icon-faicon "battery-quarter" :height 1.1 :v-adjust -0.0575 :face face)
                      (propertize "-" 'face face)))
