@@ -54,10 +54,11 @@
 ;; - An indicator for debug state
 ;; - An indicator for LSP state
 ;; - An indicator for github notifications
-;; - An indicator for unread emails with mu4e-alert.
+;; - An indicator for unread emails with mu4e-alert
 ;; - An indicator for buffer position which is compatible with nyan-mode
 ;; - An indicator for party parrot
 ;; - An indicator for PDF page number
+;; - An indicator for battery status with fancy-battery
 ;; - Truncated file name, file icon, buffer state and project name in buffer
 ;;   information segment, which is compatible with projectile and project
 ;;
@@ -84,7 +85,7 @@
 
 (doom-modeline-def-modeline 'main
   '(bar workspace-number window-number evil-state god-state ryo-modal xah-fly-keys matches buffer-info remote-host buffer-position parrot selection-info)
-  '(misc-info persp-name lsp irc mu4e github debug minor-modes input-method buffer-encoding major-mode process vcs checker))
+  '(misc-info persp-name lsp irc mu4e github debug fancy-battery minor-modes input-method buffer-encoding major-mode process vcs checker))
 
 (doom-modeline-def-modeline 'minimal
   '(bar matches " " buffer-info)
@@ -92,11 +93,11 @@
 
 (doom-modeline-def-modeline 'special
   '(bar window-number evil-state god-state ryo-modal xah-fly-keys matches buffer-info-simple buffer-position parrot selection-info)
-  '(misc-info lsp debug minor-modes input-method irc-buffers buffer-encoding major-mode process checker))
+  '(misc-info lsp irc-buffers debug fancy-battery minor-modes input-method buffer-encoding major-mode process checker))
 
 (doom-modeline-def-modeline 'project
   '(bar " " buffer-default-directory)
-  '(misc-info mu4e github debug " " major-mode " "))
+  '(misc-info mu4e github debug fancy-battery " " major-mode " "))
 
 (doom-modeline-def-modeline 'media
   '(bar window-number buffer-size buffer-info)

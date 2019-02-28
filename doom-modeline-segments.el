@@ -45,6 +45,7 @@
 (defvar anzu--total-matched)
 (defvar anzu-cons-mode-line-p)
 (defvar aw-keys)
+(defvar battery-echo-area-format)
 (defvar evil-ex-active-highlights-alist)
 (defvar evil-ex-argument)
 (defvar evil-ex-range)
@@ -53,6 +54,8 @@
 (defvar evil-visual-beginning)
 (defvar evil-visual-end)
 (defvar evil-visual-selection)
+(defvar fancy-battery-last-status)
+(defvar fancy-battery-show-percentage)
 (defvar flycheck-current-errors)
 (defvar flycheck-mode-menu-map)
 (defvar flymake--backend-state)
@@ -80,6 +83,7 @@
 (declare-function avy-tree 'avy)
 (declare-function aw-update 'ace-window)
 (declare-function aw-window-list 'ace-window)
+(declare-function battery-format 'battery)
 (declare-function evil-delimited-arguments 'evil-common)
 (declare-function evil-emacs-state-p 'evil-states)
 (declare-function evil-force-normal-state 'evil-commands)
@@ -1659,6 +1663,66 @@ we don't want to remove that so we just return the original."
                                     (doom-modeline--tracking-buffers
                                      tracking-buffers)))
      " ")))
+
+
+;;
+;; fancy battery
+;;
+
+(doom-modeline-def-segment fancy-battery
+  (when (and (doom-modeline--active)
+             (bound-and-true-p fancy-battery-mode))
+    ;; Remove the default mode-line
+    (setq global-mode-string (delq 'fancy-battery-mode-line global-mode-string))
+    (let* ((time (cdr (assq ?t fancy-battery-last-status)))
+           (percentage (cdr (assq ?p fancy-battery-last-status)))
+           (face (pcase (cdr (assq ?b fancy-battery-last-status))
+                   ("!" 'fancy-battery-critical)
+                   ("+" 'fancy-battery-charging)
+                   ("-" 'fancy-battery-discharging)
+                   (_ 'success)))
+           (icon (pcase (cdr (assq ?b fancy-battery-last-status))
+                   ("!"
+                    (if doom-modeline-icon
+                        (doom-modeline-icon-material "battery_alert" :height 1.1 :v-adjust -0.225 :face face)
+                      (propertize "!" 'face face)))
+                   ("+"
+                    (if doom-modeline-icon
+                        (doom-modeline-icon-material "battery_charging_full" :height 1.1 :v-adjust -0.225 :face face)
+                      (propertize "+" 'face face)))
+                   (_
+                    (if doom-modeline-icon
+                        (doom-modeline-icon-material "battery_std" :height 1.1 :v-adjust -0.225 :face face)
+                      (propertize "-" 'face face)))))
+           (status (if (or fancy-battery-show-percentage (string-equal time "N/A"))
+                       (and percentage (concat percentage "%%%%"))
+                     time))
+           (help-echo (if battery-echo-area-format
+                          (battery-format battery-echo-area-format
+                                          fancy-battery-last-status)
+                        "Battery status not available")))
+      (concat
+       " "
+       (if status
+           (concat
+            (propertize icon
+                        'face (if doom-modeline-icon
+                                  `(
+                                    :height ,(doom-modeline-icon-height 1.3)
+                                    :family ,(all-the-icons-icon-family icon)
+                                    :inherit ,face
+                                    )
+                                face)
+                        'help-echo help-echo)
+            (propertize doom-modeline-vspc 'help-echo help-echo)
+            (propertize  status
+                         'face face
+                         'help-echo help-echo))
+         ;; Battery status is not available
+         (if doom-modeline-icon
+             (doom-modeline-icon-material "battery_unknown" :height 1.1 :v-adjust -0.225 :face 'error)
+           (propertize "N/A" 'face 'error)))
+       " "))))
 
 (provide 'doom-modeline-segments)
 
