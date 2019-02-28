@@ -55,7 +55,6 @@
 (defvar evil-visual-end)
 (defvar evil-visual-selection)
 (defvar fancy-battery-last-status)
-(defvar fancy-battery-show-percentage)
 (defvar flycheck-current-errors)
 (defvar flycheck-mode-menu-map)
 (defvar flymake--backend-state)
@@ -1675,32 +1674,45 @@ we don't want to remove that so we just return the original."
              (bound-and-true-p fancy-battery-mode))
     ;; Remove the default mode-line
     (setq global-mode-string (delq 'fancy-battery-mode-line global-mode-string))
-    (let* ((time (cdr (assq ?t fancy-battery-last-status)))
+    (let* ((charging?  (string-equal "AC" (cdr (assoc ?L fancy-battery-last-status))))
            (percentage (cdr (assq ?p fancy-battery-last-status)))
-           (face (pcase (cdr (assq ?b fancy-battery-last-status))
-                   ("!" 'fancy-battery-critical)
-                   ("+" 'fancy-battery-charging)
-                   ("-" 'fancy-battery-discharging)
-                   (_ 'success)))
-           (icon (pcase (cdr (assq ?b fancy-battery-last-status))
-                   ("!"
-                    (if doom-modeline-icon
-                        (doom-modeline-icon-material "battery_alert" :height 1.1 :v-adjust -0.225 :face face)
-                      (propertize "!" 'face face)))
-                   ("+"
-                    (if doom-modeline-icon
-                        (doom-modeline-icon-material "battery_charging_full" :height 1.1 :v-adjust -0.225 :face face)
-                      (propertize "+" 'face face)))
-                   (_
-                    (if doom-modeline-icon
-                        (doom-modeline-icon-material "battery_std" :height 1.1 :v-adjust -0.225 :face face)
-                      (propertize "-" 'face face)))))
-           (status (if (or fancy-battery-show-percentage (string-equal time "N/A"))
-                       (and percentage (concat percentage "%%%%"))
-                     time))
+           (percentage-number (string-to-number percentage))
+           (face (cond
+                  (charging? 'fancy-battery-charging)
+                  ((< percentage-number 10) 'fancy-battery-critical)
+                  ((< percentage-number 25) 'fancy-battery-discharging)
+                  ((< percentage-number 50) 'mode-line)
+                  ((< percentage-number 75) 'mode-line)
+                  ((< percentage-number 95) 'mode-line)
+                  (t 'fancy-battery-charging)))
+           (icon (cond
+                  (charging?
+                   (if doom-modeline-icon
+                       (doom-modeline-icon-alltheicon "battery-charging" :height 1.3 :v-adjust -0.1 :face face)
+                     (propertize "+" 'face face)))
+                  ((> percentage-number 95)
+                   (if doom-modeline-icon
+                       (doom-modeline-icon-faicon "battery-full" :height 1.1 :v-adjust -0.0575 :face face)
+                     (propertize "-" 'face face)))
+                  ((> percentage-number 75)
+                   (if doom-modeline-icon
+                       (doom-modeline-icon-faicon "battery-three-quarters" :height 1.1 :v-adjust -0.0575 :face face)
+                     (propertize "-" 'face face)))
+                  ((> percentage-number 50)
+                   (if doom-modeline-icon
+                       (doom-modeline-icon-faicon "battery-half" :height 1.1 :v-adjust -0.0575 :face face)
+                     (propertize "-" 'face face)))
+                  ((> percentage-number 25)
+                   (if doom-modeline-icon
+                       (doom-modeline-icon-faicon "battery-quarter" :height 1.1 :v-adjust -0.0575 :face face)
+                     (propertize "!" 'face face)))
+                  (t
+                   (if doom-modeline-icon
+                       (doom-modeline-icon-faicon "battery-empty" :height 1.1 :v-adjust -0.0575 :face face)
+                     (propertize "!" 'face face)))))
+           (status (and percentage (concat percentage "%%%%")))
            (help-echo (if battery-echo-area-format
-                          (battery-format battery-echo-area-format
-                                          fancy-battery-last-status)
+                          (battery-format battery-echo-area-format fancy-battery-last-status)
                         "Battery status not available")))
       (concat
        " "
@@ -1709,7 +1721,7 @@ we don't want to remove that so we just return the original."
             (propertize icon
                         'face (if doom-modeline-icon
                                   `(
-                                    :height ,(doom-modeline-icon-height 1.3)
+                                    :height ,(doom-modeline-icon-height (if charging? 1.69 1.2))
                                     :family ,(all-the-icons-icon-family icon)
                                     :inherit ,face
                                     )

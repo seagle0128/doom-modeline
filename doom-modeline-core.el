@@ -450,6 +450,11 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   (when doom-modeline-icon
     (apply #'all-the-icons-material args)))
 
+(defun doom-modeline-icon-alltheicon (&rest args)
+  "Display alltheicon via ARGS."
+  (when doom-modeline-icon
+    (apply #'all-the-icons-alltheicon args)))
+
 (defun doom-modeline-icon-for-mode (&rest args)
   "Display icon for major mode via ARGS."
   (when doom-modeline-icon

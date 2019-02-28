@@ -72,13 +72,13 @@ The `doom-modeline` was designed for minimalism, and offers:
 ![evil_insert_state](https://user-images.githubusercontent.com/140797/49694461-8b5c2100-fbc5-11e8-993e-d97baa9f01af.png
 "Evil Insert State")
 
-![lsp_version](https://user-images.githubusercontent.com/140797/53586076-f95b2780-3bb9-11e9-83bf-ec6c60d1ff1a.png
+![lsp_version](https://user-images.githubusercontent.com/140797/53592864-c751c180-3bc9-11e9-9914-493007c013d5.png
 "Perspective, LSP, Version, VCS and Flycheck")
 
 ![perspective](https://user-images.githubusercontent.com/140797/49694481-e0983280-fbc5-11e8-8cb2-c8d2e782bcdb.png
  "Perspective, LSP, Version and VCS")
 
-![notifications](https://user-images.githubusercontent.com/140797/53586463-cfeecb80-3bba-11e9-8ae7-450509fa5494.png
+![notifications](https://user-images.githubusercontent.com/140797/53592683-64602a80-3bc9-11e9-8054-91f79aa930b9.png
 "Notifications")
 
 ![minions](https://user-images.githubusercontent.com/140797/50301291-de857c00-04c1-11e9-84c5-bfbc8de8295f.png
@@ -90,7 +90,7 @@ The `doom-modeline` was designed for minimalism, and offers:
 ![nyan_parrot](https://user-images.githubusercontent.com/140797/51301061-da209480-1a68-11e9-9f64-905d889df9d6.png
 "Nyan and Parrot")
 
-![battery](https://user-images.githubusercontent.com/140797/53586243-53f48380-3bba-11e9-9509-e936f466c8aa.png
+![battery](https://user-images.githubusercontent.com/140797/53593622-ba35d200-3bcb-11e9-85b3-38d64d05c127.png
 "Fancy Battery")
 
 ## Install
