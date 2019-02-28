@@ -831,29 +831,31 @@ icons."
                     `(,doom-modeline--flymake-icon . ,doom-modeline--flymake-text))
                    ((bound-and-true-p flycheck-mode)
                     `(,doom-modeline--flycheck-icon . ,doom-modeline--flycheck-text)))))
-    (let ((icon (car seg))
-          (text (cdr seg)))
-      (concat
-       (propertize (if vc-mode " " "  ")
-                   'face (if active 'mode-line 'mode-line-inactive))
-       (if active
-           (concat icon
-                   (when (and icon text) doom-modeline-vspc)
-                   text)
-         (concat
-          (when icon
-            (propertize icon
-                        'face
-                        (if doom-modeline-icon
-                            `(:height
-                              ,(doom-modeline-icon-height 1.3)
-                              :family
-                              ,(all-the-icons-icon-family icon)
-                              :inherit mode-line-inactive)
-                          'mode-line-inactive)))
-          (when (and icon text) doom-modeline-inactive-vspc)
-          (when text (propertize text 'face 'mode-line-inactive))))
-       (propertize "  " 'face (if active 'mode-line 'mode-line-inactive))))))
+    (if seg
+        (let ((icon (car seg))
+              (text (cdr seg)))
+          (concat
+           (propertize (if vc-mode " " "  ")
+                       'face (if active 'mode-line 'mode-line-inactive))
+           (if active
+               (concat icon
+                       (when (and icon text) doom-modeline-vspc)
+                       text)
+             (concat
+              (when icon
+                (propertize icon
+                            'face
+                            (if doom-modeline-icon
+                                `(:height
+                                  ,(doom-modeline-icon-height 1.3)
+                                  :family
+                                  ,(all-the-icons-icon-family icon)
+                                  :inherit mode-line-inactive)
+                              'mode-line-inactive)))
+              (when (and icon text) doom-modeline-inactive-vspc)
+              (when text (propertize text 'face 'mode-line-inactive))))
+           (propertize "  " 'face (if active 'mode-line 'mode-line-inactive))))
+      "")))
 
 
 ;;
