@@ -1578,8 +1578,7 @@ mouse-1: Toggle Debug on Quit"
              ;; we'll do our own formatting so just need to test for zero
              (> mu4e-alert-mode-line 0))
     ;; remove mu4e-alert's global modeline string setting
-    (setq global-mode-string (delete '(:eval mu4e-alert-mode-line)
-                                     global-mode-string))
+    (setq global-mode-string (delete '(:eval mu4e-alert-mode-line) global-mode-string))
     (propertize
      (concat " " (number-to-string mu4e-alert-mode-line) " ")
      'face 'doom-modeline-unread-number
@@ -1628,14 +1627,16 @@ we don't want to remove that so we just return the original."
 (doom-modeline-def-segment irc
   "A notification icon for any unread irc buffer."
   (when (and doom-modeline-irc
+             (doom-modeline--active)
              (boundp 'tracking-mode-line-buffers)
-             (> (length tracking-buffers) 0)
-             (doom-modeline--active))
+             (> (length tracking-buffers) 0))
     (concat
      " "
-     (propertize (doom-modeline-icon-material "sms"
-                                              :height 0.9
-                                              :face 'doom-modeline-warning)
+     (propertize (if doom-modeline-icon
+                     (doom-modeline-icon-material "sms"
+                                                  :height 0.9
+                                                  :face 'doom-modeline-warning)
+                   (propertize "IRC" 'face 'doom-modeline-warning))
                  'help-echo (format "IRC Notifications: %s"
                                     (doom-modeline--tracking-buffers
                                      tracking-buffers))
