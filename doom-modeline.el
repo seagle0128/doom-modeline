@@ -156,10 +156,6 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
 (defvar doom-modeline--default-mode-line mode-line-format)
 
-(unless (featurep 'mu4e-alert)
-  (defvar mu4e-alert-modeline-formatter #'ignore))
-(defvar doom-modeline--mu4e-alert-modeline-formatter mu4e-alert-modeline-formatter)
-
 ;;;###autoload
 (define-minor-mode doom-modeline-mode
   "Toggle doom-modeline on or off."
@@ -176,8 +172,6 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
           (dolist (bname '("*scratch*" "*Messages*"))
             (with-current-buffer bname
               (doom-modeline-set-main-modeline))))
-        ;; Set mu4e alert modeline
-        (if doom-modeline-mu4e (setq mu4e-alert-modeline-formatter #'identity))
         ;; Add hooks
         (add-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
         (add-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
@@ -186,7 +180,6 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
     (progn
       ;; Restore mode-line
       (setq-default mode-line-format doom-modeline--default-mode-line)
-      (setq mu4e-alert-modeline-formatter doom-modeline--mu4e-alert-modeline-formatter)
       ;; Remove hooks
       (remove-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
       (remove-hook 'image-mode-hook #'doom-modeline-set-media-modeline)

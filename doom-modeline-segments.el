@@ -65,15 +65,16 @@
 (defvar mc/mode-line)
 (defvar minions-mode)
 (defvar minions-mode-line-lighter)
+(defvar mu4e-alert-mode-line)
+(defvar mu4e-alert-modeline-formatter)
 (defvar nyan-minimum-window-width)
 (defvar persp-nil-name)
 (defvar symbol-overlay-keywords-alist)
 (defvar symbol-overlay-temp-symbol)
 (defvar text-scale-mode-amount)
+(defvar tracking-buffers)
 (defvar winum-auto-setup-mode-line)
 (defvar xah-fly-insert-state-q)
-(defvar mu4e-alert-mode-line)
-(defvar tracking-buffers)
 
 (declare-function anzu--reset-status 'anzu)
 (declare-function anzu--where-is-here 'anzu)
@@ -112,10 +113,11 @@
 (declare-function iedit-find-current-occurrence-overlay 'iedit-lib)
 (declare-function iedit-prev-occurrence 'iedit-lib)
 (declare-function image-get-display-property 'image-mode)
-(declare-function lsp-workspaces 'lsp-mode)
 (declare-function lsp--workspace-print 'lsp-mode)
+(declare-function lsp-workspaces 'lsp-mode)
 (declare-function magit-toplevel 'magit-git)
 (declare-function minions-minor-modes-menu 'minions)
+(declare-function mu4e-alert-enable-mode-line-display 'mu4e-alert)
 (declare-function nyan-create 'nyan-mode)
 (declare-function parrot-create 'parrot)
 (declare-function pdf-cache-number-of-pages 'pdf-cache)
@@ -127,6 +129,7 @@
 (declare-function symbol-overlay-get-list 'symbol-overlay)
 (declare-function symbol-overlay-get-symbol 'symbol-overlay)
 (declare-function symbol-overlay-rename 'symbol-overlay)
+(declare-function tracking-shorten 'tracking)
 (declare-function undo-tree-redo-1 'undo-tree)
 (declare-function undo-tree-undo-1 'undo-tree)
 (declare-function window-numbering-clear-mode-line 'window-numbering)
@@ -135,7 +138,6 @@
 (declare-function winum--clear-mode-line 'winum)
 (declare-function winum--install-mode-line 'winum)
 (declare-function winum-get-number-string 'winum)
-(declare-function tracking-shorten 'tracking)
 
 
 ;;
@@ -1110,9 +1112,7 @@ Returns \"\" to not break --no-window-system."
      (when (and (eq op 'set) (integerp val))
        (doom-modeline-refresh-bars val doom-modeline-height)))))
 
-(add-hook 'after-setting-font-hook
-          (lambda ()
-            (doom-modeline-refresh-bars)))
+(add-hook 'after-setting-font-hook #'doom-modeline-refresh-bars)
 
 
 ;;
@@ -1582,9 +1582,6 @@ mouse-1: Toggle Debug on Quit"
   (when (and doom-modeline-mu4e
              (doom-modeline--active)
              (bound-and-true-p mu4e-alert-mode-line))
-    ;; remove mu4e-alert's global modeline string setting
-    (setq global-mode-string (delete '(:eval mu4e-alert-mode-line) global-mode-string))
-
     ;; don't display if the unread mails count is zero
     (if (> mu4e-alert-mode-line 0)
         (concat
@@ -1606,6 +1603,24 @@ mouse-1: Toggle Debug on Quit"
                          "You have an unread email"
                        (format "You have %s unread emails" mu4e-alert-mode-line)))
          " "))))
+
+(defvar doom-modeline--mu4e-alert-modeline-formatter #'ignore)
+(with-eval-after-load 'mu4e-alert
+  (setq doom-modeline--mu4e-alert-modeline-formatter mu4e-alert-modeline-formatter))
+
+(defun doom-modeline-override-mu4e-alert-modeline (&rest _)
+  "Delete `mu4e-alert-mode-line' from global modeline string."
+  (if (and doom-modeline-mu4e
+           (bound-and-true-p doom-modeline-mode))
+      ;; Set mu4e alert modeline
+      (progn
+        (setq mu4e-alert-modeline-formatter #'identity)
+        (setq global-mode-string
+              (delete '(:eval mu4e-alert-mode-line) global-mode-string)))
+    ;; Recover default settings
+    (setq mu4e-alert-modeline-formatter doom-modeline--mu4e-alert-modeline-formatter)))
+(advice-add #'mu4e-alert-enable-mode-line-display :after #'doom-modeline-override-mu4e-alert-modeline)
+(add-hook 'doom-modeline-mode-hook #'doom-modeline-override-fancy-battery-modeline)
 
 
 ;;
@@ -1674,8 +1689,6 @@ we don't want to remove that so we just return the original."
 (doom-modeline-def-segment fancy-battery
   (when (and (doom-modeline--active)
              (bound-and-true-p fancy-battery-mode))
-    ;; Remove the default mode-line
-    (setq global-mode-string (delq 'fancy-battery-mode-line global-mode-string))
     (let* ((charging?  (string-equal "AC" (cdr (assoc ?L fancy-battery-last-status))))
            (percentage (cdr (assq ?p fancy-battery-last-status)))
            (percentage-number (string-to-number percentage))
@@ -1688,27 +1701,27 @@ we don't want to remove that so we just return the original."
            (icon (cond
                   (charging?
                    (if doom-modeline-icon
-                       (doom-modeline-icon-alltheicon "battery-charging" :height 1.3 :v-adjust -0.1 :face face)
+                       (doom-modeline-icon-alltheicon "battery-charging" :v-adjust -0.1)
                      (propertize "+" 'face face)))
                   ((> percentage-number 95)
                    (if doom-modeline-icon
-                       (doom-modeline-icon-faicon "battery-full" :height 1.1 :v-adjust -0.0575 :face face)
+                       (doom-modeline-icon-faicon "battery-full" :v-adjust -0.0575)
                      (propertize "-" 'face face)))
                   ((> percentage-number 50)
                    (if doom-modeline-icon
-                       (doom-modeline-icon-faicon "battery-three-quarters" :height 1.1 :v-adjust -0.0575 :face face)
+                       (doom-modeline-icon-faicon "battery-three-quarters" :v-adjust -0.0575)
                      (propertize "-" 'face face)))
                   ((> percentage-number 30)
                    (if doom-modeline-icon
-                       (doom-modeline-icon-faicon "battery-half" :height 1.1 :v-adjust -0.0575 :face face)
+                       (doom-modeline-icon-faicon "battery-half" :v-adjust -0.0575)
                      (propertize "-" 'face face)))
                   ((> percentage-number 15)
                    (if doom-modeline-icon
-                       (doom-modeline-icon-faicon "battery-quarter" :height 1.1 :v-adjust -0.0575 :face face)
+                       (doom-modeline-icon-faicon "battery-quarter" :v-adjust -0.0575)
                      (propertize "-" 'face face)))
                   (t
                    (if doom-modeline-icon
-                       (doom-modeline-icon-faicon "battery-empty" :height 1.1 :v-adjust -0.0575 :face face)
+                       (doom-modeline-icon-faicon "battery-empty" :v-adjust -0.0575)
                      (propertize "!" 'face face)))))
            (status (and percentage (concat percentage "%%%%")))
            (help-echo (if battery-echo-area-format
@@ -1736,7 +1749,14 @@ we don't want to remove that so we just return the original."
              (doom-modeline-icon-material "battery_unknown" :height 1.1 :v-adjust -0.225 :face 'error)
            (propertize "N/A" 'face 'error)))
        " "))))
-(add-hook 'fancy-battery-mode-hook #'force-mode-line-update)
+
+(defun doom-modeline-override-fancy-battery-modeline ()
+  "Override `fancy-battery' mode-line."
+  (if (bound-and-true-p doom-modeline-mode)
+      (setq global-mode-string
+            (delq 'fancy-battery-mode-line global-mode-string))))
+(add-hook 'fancy-battery-mode-hook #'doom-modeline-override-fancy-battery-modeline)
+(add-hook 'doom-modeline-mode-hook #'doom-modeline-override-fancy-battery-modeline)
 
 (provide 'doom-modeline-segments)
 
