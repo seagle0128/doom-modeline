@@ -936,7 +936,12 @@ lines are selected, or the NxM dimensions of a block selection."
 (with-eval-after-load 'anzu
   (add-hook 'isearch-mode-end-hook #'anzu--reset-status t)
   (add-hook 'iedit-mode-end-hook #'anzu--reset-status)
-  (advice-add #'evil-force-normal-state :after #'anzu--reset-status))
+  (advice-add #'evil-force-normal-state :after #'anzu--reset-status)
+  ;; Fix matches segment mirroring across all buffers
+  (mapc #'make-variable-buffer-local
+        '(anzu--total-matched anzu--current-position anzu--state
+          anzu--cached-count anzu--cached-positions anzu--last-command
+          anzu--last-isearch-string anzu--overflow-p)))
 
 (defsubst doom-modeline--anzu ()
   "Show the match index and total number thereof.
@@ -948,7 +953,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
      (let ((here anzu--current-position)
            (total anzu--total-matched))
        (cond ((eq anzu--state 'replace-query)
-              (format " %d replace " total))
+              (format " %d replace " anzu--cached-count))
              ((eq anzu--state 'replace)
               (format " %d/%d " here total))
              (anzu--overflow-p
