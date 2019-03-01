@@ -1712,11 +1712,11 @@ we don't want to remove that so we just return the original."
                    (if doom-modeline-icon
                        (doom-modeline-icon-faicon "battery-full" :v-adjust -0.0575)
                      (propertize "-" 'face face)))
-                  ((> percentage-number 50)
+                  ((> percentage-number 70)
                    (if doom-modeline-icon
                        (doom-modeline-icon-faicon "battery-three-quarters" :v-adjust -0.0575)
                      (propertize "-" 'face face)))
-                  ((> percentage-number 30)
+                  ((> percentage-number 40)
                    (if doom-modeline-icon
                        (doom-modeline-icon-faicon "battery-half" :v-adjust -0.0575)
                      (propertize "-" 'face face)))
