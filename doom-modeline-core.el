@@ -517,6 +517,28 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
                                  (if (eq idx len) "\"};" "\",\n")))))
         'xpm t :ascent 'center)))))
 
+;; Fix: invalid-regexp "Trailing backslash" while handling $HOME on Windows
+(defun doom-modeline-shrink-path--dirs-internal (full-path &optional truncate-all)
+  "Return fish-style truncated string based on FULL-PATH.
+Optional parameter TRUNCATE-ALL will cause the function to truncate the last
+directory too."
+  (let* ((home (getenv "HOME"))
+         (path (replace-regexp-in-string
+                (s-concat "^" home "$") "~" full-path))
+         (split (s-split "/" path 'omit-nulls))
+         (split-len (length split))
+         shrunk)
+    (->> split
+         (--map-indexed (if (= it-index (1- split-len))
+                            (if truncate-all (shrink-path--truncate it) it)
+                          (shrink-path--truncate it)))
+         (s-join "/")
+         (setq shrunk))
+    (s-concat (unless (s-matches? (rx bos (or "~" "/")) shrunk) "/")
+              shrunk
+              (unless (s-ends-with? "/" shrunk) "/"))))
+(advice-add #'shrink-path--dirs-internal :override #'doom-modeline-shrink-path--dirs-internal)
+
 (defun doom-modeline-buffer-file-name ()
   "Propertized variable `buffer-file-name' based on `doom-modeline-buffer-file-name-style'."
   (let* ((buffer-file-name (file-local-name (or (buffer-file-name (buffer-base-buffer)) "")))
