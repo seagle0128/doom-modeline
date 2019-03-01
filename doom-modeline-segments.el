@@ -39,10 +39,10 @@
 ;; Externals
 ;;
 
+(defvar anzu--cached-count)
 (defvar anzu--current-position)
 (defvar anzu--overflow-p)
 (defvar anzu--state)
-(defvar anzu--total-matched)
 (defvar anzu-cons-mode-line-p)
 (defvar aw-keys)
 (defvar battery-echo-area-format)
@@ -941,8 +941,9 @@ lines are selected, or the NxM dimensions of a block selection."
   (advice-add #'evil-force-normal-state :after #'anzu--reset-status)
   ;; Fix matches segment mirroring across all buffers
   (mapc #'make-variable-buffer-local
-        '(anzu--total-matched anzu--current-position anzu--state
-          anzu--cached-count anzu--cached-positions anzu--last-command
+        '(anzu--current-position
+          anzu--state anzu--cached-count
+          anzu--cached-positions anzu--last-command
           anzu--last-isearch-string anzu--overflow-p)))
 
 (defsubst doom-modeline--anzu ()
@@ -953,9 +954,9 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
              (not (bound-and-true-p iedit-mode)))
     (propertize
      (let ((here anzu--current-position)
-           (total anzu--total-matched))
+           (total anzu--cached-count))
        (cond ((eq anzu--state 'replace-query)
-              (format " %d replace " anzu--cached-count))
+              (format " %d replace " total))
              ((eq anzu--state 'replace)
               (format " %d/%d " here total))
              (anzu--overflow-p
