@@ -118,6 +118,7 @@
 (declare-function lsp-workspaces 'lsp-mode)
 (declare-function magit-toplevel 'magit-git)
 (declare-function minions-minor-modes-menu 'minions)
+(declare-function mu4e-alert-default-mode-line-formatter 'mu4e-alert)
 (declare-function mu4e-alert-enable-mode-line-display 'mu4e-alert)
 (declare-function nyan-create 'nyan-mode)
 (declare-function parrot-create 'parrot)
@@ -1611,21 +1612,18 @@ mouse-1: Toggle Debug on Quit"
                        (format "You have %s unread emails" mu4e-alert-mode-line)))
          " "))))
 
-(defvar doom-modeline--mu4e-alert-modeline-formatter #'ignore)
-(with-eval-after-load 'mu4e-alert
-  (setq doom-modeline--mu4e-alert-modeline-formatter mu4e-alert-modeline-formatter))
-
 (defun doom-modeline-override-mu4e-alert-modeline (&rest _)
   "Delete `mu4e-alert-mode-line' from global modeline string."
-  (if (and doom-modeline-mu4e
-           (bound-and-true-p doom-modeline-mode))
-      ;; Set mu4e alert modeline
-      (progn
-        (setq mu4e-alert-modeline-formatter #'identity)
-        (setq global-mode-string
-              (delete '(:eval mu4e-alert-mode-line) global-mode-string)))
-    ;; Recover default settings
-    (setq mu4e-alert-modeline-formatter doom-modeline--mu4e-alert-modeline-formatter)))
+  (when (featurep 'mu4e-alert)
+    (if (and doom-modeline-mu4e
+             (bound-and-true-p doom-modeline-mode))
+        ;; Set mu4e-alert modeline
+        (progn
+          (setq mu4e-alert-modeline-formatter #'identity)
+          (setq global-mode-string
+                (delete '(:eval mu4e-alert-mode-line) global-mode-string)))
+      ;; Recover default settings
+      (setq mu4e-alert-modeline-formatter #'mu4e-alert-default-mode-line-formatter))))
 (advice-add #'mu4e-alert-enable-mode-line-display :after #'doom-modeline-override-mu4e-alert-modeline)
 (add-hook 'doom-modeline-mode-hook #'doom-modeline-override-fancy-battery-modeline)
 
