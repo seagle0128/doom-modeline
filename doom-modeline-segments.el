@@ -318,7 +318,8 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                         'face `(:height
                                 ,(doom-modeline-icon-height 1.1)
                                 :family
-                                ,(all-the-icons-icon-family icon))))
+                                ,(all-the-icons-icon-family icon)
+                                :inherit t)))
           (if active doom-modeline-vspc doom-modeline-inactive-vspc))))
 
      ;; state icon
@@ -333,7 +334,8 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                           `(:height
                             ,(doom-modeline-icon-height 1.3)
                             :family
-                            ,(all-the-icons-icon-family icon))
+                            ,(all-the-icons-icon-family icon)
+                            :inherit t)
                         'mode-line-inactive)))
         (if active doom-modeline-vspc doom-modeline-inactive-vspc)))
 
@@ -369,7 +371,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
            " ")
    'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
    'help-echo 'mode-line-mule-info-help-echo
-   'mouse-face 'mode-line
+   'mouse-face '(:inherit t)
    'local-map mode-line-coding-system-map))
 
 
@@ -536,7 +538,8 @@ Uses `all-the-icons-octicon' to fetch the icon."
                           `(:height
                             ,(doom-modeline-icon-height 1.2)
                             :family
-                            ,(all-the-icons-icon-family icon))
+                            ,(all-the-icons-icon-family icon)
+                            :inherit t)
                         'mode-line-inactive))
           doom-modeline-inactive-vspc
           (propertize text 'face 'mode-line-inactive)))
@@ -595,7 +598,7 @@ mouse-2: Show help for minor mode")
                                 ('errored "Error")
                                 ('interrupted "Interrupted")
                                 ('suspicious "Suspicious")))
-           'mouse-face 'mode-line
+           'mouse-face '(:inherit t)
            'local-map (let ((map (make-sparse-keymap)))
                         (define-key map [mode-line down-mouse-1]
                           flycheck-mode-menu-map)
@@ -731,7 +734,7 @@ wheel-up/wheel-down: Previous/next error"))
 mouse-1: Display minor mode menu
 mouse-2: Show help for minor mode"
                                             (length running) (length known)))))
-             'mouse-face 'mode-line
+             'mouse-face '(:inherit t)
              'local-map (let ((map (make-sparse-keymap)))
                           (define-key map [mode-line down-mouse-1]
                             flymake-menu)
@@ -1036,7 +1039,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
                   'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
                   'help-echo "Buffer size
 mouse-1: Display Line and Column Mode Menu"
-                  'mouse-face 'mode-line
+                  'mouse-face '(:inherit t)
                   'local-map mode-line-column-line-number-mode-map)))
 
 (doom-modeline-def-segment matches
@@ -1295,7 +1298,7 @@ See `mode-line-percent-position'.")
                 (propertize (format-mode-line lc)
                             'help-echo "Buffer position\n\
 mouse-1: Display Line and Column Mode Menu"
-                            'mouse-face 'mode-line
+                            'mouse-face '(:inherit t)
                             'local-map mode-line-column-line-number-mode-map))
       (propertize
        (concat " "
@@ -1308,7 +1311,7 @@ mouse-1: Display Line and Column Mode Menu"
        'face (if active 'mode-line 'mode-line-inactive)
        'help-echo "Buffer position\n\
 mouse-1: Display Line and Column Mode Menu"
-       'mouse-face 'mode-line
+       'mouse-face '(:inherit t)
        'local-map mode-line-column-line-number-mode-map))))
 
 ;;
@@ -1514,7 +1517,7 @@ Example:
         'help-echo "Github Notifications
 mouse-1: Show notifications
 mouse-3: Fetch notifications"
-        'mouse-face 'mode-line
+        'mouse-face '(:inherit t)
         'local-map (let ((map (make-sparse-keymap)))
                      (define-key map [mode-line mouse-1]
                        (lambda ()
@@ -1548,7 +1551,7 @@ mouse-3: Fetch notifications"
           (propertize "!" 'face 'doom-modeline-urgent))
         'help-echo "Debug on Error
 mouse-1: Toggle Debug on Error"
-        'mouse-face 'mode-line
+        'mouse-face '(:inherit t)
         'local-map (make-mode-line-mouse-map 'mouse-1 #'toggle-debug-on-error)))
      (when debug-on-quit
        (propertize
@@ -1557,7 +1560,7 @@ mouse-1: Toggle Debug on Error"
           (propertize "!" 'face 'doom-modeline-warning))
         'help-echo "Debug on Quit
 mouse-1: Toggle Debug on Quit"
-        'mouse-face 'mode-line
+        'mouse-face '(:inherit t)
         'local-map (make-mode-line-mouse-map 'mouse-1 #'toggle-debug-on-quit)))
      (and (or debug-on-error debug-on-quit) " "))))
 
@@ -1601,7 +1604,7 @@ mouse-1: Toggle Debug on Quit"
            doom-modeline-vspc
            (propertize (number-to-string mu4e-alert-mode-line)
                        'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
-          'mouse-face 'mode-line
+          'mouse-face '(:inherit t)
           'help-echo (if (= mu4e-alert-mode-line 1)
                          "You have an unread email"
                        (format "You have %s unread emails" mu4e-alert-mode-line)))
