@@ -310,8 +310,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
      ;; major mode icon
      (when (and doom-modeline-icon doom-modeline-major-mode-icon)
        (when-let ((icon (or doom-modeline--buffer-file-icon
-                            (doom-modeline-update-buffer-file-icon)))
-                  (face (if active 'mode-line 'mode-line-inactive)))
+                            (doom-modeline-update-buffer-file-icon))))
          (concat
           (if (and active doom-modeline-major-mode-color-icon)
               icon
@@ -319,8 +318,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                         'face `(:height
                                 ,(doom-modeline-icon-height 1.1)
                                 :family
-                                ,(all-the-icons-icon-family icon)
-                                :inherit ,face)))
+                                ,(all-the-icons-icon-family icon))))
           (if active doom-modeline-vspc doom-modeline-inactive-vspc))))
 
      ;; state icon
@@ -335,8 +333,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                           `(:height
                             ,(doom-modeline-icon-height 1.3)
                             :family
-                            ,(all-the-icons-icon-family icon)
-                            :inherit mode-line-inactive)
+                            ,(all-the-icons-icon-family icon))
                         'mode-line-inactive)))
         (if active doom-modeline-vspc doom-modeline-inactive-vspc)))
 
@@ -539,8 +536,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
                           `(:height
                             ,(doom-modeline-icon-height 1.2)
                             :family
-                            ,(all-the-icons-icon-family icon)
-                            :inherit mode-line-inactive)
+                            ,(all-the-icons-icon-family icon))
                         'mode-line-inactive))
           doom-modeline-inactive-vspc
           (propertize text 'face 'mode-line-inactive)))
@@ -853,8 +849,7 @@ icons."
                                 `(:height
                                   ,(doom-modeline-icon-height 1.3)
                                   :family
-                                  ,(all-the-icons-icon-family icon)
-                                  :inherit mode-line-inactive)
+                                  ,(all-the-icons-icon-family icon))
                               'mode-line-inactive)))
               (when (and icon text) doom-modeline-inactive-vspc)
               (when text (propertize text 'face 'mode-line-inactive))))
