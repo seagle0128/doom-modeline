@@ -36,6 +36,7 @@ The `doom-modeline` was designed for minimalism, and offers:
 - An indicator for `LSP` state
 - An indicator for github notifications
 - An indicator for unread emails with `mu4e-alert`
+- An indicator for irc notifications with `circe`
 - An indicator for buffer position which is compatible with `nyan-mode`
 - An indicator for party parrot
 - An indicator for PDF page number
@@ -149,8 +150,8 @@ Strongly recommend to use
 ;; Please refer to https://github.com/bbatsov/projectile/issues/657.
 (setq doom-modeline-buffer-file-name-style 'truncate-upto-project)
 
-;; What executable of Python will be used (if nil nothing will be showed).
-(setq doom-modeline-python-executable "python")
+;; If non-nil, the mode-line is displayed with the `variable-pitch' face.
+(setq doom-modeline-enable-variable-pitch nil)
 
 ;; Whether show `all-the-icons' or not (if nil nothing will be showed).
 (setq doom-modeline-icon t)
@@ -185,8 +186,17 @@ Strongly recommend to use
 ;; Whether display environment version or not.
 (setq doom-modeline-env-version t)
 
+;; What executable of Python will be used (if nil nothing will be showed).
+(setq doom-modeline-python-executable "python")
+
 ;; Whether display mu4e notifications or not. Requires `mu4e-alert' package.
 (setq doom-modeline-mu4e t)
+
+;; Whether display irc notifications or not. Requires `circe' package.
+(setq doom-modeline-irc t)
+
+;; Function to stylize the irc buffer names.
+(setq doom-modeline-irc-stylize 'identity)
 ```
 
 ## FAQ

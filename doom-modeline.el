@@ -4,7 +4,7 @@
 
 ;; Author: Vincent Zhang <seagle0128@gmail.com>
 ;; Homepage: https://github.com/seagle0128/doom-modeline
-;; Version: 1.8.0
+;; Version: 1.8.1
 ;; Package-Requires: ((emacs "25.1") (all-the-icons "1.0.0") (shrink-path "0.2.0") (eldoc-eval "0.1") (dash "2.11.0"))
 ;; Keywords: faces mode-line
 
@@ -55,6 +55,7 @@
 ;; - An indicator for LSP state
 ;; - An indicator for github notifications
 ;; - An indicator for unread emails with mu4e-alert
+;; - An indicator for irc notifications with circe
 ;; - An indicator for buffer position which is compatible with nyan-mode
 ;; - An indicator for party parrot
 ;; - An indicator for PDF page number
