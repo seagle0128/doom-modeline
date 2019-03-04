@@ -1612,15 +1612,15 @@ mouse-1: Toggle Debug on Quit"
   (when (featurep 'mu4e-alert)
     (if (and doom-modeline-mu4e
              (bound-and-true-p doom-modeline-mode))
-        ;; Set mu4e-alert modeline
+        ;; Delete original modeline
         (progn
-          (setq mu4e-alert-modeline-formatter #'identity)
           (setq global-mode-string
-                (delete '(:eval mu4e-alert-mode-line) global-mode-string)))
+                (delete '(:eval mu4e-alert-mode-line) global-mode-string))
+          (setq mu4e-alert-modeline-formatter #'identity))
       ;; Recover default settings
       (setq mu4e-alert-modeline-formatter #'mu4e-alert-default-mode-line-formatter))))
 (advice-add #'mu4e-alert-enable-mode-line-display :after #'doom-modeline-override-mu4e-alert-modeline)
-(add-hook 'doom-modeline-mode-hook #'doom-modeline-override-fancy-battery-modeline)
+(add-hook 'doom-modeline-mode-hook #'doom-modeline-override-mu4e-alert-modeline)
 
 
 ;;
