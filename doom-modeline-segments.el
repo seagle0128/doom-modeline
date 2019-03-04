@@ -528,7 +528,10 @@ Uses `all-the-icons-octicon' to fetch the icon."
       (concat
        (propertize "  " 'face (if active 'mode-line 'mode-line-inactive))
        (if active
-           (concat icon doom-modeline-vspc text)
+           (concat icon
+                   (if doom-modeline-icon
+                       doom-modeline-vspc)
+                   text)
          (concat
           (propertize icon
                       'face
@@ -839,7 +842,7 @@ icons."
                        'face (if active 'mode-line 'mode-line-inactive))
            (if active
                (concat icon
-                       (when (and icon text) doom-modeline-vspc)
+                       (when (and doom-modeline-icon icon text) doom-modeline-vspc)
                        text)
              (concat
               (when icon
@@ -851,7 +854,7 @@ icons."
                                   :family
                                   ,(all-the-icons-icon-family icon))
                               'mode-line-inactive)))
-              (when (and icon text) doom-modeline-inactive-vspc)
+              (when (and doom-modeline-icon icon text) doom-modeline-inactive-vspc)
               (when text (propertize text 'face 'mode-line-inactive))))
            (propertize "  " 'face (if active 'mode-line 'mode-line-inactive))))
       "")))
@@ -1504,11 +1507,12 @@ Example:
        (propertize
         (concat
          (if doom-modeline-icon
-             (doom-modeline-icon-faicon "github"
-                                        :v-adjust -0.0575
-                                        :face 'doom-modeline-warning)
+             (concat
+              (doom-modeline-icon-faicon "github"
+                                         :v-adjust -0.0575
+                                         :face 'doom-modeline-warning)
+              doom-modeline-vspc)
            (propertize "#" 'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
-         doom-modeline-vspc
          (propertize (number-to-string doom-modeline--github-notifications-number)
                      'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
         'help-echo "Github Notifications
@@ -1592,13 +1596,14 @@ mouse-1: Toggle Debug on Quit"
          (propertize
           (concat
            (if doom-modeline-icon
-               (doom-modeline-icon-material "mail"
-                                            :height 1.1
-                                            :v-adjust -0.225
-                                            :face 'doom-modeline-warning)
+               (concat
+                (doom-modeline-icon-material "mail"
+                                             :height 1.1
+                                             :v-adjust -0.225
+                                             :face 'doom-modeline-warning)
+                doom-modeline-vspc)
              (propertize "#"
                          'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
-           doom-modeline-vspc
            (propertize (number-to-string mu4e-alert-mode-line)
                        'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
           'mouse-face '(:box 0)
@@ -1740,7 +1745,8 @@ we don't want to remove that so we just return the original."
                                     )
                                 face)
                         'help-echo help-echo)
-            (propertize doom-modeline-vspc 'help-echo help-echo)
+            (if doom-modeline-icon
+                (propertize doom-modeline-vspc 'help-echo help-echo))
             (propertize  status
                          'face face
                          'help-echo help-echo))
