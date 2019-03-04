@@ -1586,26 +1586,28 @@ mouse-1: Toggle Debug on Quit"
              (doom-modeline--active)
              (bound-and-true-p mu4e-alert-mode-line))
     ;; don't display if the unread mails count is zero
-    (if (> mu4e-alert-mode-line 0)
-        (concat
-         " "
-         (propertize
-          (concat
-           (if doom-modeline-icon
-               (doom-modeline-icon-material "mail"
-                                            :height 1.1
-                                            :v-adjust -0.225
-                                            :face 'doom-modeline-warning)
-             (propertize "#"
-                         'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
-           doom-modeline-vspc
-           (propertize (number-to-string mu4e-alert-mode-line)
-                       'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
-          'mouse-face '(:box 0)
-          'help-echo (if (= mu4e-alert-mode-line 1)
-                         "You have an unread email"
-                       (format "You have %s unread emails" mu4e-alert-mode-line)))
-         " "))))
+    (mu4e-alert--get-mu-unread-mails
+     (lambda (mails)
+       (if (> (length mails) 0)
+           (concat
+            " "
+            (propertize
+             (concat
+              (if doom-modeline-icon
+                  (doom-modeline-icon-material "mail"
+                                               :height 1.1
+                                               :v-adjust -0.225
+                                               :face 'doom-modeline-warning)
+                (propertize "#"
+                            'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
+              doom-modeline-vspc
+              (propertize (length mails)
+                          'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
+             'mouse-face '(:box 0)
+             'help-echo (if (= mu4e-alert-mode-line 1)
+                            "You have an unread email"
+                          (format "You have %s unread emails" mu4e-alert-mode-line)))
+            " "))))))
 
 (defun doom-modeline-override-mu4e-alert-modeline (&rest _)
   "Delete `mu4e-alert-mode-line' from global modeline string."
