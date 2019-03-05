@@ -290,14 +290,8 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 (advice-add #'undo-tree-undo-1 :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'undo-tree-redo-1 :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'symbol-overlay-rename :after #'doom-modeline-update-buffer-file-name)
-
-(with-no-warnings
-  (if (boundp 'after-focus-change-function)
-      (add-function :after after-focus-change-function
-                    (lambda ()
-                      (if (frame-focus-state)
-                          (doom-modeline-update-buffer-file-name))))
-    (add-hook 'focus-in-hook #'doom-modeline-update-buffer-file-name)))
+(advice-add #'doom-modeline-set-selected-window :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'doom-modeline-refresh-frame :after #'doom-modeline-update-buffer-file-name)
 
 (when (>= emacs-major-version 26)
   (add-variable-watcher
