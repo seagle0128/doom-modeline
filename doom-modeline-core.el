@@ -581,7 +581,7 @@ directory too."
        (`relative-to-project
         (doom-modeline--buffer-file-name-relative buffer-file-name buffer-file-truename))
        (`relative-from-project
-        (doom-modeline--buffer-file-name-relative buffer-file-name buffer-file-truename 'include-project))
+        (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename nil nil 'hide))
        (style
         (propertize
          (pcase style
