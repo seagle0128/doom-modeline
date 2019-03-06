@@ -150,9 +150,6 @@ Strongly recommend to use
 ;; Please refer to https://github.com/bbatsov/projectile/issues/657.
 (setq doom-modeline-buffer-file-name-style 'truncate-upto-project)
 
-;; If non-nil, the mode-line is displayed with the `variable-pitch' face.
-(setq doom-modeline-enable-variable-pitch nil)
-
 ;; Whether show `all-the-icons' or not (if nil nothing will be showed).
 (setq doom-modeline-icon t)
 

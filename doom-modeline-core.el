@@ -86,9 +86,6 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
   file-name => comint.el
   buffer-name => comint.el<2> (uniquify buffer name)")
 
-(defvar doom-modeline-enable-variable-pitch nil
-  "If non-nil, the mode-line is displayed with the `variable-pitch' face.")
-
 (defvar doom-modeline-icon (display-graphic-p)
   "Whether show `all-the-icons' or not.
 
@@ -424,24 +421,6 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
     (progn
       (add-hook 'focus-in-hook #'doom-modeline-focus)
       (add-hook 'focus-out-hook #'doom-modeline-unfocus))))
-
-;; Display mode-line with `variable-pitch' face
-(defun doom-modeline-variable-pitch (&rest _)
-  (when doom-modeline-enable-variable-pitch
-    (dolist (face '(mode-line mode-line-inactive))
-      (let ((faces (face-attribute face :inherit nil)))
-        (set-face-attribute
-         face nil :inherit
-         `(variable-pitch ,@(delq 'unspecified (if (listp faces) faces (list faces)))))))
-
-    (with-eval-after-load 'doom-themes
-      (let ((faces (face-attribute 'doom-modeline-error :inherit nil)))
-        (set-face-attribute
-         'doom-modeline-error nil :inherit
-         `(variable-pitch ,@(delq 'unspecified (if (listp faces) faces (list faces)))))))))
-
-(doom-modeline-variable-pitch)
-(advice-add #'load-theme :after #'doom-modeline-variable-pitch)
 
 
 ;;

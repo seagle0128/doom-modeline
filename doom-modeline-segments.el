@@ -322,7 +322,9 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                         'face `(:height
                                 ,(doom-modeline-icon-height 1.1)
                                 :family
-                                ,(all-the-icons-icon-family icon))))
+                                ,(all-the-icons-icon-family icon)
+                                :inherit
+                                ,(if active 'mode-line 'mode-line-inactive))))
           (if active doom-modeline-vspc doom-modeline-inactive-vspc))))
 
      ;; state icon
@@ -337,7 +339,8 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                           `(:height
                             ,(doom-modeline-icon-height 1.3)
                             :family
-                            ,(all-the-icons-icon-family icon))
+                            ,(all-the-icons-icon-family icon)
+                            :inherit mode-line-inactive)
                         'mode-line-inactive)))
         (if active doom-modeline-vspc doom-modeline-inactive-vspc)))
 
@@ -543,7 +546,9 @@ Uses `all-the-icons-octicon' to fetch the icon."
                           `(:height
                             ,(doom-modeline-icon-height 1.2)
                             :family
-                            ,(all-the-icons-icon-family icon))
+                            ,(all-the-icons-icon-family icon)
+                            :inherit
+                            mode-line-inactive)
                         'mode-line-inactive))
           doom-modeline-inactive-vspc
           (propertize text 'face 'mode-line-inactive)))
@@ -856,7 +861,9 @@ icons."
                                 `(:height
                                   ,(doom-modeline-icon-height 1.3)
                                   :family
-                                  ,(all-the-icons-icon-family icon))
+                                  ,(all-the-icons-icon-family icon)
+                                  :inherit
+                                  mode-line-inactive)
                               'mode-line-inactive)))
               (when (and doom-modeline-icon icon text) doom-modeline-inactive-vspc)
               (when text (propertize text 'face 'mode-line-inactive))))
@@ -1528,8 +1535,8 @@ mouse-3: Fetch notifications"
                        (lambda ()
                          "Open github notifications page."
                          (interactive)
-                         (browse-url "https://github.com/notifications")
-                         (run-with-timer 60 nil #'doom-modeline--github-fetch-notifications)))
+                         (run-with-timer 60 nil #'doom-modeline--github-fetch-notifications)
+                         (browse-url "https://github.com/notifications")))
                      (define-key map [mode-line mouse-3]
                        (lambda ()
                          "Fetching github notifications."
