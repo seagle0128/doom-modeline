@@ -157,8 +157,9 @@ PARSER should be a function for parsing COMMAND's output line-by-line, to
                      doom-modeline-env--parser ,parser-var)
                (doom-modeline-update-env))))
          (format "Updates the %s version string in the modeline." ',name))
-       (dolist (hook ',(doom-enlist (eval hooks)))
-         (add-hook hook #',setup-fn))))))
+       (let ((hooks ',(eval hooks)))
+         (dolist (hook (if (listp hooks) hooks (list hooks)))
+           (add-hook hook #',setup-fn)))))))
 
 
 ;;
