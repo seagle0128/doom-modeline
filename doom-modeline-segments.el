@@ -1036,12 +1036,24 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 
 (defsubst doom-modeline--multiple-cursors ()
   "Show the number of multiple cursors."
-  (when (bound-and-true-p multiple-cursors-mode)
-    (propertize
-     (concat (car mc/mode-line)
-             (eval (cadadr mc/mode-line))
-             " ")
-     'face (if (doom-modeline--active) 'doom-modeline-panel 'mode-line-inactive))))
+  (cl-destructuring-bind (count . face)
+    (cond ((bound-and-true-p multiple-cursors-mode)
+           (cons (eval (cadadr mc/mode-line))
+                 (if (doom-modeline--active)
+                     'mode-line-inactive
+                   'doom-modeline-eldoc-bar)))
+          ((bound-and-true-p evil-mc-cursor-list)
+           (cons (length evil-mc-cursor-list)
+                 (cond ((not (doom-modeline--active)) 'mode-line-inactive)
+                       (evil-mc-frozen 'doom-modeline-panel)
+                       ('doom-modeline-eldoc-bar))))
+          ((cons nil nil)))
+    (when count
+      (concat (propertize " " 'face face)
+              (doom-modeline-icon-faicon "i-cursor" :face face :v-adjust -0.1)
+              (propertize doom-modeline-vspc 'face `(:inherit (variable-pitch ,face)))
+              (propertize (format "%d " count)
+                          'face face)))))
 
 (defsubst doom-modeline--buffer-size ()
   "Show buffer size."
