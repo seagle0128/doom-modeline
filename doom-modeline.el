@@ -29,12 +29,12 @@
 
 ;;; Commentary:
 ;;
-;; This package offers a fancy and fast mode-line which was from DOOM Emacs
-;; (https://github.com/hlissner/doom-emacs/tree/master/modules/ui/doom-modeline),
-;; but it's more powerful and much faster.
-;; It's also integrated into Centaur Emacs (https://github.com/seagle0128/.emacs.d).
+;; This package offers a fancy and fast mode-line inspired by minimalism design.
 ;;
-;; The doom-modeline was designed for minimalism, and offers:
+;; It's integrated into Doom Emacs (https://github.com/hlissner/doom-emacs) and
+;; Centaur Emacs (https://github.com/seagle0128/.emacs.d).
+;;
+;; The doom-modeline offers:
 ;; - A match count panel (for anzu, iedit, multiple-cursors, symbol-overlay,
 ;;   evil-search and evil-substitute)
 ;; - An indicator for recording a macro

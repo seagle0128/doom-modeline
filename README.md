@@ -5,12 +5,10 @@
 [![MELPA Stable](https://stable.melpa.org/packages/doom-modeline-badge.svg)](https://stable.melpa.org/#/doom-modeline)
 [![License](http://img.shields.io/:license-gpl3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
 
-A fancy and fast mode-line which was from [DOOM
-Emacs](https://github.com/hlissner/doom-emacs/tree/master/modules/ui/doom-modeline),
-but it's more powerful and much faster.
+A fancy and fast mode-line inspired by minimalism design.
 
-It's integrated into [Centaur Emacs](https://github.com/seagle0128/.emacs.d) by
-default.
+It's integrated into [Doom Emacs](https://github.com/hlissner/doom-emacs) and
+[Centaur Emacs](https://github.com/seagle0128/.emacs.d).
 
 ## Feature
 
