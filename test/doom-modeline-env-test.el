@@ -32,27 +32,27 @@
 
 (ert-deftest doom-modeline-env--ruby/parse-ruby-version-string ()
   (should
-   (string= (doom-modeline-env--ruby "ruby 2.3.3p222 (2016-11-21 revision 56859) [x86_64-darwin16]")
+   (string= (doom-modeline-env--ruby-parse "ruby 2.3.3p222 (2016-11-21 revision 56859) [x86_64-darwin16]")
             "2.3.3")))
 
 (ert-deftest doom-modeline-env--elixir/parse-elixr-version-string ()
   (should
-   (string= (doom-modeline-env--elixir "IEx 1.7.4 (compiled with Erlang/OTP 21)")
+   (string= (doom-modeline-env--elixir-parse "IEx 1.7.4 (compiled with Erlang/OTP 21)")
             "1.7.4")))
 
 (ert-deftest doom-modeline-env--rustc/parse-rustc-version-string ()
   (should
-   (string= (doom-modeline-env--rustc "rustc 1.32.0-nightly (14997d56a 2018-12-05)")
+   (string= (doom-modeline-env--rust-parse "rustc 1.32.0-nightly (14997d56a 2018-12-05)")
             "1.32.0")))
 
 (ert-deftest doom-modeline-env--go/parse-go-version-string ()
   (should
-   (string= (doom-modeline-env--go "go version go1.11.4 darwin/amd64")
+   (string= (doom-modeline-env--go-parse "go version go1.11.4 darwin/amd64")
             "1.11.4")))
 
 (ert-deftest doom-modeline-env--perl/parse-perl-version-string ()
   (should
-   (string= (doom-modeline-env--perl
+   (string= (doom-modeline-env--perl-parse
              "This is perl 5, version 18, subversion 2 (v5.18.2) built for darwin-thread-multi-2level
 (with 2 registered patches, see perl -V for more detail)
 
@@ -68,7 +68,7 @@ Internet, point your browser at http://www.perl.org/, the Perl Home Page.")
 
 (ert-deftest doom-modeline-env--python/parse-python-version-string ()
   (should
-   (string= (doom-modeline-env--python "Python 2.7.15")
+   (string= (doom-modeline-env--python-parse "Python 2.7.15")
             "2.7.15")))
 
 ;;; doom-modeline-env-test.el ends here

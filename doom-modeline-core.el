@@ -123,9 +123,6 @@ The icons may not be showed correctly in terminal and on Windows.")
   "Whether display environment version or not.")
 (define-obsolete-variable-alias 'doom-modeline-version 'doom-modeline-env-version "1.7.4")
 
-(defvar doom-modeline-python-executable "python"
-  "What executable of Python will be used (if nil nothing will be showed).")
-
 (defvar doom-modeline-mu4e t
   "Whether display mu4e notifications or not. Requires `mu4e-alert' package.")
 
