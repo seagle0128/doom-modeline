@@ -237,6 +237,7 @@ Uses `all-the-icons-material' to fetch the icon."
 (add-hook 'read-only-mode-hook #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-change-functions #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-state-icon)
+(add-hook 'evil-insert-state-exit-hook #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'set-buffer-modified-p :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'restore-buffer-modified-p :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'undo :after #'doom-modeline-update-buffer-file-state-icon)
@@ -274,9 +275,10 @@ Uses `all-the-icons-material' to fetch the icon."
         (if buffer-file-name
             (doom-modeline-buffer-file-name)
           (propertize "%b"
-                      'face (if (doom-modeline--active)
-                                'doom-modeline-buffer-file
-                              'mode-line-inactive)
+                      'face (cond
+                             ((buffer-modified-p) 'doom-modeline-buffer-modified)
+                             ((doom-modeline--active) 'doom-modeline-buffer-file)
+                             (t 'mode-line-inactive))
                       'help-echo "Buffer name
 mouse-1: Previous buffer\nmouse-3: Next buffer"
                       'local-map mode-line-buffer-identification-keymap))))
@@ -286,7 +288,6 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 (add-hook 'after-change-functions #'doom-modeline-update-buffer-file-name)
 (add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'evil-insert-state-exit-hook #'doom-modeline-update-buffer-file-name)
-(add-hook 'evil-insert-state-exit-hook #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'rename-buffer :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'set-visited-file-name :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'set-buffer-modified-p :after #'doom-modeline-update-buffer-file-name)
