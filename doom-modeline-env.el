@@ -30,6 +30,9 @@
 (require 'subr-x)
 (require 'doom-modeline-core)
 
+;; Externals
+(defvar python-shell-interpreter)
+
 ;; Show version string for multi-version managers like rvm, rbenv, pyenv, etc.
 (defvar-local doom-modeline-env--version nil
   "The version to display with major-mode in mode-line.
