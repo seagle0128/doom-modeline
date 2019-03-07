@@ -51,6 +51,7 @@
 (defvar evil-ex-argument)
 (defvar evil-ex-range)
 (defvar evil-local-mode)
+(defvar evil-mc-frozen)
 (defvar evil-state)
 (defvar evil-visual-beginning)
 (defvar evil-visual-end)
@@ -291,7 +292,8 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 (advice-add #'undo-tree-redo-1 :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'symbol-overlay-rename :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'doom-modeline-set-selected-window :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'doom-modeline-refresh-frame :after #'doom-modeline-update-buffer-file-name)
+(if (fboundp 'doom-modeline-refresh-frame)
+    (advice-add #'doom-modeline-refresh-frame :after #'doom-modeline-update-buffer-file-name))
 
 (when (>= emacs-major-version 26)
   (add-variable-watcher
@@ -1252,7 +1254,7 @@ mouse-2: Show help for minor mode"
 (add-hook 'find-file-hook #'doom-modeline-update-persp-name)
 (add-hook 'persp-activated-functions #'doom-modeline-update-persp-name)
 (add-hook 'persp-renamed-functions #'doom-modeline-update-persp-name)
-(add-hook 'buffer-list-update-hook #'doom-modeline-update-persp-name)
+(advice-add #'doom-modeline-set-selected-window :after #'doom-modeline-update-persp-name)
 
 (doom-modeline-def-segment persp-name
   "The current perspective name."
