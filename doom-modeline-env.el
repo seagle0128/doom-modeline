@@ -223,7 +223,7 @@ PARSER should be a function for parsing COMMAND's output line-by-line, to
 (doom-modeline-def-env elixir
   :hooks   'elixir-mode-hook
   :command (lambda () (list (or doom-modeline-env-elixir-executable "iex") "--version"))
-  :parser  (lambda () (cadr (split-string line))))
+  :parser  (lambda (line) (cadr (split-string line))))
 
 ;;;###autoload (autoload 'doom-modeline-env-setup-rust "doom-modeline-env")
 (doom-modeline-def-env rust
