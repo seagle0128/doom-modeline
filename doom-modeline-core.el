@@ -200,7 +200,7 @@ The icons may not be showed correctly in terminal and on Windows.")
 (defface doom-modeline-bar '((t (:inherit highlight)))
   "The face used for the left-most bar on the mode-line of an active window.")
 
-(defface doom-modeline-eldoc-bar `((t (:background ,(face-foreground 'success))))
+(defface doom-modeline-eldoc-bar `((t (:background ,(face-foreground 'default))))
   "The face used for the left-most bar on the mode-line when eldoc-eval is active.")
 
 (defface doom-modeline-inactive-bar `((t (:background ,(face-foreground 'mode-line-inactive))))
@@ -227,10 +227,10 @@ The icons may not be showed correctly in terminal and on Windows.")
 (defface doom-modeline-evil-replace-state '((t (:inherit doom-modeline-buffer-modified)))
   "Face for the replace state tag in evil state indicator.")
 
-(defface doom-modeline-persp-name '((t (:inherit font-lock-comment-face :italic t)))
+(defface doom-modeline-persp-name '((t (:inherit (font-lock-comment-face italic))))
   "Face for the replace state tag in evil state indicator.")
 
-(defface doom-modeline-persp-buffer-not-in-persp '((t (:inherit font-lock-doc-face :bold t)))
+(defface doom-modeline-persp-buffer-not-in-persp '((t (:inherit (font-lock-doc-face bold))))
   "Face for the replace state tag in evil state indicator.")
 
 ;;
@@ -355,9 +355,16 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
            mode-line-in-non-selected-windows)
       (force-mode-line-update)
       (sit-for eldoc-show-in-mode-line-delay))))
-(setq eldoc-in-minibuffer-show-fn #'doom-modeline--show-eldoc)
 
-(eldoc-in-minibuffer-mode 1)
+(add-hook 'doom-modeline-mode-hook
+          (lambda ()
+            (if (bound-and-true-p doom-modeline-mode)
+                (progn
+                  (eldoc-in-minibuffer-mode 1)
+                  (setq eldoc-in-minibuffer-show-fn #'doom-modeline--show-eldoc))
+              (progn
+                (eldoc-in-minibuffer-mode -1)
+                (setq eldoc-in-minibuffer-show-fn #'eldoc-show-in-mode-line)))))
 
 ;; Keep `doom-modeline-current-window' up-to-date
 (defun doom-modeline--get-current-window ()
