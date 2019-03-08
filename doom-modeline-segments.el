@@ -215,7 +215,7 @@ Uses `all-the-icons-material' to fetch the icon."
                 "lock"
                 "%1*"
                 'doom-modeline-warning))
-              ((buffer-modified-p)
+              ((and buffer-file-name (buffer-modified-p))
                (doom-modeline-buffer-file-state-icon
                 "save"
                 "%1*"
@@ -235,11 +235,9 @@ Uses `all-the-icons-material' to fetch the icon."
 (add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-save-hook #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'read-only-mode-hook #'doom-modeline-update-buffer-file-state-icon)
-(add-hook 'after-change-functions #'doom-modeline-update-buffer-file-state-icon)
+;; (add-hook 'after-change-functions #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'evil-insert-state-exit-hook #'doom-modeline-update-buffer-file-state-icon)
-(advice-add #'set-buffer-modified-p :after #'doom-modeline-update-buffer-file-state-icon)
-(advice-add #'restore-buffer-modified-p :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'undo :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'undo-tree-undo-1 :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'undo-tree-redo-1 :after #'doom-modeline-update-buffer-file-state-icon)
@@ -275,10 +273,9 @@ Uses `all-the-icons-material' to fetch the icon."
         (if buffer-file-name
             (doom-modeline-buffer-file-name)
           (propertize "%b"
-                      'face (cond
-                             ((buffer-modified-p) 'doom-modeline-buffer-modified)
-                             ((doom-modeline--active) 'doom-modeline-buffer-file)
-                             (t 'mode-line-inactive))
+                      'face (if (doom-modeline--active)
+                                'doom-modeline-buffer-file
+                              'mode-line-inactive)
                       'help-echo "Buffer name
 mouse-1: Previous buffer\nmouse-3: Next buffer"
                       'local-map mode-line-buffer-identification-keymap))))
@@ -290,11 +287,10 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 (add-hook 'evil-insert-state-exit-hook #'doom-modeline-update-buffer-file-name)
 (advice-add #'rename-buffer :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'set-visited-file-name :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'set-buffer-modified-p :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'restore-buffer-modified-p :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'undo :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'undo-tree-undo-1 :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'undo-tree-redo-1 :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'fill-paragraph :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'symbol-overlay-rename :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'doom-modeline-set-selected-window :after #'doom-modeline-update-buffer-file-name)
 (if (fboundp 'doom-modeline-refresh-frame)
