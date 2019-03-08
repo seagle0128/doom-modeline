@@ -28,12 +28,13 @@
 
 ;;; Code:
 
-(require 'all-the-icons)
 (require 'eldoc-eval)
 (require 'shrink-path)
 (require 'subr-x)
 (when (>= emacs-major-version 26)
   (require 'project))
+(when (bound-and-true-p doom-modeline-icon)
+  (require 'all-the-icons))
 
 
 ;;
