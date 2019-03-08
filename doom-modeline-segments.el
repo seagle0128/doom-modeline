@@ -97,6 +97,8 @@
 (declare-function evil-state-property 'evil-common)
 (declare-function evil-visual-state-p 'evil-states)
 (declare-function eyebrowse--get 'eyebrowse)
+(declare-function fancy-narrow-to-region 'fancy-narrow)
+(declare-function fancy-widen 'fancy-narrow)
 (declare-function flycheck-buffer 'flycheck)
 (declare-function flycheck-count-errors 'flycheck)
 (declare-function flycheck-list-errors 'flycheck)
@@ -226,7 +228,9 @@ Uses `all-the-icons-material' to fetch the icon."
                 "do_not_disturb_alt"
                 "!"
                 'doom-modeline-urgent))
-              ((buffer-narrowed-p)
+              ((or (buffer-narrowed-p)
+                   (and (fboundp 'fancy-narrow-active-p)
+                        (fancy-narrow-active-p)))
                (doom-modeline-buffer-file-state-icon
                 "vertical_align_center"
                 "><"
@@ -243,6 +247,8 @@ Uses `all-the-icons-material' to fetch the icon."
 (advice-add #'undo-tree-redo-1 :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'narrow-to-region :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'widen :after #'doom-modeline-update-buffer-file-state-icon)
+(advice-add #'fancy-narrow-to-region :after #'doom-modeline-update-buffer-file-state-icon)
+(advice-add #'fancy-widen :after #'doom-modeline-update-buffer-file-state-icon)
 
 (when (>= emacs-major-version 26)
   (add-variable-watcher
