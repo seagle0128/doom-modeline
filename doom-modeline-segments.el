@@ -202,7 +202,7 @@ Uses `all-the-icons-material' to fetch the icon."
          icon
          :face face
          :height (or height 1.1)
-         :v-adjust (or voffset -0.225)))
+         :v-adjust (or voffset (/ -0.27 all-the-icons-scale-factor))))
     (when text
       (propertize text 'face face))))
 
@@ -570,7 +570,12 @@ TEXT is the alternative if it is not applicable.
 Uses `all-the-icons-material' to fetch the icon."
   (if doom-modeline-icon
       (when icon
-        (doom-modeline-icon-material icon :face face :height 1.1 :v-adjust (or voffset -0.225)))
+        (doom-modeline-icon-material
+         icon
+         :face face
+         :height 1.1
+         :v-adjust (or voffset
+                       (/ -0.27 all-the-icons-scale-factor))))
     (when text
       (propertize text 'face face))))
 
@@ -1040,17 +1045,17 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 (defsubst doom-modeline--multiple-cursors ()
   "Show the number of multiple cursors."
   (cl-destructuring-bind (count . face)
-    (cond ((bound-and-true-p multiple-cursors-mode)
-           (cons (eval (cadadr mc/mode-line))
-                 (if (doom-modeline--active)
-                     'mode-line-inactive
-                   'doom-modeline-eldoc-bar)))
-          ((bound-and-true-p evil-mc-cursor-list)
-           (cons (length evil-mc-cursor-list)
-                 (cond ((not (doom-modeline--active)) 'mode-line-inactive)
-                       (evil-mc-frozen 'doom-modeline-panel)
-                       ('doom-modeline-eldoc-bar))))
-          ((cons nil nil)))
+      (cond ((bound-and-true-p multiple-cursors-mode)
+             (cons (eval (cadadr mc/mode-line))
+                   (if (doom-modeline--active)
+                       'mode-line-inactive
+                     'doom-modeline-eldoc-bar)))
+            ((bound-and-true-p evil-mc-cursor-list)
+             (cons (length evil-mc-cursor-list)
+                   (cond ((not (doom-modeline--active)) 'mode-line-inactive)
+                         (evil-mc-frozen 'doom-modeline-panel)
+                         ('doom-modeline-eldoc-bar))))
+            ((cons nil nil)))
     (when count
       (concat (propertize " " 'face face)
               (doom-modeline-icon-faicon "i-cursor" :face face :v-adjust -0.1)
@@ -1625,7 +1630,7 @@ mouse-1: Toggle Debug on Quit"
                (concat
                 (doom-modeline-icon-material "mail"
                                              :height 1.1
-                                             :v-adjust -0.225
+                                             :v-adjust (/ -0.27 all-the-icons-scale-factor)
                                              :face 'doom-modeline-warning)
                 doom-modeline-vspc)
              (propertize "#"
@@ -1702,7 +1707,7 @@ we don't want to remove that so we just return the original."
      (propertize (if doom-modeline-icon
                      (doom-modeline-icon-material "message"
                                                   :height 1.1
-                                                  :v-adjust -0.225
+                                                  :v-adjust (/ -0.27 all-the-icons-scale-factor)
                                                   :face 'doom-modeline-warning)
                    (propertize "#"
                                'face '(:inherit (doom-modeline-warning
@@ -1778,7 +1783,10 @@ we don't want to remove that so we just return the original."
                          'help-echo help-echo))
          ;; Battery status is not available
          (if doom-modeline-icon
-             (doom-modeline-icon-material "battery_unknown" :height 1.1 :v-adjust -0.225 :face 'error)
+             (doom-modeline-icon-material "battery_unknown"
+                                          :height 1.1
+                                          :v-adjust (/ -0.27 all-the-icons-scale-factor)
+                                          :face 'error)
            (propertize "N/A" 'face 'error)))
        " "))))
 
