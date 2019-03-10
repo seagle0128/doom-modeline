@@ -1054,8 +1054,8 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
       (cond ((bound-and-true-p multiple-cursors-mode)
              (cons (eval (cadadr mc/mode-line))
                    (if (doom-modeline--active)
-                       'mode-line-inactive
-                     'doom-modeline-eldoc-bar)))
+                       'doom-modeline-eldoc-bar
+                     'mode-line-inactive)))
             ((bound-and-true-p evil-mc-cursor-list)
              (cons (length evil-mc-cursor-list)
                    (cond ((not (doom-modeline--active)) 'mode-line-inactive)
