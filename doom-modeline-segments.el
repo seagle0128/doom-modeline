@@ -1052,7 +1052,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
   "Show the number of multiple cursors."
   (cl-destructuring-bind (count . face)
       (cond ((bound-and-true-p multiple-cursors-mode)
-             (cons (eval (cadadr mc/mode-line))
+             (cons (mc/num-cursors)
                    (if (doom-modeline--active)
                        'doom-modeline-eldoc-bar
                      'mode-line-inactive)))
