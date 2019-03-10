@@ -298,6 +298,8 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 (advice-add #'undo-tree-redo-1 :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'fill-paragraph :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'symbol-overlay-rename :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'popup-create :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'popup-delete :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'doom-modeline-set-selected-window :after #'doom-modeline-update-buffer-file-name)
 (if (fboundp 'doom-modeline-refresh-frame)
     (advice-add #'doom-modeline-refresh-frame :after #'doom-modeline-update-buffer-file-name))
