@@ -303,14 +303,15 @@ Example:
         (rhs-forms (doom-modeline--prepare-segments rhs)))
     (defalias sym
       (lambda ()
-        (let ((rhs-str (format-mode-line (cons "" rhs-forms))))
-          (list lhs-forms
-                (propertize
-                 " "
-                 'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
-                 'display `((space :align-to (- (+ right right-fringe right-margin)
-                                                ,(+ 1 (string-width rhs-str))))))
-                rhs-str)))
+        (list lhs-forms
+              (propertize
+               " "
+               'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
+               'display `((space :align-to (- (+ right right-fringe right-margin)
+                                              ,(+ 1 (string-width
+                                                     (format-mode-line
+                                                      (cons "" rhs-forms))))))))
+              rhs-forms))
       (concat "Modeline:\n"
               (format "  %s\n  %s"
                       (prin1-to-string lhs)

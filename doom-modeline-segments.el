@@ -467,12 +467,9 @@ mouse-1: Display minor modes menu"
                                    'mouse-1 #'minions-minor-modes-menu))
            " ")
         (propertize
-         (concat
-          (replace-regexp-in-string (regexp-quote "%")
-                                    "%%%%"
-                                    (format-mode-line '("" minor-mode-alist))
-                                    t t)
-          " ")
+         (replace-regexp-in-string (regexp-quote "%") "%%"
+                                   (format-mode-line '("" minor-mode-alist " "))
+                                   t t)
          'face (if active
                    'doom-modeline-buffer-minor-mode
                  'mode-line-inactive))))))
@@ -1284,10 +1281,7 @@ mouse-2: Show help for minor mode"
   "Mode line construct for miscellaneous information.
 By default, this shows the information specified by `global-mode-string'."
   (if (doom-modeline--active)
-      (replace-regexp-in-string (regexp-quote "%")
-                                "%%%%"
-                                (format-mode-line mode-line-misc-info)
-                                t t)))
+      '("" mode-line-misc-info)))
 
 
 ;;
@@ -1767,7 +1761,7 @@ we don't want to remove that so we just return the original."
                    (if doom-modeline-icon
                        (doom-modeline-icon-faicon "battery-empty" :v-adjust -0.0575)
                      (propertize "!" 'face face)))))
-           (status (and percentage (concat percentage "%%%%")))
+           (status (and percentage (concat percentage "%%")))
            (help-echo (if battery-echo-area-format
                           (battery-format battery-echo-area-format fancy-battery-last-status)
                         "Battery status not available")))
