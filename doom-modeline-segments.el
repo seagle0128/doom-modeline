@@ -120,6 +120,7 @@
 (declare-function lsp--workspace-print 'lsp-mode)
 (declare-function lsp-workspaces 'lsp-mode)
 (declare-function magit-toplevel 'magit-git)
+(declare-function mc/num-cursors 'multiple-cursors-core)
 (declare-function minions-minor-modes-menu 'minions)
 (declare-function mu4e-alert-default-mode-line-formatter 'mu4e-alert)
 (declare-function mu4e-alert-enable-mode-line-display 'mu4e-alert)
@@ -130,6 +131,8 @@
 (declare-function persp-contain-buffer-p 'persp-mode)
 (declare-function persp-remove-buffer 'persp-mode)
 (declare-function persp-switch 'persp-mode)
+(declare-function popup-create 'popup)
+(declare-function popup-delete 'popup)
 (declare-function symbol-overlay-assoc 'symbol-overlay)
 (declare-function symbol-overlay-get-list 'symbol-overlay)
 (declare-function symbol-overlay-get-symbol 'symbol-overlay)
@@ -467,9 +470,12 @@ mouse-1: Display minor modes menu"
                                    'mouse-1 #'minions-minor-modes-menu))
            " ")
         (propertize
-         (replace-regexp-in-string (regexp-quote "%") "%%"
-                                   (format-mode-line '("" minor-mode-alist " "))
-                                   t t)
+         (concat
+          (replace-regexp-in-string (regexp-quote "%")
+                                    "%%%%"
+                                    (format-mode-line '("" minor-mode-alist))
+                                    t t)
+          " ")
          'face (if active
                    'doom-modeline-buffer-minor-mode
                  'mode-line-inactive))))))
@@ -1053,13 +1059,13 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
       (cond ((bound-and-true-p multiple-cursors-mode)
              (cons (mc/num-cursors)
                    (if (doom-modeline--active)
-                       'doom-modeline-eldoc-bar
+                       'doom-modeline-panel
                      'mode-line-inactive)))
             ((bound-and-true-p evil-mc-cursor-list)
              (cons (length evil-mc-cursor-list)
                    (cond ((not (doom-modeline--active)) 'mode-line-inactive)
-                         (evil-mc-frozen 'doom-modeline-panel)
-                         ('doom-modeline-eldoc-bar))))
+                         (evil-mc-frozen 'doom-modeline-bar)
+                         ('doom-modeline-panel))))
             ((cons nil nil)))
     (when count
       (concat (propertize " " 'face face)
