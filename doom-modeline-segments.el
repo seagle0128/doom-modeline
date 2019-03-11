@@ -129,6 +129,10 @@
 (declare-function jsonrpc--request-continuations 'jsonrpc)
 (declare-function jsonrpc-last-error 'jsonrpc)
 (declare-function lsp--workspace-print 'lsp-mode)
+(declare-function lsp-describe-session 'lsp-mode)
+(declare-function lsp-rename 'lsp-mode)
+(declare-function lsp-restart-workspace 'lsp-mode)
+(declare-function lsp-shutdown-workspace 'lsp-mode)
 (declare-function lsp-workspaces 'lsp-mode)
 (declare-function magit-toplevel 'magit-git)
 (declare-function mc/num-cursors 'multiple-cursors-core)
@@ -1484,9 +1488,25 @@ mouse-3: Describe current input method")
                                  face))
                        'help-echo (if workspaces
                                       (concat "LSP Connected "
-                                              (string-join (--map (format "[%s]" (lsp--workspace-print it))
-                                                                  workspaces)))
-                                    "LSP Disconnected")))
+                                              (string-join (--map (format "[%s]\n" (lsp--workspace-print it))
+                                                                  workspaces))
+                                              "C-mouse-1: Rename server
+mouse-1: Describe server
+mouse-2: Quit server
+mouse-3: Reconnect to server")
+                                    "LSP Disconnected")
+                       'mouse-face (if workspaces '(:box 0))
+                       'local-map (let ((map (make-sparse-keymap)))
+                                    (when workspaces
+                                      (define-key map [mode-line C-mouse-1]
+                                        #'lsp-rename)
+                                      (define-key map [mode-line mouse-1]
+                                        #'lsp-describe-session)
+                                      (define-key map [mode-line mouse-2]
+                                        #'lsp-shutdown-workspace)
+                                      (define-key map [mode-line mouse-3]
+                                        #'lsp-restart-workspace))
+                                    map)))
          " "))
        ((and (fboundp 'eglot--current-server) (eglot--current-server))
         (pcase-let* ((icon (if doom-modeline-icon
