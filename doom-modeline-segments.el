@@ -86,6 +86,15 @@
 (declare-function aw-update 'ace-window)
 (declare-function aw-window-list 'ace-window)
 (declare-function battery-format 'battery)
+(declare-function eglot--major-mode 'eglot)
+(declare-function eglot--project-nickname 'eglot)
+(declare-function eglot--spinner 'eglot)
+(declare-function eglot-clear-status 'eglot)
+(declare-function eglot-events-buffer 'eglot)
+(declare-function eglot-forget-pending-continuations 'eglot)
+(declare-function eglot-reconnect 'eglot)
+(declare-function eglot-shutdown 'eglot)
+(declare-function eglot-stderr-buffer 'eglot)
 (declare-function evil-delimited-arguments 'evil-common)
 (declare-function evil-emacs-state-p 'evil-states)
 (declare-function evil-force-normal-state 'evil-commands)
@@ -117,6 +126,8 @@
 (declare-function iedit-find-current-occurrence-overlay 'iedit-lib)
 (declare-function iedit-prev-occurrence 'iedit-lib)
 (declare-function image-get-display-property 'image-mode)
+(declare-function jsonrpc--request-continuations 'jsonrpc)
+(declare-function jsonrpc-last-error 'jsonrpc)
 (declare-function lsp--workspace-print 'lsp-mode)
 (declare-function lsp-workspaces 'lsp-mode)
 (declare-function magit-toplevel 'magit-git)
@@ -1457,25 +1468,97 @@ mouse-3: Describe current input method")
 (doom-modeline-def-segment lsp
   "The LSP server state."
   (if (and doom-modeline-lsp
-           (doom-modeline--active)
-           (bound-and-true-p lsp-mode))
-      (concat
-       " "
-       (let ((icon (if doom-modeline-icon
-                       (doom-modeline-icon-faicon "rocket" :v-adjust -0.0575)
-                     "LSP"))
-             (workspaces (lsp-workspaces)))
-         (propertize icon
-                     'face (let ((face (if workspaces 'success 'warning)))
-                             (if doom-modeline-icon
+           (doom-modeline--active))
+      (cond
+       ((bound-and-true-p lsp-mode)
+        (concat
+         " "
+         (let ((icon (if doom-modeline-icon
+                         (doom-modeline-icon-faicon "rocket" :v-adjust -0.0575)
+                       "LSP"))
+               (workspaces (lsp-workspaces)))
+           (propertize icon
+                       'face (let ((face (if workspaces 'success 'warning)))
+                               (if doom-modeline-icon
+                                   `(:height 1.1 :family ,(all-the-icons-icon-family icon) :inherit ,face)
+                                 face))
+                       'help-echo (if workspaces
+                                      (concat "LSP Connected "
+                                              (string-join (--map (format "[%s]" (lsp--workspace-print it))
+                                                                  workspaces)))
+                                    "LSP Disconnected")))
+         " "))
+       ((and (fboundp 'eglot--current-server) (eglot--current-server))
+        (pcase-let* ((icon (if doom-modeline-icon
+                               (doom-modeline-icon-faicon "rocket" :v-adjust -0.0575)
+                             "EGLOT"))
+                     (server (eglot--current-server))
+                     (nick (and server (eglot--project-nickname server)))
+                     (pending (and server (hash-table-count
+                                           (jsonrpc--request-continuations server))))
+                     (`(,_id ,doing ,done-p ,detail) (and server (eglot--spinner server)))
+                     (last-error (and server (jsonrpc-last-error server)))
+                     (face (cond
+                            (last-error 'error)
+                            ((and doing (not done-p)) 'compilation-mode-line-run)
+                            ((cl-plusp pending) 'mode-line)
+                            (nick 'success)
+                            (t 'warning)))
+                     (help-echo (cond
+                                 (last-error
+                                  (format "EGLOT\nAn error occured: %s
+mouse-3: clear this status" (plist-get last-error :message)))
+                                 ((and doing (not done-p))
+                                  (format "EGLOT\n%s%s" doing
+                                          (if detail (format "%s" detail) "")))
+                                 ((cl-plusp pending)
+                                  (format "EGLOT\n%d outstanding requests" pending))
+                                 (nick (format "EGLOT Connected: (%s/%s)
+C-mouse-1: Disply server errors
+mouse-1: Display server events
+mouse-2: Quit server
+mouse-3: Reconnect to server" nick (eglot--major-mode server)))
+                                 (t "EGLOT Disconnected")))
+                     (local-map
+                      (let ((map (make-sparse-keymap)))
+                        (cond
+                         (last-error
+                          (define-key map [mode-line mouse-3]
+                            #'eglot-clear-status))
+                         ((cl-plusp pending)
+                          (define-key map [mode-line mouse-3]
+                            #'eglot-forget-pending-continuations))
+                         (nick
+                          (define-key map [mode-line C-mouse-1]
+                            #'eglot-stderr-buffer)
+                          (define-key map [mode-line mouse-1]
+                            #'eglot-events-buffer)
+                          (define-key map [mode-line mouse-2]
+                            #'eglot-shutdown)
+                          (define-key map [mode-line mouse-3]
+                            #'eglot-reconnect)))
+                        map)))
+          (concat
+           " "
+           (propertize icon
+                       'face (if doom-modeline-icon
                                  `(:height 1.1 :family ,(all-the-icons-icon-family icon) :inherit ,face)
-                               face))
-                     'help-echo (if workspaces
-                                    (concat "LSP Connected "
-                                            (string-join (--map (format "[%s]" (lsp--workspace-print it))
-                                                                workspaces)))
-                                  "LSP Disconnected")))
-       " ")))
+                               face)
+                       'help-echo help-echo
+                       'mouse-face '(:box 0)
+                       'local-map local-map)
+           " "))))))
+
+(defun doom-modeline-override-eglot-modeline ()
+  "Override `eglot' mode-line."
+  (if (bound-and-true-p doom-modeline-mode)
+      (setq mode-line-misc-info
+            (delq (assq 'eglot--managed-mode mode-line-misc-info) mode-line-misc-info))
+    (add-to-list 'mode-line-misc-info
+                 `(eglot--managed-mode (" [" eglot--mode-line-format "] ")))))
+(with-eval-after-load 'eglot
+  (doom-modeline-override-eglot-modeline))
+(add-hook 'doom-modeline-mode-hook #'doom-modeline-override-eglot-modeline)
 
 
 ;;

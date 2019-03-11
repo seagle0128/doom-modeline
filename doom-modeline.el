@@ -52,7 +52,7 @@
 ;; - An indicator for remote host
 ;; - An indicator for current input method
 ;; - An indicator for debug state
-;; - An indicator for LSP state
+;; - An indicator for LSP state with lsp-mode or eglot
 ;; - An indicator for github notifications
 ;; - An indicator for unread emails with mu4e-alert
 ;; - An indicator for irc notifications with circe
