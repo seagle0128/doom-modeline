@@ -165,6 +165,25 @@
 
 
 ;;
+;; global watchers
+;;
+
+(when (>= emacs-major-version 26)
+  (add-variable-watcher
+   'doom-modeline-icon
+   (lambda (_sym val op _where)
+     (when (eq op 'set)
+       (setq doom-modeline-icon val)
+       (revert-buffer t t))))
+
+  (add-variable-watcher
+   'all-the-icons-scale-factor
+   (lambda (_sym val op _where)
+     (when (eq op 'set)
+       (setq all-the-icons-scale-factor val)
+       (revert-buffer t t)))))
+
+;;
 ;; buffer information
 ;;
 
@@ -204,14 +223,6 @@ buffer where knowing the current project directory is important."
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-icon)
 (add-hook 'after-change-major-mode-hook #'doom-modeline-update-buffer-file-icon)
 (add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-icon)
-
-(when (>= emacs-major-version 26)
-  (add-variable-watcher
-   'all-the-icons-scale-factor
-   (lambda (_sym val op _where)
-     (when (eq op 'set)
-       (setq all-the-icons-scale-factor val)
-       (doom-modeline-update-buffer-file-icon)))))
 
 (defun doom-modeline-buffer-file-state-icon (icon &optional text face height voffset)
   "Displays an ICON with FACE, HEIGHT and VOFFSET.
@@ -275,20 +286,6 @@ Uses `all-the-icons-material' to fetch the icon."
    (lambda (_sym val op _where)
      (when (eq op 'set)
        (setq buffer-read-only val)
-       (doom-modeline-update-buffer-file-state-icon))))
-
-  (add-variable-watcher
-   'doom-modeline-icon
-   (lambda (_sym val op _where)
-     (when (eq op 'set)
-       (setq doom-modeline-icon val)
-       (doom-modeline-update-buffer-file-state-icon))))
-
-  (add-variable-watcher
-   'all-the-icons-scale-factor
-   (lambda (_sym val op _where)
-     (when (eq op 'set)
-       (setq all-the-icons-scale-factor val)
        (doom-modeline-update-buffer-file-state-icon)))))
 
 (defvar-local doom-modeline--buffer-file-name nil)
@@ -532,14 +529,6 @@ Uses `all-the-icons-octicon' to fetch the icon."
 (add-hook 'after-save-hook #'doom-modeline--update-vcs-icon)
 (advice-add #'vc-refresh-state :after #'doom-modeline--update-vcs-icon)
 
-(when (>= emacs-major-version 26)
-  (add-variable-watcher
-   'doom-modeline-icon
-   (lambda (_sym val op _where)
-     (when (eq op 'set)
-       (setq doom-modeline-icon val)
-       (doom-modeline--update-vcs-icon)))))
-
 (defvar-local doom-modeline--vcs-text nil)
 (defun doom-modeline-update-vcs-text (&rest _)
   "Update text of vsc state in mode-line."
@@ -653,15 +642,6 @@ mouse-2: Show help for minor mode")
                         map)))))
 (add-hook 'flycheck-status-changed-functions #'doom-modeline-update-flycheck-icon)
 (add-hook 'flycheck-mode-hook #'doom-modeline-update-flycheck-icon)
-
-(when (>= emacs-major-version 26)
-  (add-variable-watcher
-   'doom-modeline-icon
-   (lambda (_sym val op _where)
-     (when (eq op 'set)
-       (setq doom-modeline-icon val)
-       (when (bound-and-true-p flycheck-mode)
-         (flycheck-buffer))))))
 
 (defvar-local doom-modeline--flycheck-text nil)
 (defun doom-modeline-update-flycheck-text (&optional status)
@@ -788,15 +768,6 @@ mouse-2: Show help for minor mode"
                               (describe-function 'flymake-mode)))
                           map))))))
 (advice-add #'flymake--handle-report :after #'doom-modeline-update-flymake-icon)
-
-(when (>= emacs-major-version 26)
-  (add-variable-watcher
-   'doom-modeline-icon
-   (lambda (_sym val op _where)
-     (when (eq op 'set)
-       (setq doom-modeline-icon val)
-       (when (bound-and-true-p flymake-mode)
-         (flymake-start))))))
 
 (defvar-local doom-modeline--flymake-text nil)
 (defun doom-modeline-update-flymake-text (&rest _)
