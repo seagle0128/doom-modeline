@@ -1491,8 +1491,8 @@ mouse-3: Describe current input method")
                                       (concat "LSP Connected "
                                               (string-join (--map (format "[%s]\n" (lsp--workspace-print it))
                                                                   workspaces))
-                                              "C-mouse-1: Rename server
-mouse-1: Describe server
+                                              "C-mouse-1: Switch to another workspace folder
+mouse-1: Describe current session
 mouse-2: Quit server
 mouse-3: Reconnect to server")
                                     "LSP Disconnected")
@@ -1500,7 +1500,7 @@ mouse-3: Reconnect to server")
                        'local-map (let ((map (make-sparse-keymap)))
                                     (when workspaces
                                       (define-key map [mode-line C-mouse-1]
-                                        #'lsp-rename)
+                                        #'lsp-workspace-folders-switch)
                                       (define-key map [mode-line mouse-1]
                                         #'lsp-describe-session)
                                       (define-key map [mode-line mouse-2]
@@ -1522,9 +1522,9 @@ mouse-3: Reconnect to server")
                      (face (cond
                             (last-error 'error)
                             ((and doing (not done-p)) 'compilation-mode-line-run)
-                            ((cl-plusp pending) 'mode-line)
+                            ((cl-plusp pending) 'warning)
                             (nick 'success)
-                            (t 'warning)))
+                            (t 'mode-line)))
                      (help-echo (cond
                                  (last-error
                                   (format "EGLOT\nAn error occured: %s
@@ -1534,7 +1534,7 @@ mouse-3: clear this status" (plist-get last-error :message)))
                                           (if detail (format "%s" detail) "")))
                                  ((cl-plusp pending)
                                   (format "EGLOT\n%d outstanding requests" pending))
-                                 (nick (format "EGLOT Connected: (%s/%s)
+                                 (nick (format "EGLOT Connected (%s/%s)
 C-mouse-1: Disply server errors
 mouse-1: Display server events
 mouse-2: Quit server
