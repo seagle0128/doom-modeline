@@ -1085,7 +1085,9 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
             ((cons nil nil)))
     (when count
       (concat (propertize " " 'face face)
-              (doom-modeline-icon-faicon "i-cursor" :face face :v-adjust -0.1)
+              (if doom-modeline-icon
+                  (doom-modeline-icon-faicon "i-cursor" :face face :v-adjust -0.0575)
+                (propertize "I" 'face `(:inherit ,face :height 1.4) 'display '(raise -0.085)))
               (propertize doom-modeline-vspc 'face `(:inherit (variable-pitch ,face)))
               (propertize (format "%d " count)
                           'face face)))))
