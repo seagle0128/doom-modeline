@@ -231,7 +231,7 @@ The icons may not be showed correctly in terminal and on Windows.")
 (defface doom-modeline-persp-name '((t (:inherit (font-lock-comment-face italic))))
   "Face for the replace state tag in evil state indicator.")
 
-(defface doom-modeline-persp-buffer-not-in-persp '((t (:inherit (font-lock-doc-face bold))))
+(defface doom-modeline-persp-buffer-not-in-persp '((t (:inherit (font-lock-doc-face bold italic))))
   "Face for the replace state tag in evil state indicator.")
 
 ;;

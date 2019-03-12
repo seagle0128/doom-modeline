@@ -1243,23 +1243,26 @@ Requires `eyebrowse-mode' to be enabled."
           (let* ((persp (get-current-persp))
                  (name (safe-persp-name persp)))
             (unless (string-equal persp-nil-name name)
-              (propertize
-               (format " #%s " name)
-               'face (if (and persp
-                              (not (persp-contain-buffer-p (current-buffer) persp)))
-                         'doom-modeline-persp-buffer-not-in-persp
-                       'doom-modeline-persp-name)
-               'help-echo "mouse-1: Switch perspective
+              (concat
+               " "
+               (propertize
+                (format "#%s" name)
+                'face (if (and persp
+                               (not (persp-contain-buffer-p (current-buffer) persp)))
+                          'doom-modeline-persp-buffer-not-in-persp
+                        'doom-modeline-persp-name)
+                'help-echo "mouse-1: Switch perspective
 mouse-2: Show help for minor mode"
-               'mouse-face 'mode-line-highlight
-               'local-map (let ((map (make-sparse-keymap)))
-                            (define-key map [mode-line mouse-1]
-                              #'persp-switch)
-                            (define-key map [mode-line mouse-2]
-                              (lambda ()
-                                (interactive)
-                                (describe-function 'persp-mode)))
-                            map)))))))
+                'mouse-face 'mode-line-highlight
+                'local-map (let ((map (make-sparse-keymap)))
+                             (define-key map [mode-line mouse-1]
+                               #'persp-switch)
+                             (define-key map [mode-line mouse-2]
+                               (lambda ()
+                                 (interactive)
+                                 (describe-function 'persp-mode)))
+                             map))
+               " "))))))
 
 (add-hook 'find-file-hook #'doom-modeline-update-persp-name)
 (add-hook 'persp-activated-functions #'doom-modeline-update-persp-name)
