@@ -955,10 +955,14 @@ lines are selected, or the NxM dimensions of a block selection."
   (when (and (doom-modeline--active) (or defining-kbd-macro executing-kbd-macro))
     (let ((sep (propertize " " 'face 'doom-modeline-panel)))
       (concat sep
-              (propertize (if (bound-and-true-p evil-this-macro)
-                              (char-to-string evil-this-macro)
-                            "Macro")
-                          'face 'doom-modeline-panel)
+              (if doom-modeline-icon
+                  (doom-modeline-icon-material "fiber_manual_record"
+                                               :face 'doom-modeline-panel
+                                               :v-adjust (/ -0.27 all-the-icons-scale-factor))
+                (propertize (if (bound-and-true-p evil-this-macro)
+                                (char-to-string evil-this-macro)
+                              "Macro")
+                            'face 'doom-modeline-panel))
               sep
               (if doom-modeline-icon
                   (doom-modeline-icon-octicon "triangle-right"
