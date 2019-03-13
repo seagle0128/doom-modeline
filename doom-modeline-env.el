@@ -154,9 +154,10 @@ PARSER should be a function for parsing COMMAND's output line-by-line, to
        (defalias ',update-fn
          (lambda ()
            (when ,enable-var
-             (when-let* ((command (funcall ,command-var)))
-               (setq doom-modeline-env--command (car command)
-                     doom-modeline-env--command-args (cdr command)
+             (when-let* ((command-list (funcall ,command-var))
+                         (exe (executable-find (car command-list))))
+               (setq doom-modeline-env--command exe
+                     doom-modeline-env--command-args (cdr command-list)
                      doom-modeline-env--parser ,parser-var)
                (doom-modeline-update-env))))
          (format "Updates the %s version string in the modeline." ',name))
