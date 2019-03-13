@@ -1032,7 +1032,8 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
              (bound-and-true-p symbol-overlay-keywords-alist)
              (not (bound-and-true-p symbol-overlay-temp-symbol))
              (not (bound-and-true-p iedit-mode)))
-    (let* ((keyword (symbol-overlay-assoc (symbol-overlay-get-symbol)))
+    (let* ((keyword (symbol-overlay-assoc
+                     (ignore-errors (symbol-overlay-get-symbol))))
            (symbol (car keyword))
            (before (symbol-overlay-get-list -1 symbol))
            (after (symbol-overlay-get-list 1 symbol))
