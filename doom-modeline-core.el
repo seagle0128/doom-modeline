@@ -238,6 +238,14 @@ The icons may not be showed correctly in terminal and on Windows.")
 ;; Externals
 ;;
 
+(defvar all-the-icons-scale-factor)
+
+(declare-function all-the-icons-alltheicon 'all-the-icons)
+(declare-function all-the-icons-faicon 'all-the-icons)
+(declare-function all-the-icons-icon-for-file 'all-the-icons)
+(declare-function all-the-icons-icon-for-mode 'all-the-icons)
+(declare-function all-the-icons-material 'all-the-icons)
+(declare-function all-the-icons-octicon 'all-the-icons)
 (declare-function face-remap-remove-relative 'face-remap)
 (declare-function project-current 'project)
 (declare-function project-roots 'project)
