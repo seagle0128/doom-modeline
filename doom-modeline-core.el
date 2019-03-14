@@ -31,10 +31,6 @@
 (require 'eldoc-eval)
 (require 'shrink-path)
 (require 'subr-x)
-(when (>= emacs-major-version 26)
-  (require 'project))
-(when (bound-and-true-p doom-modeline-icon)
-  (require 'all-the-icons))
 
 
 ;;
@@ -91,7 +87,7 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
   "Whether show `all-the-icons' or not.
 
 Non-nil to show the icons in mode-line.
-The icons may not be showed correctly in terminal and on Windows.")
+The icons may not be showed correctly in terminal.")
 
 (defvar doom-modeline-major-mode-icon t
   "Whether show the icon for major mode. It respects `doom-modeline-icon'.")
@@ -247,7 +243,6 @@ The icons may not be showed correctly in terminal and on Windows.")
 (declare-function all-the-icons-material 'all-the-icons)
 (declare-function all-the-icons-octicon 'all-the-icons)
 (declare-function face-remap-remove-relative 'face-remap)
-(declare-function project-current 'project)
 (declare-function project-roots 'project)
 (declare-function projectile-project-root 'projectile)
 
