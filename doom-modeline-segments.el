@@ -541,6 +541,13 @@ Uses `all-the-icons-octicon' to fetch the icon."
    (lambda (_sym val op _where)
      (when (eq op 'set)
        (setq doom-modeline-icon val)
+       (doom-modeline--update-vcs-icon))))
+
+  (add-variable-watcher
+   'all-the-icons-scale-factor
+   (lambda (_sym val op _where)
+     (when (eq op 'set)
+       (setq all-the-icons-scale-factor val)
        (doom-modeline--update-vcs-icon)))))
 
 (defvar-local doom-modeline--vcs-text nil)
@@ -663,6 +670,14 @@ mouse-2: Show help for minor mode")
    (lambda (_sym val op _where)
      (when (eq op 'set)
        (setq doom-modeline-icon val)
+       (when (bound-and-true-p flycheck-mode)
+         (flycheck-buffer)))))
+
+  (add-variable-watcher
+   'all-the-icons-scale-factor
+   (lambda (_sym val op _where)
+     (when (eq op 'set)
+       (setq all-the-icons-scale-factor val)
        (when (bound-and-true-p flycheck-mode)
          (flycheck-buffer))))))
 
@@ -798,6 +813,14 @@ mouse-2: Show help for minor mode"
    (lambda (_sym val op _where)
      (when (eq op 'set)
        (setq doom-modeline-icon val)
+       (when (bound-and-true-p flymake-mode)
+         (flymake-start)))))
+
+  (add-variable-watcher
+   'all-the-icons-scale-factor
+   (lambda (_sym val op _where)
+     (when (eq op 'set)
+       (setq all-the-icons-scale-factor val)
        (when (bound-and-true-p flymake-mode)
          (flymake-start))))))
 
