@@ -398,7 +398,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 (advice-add #'delete-frame :after #'doom-modeline-set-selected-window)
 (with-no-warnings
   (cond ((not (boundp 'after-focus-change-function))
-         (add-hook 'focus-in-hook  #'doom-modeline-set-selected-window)
+         (add-hook 'focus-in-hook #'doom-modeline-set-selected-window)
          (add-hook 'focus-out-hook #'doom-modeline-unset-selected-window))
         ((defun doom-modeline-refresh-frame ()
            (setq doom-modeline-current-window nil)
