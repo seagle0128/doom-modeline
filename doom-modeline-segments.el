@@ -49,6 +49,7 @@
 (defvar anzu-cons-mode-line-p)
 (defvar aw-keys)
 (defvar battery-echo-area-format)
+(defvar edebug-execution-mode)
 (defvar evil-ex-active-highlights-alist)
 (defvar evil-ex-argument)
 (defvar evil-ex-range)
@@ -90,6 +91,9 @@
 (declare-function aw-update 'ace-window)
 (declare-function aw-window-list 'ace-window)
 (declare-function battery-format 'battery)
+(declare-function edebug-help 'edebug)
+(declare-function edebug-next-mode 'edebug)
+(declare-function edebug-stop 'edebug)
 (declare-function eglot--current-server 'eglot)
 (declare-function eglot--major-mode 'eglot)
 (declare-function eglot--project-nickname 'eglot)
@@ -1723,30 +1727,65 @@ mouse-3: Fetch notifications"
 ;; debug state
 ;;
 
+(defun doom-modeline-debug-icon (face)
+  "Display debug icon with FACE."
+  (if doom-modeline-icon
+      (doom-modeline-icon-material "bug_report"
+                                   :height 1.1
+                                   :v-adjust -0.225
+                                   :face face)
+    (propertize "!" 'face face)))
+
 (doom-modeline-def-segment debug
   "The current debug state."
   (when (doom-modeline--active)
     (concat
-     (and (or debug-on-error debug-on-quit) " ")
-     (when debug-on-error
+     (and (or debug-on-error debug-on-quit
+              (bound-and-true-p edebug-mode)
+              (bound-and-true-p edebug-x-mode))
+          " ")
+
+     ;; For `edebug'
+     (when (or (bound-and-true-p edebug-mode)
+               (bound-and-true-p edebug-x-mode))
        (propertize
-        (if doom-modeline-icon
-            (doom-modeline-icon-faicon "bug" :v-adjust -0.0575 :face 'doom-modeline-urgent)
-          (propertize "!" 'face 'doom-modeline-urgent))
-        'help-echo "Debug on Error
-mouse-1: Toggle Debug on Error"
+        (doom-modeline-debug-icon 'doom-modeline-urgent)
+        'help-echo (format "EDebug(%s)
+mouse-1: Show help
+mouse-2: Next
+mouse-3: Stop debugging"
+                           edebug-execution-mode)
         'mouse-face '(:box 0)
-        'local-map (make-mode-line-mouse-map 'mouse-1 #'toggle-debug-on-error)))
+        'local-map (let ((map (make-sparse-keymap)))
+                     (define-key map [mode-line mouse-1]
+                       #'edebug-help)
+                     (define-key map [mode-line mouse-2]
+                       #'edebug-next-mode)
+                     (define-key map [mode-line mouse-3]
+                       #'edebug-stop)
+                     map)))
+
+     ;; For `debug-on-error'
+     (when debug-on-error
+       (propertize (doom-modeline-debug-icon 'doom-modeline-warning)
+                   'help-echo "Debug on Error
+mouse-1: Toggle Debug on Error"
+                   'mouse-face '(:box 0)
+                   'local-map (make-mode-line-mouse-map 'mouse-1 #'toggle-debug-on-error)))
+
+     ;; For `debug-on-quit'
      (when debug-on-quit
        (propertize
-        (if doom-modeline-icon
-            (doom-modeline-icon-faicon "bug" :v-adjust -0.0575 :face 'doom-modeline-warning)
-          (propertize "!" 'face 'doom-modeline-warning))
+        (doom-modeline-debug-icon 'doom-modeline-buffer-file)
         'help-echo "Debug on Quit
 mouse-1: Toggle Debug on Quit"
         'mouse-face '(:box 0)
         'local-map (make-mode-line-mouse-map 'mouse-1 #'toggle-debug-on-quit)))
-     (and (or debug-on-error debug-on-quit) " "))))
+
+     (and (or debug-on-error debug-on-quit
+              (bound-and-true-p edebug-mode)
+              (bound-and-true-p edebug-x-mode))
+          " "))))
 
 
 ;;
