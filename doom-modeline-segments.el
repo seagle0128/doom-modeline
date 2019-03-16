@@ -535,7 +535,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
       (propertize text 'face face))))
 
 (defvar-local doom-modeline--vcs-icon nil)
-(defun doom-modeline--update-vcs-icon (&rest _)
+(defun doom-modeline-update-vcs-icon (&rest _)
   "Update icon of vsc state in mode-line."
   (setq doom-modeline--vcs-icon
         (when (and vc-mode buffer-file-name)
@@ -551,9 +551,9 @@ Uses `all-the-icons-octicon' to fetch the icon."
                    (doom-modeline-vcs-icon "alert" "!" 'doom-modeline-urgent))
                   (t
                    (doom-modeline-vcs-icon "git-branch" "@" 'doom-modeline-info -0.05)))))))
-(add-hook 'find-file-hook #'doom-modeline--update-vcs-icon t)
-(add-hook 'after-save-hook #'doom-modeline--update-vcs-icon)
-(advice-add #'vc-refresh-state :after #'doom-modeline--update-vcs-icon)
+(add-hook 'find-file-hook #'doom-modeline-update-vcs-icon t)
+(add-hook 'after-save-hook #'doom-modeline-update-vcs-icon)
+(advice-add #'vc-refresh-state :after #'doom-modeline-update-vcs-icon)
 
 (when (>= emacs-major-version 26)
   (add-variable-watcher
@@ -561,14 +561,14 @@ Uses `all-the-icons-octicon' to fetch the icon."
    (lambda (_sym val op _where)
      (when (eq op 'set)
        (setq doom-modeline-icon val)
-       (doom-modeline--update-vcs-icon))))
+       (doom-modeline-update-vcs-icon))))
 
   (add-variable-watcher
    'all-the-icons-scale-factor
    (lambda (_sym val op _where)
      (when (eq op 'set)
        (setq all-the-icons-scale-factor val)
-       (doom-modeline--update-vcs-icon)))))
+       (doom-modeline-update-vcs-icon)))))
 
 (defvar-local doom-modeline--vcs-text nil)
 (defun doom-modeline-update-vcs-text (&rest _)
@@ -590,7 +590,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
 (doom-modeline-def-segment vcs
   "Displays the current branch, colored based on its state."
   (let ((active (doom-modeline--active)))
-    (when-let ((icon (or doom-modeline--vcs-icon (doom-modeline--update-vcs-icon)))
+    (when-let ((icon (or doom-modeline--vcs-icon (doom-modeline-update-vcs-icon)))
                (text (or doom-modeline--vcs-text (doom-modeline-update-vcs-text))))
       (concat
        (propertize "  " 'face (if active 'mode-line 'mode-line-inactive))
