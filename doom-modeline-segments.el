@@ -93,6 +93,7 @@
 (declare-function battery-format 'battery)
 (declare-function dap--cur-session 'dap-mode)
 (declare-function dap-debug-recent 'dap-mode)
+(declare-function dap-disconnect 'dap-mode)
 (declare-function dap-hydra 'dap-hydra)
 (declare-function dap-mode-line 'dap-mode)
 (declare-function edebug-help 'edebug)
@@ -1768,7 +1769,8 @@ mouse-3: Fetch notifications"
         (doom-modeline-debug-icon 'doom-modeline-urgent)
         'help-echo (format "DAP (%s)
 mouse-1: Display debug hydra
-mouse-2: Display recent configurations"
+mouse-2: Display recent configurations
+mouse-3: Disconnect session"
                            (dap-mode-line))
         'mouse-face '(:box 0)
         'local-map (let ((map (make-sparse-keymap)))
@@ -1776,6 +1778,8 @@ mouse-2: Display recent configurations"
                        #'dap-hydra)
                      (define-key map [mode-line mouse-2]
                        #'dap-debug-recent)
+                     (define-key map [mode-line mouse-3]
+                       #'dap-disconnect)
                      map)))
 
      ;; For `edebug'
