@@ -91,6 +91,10 @@
 (declare-function aw-update 'ace-window)
 (declare-function aw-window-list 'ace-window)
 (declare-function battery-format 'battery)
+(declare-function dap--cur-session 'dap-mode)
+(declare-function dap-debug-recent 'dap-mode)
+(declare-function dap-hydra 'dap-hydra)
+(declare-function dap-mode-line 'dap-mode)
 (declare-function edebug-help 'edebug)
 (declare-function edebug-next-mode 'edebug)
 (declare-function edebug-stop 'edebug)
@@ -1755,6 +1759,24 @@ mouse-3: Fetch notifications"
               (bound-and-true-p edebug-mode)
               (bound-and-true-p edebug-x-mode))
           " ")
+
+     ;; For `dap-mode'
+     (when (and (bound-and-true-p dap-mode)
+                (bound-and-true-p lsp-mode)
+                (dap--cur-session))
+       (propertize
+        (doom-modeline-debug-icon 'doom-modeline-urgent)
+        'help-echo (format "DAP (%s)
+mouse-1: Display debug hydra
+mouse-2: Display recent configurations"
+                           (dap-mode-line))
+        'mouse-face '(:box 0)
+        'local-map (let ((map (make-sparse-keymap)))
+                     (define-key map [mode-line mouse-1]
+                       #'dap-hydra)
+                     (define-key map [mode-line mouse-2]
+                       #'dap-debug-recent)
+                     map)))
 
      ;; For `edebug'
      (when (or (bound-and-true-p edebug-mode)
