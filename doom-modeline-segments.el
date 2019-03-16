@@ -214,6 +214,17 @@ buffer where knowing the current project directory is important."
 
 (when (>= emacs-major-version 26)
   (add-variable-watcher
+   'doom-modeline-icon
+   (lambda (_sym val op _where)
+     (when (eq op 'set)
+       (setq doom-modeline-icon val)
+       ;; Fix #149: hang while changing `doom-modeline-icon' from nil to t
+       (if (and doom-modeline-icon
+                (not (featurep 'all-the-icons)))
+           (require 'all-the-icons))
+       (doom-modeline-update-buffer-file-icon))))
+
+  (add-variable-watcher
    'all-the-icons-scale-factor
    (lambda (_sym val op _where)
      (when (eq op 'set)
