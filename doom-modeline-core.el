@@ -28,6 +28,7 @@
 
 ;;; Code:
 
+(require 'all-the-icons)
 (require 'eldoc-eval)
 (require 'shrink-path)
 (require 'subr-x)
@@ -234,14 +235,6 @@ The icons may not be showed correctly in terminal.")
 ;; Externals
 ;;
 
-(defvar all-the-icons-scale-factor)
-
-(declare-function all-the-icons-alltheicon 'all-the-icons)
-(declare-function all-the-icons-faicon 'all-the-icons)
-(declare-function all-the-icons-icon-for-file 'all-the-icons)
-(declare-function all-the-icons-icon-for-mode 'all-the-icons)
-(declare-function all-the-icons-material 'all-the-icons)
-(declare-function all-the-icons-octicon 'all-the-icons)
 (declare-function face-remap-remove-relative 'face-remap)
 (declare-function project-roots 'project)
 (declare-function projectile-project-root 'projectile)

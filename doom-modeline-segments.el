@@ -29,18 +29,16 @@
 
 ;;; Code:
 
+(require 'all-the-icons)
 (require 'subr-x)
 (require 'doom-modeline-core)
 (require 'doom-modeline-env)
-(when (bound-and-true-p doom-modeline-icon)
-  (require 'all-the-icons))
 
 
 ;;
 ;; Externals
 ;;
 
-(defvar all-the-icons-scale-factor)
 (defvar anzu--cached-count)
 (defvar anzu--current-position)
 (defvar anzu--overflow-p)
@@ -81,8 +79,6 @@
 (defvar winum-auto-setup-mode-line)
 (defvar xah-fly-insert-state-q)
 
-(declare-function all-the-icons-auto-mode-match? 'all-the-icons)
-(declare-function all-the-icons-icon-family 'all-the-icons)
 (declare-function anzu--reset-status 'anzu)
 (declare-function anzu--where-is-here 'anzu)
 (declare-function async-inject-variables 'async)
@@ -223,10 +219,6 @@ buffer where knowing the current project directory is important."
    (lambda (_sym val op _where)
      (when (eq op 'set)
        (setq doom-modeline-icon val)
-       ;; Fix #149: hang while changing `doom-modeline-icon' from nil to t
-       (if (and doom-modeline-icon
-                (not (featurep 'all-the-icons)))
-           (require 'all-the-icons))
        (dolist (buf (buffer-list))
          (with-current-buffer buf
            (doom-modeline-update-buffer-file-icon))))))
