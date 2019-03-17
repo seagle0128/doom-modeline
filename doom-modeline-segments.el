@@ -227,7 +227,9 @@ buffer where knowing the current project directory is important."
        (if (and doom-modeline-icon
                 (not (featurep 'all-the-icons)))
            (require 'all-the-icons))
-       (doom-modeline-update-buffer-file-icon))))
+       (dolist (buf (buffer-list))
+         (with-current-buffer buf
+           (doom-modeline-update-buffer-file-icon))))))
 
   (add-variable-watcher
    'all-the-icons-scale-factor
@@ -305,7 +307,9 @@ Uses `all-the-icons-material' to fetch the icon."
    (lambda (_sym val op _where)
      (when (eq op 'set)
        (setq doom-modeline-icon val)
-       (doom-modeline-update-buffer-file-state-icon))))
+       (dolist (buf (buffer-list))
+         (with-current-buffer buf
+           (doom-modeline-update-buffer-file-state-icon))))))
 
   (add-variable-watcher
    'all-the-icons-scale-factor
@@ -566,7 +570,9 @@ Uses `all-the-icons-octicon' to fetch the icon."
    (lambda (_sym val op _where)
      (when (eq op 'set)
        (setq doom-modeline-icon val)
-       (doom-modeline-update-vcs-icon))))
+       (dolist (buf (buffer-list))
+         (with-current-buffer buf
+           (doom-modeline-update-vcs-icon))))))
 
   (add-variable-watcher
    'all-the-icons-scale-factor
@@ -695,8 +701,10 @@ mouse-2: Show help for minor mode")
    (lambda (_sym val op _where)
      (when (eq op 'set)
        (setq doom-modeline-icon val)
-       (when (bound-and-true-p flycheck-mode)
-         (flycheck-buffer)))))
+       (dolist (buf (buffer-list))
+         (with-current-buffer buf
+           (when (bound-and-true-p flycheck-mode)
+             (flycheck-buffer)))))))
 
   (add-variable-watcher
    'all-the-icons-scale-factor
@@ -838,8 +846,10 @@ mouse-2: Show help for minor mode"
    (lambda (_sym val op _where)
      (when (eq op 'set)
        (setq doom-modeline-icon val)
-       (when (bound-and-true-p flymake-mode)
-         (flymake-start)))))
+       (dolist (buf (buffer-list))
+         (with-current-buffer buf
+           (when (bound-and-true-p flymake-mode)
+             (flymake-start)))))))
 
   (add-variable-watcher
    'all-the-icons-scale-factor
