@@ -1535,12 +1535,10 @@ mouse-3: Describe current input method")
 ;; LSP
 ;;
 
-(doom-modeline-def-segment lsp
-  "The LSP server state."
-  (if (and doom-modeline-lsp
-           (doom-modeline--active))
-      (cond
-       ((bound-and-true-p lsp-mode)
+(defvar doom-modeline--lsp nil)
+(defun doom-modeline-update-lsp ()
+  "Update `lsp-mode' status."
+  (setq doom-modeline--lsp
         (concat
          " "
          (let ((icon (if doom-modeline-icon
@@ -1573,8 +1571,13 @@ mouse-3: Reconnect to server")
                                       (define-key map [mode-line mouse-3]
                                         #'lsp-restart-workspace))
                                     map)))
-         " "))
-       ((bound-and-true-p eglot--managed-mode)
+         " ")))
+(add-hook 'lsp-mode-hook #'doom-modeline-update-lsp)
+
+(defvar doom-modeline--eglot nil)
+(defun doom-modeline-update-eglot ()
+  "Update `eglot' status."
+  (setq doom-modeline--eglot
         (pcase-let* ((icon (if doom-modeline-icon
                                (doom-modeline-icon-faicon "rocket" :v-adjust -0.0575)
                              "EGLOT"))
@@ -1633,7 +1636,18 @@ mouse-3: Reconnect to server" nick (eglot--major-mode server)))
                        'help-echo help-echo
                        'mouse-face '(:box 0)
                        'local-map local-map)
-           " "))))))
+           " "))))
+(add-hook 'eglot--managed-mode-hook #'doom-modeline-update-eglot)
+
+(doom-modeline-def-segment lsp
+  "The LSP server state."
+  (if (and doom-modeline-lsp
+           (doom-modeline--active))
+      (cond
+       ((bound-and-true-p lsp-mode)
+        doom-modeline--lsp)
+       ((bound-and-true-p eglot--managed-mode)
+        doom-modeline--eglot))))
 
 (defun doom-modeline-override-eglot-modeline ()
   "Override `eglot' mode-line."
@@ -1836,6 +1850,7 @@ mouse-1: Toggle Debug on Quit"
 
 (defvar-local doom-modeline--pdf-pages nil)
 (defun doom-modeline-update-pdf-pages ()
+  "Update PDF pages."
   (setq doom-modeline--pdf-pages
         (propertize
          (format "  P%d/%d "
