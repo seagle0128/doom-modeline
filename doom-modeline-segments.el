@@ -270,12 +270,13 @@ Uses `all-the-icons-material' to fetch the icon."
                (doom-modeline-buffer-file-state-icon
                 "vertical_align_center"
                 "><"
-                'doom-modeline-warning)))))
+                'doom-modeline-warning))
+              (t ""))))
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-save-hook #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'read-only-mode-hook #'doom-modeline-update-buffer-file-state-icon)
-;; (add-hook 'after-change-functions #'doom-modeline-update-buffer-file-state-icon)
+(add-hook 'after-change-functions #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'evil-insert-state-exit-hook #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'undo :after #'doom-modeline-update-buffer-file-state-icon)
@@ -369,34 +370,36 @@ directory, the file name, and its state (modified, read-only or non-existent)."
      (when (and doom-modeline-icon doom-modeline-major-mode-icon)
        (when-let ((icon (or doom-modeline--buffer-file-icon
                             (doom-modeline-update-buffer-file-icon))))
-         (concat
-          (if (and active doom-modeline-major-mode-color-icon)
-              icon
-            (propertize icon
-                        'face `(:height
-                                ,(doom-modeline-icon-height 1.1)
-                                :family
-                                ,(all-the-icons-icon-family icon)
-                                :inherit
-                                ,(if active 'mode-line 'mode-line-inactive))))
-          (if active doom-modeline-vspc doom-modeline-inactive-vspc))))
+         (unless (string-empty-p icon)
+           (concat
+            (if (and active doom-modeline-major-mode-color-icon)
+                icon
+              (propertize icon
+                          'face `(:height
+                                  ,(doom-modeline-icon-height 1.1)
+                                  :family
+                                  ,(all-the-icons-icon-family icon)
+                                  :inherit
+                                  ,(if active 'mode-line 'mode-line-inactive))))
+            (if active doom-modeline-vspc doom-modeline-inactive-vspc)))))
 
      ;; state icon
      (when-let ((icon (or doom-modeline--buffer-file-state-icon
                           (doom-modeline-update-buffer-file-state-icon))))
-       (concat
-        (if active
-            icon
-          (propertize icon
-                      'face
-                      (if doom-modeline-icon
-                          `(:height
-                            ,(doom-modeline-icon-height 1.3)
-                            :family
-                            ,(all-the-icons-icon-family icon)
-                            :inherit mode-line-inactive)
-                        'mode-line-inactive)))
-        (if active doom-modeline-vspc doom-modeline-inactive-vspc)))
+       (unless (string-empty-p icon)
+         (concat
+          (if active
+              icon
+            (propertize icon
+                        'face
+                        (if doom-modeline-icon
+                            `(:height
+                              ,(doom-modeline-icon-height 1.3)
+                              :family
+                              ,(all-the-icons-icon-family icon)
+                              :inherit mode-line-inactive)
+                          'mode-line-inactive)))
+          (if active doom-modeline-vspc doom-modeline-inactive-vspc))))
 
      ;; buffer file name
      (when-let ((name (or doom-modeline--buffer-file-name
