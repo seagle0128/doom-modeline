@@ -1952,73 +1952,81 @@ we don't want to remove that so we just return the original."
 ;; fancy battery
 ;;
 
+(defvar-local doom-modeline--battery-status nil)
+(defun doom-modeline-update-battery-status (&optional status)
+  "Update battery STATUS."
+  (setq doom-modeline--battery-status
+        (let* ((status (or status fancy-battery-last-status))
+               (charging?  (string-equal "AC" (cdr (assoc ?L status))))
+               (percentage (cdr (assq ?p status)))
+               (percentage-number (string-to-number percentage))
+               (face (cond
+                      (charging? 'fancy-battery-charging)
+                      ((< percentage-number 10) 'fancy-battery-critical)
+                      ((< percentage-number 25) 'fancy-battery-discharging)
+                      ((< percentage-number 95) 'mode-line)
+                      (t 'fancy-battery-charging)))
+               (icon (cond
+                      (charging?
+                       (if doom-modeline-icon
+                           (doom-modeline-icon-alltheicon "battery-charging" :v-adjust -0.1)
+                         (propertize "+" 'face face)))
+                      ((> percentage-number 95)
+                       (if doom-modeline-icon
+                           (doom-modeline-icon-faicon "battery-full" :v-adjust -0.0575)
+                         (propertize "-" 'face face)))
+                      ((> percentage-number 70)
+                       (if doom-modeline-icon
+                           (doom-modeline-icon-faicon "battery-three-quarters" :v-adjust -0.0575)
+                         (propertize "-" 'face face)))
+                      ((> percentage-number 40)
+                       (if doom-modeline-icon
+                           (doom-modeline-icon-faicon "battery-half" :v-adjust -0.0575)
+                         (propertize "-" 'face face)))
+                      ((> percentage-number 15)
+                       (if doom-modeline-icon
+                           (doom-modeline-icon-faicon "battery-quarter" :v-adjust -0.0575)
+                         (propertize "-" 'face face)))
+                      (t
+                       (if doom-modeline-icon
+                           (doom-modeline-icon-faicon "battery-empty" :v-adjust -0.0575)
+                         (propertize "!" 'face face)))))
+               (percent-str (and percentage (concat percentage "%%")))
+               (help-echo (if battery-echo-area-format
+                              (battery-format battery-echo-area-format status)
+                            "Battery status not available")))
+          (concat
+           " "
+           (if percent-str
+               (concat
+                (propertize icon
+                            'face (if doom-modeline-icon
+                                      `(
+                                        :height ,(doom-modeline-icon-height (if charging? 1.69 1.2))
+                                        :family ,(all-the-icons-icon-family icon)
+                                        :inherit ,face
+                                        )
+                                    face)
+                            'help-echo help-echo)
+                (if doom-modeline-icon
+                    (propertize doom-modeline-vspc 'help-echo help-echo))
+                (propertize  percent-str
+                             'face face
+                             'help-echo help-echo))
+             ;; Battery status is not available
+             (if doom-modeline-icon
+                 (doom-modeline-icon-material "battery_unknown"
+                                              :height 1.1
+                                              :v-adjust (/ -0.27 all-the-icons-scale-factor)
+                                              :face 'error)
+               (propertize "N/A" 'face 'error)))
+           " "))))
+(add-hook 'fancy-battery-status-update-functions #'doom-modeline-update-battery-status)
+
 (doom-modeline-def-segment fancy-battery
   (when (and (doom-modeline--active)
              (bound-and-true-p fancy-battery-mode))
-    (let* ((charging?  (string-equal "AC" (cdr (assoc ?L fancy-battery-last-status))))
-           (percentage (cdr (assq ?p fancy-battery-last-status)))
-           (percentage-number (string-to-number percentage))
-           (face (cond
-                  (charging? 'fancy-battery-charging)
-                  ((< percentage-number 10) 'fancy-battery-critical)
-                  ((< percentage-number 25) 'fancy-battery-discharging)
-                  ((< percentage-number 95) 'mode-line)
-                  (t 'fancy-battery-charging)))
-           (icon (cond
-                  (charging?
-                   (if doom-modeline-icon
-                       (doom-modeline-icon-alltheicon "battery-charging" :v-adjust -0.1)
-                     (propertize "+" 'face face)))
-                  ((> percentage-number 95)
-                   (if doom-modeline-icon
-                       (doom-modeline-icon-faicon "battery-full" :v-adjust -0.0575)
-                     (propertize "-" 'face face)))
-                  ((> percentage-number 70)
-                   (if doom-modeline-icon
-                       (doom-modeline-icon-faicon "battery-three-quarters" :v-adjust -0.0575)
-                     (propertize "-" 'face face)))
-                  ((> percentage-number 40)
-                   (if doom-modeline-icon
-                       (doom-modeline-icon-faicon "battery-half" :v-adjust -0.0575)
-                     (propertize "-" 'face face)))
-                  ((> percentage-number 15)
-                   (if doom-modeline-icon
-                       (doom-modeline-icon-faicon "battery-quarter" :v-adjust -0.0575)
-                     (propertize "-" 'face face)))
-                  (t
-                   (if doom-modeline-icon
-                       (doom-modeline-icon-faicon "battery-empty" :v-adjust -0.0575)
-                     (propertize "!" 'face face)))))
-           (status (and percentage (concat percentage "%%")))
-           (help-echo (if battery-echo-area-format
-                          (battery-format battery-echo-area-format fancy-battery-last-status)
-                        "Battery status not available")))
-      (concat
-       " "
-       (if status
-           (concat
-            (propertize icon
-                        'face (if doom-modeline-icon
-                                  `(
-                                    :height ,(doom-modeline-icon-height (if charging? 1.69 1.2))
-                                    :family ,(all-the-icons-icon-family icon)
-                                    :inherit ,face
-                                    )
-                                face)
-                        'help-echo help-echo)
-            (if doom-modeline-icon
-                (propertize doom-modeline-vspc 'help-echo help-echo))
-            (propertize  status
-                         'face face
-                         'help-echo help-echo))
-         ;; Battery status is not available
-         (if doom-modeline-icon
-             (doom-modeline-icon-material "battery_unknown"
-                                          :height 1.1
-                                          :v-adjust (/ -0.27 all-the-icons-scale-factor)
-                                          :face 'error)
-           (propertize "N/A" 'face 'error)))
-       " "))))
+    (or doom-modeline--battery-status (doom-modeline-update-battery-status))))
 
 (defun doom-modeline-override-fancy-battery-modeline ()
   "Override `fancy-battery' mode-line."
