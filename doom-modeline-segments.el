@@ -1729,7 +1729,7 @@ mouse-3: Fetch notifications"
                        (lambda ()
                          "Open github notifications page."
                          (interactive)
-                         (run-with-timer 60 nil #'doom-modeline--github-fetch-notifications)
+                         (run-with-timer 300 nil #'doom-modeline--github-fetch-notifications)
                          (browse-url "https://github.com/notifications")))
                      (define-key map [mode-line mouse-3]
                        (lambda ()
