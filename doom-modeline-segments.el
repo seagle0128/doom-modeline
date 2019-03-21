@@ -1831,15 +1831,21 @@ mouse-1: Toggle Debug on Quit"
 ;; pdf pages
 ;;
 
+(defvar-local doom-modeline--pdf-pages nil)
+(defun doom-modeline-update-pdf-pages ()
+  (setq doom-modeline--pdf-pages
+        (propertize
+         (format "  P%d/%d "
+                 (eval `(pdf-view-current-page))
+                 (pdf-cache-number-of-pages))
+         'face (if (doom-modeline--active)
+                   'mode-line
+                 'mode-line-inactive))))
+(add-hook 'pdf-view-change-page-hook #'doom-modeline-update-pdf-pages)
+
 (doom-modeline-def-segment pdf-pages
   (when (eq major-mode 'pdf-view-mode)
-    (propertize
-     (format "  P%d/%d "
-             (eval `(pdf-view-current-page))
-             (pdf-cache-number-of-pages))
-     'face (if (doom-modeline--active)
-               'mode-line
-             'mode-line-inactive))))
+    doom-modeline--pdf-pages))
 
 
 ;;
