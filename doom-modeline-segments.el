@@ -138,6 +138,7 @@
 (declare-function image-get-display-property 'image-mode)
 (declare-function jsonrpc--request-continuations 'jsonrpc)
 (declare-function jsonrpc-last-error 'jsonrpc)
+(declare-function lsp--cleanup-hanging-watches 'lsp-mode)
 (declare-function lsp--workspace-print 'lsp-mode)
 (declare-function lsp-describe-session 'lsp-mode)
 (declare-function lsp-restart-workspace 'lsp-mode)
@@ -1536,7 +1537,7 @@ mouse-3: Describe current input method")
 ;;
 
 (defvar doom-modeline--lsp nil)
-(defun doom-modeline-update-lsp ()
+(defun doom-modeline-update-lsp (&rest _)
   "Update `lsp-mode' status."
   (setq doom-modeline--lsp
         (concat
@@ -1558,21 +1559,29 @@ mouse-3: Describe current input method")
 mouse-1: Describe current session
 mouse-2: Quit server
 mouse-3: Reconnect to server")
-                                    "LSP Disconnected")
-                       'mouse-face (if workspaces '(:box 0))
+                                    "LSP Disconnected
+mouse-1: Reload to start server")
+                       'mouse-face '(:box 0)
                        'local-map (let ((map (make-sparse-keymap)))
-                                    (when workspaces
-                                      (define-key map [mode-line C-mouse-1]
-                                        #'lsp-workspace-folders-switch)
-                                      (define-key map [mode-line mouse-1]
-                                        #'lsp-describe-session)
-                                      (define-key map [mode-line mouse-2]
-                                        #'lsp-shutdown-workspace)
-                                      (define-key map [mode-line mouse-3]
-                                        #'lsp-restart-workspace))
+                                    (if workspaces
+                                        (progn
+                                          (define-key map [mode-line C-mouse-1]
+                                            #'lsp-workspace-folders-switch)
+                                          (define-key map [mode-line mouse-1]
+                                            #'lsp-describe-session)
+                                          (define-key map [mode-line mouse-2]
+                                            #'lsp-shutdown-workspace)
+                                          (define-key map [mode-line mouse-3]
+                                            #'lsp-restart-workspace))
+                                      (progn
+                                        (define-key map [mode-line mouse-1]
+                                          (lambda ()
+                                            (interactive)
+                                            (revert-buffer t t)))))
                                     map)))
          " ")))
 (add-hook 'lsp-mode-hook #'doom-modeline-update-lsp)
+(advice-add #'lsp--cleanup-hanging-watches :after #'doom-modeline-update-lsp)
 
 (defvar doom-modeline--eglot nil)
 (defun doom-modeline-update-eglot ()
@@ -1647,7 +1656,7 @@ mouse-3: Reconnect to server" nick (eglot--major-mode server)))
        ((bound-and-true-p lsp-mode)
         doom-modeline--lsp)
        ((bound-and-true-p eglot--managed-mode)
-        doom-modeline--eglot))))
+        (doom-modeline-update-eglot)))))
 
 (defun doom-modeline-override-eglot-modeline ()
   "Override `eglot' mode-line."
