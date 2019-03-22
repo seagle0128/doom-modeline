@@ -138,7 +138,6 @@
 (declare-function image-get-display-property 'image-mode)
 (declare-function jsonrpc--request-continuations 'jsonrpc)
 (declare-function jsonrpc-last-error 'jsonrpc)
-(declare-function lsp--cleanup-hanging-watches 'lsp-mode)
 (declare-function lsp--workspace-print 'lsp-mode)
 (declare-function lsp-describe-session 'lsp-mode)
 (declare-function lsp-restart-workspace 'lsp-mode)
@@ -1537,7 +1536,7 @@ mouse-3: Describe current input method")
 ;;
 
 (defvar doom-modeline--lsp nil)
-(defun doom-modeline-update-lsp (&rest _)
+(defun doom-modeline-update-lsp ()
   "Update `lsp-mode' status."
   (setq doom-modeline--lsp
         (concat
@@ -1581,7 +1580,7 @@ mouse-1: Reload to start server")
                                     map)))
          " ")))
 (add-hook 'lsp-mode-hook #'doom-modeline-update-lsp)
-(advice-add #'lsp--cleanup-hanging-watches :after #'doom-modeline-update-lsp)
+(add-hook 'lsp-after-uninitialized-hook #'doom-modeline-update-lsp)
 
 (defvar doom-modeline--eglot nil)
 (defun doom-modeline-update-eglot ()
