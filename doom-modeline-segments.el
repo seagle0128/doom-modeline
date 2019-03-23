@@ -1536,7 +1536,7 @@ mouse-3: Describe current input method")
 ;;
 
 (defvar doom-modeline--lsp nil)
-(defun doom-modeline-update-lsp ()
+(defun doom-modeline-update-lsp (&rest _)
   "Update `lsp-mode' status."
   (setq doom-modeline--lsp
         (concat
