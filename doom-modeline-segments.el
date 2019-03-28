@@ -290,10 +290,9 @@ Uses `all-the-icons-material' to fetch the icon."
 (when (>= emacs-major-version 26)
   (add-variable-watcher
    'buffer-read-only
-   (lambda (_sym val op _where)
-     (when (eq op 'set)
-       (setq buffer-read-only val)
-       (doom-modeline-update-buffer-file-state-icon))))
+   (lambda (_sym val _op _where)
+     (setq buffer-read-only val)
+     (doom-modeline-update-buffer-file-state-icon)))
 
   (add-variable-watcher
    'doom-modeline-icon
