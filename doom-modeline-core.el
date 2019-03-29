@@ -478,15 +478,14 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 (defvar-local doom-modeline-project-root nil)
 (defun doom-modeline-project-root ()
   "Get the path to the root of your project.
-
-  Return `default-directory' if no project was found."
+Return `default-directory' if no project was found."
   (or doom-modeline-project-root
       (setq doom-modeline-project-root
             (file-local-name
              (or
-              (when (featurep 'projectile)
+              (when (bound-and-true-p projectile-mode)
                 (ignore-errors (projectile-project-root)))
-              (when (featurep 'project)
+              (when (fboundp 'project-current)
                 (ignore-errors
                   (when-let ((project (project-current)))
                     (expand-file-name (car (project-roots project))))))
