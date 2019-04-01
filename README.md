@@ -208,9 +208,9 @@ Strongly recommend to use
 
 ## FAQ
 
-1. I am experiencing the laggy issue on Windows, how to resolve it?
+1. I am experiencing the laggy issue, how to resolve it?
 
-   You need to add this configuration into your init file.
+   Add this configuration into your init file:
 
    ``` emacs-lisp
    ;; Don’t compact font caches during GC.
