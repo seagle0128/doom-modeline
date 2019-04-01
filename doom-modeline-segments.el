@@ -1792,7 +1792,7 @@ mouse-3: Fetch notifications"
                 (bound-and-true-p lsp-mode)
                 (dap--cur-session))
        (propertize
-        (doom-modeline-debug-icon 'doom-modeline-urgent)
+        (doom-modeline-debug-icon 'doom-modeline-warning)
         'help-echo (format "DAP (%s)
 mouse-1: Display debug hydra
 mouse-2: Display recent configurations
@@ -1812,7 +1812,7 @@ mouse-3: Disconnect session"
      (when (or (bound-and-true-p edebug-mode)
                (bound-and-true-p edebug-x-mode))
        (propertize
-        (doom-modeline-debug-icon 'doom-modeline-urgent)
+        (doom-modeline-debug-icon 'doom-modeline-warning)
         'help-echo (format "EDebug(%s)
 mouse-1: Show help
 mouse-2: Next
@@ -1830,7 +1830,7 @@ mouse-3: Stop debugging"
 
      ;; For `debug-on-error'
      (when debug-on-error
-       (propertize (doom-modeline-debug-icon 'doom-modeline-warning)
+       (propertize (doom-modeline-debug-icon 'doom-modeline-urgent)
                    'help-echo "Debug on Error
 mouse-1: Toggle Debug on Error"
                    'mouse-face '(:box 0)
@@ -1839,7 +1839,7 @@ mouse-1: Toggle Debug on Error"
      ;; For `debug-on-quit'
      (when debug-on-quit
        (propertize
-        (doom-modeline-debug-icon 'doom-modeline-buffer-file)
+        (doom-modeline-debug-icon 'doom-modeline-info)
         'help-echo "Debug on Quit
 mouse-1: Toggle Debug on Quit"
         'mouse-face '(:box 0)
