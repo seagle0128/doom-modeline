@@ -150,6 +150,9 @@
 (declare-function mu4e-alert-default-mode-line-formatter 'mu4e-alert)
 (declare-function mu4e-alert-enable-mode-line-display 'mu4e-alert)
 (declare-function nyan-create 'nyan-mode)
+(declare-function org-narrow-to-block 'org)
+(declare-function org-narrow-to-element 'org)
+(declare-function org-narrow-to-subtree 'org)
 (declare-function parrot-create 'parrot)
 (declare-function pdf-cache-number-of-pages 'pdf-cache)
 (declare-function persp-add-buffer 'persp-mode)
@@ -286,9 +289,9 @@ Uses `all-the-icons-material' to fetch the icon."
 (advice-add #'widen :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'fancy-narrow-to-region :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'fancy-widen :after #'doom-modeline-update-buffer-file-state-icon)
-(advice-add #'org-narrow-to-subtree :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'org-narrow-to-block :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'org-narrow-to-element :after #'doom-modeline-update-buffer-file-state-icon)
+(advice-add #'org-narrow-to-subtree :after #'doom-modeline-update-buffer-file-state-icon)
 
 (when (>= emacs-major-version 26)
   (add-variable-watcher
