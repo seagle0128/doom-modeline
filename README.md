@@ -166,6 +166,9 @@ Strongly recommend to use
 ;; If non-nil, only display one number for checker information if applicable.
 (setq doom-modeline-checker-simple-format t)
   
+;; The maximum displayed length of the branch name of version control.
+(setq doom-modeline-vcs-max-length 12)
+
 ;; Whether display perspective name or not. Non-nil to display in mode-line.
 (setq doom-modeline-persp-name t)
 

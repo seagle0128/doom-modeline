@@ -105,6 +105,9 @@ The icons may not be showed correctly in terminal.")
 (defvar doom-modeline-checker-simple-format t
   "If non-nil, only display one number for checker information if applicable.")
 
+(defvar doom-modeline-vcs-max-length 12
+  "The maximum displayed length of the branch name of version control.")
+
 (defvar doom-modeline-persp-name t
   "Whether display perspective name or not. Non-nil to display in mode-line.")
 

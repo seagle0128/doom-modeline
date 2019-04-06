@@ -545,7 +545,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
 
 (defvar-local doom-modeline--vcs-icon nil)
 (defun doom-modeline-update-vcs-icon (&rest _)
-  "Update icon of vsc state in mode-line."
+  "Update icon of vcs state in mode-line."
   (setq doom-modeline--vcs-icon
         (when (and vc-mode buffer-file-name)
           (let* ((backend (vc-backend buffer-file-name))
@@ -583,12 +583,17 @@ Uses `all-the-icons-octicon' to fetch the icon."
 
 (defvar-local doom-modeline--vcs-text nil)
 (defun doom-modeline-update-vcs-text (&rest _)
-  "Update text of vsc state in mode-line."
+  "Update text of vcs state in mode-line."
   (setq doom-modeline--vcs-text
         (when (and vc-mode buffer-file-name)
           (let* ((backend (vc-backend buffer-file-name))
-                 (state   (vc-state buffer-file-name backend)))
-            (propertize (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
+                 (state (vc-state buffer-file-name backend))
+                 (str (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))))
+            (propertize (if (> (length str) doom-modeline-vcs-max-length)
+                            (concat
+                             (substring str 0 (- doom-modeline-vcs-max-length 3))
+                             "...")
+                          str)
                         'face (cond ((eq state 'needs-update)
                                      'doom-modeline-warning)
                                     ((memq state '(removed conflict unregistered))
