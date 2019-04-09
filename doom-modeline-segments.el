@@ -202,7 +202,8 @@ buffer where knowing the current project directory is important."
         (when (and doom-modeline-icon doom-modeline-major-mode-icon)
           (let* ((height (/ all-the-icons-scale-factor 1.3))
                  (icon (if (and buffer-file-name
-                                (all-the-icons-auto-mode-match?))
+                                (all-the-icons-match-to-alist buffer-file-name
+                                                              all-the-icons-icon-alist))
                            (doom-modeline-icon-for-file (file-name-nondirectory buffer-file-name)
                                                         :height height)
                          (doom-modeline-icon-for-mode major-mode :height height))))
