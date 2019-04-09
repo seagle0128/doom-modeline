@@ -1785,7 +1785,7 @@ mouse-3: Fetch notifications"
   (if doom-modeline-icon
       (doom-modeline-icon-material "bug_report"
                                    :height 1.1
-                                   :v-adjust -0.225
+                                   :v-adjust (/ -0.27 all-the-icons-scale-factor)
                                    :face face)
     (propertize "!" 'face face)))
 
