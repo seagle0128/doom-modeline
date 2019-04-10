@@ -201,10 +201,12 @@ buffer where knowing the current project directory is important."
   (setq doom-modeline--buffer-file-icon
         (when (and doom-modeline-icon doom-modeline-major-mode-icon)
           (let* ((height (/ all-the-icons-scale-factor 1.3))
+                 (file (file-name-nondirectory (or buffer-file-name "")))
                  (icon (if (and buffer-file-name
                                 (all-the-icons-match-to-alist buffer-file-name
                                                               all-the-icons-icon-alist))
-                           (doom-modeline-icon-for-file buffer-file-name :height height)
+                           (unless (string-empty-p file)
+                             (doom-modeline-icon-for-file file :height height))
                          (doom-modeline-icon-for-mode major-mode :height height))))
             (if (symbolp icon)
                 (setq icon (doom-modeline-icon-faicon "file" :height height :v-adjust -0.0575)))
