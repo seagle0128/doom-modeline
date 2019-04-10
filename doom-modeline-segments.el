@@ -209,7 +209,7 @@ buffer where knowing the current project directory is important."
                              (doom-modeline-icon-for-file file :height height))
                          (doom-modeline-icon-for-mode major-mode :height height))))
             (if (symbolp icon)
-                (setq icon (doom-modeline-icon-faicon "file" :height height :v-adjust -0.0575)))
+                (setq icon (doom-modeline-icon-faicon "file-o" :height height :v-adjust -0.0575)))
             (unless (symbolp icon)
               (propertize icon
                           'help-echo (format "Major-mode: %s" (format-mode-line mode-name))
