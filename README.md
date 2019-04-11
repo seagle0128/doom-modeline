@@ -148,14 +148,14 @@ Strongly recommend to use
 ;; Please refer to https://github.com/bbatsov/projectile/issues/657.
 (setq doom-modeline-buffer-file-name-style 'truncate-upto-project)
 
-;; Whether show `all-the-icons' or not (if nil nothing will be showed).
+;; Whether display icons or not (if nil nothing will be showed).
 (setq doom-modeline-icon t)
 
-;; Whether show the icon for major mode. It respects `doom-modeline-icon'.
+;; Whether display the icon for major mode. It respects `doom-modeline-icon'.
 (setq doom-modeline-major-mode-icon t)
 
 ;; Display color icons for `major-mode'. It respects `all-the-icons-color-icons'.
-(setq doom-modeline-major-mode-color-icon nil)
+(setq doom-modeline-major-mode-color-icon t)
 
 ;; Whether display minor modes or not. Non-nil to display in mode-line.
 (setq doom-modeline-minor-modes nil)

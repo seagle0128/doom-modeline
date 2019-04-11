@@ -206,10 +206,10 @@ buffer where knowing the current project directory is important."
                                 (all-the-icons-match-to-alist buffer-file-name
                                                               all-the-icons-icon-alist))
                            (unless (string-empty-p file)
-                             (doom-modeline-icon-for-file file :height height))
-                         (doom-modeline-icon-for-mode major-mode :height height))))
+                             (doom-modeline-icon-for-file file :height height :v-adjust -0.05))
+                         (doom-modeline-icon-for-mode major-mode :height height :v-adjust -0.05))))
             (if (symbolp icon)
-                (setq icon (doom-modeline-icon-faicon "file-o" :height height :v-adjust -0.0575)))
+                (setq icon (doom-modeline-icon-faicon "file-o" :face 'all-the-icons-dsilver :height height :v-adjust -0.05)))
             (unless (symbolp icon)
               (propertize icon
                           'help-echo (format "Major-mode: %s" (format-mode-line mode-name))
