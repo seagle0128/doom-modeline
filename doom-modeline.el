@@ -174,6 +174,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
             (with-current-buffer bname
               (doom-modeline-set-main-modeline))))
         ;; Add hooks
+        (add-hook 'magit-mode-hook #'doom-modeline-set-project-modeline)
         (add-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
         (add-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
         (add-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
@@ -182,6 +183,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
       ;; Restore mode-line
       (setq-default mode-line-format doom-modeline--default-mode-line)
       ;; Remove hooks
+      (remove-hook 'magit-mode-hook #'doom-modeline-set-project-modeline)
       (remove-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
       (remove-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
       (remove-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
