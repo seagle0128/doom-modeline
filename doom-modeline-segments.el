@@ -1786,10 +1786,9 @@ mouse-3: Fetch notifications"
 (defun doom-modeline-debug-icon (face)
   "Display debug icon with FACE."
   (if doom-modeline-icon
-      (doom-modeline-icon-material "bug_report"
-                                   :height 1.1
-                                   :v-adjust (/ -0.27 all-the-icons-scale-factor)
-                                   :face face)
+      (doom-modeline-icon-faicon "bug"
+                                 :v-adjust -0.0575
+                                 :face face)
     (propertize "!" 'face face)))
 
 (doom-modeline-def-segment debug
