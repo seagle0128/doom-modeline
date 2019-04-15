@@ -97,7 +97,7 @@
   '(misc-info lsp irc-buffers debug fancy-battery minor-modes input-method buffer-encoding major-mode process checker))
 
 (doom-modeline-def-modeline 'project
-  '(bar " " buffer-default-directory)
+  '(bar window-number " " buffer-default-directory)
   '(misc-info mu4e github debug fancy-battery " " major-mode process " "))
 
 (doom-modeline-def-modeline 'media
