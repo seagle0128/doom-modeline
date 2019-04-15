@@ -1826,7 +1826,7 @@ mouse-3: Disconnect session"
                (bound-and-true-p edebug-x-mode))
        (propertize
         (doom-modeline-debug-icon 'doom-modeline-warning)
-        'help-echo (format "EDebug(%s)
+        'help-echo (format "EDebug (%s)
 mouse-1: Show help
 mouse-2: Next
 mouse-3: Stop debugging"
