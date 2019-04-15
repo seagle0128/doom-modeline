@@ -1307,7 +1307,7 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
 ;; workspace number
 ;;
 
-(doom-modeline-def-segment workspace-number
+(doom-modeline-def-segment workspace-name
   "The current workspace name or number.
 Requires `eyebrowse-mode' to be enabled."
   (if (and (bound-and-true-p eyebrowse-mode)
