@@ -98,15 +98,15 @@
 
 (doom-modeline-def-modeline 'project
   '(bar " " buffer-default-directory)
-  '(misc-info mu4e github debug fancy-battery " " major-mode " "))
+  '(misc-info mu4e github debug fancy-battery " " major-mode process " "))
 
 (doom-modeline-def-modeline 'media
   '(bar window-number buffer-size buffer-info)
-  '(misc-info media-info major-mode vcs " "))
+  '(misc-info media-info major-mode process vcs " "))
 
 (doom-modeline-def-modeline 'pdf
   '(bar window-number buffer-size buffer-info pdf-pages)
-  '(misc-info " " major-mode vcs " "))
+  '(misc-info " " major-mode process vcs " "))
 
 
 ;;
