@@ -970,8 +970,7 @@ icons."
                                   mode-line-inactive)
                               'mode-line-inactive)))
               (when (and doom-modeline-icon icon text) doom-modeline-inactive-vspc)
-              (when text (propertize text 'face 'mode-line-inactive))))
-           (propertize "  " 'face (if active 'mode-line 'mode-line-inactive))))
+              (when text (propertize text 'face 'mode-line-inactive))))))
       "")))
 
 

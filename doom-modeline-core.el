@@ -56,6 +56,38 @@ It returns a file name which can be used directly as argument of
 `process-file', `start-file-process', or `shell-command'."
     (or (file-remote-p file 'localname) file)))
 
+;; Set correct font width for `all-the-icons' for appropriate mode-line width.
+;; @see https://emacs.stackexchange.com/questions/14420/how-can-i-fix-incorrect-character-width
+(defun doom-modeline--set-char-widths (alist)
+  "Set correct widths of icons characters in ALIST."
+  (while (char-table-parent char-width-table)
+    (setq char-width-table (char-table-parent char-width-table)))
+  (dolist (pair alist)
+    (let ((width (car pair))
+          (chars (cdr pair))
+          (table (make-char-table nil)))
+      (dolist (char chars)
+        (set-char-table-range table char width))
+      (optimize-char-table table)
+      (set-char-table-parent table char-width-table)
+      (setq char-width-table table))))
+
+(defun doom-moddeline--set-font-widths (alist)
+  (let (fonts)
+    (dolist (pair alist)
+      (push (string-to-char (cdr pair)) fonts))
+    (doom-modeline--set-char-widths
+     `((2 . ,fonts)))))
+
+;; TODO: better performance?
+(doom-moddeline--set-font-widths all-the-icons-data/alltheicons-alist)
+;; (doom-moddeline--set-font-widths all-the-icons-data/file-icon-alist)
+(doom-moddeline--set-font-widths all-the-icons-data/fa-icon-alist)
+(doom-moddeline--set-font-widths all-the-icons-data/octicons-alist)
+;; (doom-moddeline--set-font-widths all-the-icons-data/weather-icons-alist)
+(doom-moddeline--set-font-widths all-the-icons-data/material-icons-alist)
+
+
 ;;
 ;; Variables
 ;;

@@ -90,7 +90,7 @@
 
 (doom-modeline-def-modeline 'minimal
   '(bar matches " " buffer-info)
-  '(media-info major-mode " "))
+  '(media-info major-mode))
 
 (doom-modeline-def-modeline 'special
   '(bar window-number evil-state god-state ryo-modal xah-fly-keys matches buffer-info-simple buffer-position parrot selection-info)
@@ -98,15 +98,15 @@
 
 (doom-modeline-def-modeline 'project
   '(bar window-number " " buffer-default-directory)
-  '(misc-info mu4e github debug fancy-battery " " major-mode process " "))
+  '(misc-info mu4e github debug fancy-battery " " major-mode process))
 
 (doom-modeline-def-modeline 'media
   '(bar window-number buffer-size buffer-info)
-  '(misc-info media-info major-mode process vcs " "))
+  '(misc-info media-info major-mode process vcs))
 
 (doom-modeline-def-modeline 'pdf
   '(bar window-number buffer-size buffer-info pdf-pages)
-  '(misc-info " " major-mode process vcs " "))
+  '(misc-info " " major-mode process vcs))
 
 
 ;;
