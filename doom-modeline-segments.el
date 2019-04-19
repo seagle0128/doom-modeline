@@ -200,17 +200,15 @@ buffer where knowing the current project directory is important."
   "Update file icon in mode-line."
   (setq doom-modeline--buffer-file-icon
         (when (and doom-modeline-icon doom-modeline-major-mode-icon)
-          (let* ((height (/ all-the-icons-scale-factor 1.3))
-                 (icon (if (and (buffer-file-name)
+          (let* ((icon (if (and (buffer-file-name)
                                 (all-the-icons-auto-mode-match?))
-                           (all-the-icons-icon-for-file (file-name-nondirectory (buffer-file-name))
-                                                        :height height :v-adjust -0.05)
-                         (all-the-icons-icon-for-mode major-mode :height height :v-adjust -0.05))))
+                           (all-the-icons-icon-for-file (file-name-nondirectory (buffer-file-name)))
+                         (all-the-icons-icon-for-mode major-mode))))
             (if (symbolp icon)
                 (setq icon (doom-modeline-icon-faicon "file-o"
                                                       :face 'all-the-icons-dsilver
-                                                      :height height
-                                                      :v-adjust -0.05)))
+                                                      :height 0.8
+                                                      :v-adjust 0.0)))
             (unless (symbolp icon)
               (propertize icon
                           'help-echo (format "Major-mode: %s" (format-mode-line mode-name))
@@ -227,14 +225,7 @@ buffer where knowing the current project directory is important."
        (setq doom-modeline-icon val)
        (dolist (buf (buffer-list))
          (with-current-buffer buf
-           (doom-modeline-update-buffer-file-icon))))))
-
-  (add-variable-watcher
-   'all-the-icons-scale-factor
-   (lambda (_sym val op _where)
-     (when (eq op 'set)
-       (setq all-the-icons-scale-factor val)
-       (doom-modeline-update-buffer-file-icon)))))
+           (doom-modeline-update-buffer-file-icon)))))))
 
 (defun doom-modeline-buffer-file-state-icon (icon &optional text face height voffset)
   "Displays an ICON with FACE, HEIGHT and VOFFSET.
@@ -246,7 +237,7 @@ Uses `all-the-icons-material' to fetch the icon."
          icon
          :face face
          :height (or height 1.1)
-         :v-adjust (or voffset (/ -0.27 all-the-icons-scale-factor))))
+         :v-adjust (or voffset -0.225)))
     (when text
       (propertize text 'face face))))
 
@@ -310,14 +301,7 @@ Uses `all-the-icons-material' to fetch the icon."
        (setq doom-modeline-icon val)
        (dolist (buf (buffer-list))
          (with-current-buffer buf
-           (doom-modeline-update-buffer-file-state-icon))))))
-
-  (add-variable-watcher
-   'all-the-icons-scale-factor
-   (lambda (_sym val op _where)
-     (when (eq op 'set)
-       (setq all-the-icons-scale-factor val)
-       (doom-modeline-update-buffer-file-state-icon)))))
+           (doom-modeline-update-buffer-file-state-icon)))))))
 
 (defvar-local doom-modeline--buffer-file-name nil)
 (defun doom-modeline-update-buffer-file-name (&rest _)
@@ -382,13 +366,10 @@ directory, the file name, and its state (modified, read-only or non-existent)."
            (concat
             (if (and active doom-modeline-major-mode-color-icon)
                 icon
-              (propertize icon
-                          'face `(:height
-                                  ,(doom-modeline-icon-height 1.1)
-                                  :family
-                                  ,(all-the-icons-icon-family icon)
-                                  :inherit
-                                  ,(if active 'mode-line 'mode-line-inactive))))
+              (propertize icon 'face `(:inherit
+                                       ,(get-text-property 0 'face icon)
+                                       :inherit
+                                       ,(if active 'mode-line 'mode-line-inactive))))
             (if active doom-modeline-vspc doom-modeline-inactive-vspc)))))
 
      ;; state icon
@@ -398,15 +379,10 @@ directory, the file name, and its state (modified, read-only or non-existent)."
          (concat
           (if active
               icon
-            (propertize icon
-                        'face
-                        (if doom-modeline-icon
-                            `(:height
-                              ,(doom-modeline-icon-height 1.3)
-                              :family
-                              ,(all-the-icons-icon-family icon)
-                              :inherit mode-line-inactive)
-                          'mode-line-inactive)))
+            (propertize icon 'face `(:inherit
+                                     ,(get-text-property 0 'face icon)
+                                     :inherit
+                                     mode-line-inactive)))
           (if active doom-modeline-vspc doom-modeline-inactive-vspc))))
 
      ;; buffer file name
@@ -575,14 +551,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
        (setq doom-modeline-icon val)
        (dolist (buf (buffer-list))
          (with-current-buffer buf
-           (doom-modeline-update-vcs-icon))))))
-
-  (add-variable-watcher
-   'all-the-icons-scale-factor
-   (lambda (_sym val op _where)
-     (when (eq op 'set)
-       (setq all-the-icons-scale-factor val)
-       (doom-modeline-update-vcs-icon)))))
+           (doom-modeline-update-vcs-icon)))))))
 
 (defvar-local doom-modeline--vcs-text nil)
 (defun doom-modeline-update-vcs-text (&rest _)
@@ -619,16 +588,10 @@ Uses `all-the-icons-octicon' to fetch the icon."
                        doom-modeline-vspc)
                    text)
          (concat
-          (propertize icon
-                      'face
-                      (if doom-modeline-icon
-                          `(:height
-                            ,(doom-modeline-icon-height 1.2)
-                            :family
-                            ,(all-the-icons-icon-family icon)
-                            :inherit
-                            mode-line-inactive)
-                        'mode-line-inactive))
+          (propertize icon 'face `(:inherit
+                                   ,(if doom-modeline-icon (get-text-property 0 'face icon))
+                                   :inherit
+                                   mode-line-inactive))
           doom-modeline-inactive-vspc
           (propertize text 'face 'mode-line-inactive)))
        (propertize " " 'face (if active 'mode-line 'mode-line-inactive))))))
@@ -650,8 +613,7 @@ Uses `all-the-icons-material' to fetch the icon."
          icon
          :face face
          :height 1.1
-         :v-adjust (or voffset
-                       (/ -0.27 all-the-icons-scale-factor))))
+         :v-adjust (or voffset -0.225)))
     (when text
       (propertize text 'face face))))
 
@@ -712,15 +674,7 @@ mouse-2: Show help for minor mode")
        (dolist (buf (buffer-list))
          (with-current-buffer buf
            (when (bound-and-true-p flycheck-mode)
-             (flycheck-buffer)))))))
-
-  (add-variable-watcher
-   'all-the-icons-scale-factor
-   (lambda (_sym val op _where)
-     (when (eq op 'set)
-       (setq all-the-icons-scale-factor val)
-       (when (bound-and-true-p flycheck-mode)
-         (flycheck-buffer))))))
+             (flycheck-buffer))))))))
 
 (defvar-local doom-modeline--flycheck-text nil)
 (defun doom-modeline-update-flycheck-text (&optional status)
@@ -857,15 +811,7 @@ mouse-2: Show help for minor mode"
        (dolist (buf (buffer-list))
          (with-current-buffer buf
            (when (bound-and-true-p flymake-mode)
-             (flymake-start)))))))
-
-  (add-variable-watcher
-   'all-the-icons-scale-factor
-   (lambda (_sym val op _where)
-     (when (eq op 'set)
-       (setq all-the-icons-scale-factor val)
-       (when (bound-and-true-p flymake-mode)
-         (flymake-start))))))
+             (flymake-start))))))))
 
 (defvar-local doom-modeline--flymake-text nil)
 (defun doom-modeline-update-flymake-text (&rest _)
@@ -959,16 +905,10 @@ icons."
                        text)
              (concat
               (when icon
-                (propertize icon
-                            'face
-                            (if doom-modeline-icon
-                                `(:height
-                                  ,(doom-modeline-icon-height 1.3)
-                                  :family
-                                  ,(all-the-icons-icon-family icon)
-                                  :inherit
-                                  mode-line-inactive)
-                              'mode-line-inactive)))
+                (propertize icon 'face `(:inherit
+                                         ,(if doom-modeline-icon (get-text-property 0 'face icon))
+                                         :inherit
+                                         mode-line-inactive)))
               (when (and doom-modeline-icon icon text) doom-modeline-inactive-vspc)
               (when text (propertize text 'face 'mode-line-inactive))))))
       "")))
@@ -1026,7 +966,7 @@ lines are selected, or the NxM dimensions of a block selection."
               (if doom-modeline-icon
                   (doom-modeline-icon-material "fiber_manual_record"
                                                :face 'doom-modeline-panel
-                                               :v-adjust (/ -0.27 all-the-icons-scale-factor))
+                                               :v-adjust -0.225)
                 (propertize (if (bound-and-true-p evil-this-macro)
                                 (char-to-string evil-this-macro)
                               "Macro")
@@ -1904,7 +1844,7 @@ mouse-1: Toggle Debug on Quit"
                (concat
                 (doom-modeline-icon-material "mail"
                                              :height 1.1
-                                             :v-adjust (/ -0.27 all-the-icons-scale-factor)
+                                             :v-adjust -0.225
                                              :face 'doom-modeline-warning)
                 doom-modeline-vspc)
              (propertize "#"
@@ -1981,7 +1921,7 @@ we don't want to remove that so we just return the original."
      (propertize (if doom-modeline-icon
                      (doom-modeline-icon-material "message"
                                                   :height 1.1
-                                                  :v-adjust (/ -0.27 all-the-icons-scale-factor)
+                                                  :v-adjust -0.225
                                                   :face 'doom-modeline-warning)
                    (propertize "#"
                                'face '(:inherit (doom-modeline-warning
@@ -2013,7 +1953,7 @@ we don't want to remove that so we just return the original."
                (icon (cond
                       (charging?
                        (if doom-modeline-icon
-                           (doom-modeline-icon-alltheicon "battery-charging" :v-adjust -0.1)
+                           (doom-modeline-icon-alltheicon "battery-charging" :height 1.4 :v-adjust -0.1)
                          (propertize "+" 'face face)))
                       ((> percentage-number 95)
                        (if doom-modeline-icon
@@ -2043,14 +1983,9 @@ we don't want to remove that so we just return the original."
            " "
            (if percent-str
                (concat
-                (propertize icon
-                            'face (if doom-modeline-icon
-                                      `(
-                                        :height ,(doom-modeline-icon-height (if charging? 1.69 1.2))
-                                        :family ,(all-the-icons-icon-family icon)
-                                        :inherit ,face
-                                        )
-                                    face)
+                (propertize icon 'face `(:inherit
+                                         ,(if doom-modeline-icon (get-text-property 0 'face icon))
+                                         :inherit ,face)
                             'help-echo help-echo)
                 (if doom-modeline-icon
                     (propertize doom-modeline-vspc 'help-echo help-echo))
@@ -2059,10 +1994,7 @@ we don't want to remove that so we just return the original."
                              'help-echo help-echo))
              ;; Battery status is not available
              (if doom-modeline-icon
-                 (doom-modeline-icon-material "battery_unknown"
-                                              :height 1.1
-                                              :v-adjust (/ -0.27 all-the-icons-scale-factor)
-                                              :face 'error)
+                 (doom-modeline-icon-material "battery_unknown" :height 1.1 :v-adjust -0.225 :face 'error)
                (propertize "N/A" 'face 'error)))
            " "))))
 (add-hook 'fancy-battery-status-update-functions #'doom-modeline-update-battery-status)

@@ -502,10 +502,6 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   (when doom-modeline-icon
     (apply #'all-the-icons-icon-for-file args)))
 
-(defun doom-modeline-icon-height (height)
-  "Calculate the actual HEIGHT of the icon."
-  (* (/ height 1.2) all-the-icons-scale-factor))
-
 (defun doom-modeline--active ()
   "Whether is an active window."
   (eq (selected-window) doom-modeline-current-window))
