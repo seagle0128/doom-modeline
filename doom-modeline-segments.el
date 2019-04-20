@@ -231,13 +231,14 @@ buffer where knowing the current project directory is important."
   "Displays an ICON with FACE, HEIGHT and VOFFSET.
 TEXT is the alternative if it is not applicable.
 Uses `all-the-icons-material' to fetch the icon."
-  (if doom-modeline-icon
-      (when icon
-        (doom-modeline-icon-material
-         icon
-         :face face
-         :height (or height 1.1)
-         :v-adjust (or voffset -0.225)))
+    (if (and doom-modeline-icon
+             doom-modeline-buffer-state-icon
+             icon)
+      (doom-modeline-icon-material
+       icon
+       :face face
+       :height (or height 1.1)
+       :v-adjust (or voffset -0.225))
     (when text
       (propertize text 'face face))))
 
@@ -250,7 +251,8 @@ Uses `all-the-icons-material' to fetch the icon."
                 "lock"
                 "%1*"
                 'doom-modeline-warning))
-              ((and buffer-file-name (buffer-modified-p))
+              ((and buffer-file-name (buffer-modified-p)
+                    doom-modeline-buffer-modification-icon)
                (doom-modeline-buffer-file-state-icon
                 "save"
                 "%1*"

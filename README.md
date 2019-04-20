@@ -148,16 +148,24 @@ Strongly recommend to use
 ;; Please refer to https://github.com/bbatsov/projectile/issues/657.
 (setq doom-modeline-buffer-file-name-style 'truncate-upto-project)
 
-;; Whether display icons or not (if nil nothing will be showed).
+;; Whether display icons in mode-line or not.
 (setq doom-modeline-icon t)
 
 ;; Whether display the icon for major mode. It respects `doom-modeline-icon'.
 (setq doom-modeline-major-mode-icon t)
 
-;; Display color icons for `major-mode'. It respects `all-the-icons-color-icons'.
+;; Whether display color icons for `major-mode'. It respects
+;; `doom-modeline-icon' and `all-the-icons-color-icons'.
 (setq doom-modeline-major-mode-color-icon t)
 
-;; Whether display minor modes or not. Non-nil to display in mode-line.
+;; Whether display icons for buffer states. It respects `doom-modeline-icon'.
+(setq doom-modeline-buffer-state-icon t)
+
+;; Whether display buffer modification icon. It respects `doom-modeline-icon'
+;; and `doom-modeline-buffer-state-icon'.
+(setq doom-modeline-buffer-modification-icon t)
+
+;; Whether display minor modes in mode-line or not.
 (setq doom-modeline-minor-modes nil)
 
 ;; If non-nil, a word count will be added to the selection-info modeline segment.

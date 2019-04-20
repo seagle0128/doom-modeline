@@ -117,19 +117,22 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
   buffer-name => comint.el<2> (uniquify buffer name)")
 
 (defvar doom-modeline-icon (display-graphic-p)
-  "Whether show `all-the-icons' or not.
-
-Non-nil to show the icons in mode-line.
-The icons may not be showed correctly in terminal.")
+  "Whether display icons in mode-line or not.")
 
 (defvar doom-modeline-major-mode-icon t
-  "Whether show the icon for major mode. It respects `doom-modeline-icon'.")
+  "Whether display the icon for major mode. It respects `doom-modeline-icon'.")
 
 (defvar doom-modeline-major-mode-color-icon t
-  "Display color icons for `major-mode'. It respects `all-the-icons-color-icons'.")
+  "Whether display color icons for `major-mode'. It respects `doom-modeline-icon' and `all-the-icons-color-icons'.")
+
+(defvar doom-modeline-buffer-state-icon t
+  "Whether display icons for buffer states. It respects `doom-modeline-icon'.")
+
+(defvar doom-modeline-buffer-modification-icon t
+  "Whether display buffer modification icon. It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'.")
 
 (defvar doom-modeline-minor-modes nil
-  "Whether display minor modes or not. Non-nil to display in mode-line.")
+  "Whether display minor modes in mode-line or not.")
 
 (defvar doom-modeline-enable-word-count nil
   "If non-nil, a word count will be added to the selection-info modeline segment.")
@@ -212,7 +215,7 @@ The icons may not be showed correctly in terminal.")
 (defface doom-modeline-panel
   '((t (:inherit mode-line-highlight)))
   "Face for 'X out of Y' segments, such as `anzu', `evil-substitute'
- and`iedit', etc.")
+  and`iedit', etc.")
 
 (defface doom-modeline-info
   `((t (:inherit (success bold))))
@@ -320,14 +323,14 @@ The icons may not be showed correctly in terminal.")
 
 (defun doom-modeline-def-modeline (name lhs &optional rhs)
   "Defines a modeline format and byte-compiles it.
-NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
-LHS and RHS are lists of symbols of modeline segments defined with
-`doom-modeline-def-segment'.
+  NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
+  LHS and RHS are lists of symbols of modeline segments defined with
+  `doom-modeline-def-segment'.
 
-Example:
+  Example:
   (doom-modeline-def-modeline 'minimal
-     '(bar matches \" \" buffer-info)
-     '(media-info major-mode))
+    '(bar matches \" \" buffer-info)
+    '(media-info major-mode))
   (doom-modeline-set-modeline 'minimal t)"
   (let ((sym (intern (format "doom-modeline-format--%s" name)))
         (lhs-forms (doom-modeline--prepare-segments lhs))
@@ -351,14 +354,14 @@ Example:
 
 (defun doom-modeline (key)
   "Return a mode-line configuration associated with KEY (a symbol).
-Throws an error if it doesn't exist."
+  Throws an error if it doesn't exist."
   (let ((fn (intern-soft (format "doom-modeline-format--%s" key))))
     (when (functionp fn)
       `(:eval (,fn)))))
 
 (defun doom-modeline-set-modeline (key &optional default)
   "Set the modeline format. Does nothing if the modeline KEY doesn't exist.
-If DEFAULT is non-nil, set the default mode-line for all buffers."
+  If DEFAULT is non-nil, set the default mode-line for all buffers."
   (when-let ((modeline (doom-modeline key)))
     (setf (if default
               (default-value 'mode-line-format)
@@ -509,7 +512,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 (defvar-local doom-modeline-project-root nil)
 (defun doom-modeline-project-root ()
   "Get the path to the root of your project.
-Return `default-directory' if no project was found."
+  Return `default-directory' if no project was found."
   (or doom-modeline-project-root
       (setq doom-modeline-project-root
             (file-local-name
@@ -547,7 +550,7 @@ Return `default-directory' if no project was found."
                                           if (= d 0) collect (string-to-char " ")
                                           else collect (string-to-char "."))
                                  (if (eq idx len) "\"};" "\",\n")))))
-        'xpm t :ascent 'center)))))
+  'xpm t :ascent 'center)))))
 
 ;; Fix: invalid-regexp "Trailing backslash" while handling $HOME on Windows
 (defun doom-modeline-shrink-path--dirs-internal (full-path &optional truncate-all)
