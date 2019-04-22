@@ -1399,10 +1399,10 @@ mouse-1: Display Line and Column Mode Menu"
     (concat "  " (parrot-create) " ")))
 
 ;;
-;; evil-state
+;; modals (evil, god, ryo and xah-fly-keys, etc.)
 ;;
 
-(doom-modeline-def-segment evil-state
+(defsubst doom-modeline--evil ()
   "The current evil state. Requires `evil-mode' to be enabled."
   (when (bound-and-true-p evil-local-mode)
     (let ((tag (evil-state-property evil-state :tag t)))
@@ -1417,37 +1417,22 @@ mouse-1: Display Line and Column Mode Menu"
                             ((evil-replace-state-p) 'doom-modeline-evil-replace-state))
                     'mode-line-inactive)))))
 
-
-;;
-;; god-state
-;;
-
-(doom-modeline-def-segment god-state
+(defsubst doom-modeline--god ()
   "The current god state. Requires `god-mode' to be enabled."
   (when (bound-and-true-p god-local-mode)
     (propertize " <G> " 'face (if (doom-modeline--active)
                                   'doom-modeline-evil-normal-state
                                 'mode-line-inactive))))
 
-
-;;
-;; ryo-modal state
-;;
-
-(doom-modeline-def-segment ryo-modal ()
+(defsubst doom-modeline--ryo ()
   "The current ryo-modal state. Requires `ryo-modal-mode' to be enabled."
   (when (bound-and-true-p ryo-modal-mode)
     (propertize " <R> " 'face (if (doom-modeline--active)
                                   'doom-modeline-evil-normal-state
                                 'mode-line-inactive))))
 
-
-;;
-;; xah-fly-keys state
-;;
-
-(doom-modeline-def-segment xah-fly-keys ()
-  "The current xah-fly-keys state."
+(defsubst doom-modeline--xah-fly-keys ()
+  "The current `xah-fly-keys' state."
   (when (boundp 'xah-fly-insert-state-q)
     (propertize (if xah-fly-insert-state-q
                     " <I> "
@@ -1455,6 +1440,13 @@ mouse-1: Display Line and Column Mode Menu"
                 'face (if (doom-modeline--active)
                           'doom-modeline-evil-normal-state
                         'mode-line-inactive))))
+
+(doom-modeline-def-segment modals
+  "Displays modal editing states, including `evil', `god', `ryo' and `xha-fly-kyes', etc. "
+  (concat (doom-modeline--evil)
+          (doom-modeline--god)
+          (doom-modeline--ryo)
+          (doom-modeline--xah-fly-keys)))
 
 ;;
 ;; input method

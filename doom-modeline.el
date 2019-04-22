@@ -45,10 +45,8 @@
 ;; - A workspace number segment for eyebrowse
 ;; - A perspective name segment for persp-mode
 ;; - A window number segment for winum and window-numbering
-;; - An indicator for evil state
-;; - An indicator for god state
-;; - An indicator for ryo-modal state
-;; - An indicator for xah-fly-keys state
+;; - An indicator for modal editing state, including evil, god, ryo and
+;;   xah-fly-keys, etc.
 ;; - An indicator for remote host
 ;; - An indicator for current input method
 ;; - An indicator for debug state
@@ -85,7 +83,7 @@
 ;;
 
 (doom-modeline-def-modeline 'main
-  '(bar workspace-name window-number evil-state god-state ryo-modal xah-fly-keys matches buffer-info remote-host buffer-position parrot selection-info)
+  '(bar workspace-name window-number modals matches buffer-info remote-host buffer-position parrot selection-info)
   '(misc-info persp-name lsp irc mu4e github debug fancy-battery minor-modes input-method buffer-encoding major-mode process vcs checker))
 
 (doom-modeline-def-modeline 'minimal
@@ -93,7 +91,7 @@
   '(media-info major-mode))
 
 (doom-modeline-def-modeline 'special
-  '(bar window-number evil-state god-state ryo-modal xah-fly-keys matches buffer-info-simple buffer-position parrot selection-info)
+  '(bar window-number modals matches buffer-info-simple buffer-position parrot selection-info)
   '(misc-info lsp irc-buffers debug fancy-battery minor-modes input-method buffer-encoding major-mode process checker))
 
 (doom-modeline-def-modeline 'project
