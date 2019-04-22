@@ -216,6 +216,10 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
   "Face for 'X out of Y' segments, such as `anzu', `evil-substitute'
   and`iedit', etc.")
 
+(defface doom-modeline-debug
+  `((t (:inherit font-lock-doc-face)))
+  "Face for debug-level messages in the modeline. Used by `*flycheck'.")
+
 (defface doom-modeline-info
   `((t (:inherit (success bold))))
   "Face for info-level messages in the modeline. Used by `*vc'.")
