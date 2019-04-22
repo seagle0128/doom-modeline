@@ -128,6 +128,7 @@
 (declare-function flymake--backend-state-diags 'flymake)
 (declare-function flymake--diag-type 'flymake)
 (declare-function flymake--handle-report 'flymake)
+(declare-function flymake--severity 'flymake)
 (declare-function flymake-disabled-backends 'flymake)
 (declare-function flymake-goto-next-error 'flymake)
 (declare-function flymake-goto-prev-error 'flymake)
@@ -170,6 +171,7 @@
 (declare-function tracking-shorten 'tracking)
 (declare-function undo-tree-redo-1 'undo-tree)
 (declare-function undo-tree-undo-1 'undo-tree)
+(declare-function warning-numeric-level 'warnings)
 (declare-function window-numbering-clear-mode-line 'window-numbering)
 (declare-function window-numbering-get-number-string 'window-numbering)
 (declare-function window-numbering-install-mode-line 'window-numbering)
@@ -759,31 +761,35 @@ wheel-up/wheel-down: Previous/next error"))
                (running (flymake-running-backends))
                (disabled (flymake-disabled-backends))
                (reported (flymake-reporting-backends))
-               (diags-by-type (make-hash-table))
                (all-disabled (and disabled (null running)))
                (some-waiting (cl-set-difference running reported)))
-          (maphash (lambda (_b state)
-                     (mapc (lambda (diag)
-                             (push diag
-                                   (gethash (flymake--diag-type diag)
-                                            diags-by-type)))
-                           (flymake--backend-state-diags state)))
-                   flymake--backend-state)
           (when-let
               ((icon
                 (cond
                  (some-waiting (doom-modeline-checker-icon "access_time" "*" 'doom-modeline-debug))
                  ((null known) (doom-modeline-checker-icon "sim_card_alert" "?" 'doom-modeline-debug))
                  (all-disabled (doom-modeline-checker-icon "sim_card_alert" "!" 'doom-modeline-urgent))
-                 (t (let ((.error (length (gethash :error diags-by-type)))
-                          (.warning (length (gethash :warning diags-by-type)))
-                          (.note (length (gethash :note diags-by-type))))
-                      (if (> (+ .error .warning .note) 0)
-                          (doom-modeline-checker-icon "do_not_disturb_alt" "!"
-                                                      (cond ((> .error 0) 'doom-modeline-urgent)
-                                                            ((> .warning 0) 'doom-modeline-warning)
-                                                            (t 'doom-modeline-info)))
-                        (doom-modeline-checker-icon "check" "-" 'doom-modeline-info)))))))
+                 (t (let ((.error 0)
+                          (.warning 0)
+                          (.note 0))
+                      (progn
+                        (cl-loop
+                         with warning-level = (warning-numeric-level :warning)
+                         with note-level = (warning-numeric-level :debug)
+                         for state being the hash-values of flymake--backend-state
+                         do (cl-loop
+                             with diags = (flymake--backend-state-diags state)
+                             for diag in diags do
+                             (let ((severity (flymake--severity (flymake--diag-type diag))))
+                               (cond ((> severity warning-level) (cl-incf .error))
+                                     ((> severity note-level)    (cl-incf .warning))
+                                     (t                          (cl-incf .note))))))
+                        (if (> (+ .error .warning .note) 0)
+                            (doom-modeline-checker-icon "do_not_disturb_alt" "!"
+                                                        (cond ((> .error 0) 'doom-modeline-urgent)
+                                                              ((> .warning 0) 'doom-modeline-warning)
+                                                              (t 'doom-modeline-info)))
+                          (doom-modeline-checker-icon "check" "-" 'doom-modeline-info))))))))
             (propertize
              icon
              'help-echo (concat "Flymake\n"
@@ -826,66 +832,69 @@ mouse-2: Show help for minor mode"
                (running (flymake-running-backends))
                (disabled (flymake-disabled-backends))
                (reported (flymake-reporting-backends))
-               (diags-by-type (make-hash-table))
                (all-disabled (and disabled (null running)))
-               (some-waiting (cl-set-difference running reported)))
+               (some-waiting (cl-set-difference running reported))
+               (warning-level (warning-numeric-level :warning))
+               (note-level (warning-numeric-level :debug))
+               (.error 0)
+               (.warning 0)
+               (.note 0))
           (maphash (lambda (_b state)
-                     (mapc (lambda (diag)
-                             (push diag
-                                   (gethash (flymake--diag-type diag)
-                                            diags-by-type)))
-                           (flymake--backend-state-diags state)))
+                     (cl-loop
+                      with diags = (flymake--backend-state-diags state)
+                      for diag in diags do
+                      (let ((severity (flymake--severity (flymake--diag-type diag))))
+                        (cond ((> severity warning-level) (cl-incf .error))
+                              ((> severity note-level) (cl-incf .warning))
+                              (t (cl-incf .note))))))
                    flymake--backend-state)
-          (let ((.error (length (gethash :error diags-by-type)))
-                (.warning (length (gethash :warning diags-by-type)))
-                (.note (length (gethash :note diags-by-type))))
-            (when-let
-                ((text
-                  (cond
-                   (some-waiting "Running..." "")
-                   ((null known) (doom-modeline-checker-text "-" 'doom-modeline-debug))
-                   (all-disabled (doom-modeline-checker-text "-" 'doom-modeline-urgent))
-                   (t (let ((num (+ .error .warning .note)))
-                        (when (> num 0)
-                          (if doom-modeline-checker-simple-format
-                              (doom-modeline-checker-text (number-to-string num)
-                                                          (cond ((> .error 0) 'doom-modeline-urgent)
-                                                                ((> .warning 0) 'doom-modeline-warning)
-                                                                (t 'doom-modeline-info)))
-                            (format "%s/%s/%s"
-                                    (doom-modeline-checker-text (number-to-string .error)
-                                                                'doom-modeline-urgent)
-                                    (doom-modeline-checker-text (number-to-string .warning)
-                                                                'doom-modeline-warning)
-                                    (doom-modeline-checker-text (number-to-string .note)
-                                                                'doom-modeline-info)))))))))
-              (propertize
-               text
-               'help-echo (cond
-                           (some-waiting "Running...")
-                           ((null known) "No Checker")
-                           (all-disabled "All Checkers Disabled")
-                           (t (format "error: %d, warning: %d, note: %d
+          (when-let
+              ((text
+                (cond
+                 (some-waiting "Running..." "")
+                 ((null known) (doom-modeline-checker-text "-" 'doom-modeline-debug))
+                 (all-disabled (doom-modeline-checker-text "-" 'doom-modeline-urgent))
+                 (t (let ((num (+ .error .warning .note)))
+                      (when (> num 0)
+                        (if doom-modeline-checker-simple-format
+                            (doom-modeline-checker-text (number-to-string num)
+                                                        (cond ((> .error 0) 'doom-modeline-urgent)
+                                                              ((> .warning 0) 'doom-modeline-warning)
+                                                              (t 'doom-modeline-info)))
+                          (format "%s/%s/%s"
+                                  (doom-modeline-checker-text (number-to-string .error)
+                                                              'doom-modeline-urgent)
+                                  (doom-modeline-checker-text (number-to-string .warning)
+                                                              'doom-modeline-warning)
+                                  (doom-modeline-checker-text (number-to-string .note)
+                                                              'doom-modeline-info)))))))))
+            (propertize
+             text
+             'help-echo (cond
+                         (some-waiting "Running...")
+                         ((null known) "No Checker")
+                         (all-disabled "All Checkers Disabled")
+                         (t (format "error: %d, warning: %d, note: %d
 mouse-1: List all problems
 wheel-up/wheel-down: Previous/next problem"
-                                      .error .warning .note)))
-               'mouse-face 'mode-line-highlight
-               'local-map (let ((map (make-sparse-keymap)))
-                            (define-key map [mode-line mouse-1]
-                              #'flymake-show-diagnostics-buffer)
-                            (define-key map (vector 'mode-line
-                                                    mouse-wheel-down-event)
-                              (lambda (event)
-                                (interactive "e")
-                                (with-selected-window (posn-window (event-start event))
-                                  (flymake-goto-prev-error 1 nil t))))
-                            (define-key map (vector 'mode-line
-                                                    mouse-wheel-up-event)
-                              (lambda (event)
-                                (interactive "e")
-                                (with-selected-window (posn-window (event-start event))
-                                  (flymake-goto-next-error 1 nil t))))
-                            map)))))))
+                                    .error .warning .note)))
+             'mouse-face 'mode-line-highlight
+             'local-map (let ((map (make-sparse-keymap)))
+                          (define-key map [mode-line mouse-1]
+                            #'flymake-show-diagnostics-buffer)
+                          (define-key map (vector 'mode-line
+                                                  mouse-wheel-down-event)
+                            (lambda (event)
+                              (interactive "e")
+                              (with-selected-window (posn-window (event-start event))
+                                (flymake-goto-prev-error 1 nil t))))
+                          (define-key map (vector 'mode-line
+                                                  mouse-wheel-up-event)
+                            (lambda (event)
+                              (interactive "e")
+                              (with-selected-window (posn-window (event-start event))
+                                (flymake-goto-next-error 1 nil t))))
+                          map))))))
 (advice-add #'flymake--handle-report :after #'doom-modeline-update-flymake-text)
 
 (doom-modeline-def-segment checker
