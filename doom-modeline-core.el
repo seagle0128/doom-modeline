@@ -29,7 +29,6 @@
 ;;; Code:
 
 (require 'all-the-icons)
-(require 'eldoc-eval)
 (require 'shrink-path)
 (require 'subr-x)
 
@@ -236,9 +235,6 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
 (defface doom-modeline-bar '((t (:inherit highlight)))
   "The face used for the left-most bar on the mode-line of an active window.")
 
-(defface doom-modeline-eldoc-bar `((t (:background ,(face-foreground 'default))))
-  "The face used for the left-most bar on the mode-line when eldoc-eval is active.")
-
 (defface doom-modeline-inactive-bar `((t (:background ,(face-foreground 'mode-line-inactive))))
   "The face used for the left-most bar on the mode-line of an inactive window.")
 
@@ -372,35 +368,6 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
 ;;
 ;; Plugins
 ;;
-
-(defun doom-modeline-eldoc (text)
-  "Get eldoc TEXT for mode-line."
-  (concat (doom-modeline--make-xpm 'doom-modeline-eldoc-bar
-                                   doom-modeline-bar-width
-                                   doom-modeline-height)
-          " "
-          text))
-
-;; Show eldoc in the mode-line with `eval-expression'
-(defun doom-modeline--show-eldoc (input)
-  "Display string INPUT in the mode-line next to minibuffer."
-  (with-current-buffer (eldoc-current-buffer)
-    (let* ((str              (and (stringp input) input))
-           (mode-line-format (or (and str (or (doom-modeline-eldoc str) str))
-                                 mode-line-format))
-           mode-line-in-non-selected-windows)
-      (force-mode-line-update)
-      (sit-for eldoc-show-in-mode-line-delay))))
-
-(add-hook 'doom-modeline-mode-hook
-          (lambda ()
-            (if (bound-and-true-p doom-modeline-mode)
-                (progn
-                  (eldoc-in-minibuffer-mode 1)
-                  (setq eldoc-in-minibuffer-show-fn #'doom-modeline--show-eldoc))
-              (progn
-                (eldoc-in-minibuffer-mode -1)
-                (setq eldoc-in-minibuffer-show-fn #'eldoc-show-in-mode-line)))))
 
 ;; Keep `doom-modeline-current-window' up-to-date
 (defun doom-modeline--get-current-window ()
