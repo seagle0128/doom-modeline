@@ -71,6 +71,8 @@
 (defvar mu4e-alert-mode-line)
 (defvar mu4e-alert-modeline-formatter)
 (defvar nyan-minimum-window-width)
+(defvar objed--object)
+(defvar objed--obj-state)
 (defvar persp-nil-name)
 (defvar symbol-overlay-keywords-alist)
 (defvar symbol-overlay-temp-symbol)
@@ -1447,6 +1449,33 @@ mouse-1: Display Line and Column Mode Menu"
           (doom-modeline--god)
           (doom-modeline--ryo)
           (doom-modeline--xah-fly-keys)))
+
+
+;;
+;; objed-state
+;;
+
+(defvar doom-modeline--objed-active nil)
+
+(defun doom-modeline-update-objed (_ &optional reset)
+  "Update `objed' status, inactive when RESET is true."
+  (setq doom-modeline--objed-active (not reset)))
+
+(setq objed-modeline-setup-func #'doom-modeline-update-objed)
+
+(doom-modeline-def-segment objed-state ()
+  "The current objed state."
+  (when (and doom-modeline--objed-active
+             (doom-modeline--active))
+    (propertize
+     (format " %s(%s) "
+             (symbol-name objed--object)
+             (char-to-string (aref (symbol-name objed--obj-state) 0)))
+     'face 'doom-modeline-evil-emacs-state
+     'help-echo (format "Objed object: %s (%s)"
+                        (symbol-name objed--object)
+                        (symbol-name objed--obj-state)))))
+
 
 ;;
 ;; input method
