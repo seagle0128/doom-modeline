@@ -640,10 +640,10 @@ Uses `all-the-icons-material' to fetch the icon."
                                                                     (.warning 'doom-modeline-warning)
                                                                     (t 'doom-modeline-info))))
                               (doom-modeline-checker-icon "check" "-" 'doom-modeline-info)))
-                (`running     (doom-modeline-checker-icon "access_time" "*" 'font-lock-doc-face))
-                (`no-checker  (doom-modeline-checker-icon "sim_card_alert" "?" 'font-lock-doc-face))
+                (`running     (doom-modeline-checker-icon "access_time" "*" 'doom-modeline-debug))
+                (`no-checker  (doom-modeline-checker-icon "sim_card_alert" "?" 'doom-modeline-debug))
                 (`errored     (doom-modeline-checker-icon "sim_card_alert" "!" 'doom-modeline-urgent))
-                (`interrupted (doom-modeline-checker-icon "pause" "!" 'font-lock-doc-face))
+                (`interrupted (doom-modeline-checker-icon "pause" "!" 'doom-modeline-debug))
                 (`suspicious  (doom-modeline-checker-icon "priority_high" "!" 'doom-modeline-urgent))
                 (_ nil))))
           (propertize
@@ -705,9 +705,9 @@ mouse-2: Show help for minor mode")
                                             (doom-modeline-checker-text (number-to-string info)
                                                                         'doom-modeline-info)))))))
                 (`running     nil)
-                (`no-checker  (doom-modeline-checker-text "-" 'font-lock-doc-face))
+                (`no-checker  (doom-modeline-checker-text "-" 'doom-modeline-debug))
                 (`errored     (doom-modeline-checker-text "Error" 'doom-modeline-urgent))
-                (`interrupted (doom-modeline-checker-text "Interrupted" 'font-lock-doc-face))
+                (`interrupted (doom-modeline-checker-text "Interrupted" 'doom-modeline-debug))
                 (`suspicious  (doom-modeline-checker-text "Suspicious" 'doom-modeline-urgent))
                 (_ nil))))
           (propertize
@@ -772,8 +772,8 @@ wheel-up/wheel-down: Previous/next error"))
           (when-let
               ((icon
                 (cond
-                 (some-waiting (doom-modeline-checker-icon "access_time" "*" 'font-lock-doc-face))
-                 ((null known) (doom-modeline-checker-icon "sim_card_alert" "?" 'font-lock-doc-face))
+                 (some-waiting (doom-modeline-checker-icon "access_time" "*" 'doom-modeline-debug))
+                 ((null known) (doom-modeline-checker-icon "sim_card_alert" "?" 'doom-modeline-debug))
                  (all-disabled (doom-modeline-checker-icon "sim_card_alert" "!" 'doom-modeline-urgent))
                  (t (let ((.error (length (gethash :error diags-by-type)))
                           (.warning (length (gethash :warning diags-by-type)))
@@ -843,7 +843,7 @@ mouse-2: Show help for minor mode"
                 ((text
                   (cond
                    (some-waiting "Running..." "")
-                   ((null known) (doom-modeline-checker-text "-" 'font-lock-doc-face))
+                   ((null known) (doom-modeline-checker-text "-" 'doom-modeline-debug))
                    (all-disabled (doom-modeline-checker-text "-" 'doom-modeline-urgent))
                    (t (let ((num (+ .error .warning .note)))
                         (when (> num 0)
