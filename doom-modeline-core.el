@@ -81,10 +81,10 @@ It returns a file name which can be used directly as argument of
 ;; TODO: better performance?
 (doom-moddeline--set-font-widths all-the-icons-data/alltheicons-alist)
 ;; (doom-moddeline--set-font-widths all-the-icons-data/file-icon-alist)
-(doom-moddeline--set-font-widths all-the-icons-data/fa-icon-alist)
-(doom-moddeline--set-font-widths all-the-icons-data/octicons-alist)
 ;; (doom-moddeline--set-font-widths all-the-icons-data/weather-icons-alist)
+(doom-moddeline--set-font-widths all-the-icons-data/octicons-alist)
 (doom-moddeline--set-font-widths all-the-icons-data/material-icons-alist)
+(doom-moddeline--set-font-widths all-the-icons-data/fa-icon-alist)
 
 
 ;;
