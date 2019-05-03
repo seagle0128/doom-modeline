@@ -188,14 +188,14 @@ buffer where knowing the current project directory is important."
   (let ((face (if (doom-modeline--active)
                   'doom-modeline-buffer-path
                 'mode-line-inactive)))
-    (concat (if (display-graphic-p) " ")
+    (concat " "
             (doom-modeline-icon-octicon
              "file-directory"
              :face face
              :v-adjust -0.05
              :height 1.25)
-            (propertize (concat " " (abbreviate-file-name default-directory))
-                        'face face))))
+            (if (display-graphic-p) " ")
+            (propertize (abbreviate-file-name default-directory) 'face face))))
 
 ;;
 (defvar-local doom-modeline--buffer-file-icon nil)
@@ -922,10 +922,7 @@ icons."
                                          :inherit
                                          mode-line-inactive)))
               (when (and doom-modeline-icon icon text) doom-modeline-inactive-vspc)
-              (when text (propertize text 'face 'mode-line-inactive))))
-           ;; Adjust the position of the last icon
-           (if (and (display-graphic-p) (bound-and-true-p fancy-battery-mode))
-               (propertize " " 'face (if active 'mode-line 'mode-line-inactive)))))
+              (when text (propertize text 'face 'mode-line-inactive))))))
       "")))
 
 
