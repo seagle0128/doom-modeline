@@ -1988,27 +1988,27 @@ we don't want to remove that so we just return the original."
                       (charging?
                        (if doom-modeline-icon
                            (doom-modeline-icon-alltheicon "battery-charging" :height 1.4 :v-adjust -0.1)
-                         (propertize "+" 'face face)))
+                         "+"))
                       ((> percentage-number 95)
                        (if doom-modeline-icon
                            (doom-modeline-icon-faicon "battery-full" :v-adjust -0.0575)
-                         (propertize "-" 'face face)))
+                         "-"))
                       ((> percentage-number 70)
                        (if doom-modeline-icon
                            (doom-modeline-icon-faicon "battery-three-quarters" :v-adjust -0.0575)
-                         (propertize "-" 'face face)))
+                         "-"))
                       ((> percentage-number 40)
                        (if doom-modeline-icon
                            (doom-modeline-icon-faicon "battery-half" :v-adjust -0.0575)
-                         (propertize "-" 'face face)))
+                         "-"))
                       ((> percentage-number 15)
                        (if doom-modeline-icon
                            (doom-modeline-icon-faicon "battery-quarter" :v-adjust -0.0575)
-                         (propertize "-" 'face face)))
+                         "-"))
                       (t
                        (if doom-modeline-icon
                            (doom-modeline-icon-faicon "battery-empty" :v-adjust -0.0575)
-                         (propertize "!" 'face face)))))
+                         "!"))))
                (percent-str (and percentage (concat percentage "%%")))
                (help-echo (if battery-echo-area-format
                               (battery-format battery-echo-area-format status)
@@ -2028,8 +2028,10 @@ we don't want to remove that so we just return the original."
                              'help-echo help-echo))
              ;; Battery status is not available
              (if doom-modeline-icon
-                 (doom-modeline-icon-material "battery_unknown" :height 1.1 :v-adjust -0.225 :face 'error)
-               (propertize "N/A" 'face 'error)))
+                 (doom-modeline-icon-faicon "battery-empty" :v-adjust -0.0575 :face 'error)
+               (propertize "N/A"
+                           'face 'error
+                           'help-echo "Battery status not available")))
            " "))))
 (add-hook 'fancy-battery-status-update-functions #'doom-modeline-update-battery-status)
 
