@@ -1876,7 +1876,7 @@ mouse-1: Toggle Debug on Quit"
           (concat
            (if doom-modeline-icon
                (concat
-                (doom-modeline-icon-material "mail"
+                (doom-modeline-icon-material "email"
                                              :height 1.1
                                              :v-adjust -0.225
                                              :face 'doom-modeline-warning)
