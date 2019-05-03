@@ -78,13 +78,38 @@ It returns a file name which can be used directly as argument of
     (doom-modeline--set-char-widths
      `((2 . ,fonts)))))
 
-;; TODO: better performance?
-(doom-moddeline--set-font-widths all-the-icons-data/alltheicons-alist)
-;; (doom-moddeline--set-font-widths all-the-icons-data/file-icon-alist)
-;; (doom-moddeline--set-font-widths all-the-icons-data/weather-icons-alist)
-(doom-moddeline--set-font-widths all-the-icons-data/octicons-alist)
-(doom-moddeline--set-font-widths all-the-icons-data/material-icons-alist)
-(doom-moddeline--set-font-widths all-the-icons-data/fa-icon-alist)
+(defconst doom-modeline-icons-alist
+  '(;; macro
+    ("fiber_manual_record" . "\xe061")
+    ("triangle-right" . "\xf05a")
+
+    ;; multiple-cursors
+    ("i-cursor" . "\xf246")
+
+    ;; LSP
+    ("rocket" . "\xf135")
+
+    ;; github
+    ("github" . "\xf09b")
+
+    ;; debug
+    ("bug" . "\xf188")
+
+    ;; mu4e
+    ("email" . "\xe0be")
+    ;; ("mail" . "\xe158")
+
+    ;; irc
+    ("message" . "\xe0c9")
+
+    ;; Battery
+    ("battery-charging" . "\xe939")
+    ("battery-empty" . "\xf244")
+    ("battery-full" . "\xf240")
+    ("battery-half" . "\xf242")
+    ("battery-quarter" . "\xf243")
+    ("battery-three-quarters" . "\xf241")))
+(doom-moddeline--set-font-widths doom-modeline-icons-alist)
 
 
 ;;
