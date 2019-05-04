@@ -127,7 +127,7 @@
 (declare-function flymake--backend-state-diags 'flymake)
 (declare-function flymake--diag-type 'flymake)
 (declare-function flymake--handle-report 'flymake)
-(declare-function flymake--severity 'flymake)
+(declare-function flymake--lookup-type-property 'flymake)
 (declare-function flymake-disabled-backends 'flymake)
 (declare-function flymake-goto-next-error 'flymake)
 (declare-function flymake-goto-prev-error 'flymake)
@@ -779,7 +779,8 @@ wheel-up/wheel-down: Previous/next error"))
                          do (cl-loop
                              with diags = (flymake--backend-state-diags state)
                              for diag in diags do
-                             (let ((severity (flymake--severity (flymake--diag-type diag))))
+                             (let ((severity (flymake--lookup-type-property (flymake--diag-type diag) 'severity
+                                                                            (warning-numeric-level :error))))
                                (cond ((> severity warning-level) (cl-incf .error))
                                      ((> severity note-level)    (cl-incf .warning))
                                      (t                          (cl-incf .note))))))
@@ -842,7 +843,8 @@ mouse-2: Show help for minor mode"
                      (cl-loop
                       with diags = (flymake--backend-state-diags state)
                       for diag in diags do
-                      (let ((severity (flymake--severity (flymake--diag-type diag))))
+                      (let ((severity (flymake--lookup-type-property (flymake--diag-type diag) 'severity
+                                                                     (warning-numeric-level :error))))
                         (cond ((> severity warning-level) (cl-incf .error))
                               ((> severity note-level) (cl-incf .warning))
                               (t (cl-incf .note))))))
