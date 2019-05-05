@@ -378,8 +378,10 @@ directory, the file name, and its state (modified, read-only or non-existent)."
          (unless (string-empty-p icon)
            (concat
             (propertize icon 'face `(:inherit
-                                     ;; TODO: doom-modeline-major-mode-color-icon
-                                     ,(get-text-property 0 'face icon)
+                                     ,(let ((plist (get-text-property 0 'face icon)))
+                                        (if doom-modeline-major-mode-color-icon
+                                            plist
+                                          (remove :inherit plist)))
                                      :inherit
                                      ,(if active 'mode-line 'mode-line-inactive)))
             (if active doom-modeline-vspc doom-modeline-inactive-vspc)))))
