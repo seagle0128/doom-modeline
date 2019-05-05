@@ -932,7 +932,8 @@ icons."
                                          :inherit
                                          mode-line-inactive)))
               (when (and doom-modeline-icon icon text) doom-modeline-inactive-vspc)
-              (when text (propertize text 'face 'mode-line-inactive))))))
+              (when text (propertize text 'face 'mode-line-inactive))))
+           " "))
       "")))
 
 
