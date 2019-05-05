@@ -377,12 +377,11 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                             (doom-modeline-update-buffer-file-icon))))
          (unless (string-empty-p icon)
            (concat
-            (if (and active doom-modeline-major-mode-color-icon)
-                icon
-              (propertize icon 'face `(:inherit
-                                       ,(get-text-property 0 'face icon)
-                                       :inherit
-                                       ,(if active 'mode-line 'mode-line-inactive))))
+            (propertize icon 'face `(:inherit
+                                     ;; TODO: doom-modeline-major-mode-color-icon
+                                     ,(get-text-property 0 'face icon)
+                                     :inherit
+                                     ,(if active 'mode-line 'mode-line-inactive)))
             (if active doom-modeline-vspc doom-modeline-inactive-vspc)))))
 
      ;; state icon
@@ -390,12 +389,10 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                           (doom-modeline-update-buffer-file-state-icon))))
        (unless (string-empty-p icon)
          (concat
-          (if active
-              icon
-            (propertize icon 'face `(:inherit
-                                     ,(get-text-property 0 'face icon)
-                                     :inherit
-                                     mode-line-inactive)))
+          (propertize icon 'face `(:inherit
+                                   ,(get-text-property 0 'face icon)
+                                   :inherit
+                                   ,(if active 'mode-line 'mode-line-inactive)))
           (if active doom-modeline-vspc doom-modeline-inactive-vspc))))
 
      ;; buffer file name
@@ -595,18 +592,16 @@ Uses `all-the-icons-octicon' to fetch the icon."
                (text (or doom-modeline--vcs-text (doom-modeline-update-vcs-text))))
       (concat
        (propertize "  " 'face (if active 'mode-line 'mode-line-inactive))
-       (if active
-           (concat icon
-                   (if doom-modeline-icon
-                       doom-modeline-vspc)
-                   text)
-         (concat
-          (propertize icon 'face `(:inherit
-                                   ,(if doom-modeline-icon (get-text-property 0 'face icon))
-                                   :inherit
-                                   mode-line-inactive))
-          doom-modeline-inactive-vspc
-          (propertize text 'face 'mode-line-inactive)))
+       (propertize icon 'face `(:inherit
+                                ,(if doom-modeline-icon (get-text-property 0 'face icon))
+                                :inherit
+                                ,(if active 'mode-line 'mode-line-inactive)))
+       (if doom-modeline-icon
+           (if active doom-modeline-vspc doom-modeline-inactive-vspc))
+       (propertize text 'face `(:inherit
+                                ,(if doom-modeline-icon (get-text-property 0 'face text))
+                                :inherit
+                                ,(if active 'mode-line 'mode-line-inactive)))
        (propertize " " 'face (if active 'mode-line 'mode-line-inactive))))))
 
 
@@ -921,18 +916,18 @@ icons."
           (concat
            (propertize (if vc-mode " " "  ")
                        'face (if active 'mode-line 'mode-line-inactive))
-           (if active
-               (concat icon
-                       (when (and doom-modeline-icon icon text) doom-modeline-vspc)
-                       text)
-             (concat
-              (when icon
-                (propertize icon 'face `(:inherit
-                                         ,(if doom-modeline-icon (get-text-property 0 'face icon))
-                                         :inherit
-                                         mode-line-inactive)))
-              (when (and doom-modeline-icon icon text) doom-modeline-inactive-vspc)
-              (when text (propertize text 'face 'mode-line-inactive))))
+           (when icon
+             (propertize icon 'face `(:inherit
+                                      ,(if doom-modeline-icon (get-text-property 0 'face icon))
+                                      :inherit
+                                      ,(if active 'mode-line 'mode-line-inactive))))
+           (when (and doom-modeline-icon icon text)
+             (if active doom-modeline-vspc doom-modeline-inactive-vspc))
+           (when text
+             (propertize text 'face `(:inherit
+                                      ,(if active
+                                           (get-text-property 0 'face text)
+                                         'mode-line-inactive))))
            " "))
       "")))
 
@@ -2077,7 +2072,7 @@ we don't want to remove that so we just return the original."
           (propertize icon 'face `(:inherit
                                    ,(if doom-modeline-icon (get-text-property 0 'face icon))
                                    :inherit
-                                   ,(unless active 'mode-line-inactive))))))
+                                   ,(if active 'mode-line 'mode-line-inactive))))))
 
      (when paradox-display-buffer-name
        (propertize (format " %%%sb" (length (buffer-name)))
