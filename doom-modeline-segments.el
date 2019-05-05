@@ -1257,7 +1257,8 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
                (window-numbering-get-number-string))
               (t ""))))
     (if (and (< 0 (length num))
-             (< 1 (length (window-list))))
+             (< (if (active-minibuffer-window) 2 1)
+                (length (window-list))))
         (propertize (format " %s " num)
                     'face (if (doom-modeline--active)
                               'doom-modeline-buffer-major-mode
