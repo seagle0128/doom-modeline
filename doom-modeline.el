@@ -106,6 +106,10 @@
   '(bar window-number buffer-size buffer-info pdf-pages)
   '(misc-info " " major-mode process vcs))
 
+(doom-modeline-def-modeline 'package
+  '(bar window-number package)
+  '(misc-info " " major-mode process))
+
 
 ;;
 ;; Interfaces
@@ -148,6 +152,11 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   "Set pdf mode-line."
   (doom-modeline-set-modeline 'pdf))
 
+;;;###autoload
+(defun doom-modeline-set-package-modeline ()
+  "Set package mode-line."
+  (doom-modeline-set-modeline 'package))
+
 
 ;;
 ;; Mode
@@ -176,7 +185,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (add-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
         (add-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
         (add-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
-        (add-hook 'pdf-tools-enabled-hook #'doom-modeline-set-pdf-modeline))
+        (add-hook 'pdf-tools-enabled-hook #'doom-modeline-set-pdf-modeline)
+        (add-hook 'paradox-menu-mode-hook #'doom-modeline-set-package-modeline))
     (progn
       ;; Restore mode-line
       (setq-default mode-line-format doom-modeline--default-mode-line)
@@ -185,7 +195,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
       (remove-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
       (remove-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
       (remove-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
-      (remove-hook 'pdf-tools-enabled-hook #'doom-modeline-set-pdf-modeline))))
+      (remove-hook 'pdf-tools-enabled-hook #'doom-modeline-set-pdf-modeline)
+      (remove-hook 'paradox-menu-mode-hook #'doom-modeline-set-package-modeline))))
 
 (provide 'doom-modeline)
 

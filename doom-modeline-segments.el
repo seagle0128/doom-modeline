@@ -71,6 +71,12 @@
 (defvar objed--obj-state)
 (defvar objed--object)
 (defvar objed-modeline-setup-func)
+(defvar package-archive-contents)
+(defvar package-menu--new-package-list)
+(defvar paradox--current-filter)
+(defvar paradox--upgradeable-packages-any?)
+(defvar paradox--upgradeable-packages-number)
+(defvar paradox-display-buffer-name)
 (defvar persp-nil-name)
 (defvar symbol-overlay-keywords-alist)
 (defvar symbol-overlay-temp-symbol)
@@ -155,6 +161,7 @@
 (declare-function org-narrow-to-block 'org)
 (declare-function org-narrow-to-element 'org)
 (declare-function org-narrow-to-subtree 'org)
+(declare-function paradox--cas 'paradox-core)
 (declare-function parrot-create 'parrot)
 (declare-function pdf-cache-number-of-pages 'pdf-cache)
 (declare-function persp-add-buffer 'persp-mode)
@@ -177,6 +184,7 @@
 (declare-function winum--clear-mode-line 'winum)
 (declare-function winum--install-mode-line 'winum)
 (declare-function winum-get-number-string 'winum)
+
 
 ;;
 ;; buffer information
@@ -1855,6 +1863,7 @@ mouse-1: Toggle Debug on Quit"
 (add-hook 'pdf-view-change-page-hook #'doom-modeline-update-pdf-pages)
 
 (doom-modeline-def-segment pdf-pages
+  "Display PDF pages."
   (when (eq major-mode 'pdf-view-mode)
     doom-modeline--pdf-pages))
 
@@ -1864,6 +1873,7 @@ mouse-1: Toggle Debug on Quit"
 ;;
 
 (doom-modeline-def-segment mu4e
+  "Show notifications of any unread emails in `mu4e'."
   (when (and doom-modeline-mu4e
              (doom-modeline--active)
              (bound-and-true-p mu4e-alert-mode-line))
@@ -2035,6 +2045,7 @@ we don't want to remove that so we just return the original."
 (add-hook 'fancy-battery-status-update-functions #'doom-modeline-update-battery-status)
 
 (doom-modeline-def-segment fancy-battery
+  "Display battery status."
   (when (and (doom-modeline--active)
              (bound-and-true-p fancy-battery-mode))
     (or doom-modeline--battery-status (doom-modeline-update-battery-status))))
@@ -2046,6 +2057,61 @@ we don't want to remove that so we just return the original."
             (delq 'fancy-battery-mode-line global-mode-string))))
 (add-hook 'fancy-battery-mode-hook #'doom-modeline-override-fancy-battery-modeline)
 (add-hook 'doom-modeline-mode-hook #'doom-modeline-override-fancy-battery-modeline)
+
+(doom-modeline-def-segment package
+  "Show package information via `paradox'."
+  (let ((total-lines (int-to-string (length tabulated-list-entries)))
+        (active (doom-modeline--active)))
+    (concat
+     (concat
+      " ("
+      (propertize (format "%%%sl" (length total-lines))
+                  'face (if active 'doom-modeline-buffer-file 'mode-line-inactive))
+      "/" total-lines ") ")
+
+     (when doom-modeline-icon
+       (let ((icon (doom-modeline-icon-for-mode 'paradox-menu-mode)))
+         (concat
+          " "
+          (propertize icon 'face `(:inherit
+                                   ,(if doom-modeline-icon (get-text-property 0 'face icon))
+                                   :inherit
+                                   ,(unless active 'mode-line-inactive))))))
+
+     (when paradox-display-buffer-name
+       (propertize (format " %%%sb" (length (buffer-name)))
+                   'face (if active 'doom-modeline-buffer-file 'mode-line-inactive)))
+
+     " "
+
+     (when paradox--current-filter
+       (propertize (concat "[" paradox--current-filter "]")
+                   'face (if active 'paradox-mode-line-face 'mode-line-inactive)))
+     (when paradox--upgradeable-packages-any?
+       (concat
+        (propertize " Upgrade:"
+                    'face (if active 'paradox-mode-line-face 'mode-line-inactive))
+        (propertize (int-to-string paradox--upgradeable-packages-number)
+                    'face (if active 'doom-modeline-buffer-file 'mode-line-inactive))))
+     (when package-menu--new-package-list
+       (concat
+        (propertize " New:"
+                    'face (if active 'paradox-mode-line-face 'mode-line-inactive))
+        (propertize (int-to-string (paradox--cas "new"))
+                    'face (if active 'doom-modeline-buffer-file 'mode-line-inactive))))
+     (concat
+      (propertize " Installed:"
+                  'face (if active 'paradox-mode-line-face 'mode-line-inactive))
+      (propertize (int-to-string (+ (paradox--cas "installed")
+                                    (paradox--cas "dependency")
+                                    (paradox--cas "unsigned")))
+                  'face (if active 'doom-modeline-buffer-file 'mode-line-inactive)))
+     (when paradox--current-filter
+       (concat
+        (propertize " Total:"
+                    'face (if active 'paradox-mode-line-face 'mode-line-inactive))
+        (propertize (int-to-string (length package-archive-contents))
+                    'face (if active 'doom-modeline-buffer-file 'mode-line-inactive)))))))
 
 (provide 'doom-modeline-segments)
 
