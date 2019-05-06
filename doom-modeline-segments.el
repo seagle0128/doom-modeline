@@ -1585,7 +1585,7 @@ mouse-1: Reload to start server")
                             (last-error 'error)
                             ((and doing (not done-p)) 'compilation-mode-line-run)
                             ((and pending (cl-plusp pending)) 'warning)
-                            (nick 'doom-modeline-highlight)
+                            (nick 'success)
                             (t 'mode-line)))
                      (help-echo (cond
                                  (last-error
@@ -1825,7 +1825,7 @@ mouse-1: Toggle Debug on Error"
      ;; For `debug-on-quit'
      (when debug-on-quit
        (propertize
-        (doom-modeline-debug-icon 'doom-modeline-info)
+        (doom-modeline-debug-icon 'doom-modeline-buffer-path)
         'help-echo "Debug on Quit
 mouse-1: Toggle Debug on Quit"
         'mouse-face '(:box 0)
