@@ -1584,8 +1584,8 @@ mouse-1: Reload to start server")
                      (face (cond
                             (last-error 'error)
                             ((and doing (not done-p)) 'compilation-mode-line-run)
-                            ((cl-plusp pending) 'warning)
-                            (nick 'success)
+                            ((and pending (cl-plusp pending)) 'warning)
+                            (nick 'doom-modeline-highlight)
                             (t 'mode-line)))
                      (help-echo (cond
                                  (last-error
@@ -1594,7 +1594,7 @@ mouse-3: clear this status" (plist-get last-error :message)))
                                  ((and doing (not done-p))
                                   (format "EGLOT\n%s%s" doing
                                           (if detail (format "%s" detail) "")))
-                                 ((cl-plusp pending)
+                                 ((and pending (cl-plusp pending))
                                   (format "EGLOT\n%d outstanding requests" pending))
                                  (nick (format "EGLOT Connected (%s/%s)
 C-mouse-1: Disply server errors
@@ -1608,7 +1608,7 @@ mouse-3: Reconnect to server" nick (eglot--major-mode server)))
                          (last-error
                           (define-key map [mode-line mouse-3]
                             #'eglot-clear-status))
-                         ((cl-plusp pending)
+                         ((and pending (cl-plusp pending))
                           (define-key map [mode-line mouse-3]
                             #'eglot-forget-pending-continuations))
                          (nick
@@ -1641,7 +1641,7 @@ mouse-3: Reconnect to server" nick (eglot--major-mode server)))
        ((bound-and-true-p lsp-mode)
         doom-modeline--lsp)
        ((bound-and-true-p eglot--managed-mode)
-        (doom-modeline-update-eglot)))))
+        doom-modeline--eglot))))
 
 (defun doom-modeline-override-eglot-modeline ()
   "Override `eglot' mode-line."
