@@ -588,13 +588,13 @@ Uses `all-the-icons-octicon' to fetch the icon."
       (concat
        (propertize "  " 'face (if active 'mode-line 'mode-line-inactive))
        (propertize icon 'face `(:inherit
-                                ,(if doom-modeline-icon (get-text-property 0 'face icon))
+                                ,(get-text-property 0 'face icon)
                                 :inherit
                                 ,(if active 'mode-line 'mode-line-inactive)))
        (if doom-modeline-icon
            (if active doom-modeline-vspc doom-modeline-inactive-vspc))
        (propertize text 'face `(:inherit
-                                ,(if doom-modeline-icon (get-text-property 0 'face text))
+                                ,(get-text-property 0 'face text)
                                 :inherit
                                 ,(if active 'mode-line 'mode-line-inactive)))
        (propertize " " 'face (if active 'mode-line 'mode-line-inactive))))))
@@ -913,7 +913,7 @@ icons."
                        'face (if active 'mode-line 'mode-line-inactive))
            (when icon
              (propertize icon 'face `(:inherit
-                                      ,(if doom-modeline-icon (get-text-property 0 'face icon))
+                                      ,(get-text-property 0 'face icon)
                                       :inherit
                                       ,(if active 'mode-line 'mode-line-inactive))))
            (when (and doom-modeline-icon icon text)
@@ -2018,7 +2018,7 @@ we don't want to remove that so we just return the original."
            (if percent-str
                (concat
                 (propertize icon 'face `(:inherit
-                                         ,(if doom-modeline-icon (get-text-property 0 'face icon))
+                                         ,(get-text-property 0 'face icon)
                                          :inherit ,face)
                             'help-echo help-echo)
                 (if doom-modeline-icon
