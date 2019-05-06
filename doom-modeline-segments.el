@@ -1524,7 +1524,7 @@ mouse-3: Describe current input method")
 (defun doom-modeline-lsp-icon (text face)
   "Display LSP icon (or TEXT in terminal) with FACE."
   (if doom-modeline-icon
-      (doom-modeline-icon-faicon "rocket" :face face :v-adjust -0.0575)
+      (doom-modeline-icon-faicon "rocket" :height 1.0 :face face :v-adjust -0.0575)
     (propertize text 'face face)))
 
 (defvar doom-modeline--lsp nil)
@@ -1630,13 +1630,17 @@ mouse-3: Reconnect to server" nick (eglot--major-mode server)))
 
 (doom-modeline-def-segment lsp
   "The LSP server state."
-  (if (and doom-modeline-lsp
-           (doom-modeline--active))
-      (cond
-       ((bound-and-true-p lsp-mode)
-        doom-modeline--lsp)
-       ((bound-and-true-p eglot--managed-mode)
-        doom-modeline--eglot))))
+  (when doom-modeline-lsp
+    (when-let ((icon (cond ((bound-and-true-p lsp-mode)
+                            doom-modeline--lsp)
+                           ((bound-and-true-p eglot--managed-mode)
+                            doom-modeline--eglot))))
+      (propertize icon 'face `(:inherit
+                               ,(get-text-property 1 'face icon)
+                               :inherit
+                               ,(if (doom-modeline--active)
+                                    'mode-line
+                                  'mode-line-inactive))))))
 
 (defun doom-modeline-override-eglot-modeline ()
   "Override `eglot' mode-line."

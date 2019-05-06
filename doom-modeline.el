@@ -84,7 +84,7 @@
 
 (doom-modeline-def-modeline 'main
   '(bar workspace-name window-number modals matches buffer-info remote-host buffer-position parrot selection-info)
-  '(objed-state misc-info persp-name lsp irc mu4e github debug fancy-battery minor-modes input-method buffer-encoding major-mode process vcs checker))
+  '(objed-state misc-info persp-name fancy-battery irc mu4e github debug lsp minor-modes input-method buffer-encoding major-mode process vcs checker))
 
 (doom-modeline-def-modeline 'minimal
   '(bar matches " " buffer-info)
@@ -92,11 +92,11 @@
 
 (doom-modeline-def-modeline 'special
   '(bar window-number modals matches buffer-info-simple buffer-position parrot selection-info)
-  '(objed-state misc-info lsp irc-buffers debug fancy-battery minor-modes input-method buffer-encoding major-mode process checker))
+  '(objed-state misc-info fancy-battery irc-buffers debug lsp minor-modes input-method buffer-encoding major-mode process checker))
 
 (doom-modeline-def-modeline 'project
   '(bar window-number " " buffer-default-directory)
-  '(misc-info mu4e github debug fancy-battery " " major-mode process))
+  '(misc-info fancy-battery mu4e github debug " " major-mode process))
 
 (doom-modeline-def-modeline 'media
   '(bar window-number buffer-size buffer-info)
