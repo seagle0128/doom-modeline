@@ -56,10 +56,13 @@
 ;; - An indicator for irc notifications with circe
 ;; - An indicator for buffer position which is compatible with nyan-mode
 ;; - An indicator for party parrot
-;; - An indicator for PDF page number
+;; - An indicator for PDF page number with pdf-tools
 ;; - An indicator for battery status with fancy-battery
 ;; - Truncated file name, file icon, buffer state and project name in buffer
 ;;   information segment, which is compatible with projectile and project
+;; - New mode-line for Info-mode buffers
+;; - New package mode-line for paradox
+;; - New mode-line for helm buffers
 ;;
 ;; Installation:
 ;; From melpa, `M-x package-install RET doom-modeline RET`.
