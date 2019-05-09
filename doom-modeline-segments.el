@@ -65,6 +65,7 @@
 (defvar flymake--backend-state)
 (defvar flymake--mode-line-format)
 (defvar flymake-menu)
+(defvar helm--mode-line-display-prefarg)
 (defvar iedit-occurrences-overlays)
 (defvar mc/mode-line)
 (defvar minions-mode-line-lighter)
@@ -138,6 +139,8 @@
 (declare-function flymake-running-backends 'flymake)
 (declare-function flymake-show-diagnostics-buffer 'flymake)
 (declare-function flymake-start 'flymake)
+(declare-function helm-candidate-number-at-point 'helm)
+(declare-function helm-get-candidate-number 'helm)
 (declare-function iedit-find-current-occurrence-overlay 'iedit-lib)
 (declare-function iedit-prev-occurrence 'iedit-lib)
 (declare-function image-get-display-property 'image-mode)
@@ -2111,6 +2114,79 @@ we don't want to remove that so we just return the original."
        (if active
            info
          (propertize info 'face 'mode-line-inactive))))))
+
+
+;;
+;; Helm
+;;
+
+(defvar doom-modeline--helm-buffer-ids
+  '(("*helm*" . "HELM")
+    ("*helm M-x*" . "HELM M-x")
+    ("*swiper*" . "SWIPER")
+    ("*Projectile Perspectives*" . "HELM Projectile Perspectives")
+    ("*Projectile Layouts*" . "HELM Projectile Layouts")
+    ("*helm-ag*" . (lambda ()
+                     (format "HELM Ag: Using %s"
+                             (car (split-string helm-ag-base-command))))))
+  "Alist of custom helm buffer names to use.
+The cdr can also be a function that returns a name to use.")
+(doom-modeline-def-segment helm-buffer-id
+  "Helm session identifier."
+  (when (bound-and-true-p helm-alive-p)
+    (concat
+     " "
+     (propertize
+      (let ((custom (cdr (assoc (buffer-name) doom-modeline--helm-buffer-ids)))
+            (case-fold-search t)
+            (name (replace-regexp-in-string "-" " " (buffer-name))))
+        (cond ((stringp custom) custom)
+              ((functionp custom) (funcall custom))
+              (t
+               (string-match "\\*helm:? \\(mode \\)?\\([^\\*]+\\)\\*" name)
+               (concat "HELM " (capitalize (match-string 2 name))))))
+      'face 'doom-modeline-buffer-file)
+     " ")))
+
+(doom-modeline-def-segment helm-number
+  "Number of helm candidates."
+  (when (bound-and-true-p helm-alive-p)
+    (concat
+     (propertize (format " %d/%d"
+                         (helm-candidate-number-at-point)
+                         (helm-get-candidate-number t))
+                 'face 'doom-modeline-buffer-path)
+     (propertize (format " (%d total) " (helm-get-candidate-number))
+                 'face 'doom-modeline-info))))
+
+(doom-modeline-def-segment helm-help
+  "Helm keybindings help."
+  (when (bound-and-true-p helm-alive-p)
+    (-interleave
+     (mapcar (lambda (s)
+               (propertize (substitute-command-keys s) 'face 'doom-modeline-buffer-file))
+             '("\\<helm-map>\\[helm-help]"
+               "\\<helm-map>\\[helm-select-action]"
+               "\\<helm-map>\\[helm-maybe-exit-minibuffer]/F1/F2..."))
+     '("(help) " "(actions) " "(action) "))))
+
+(doom-modeline-def-segment helm-prefix-argument
+  "Helm prefix argument."
+  (when (and (bound-and-true-p helm-alive-p)
+             helm--mode-line-display-prefarg)
+    (let ((arg (prefix-numeric-value (or prefix-arg current-prefix-arg))))
+      (unless (= arg 1)
+        (propertize (format "C-u %s" arg) 'face 'doom-modeline-info)))))
+
+(defvar doom-modeline--helm-current-source nil
+  "The currently active helm source.")
+(doom-modeline-def-segment helm-follow
+  "Helm follow indicator."
+  (when (and (bound-and-true-p helm-alive-p)
+             doom-modeline--helm-current-source
+             (eq 1 (cdr (assq 'follow doom-modeline--helm-current-source))))
+    "HF"))
+
 
 (provide 'doom-modeline-segments)
 

@@ -114,6 +114,10 @@
   '(bar window-number buffer-size buffer-info pdf-pages)
   '(misc-info " " major-mode process vcs))
 
+(doom-modeline-def-modeline 'helm
+  '(bar helm-buffer-id helm-number helm-follow helm-prefix-argument)
+  '(helm-help))
+
 
 ;;
 ;; Interfaces
@@ -166,12 +170,18 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   "Set pdf mode-line."
   (doom-modeline-set-modeline 'pdf))
 
+;;;###autoload
+(defun doom-modeline-set-helm-modeline (&rest _)
+  "Set helm mode-line."
+  (doom-modeline-set-modeline 'helm))
+
 
 ;;
 ;; Mode
 ;;
 
 (defvar doom-modeline--default-mode-line mode-line-format)
+(declare-function helm-display-mode-line 'helm)
 
 ;;;###autoload
 (define-minor-mode doom-modeline-mode
@@ -196,7 +206,9 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (add-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
         (add-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
         (add-hook 'pdf-tools-enabled-hook #'doom-modeline-set-pdf-modeline)
-        (add-hook 'paradox-menu-mode-hook #'doom-modeline-set-package-modeline))
+        (add-hook 'paradox-menu-mode-hook #'doom-modeline-set-package-modeline)
+        ;; Add advice
+        (advice-add #'helm-display-mode-line :override #'doom-modeline-set-helm-modeline))
     (progn
       ;; Restore mode-line
       (setq-default mode-line-format doom-modeline--default-mode-line)
@@ -207,7 +219,9 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
       (remove-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
       (remove-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
       (remove-hook 'pdf-tools-enabled-hook #'doom-modeline-set-pdf-modeline)
-      (remove-hook 'paradox-menu-mode-hook #'doom-modeline-set-package-modeline))))
+      (remove-hook 'paradox-menu-mode-hook #'doom-modeline-set-package-modeline)
+      ;; Remove advices
+      (advice-remove #'helm-display-mode-line #'doom-modeline-set-helm-modeline))))
 
 (provide 'doom-modeline)
 
