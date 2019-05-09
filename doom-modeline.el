@@ -98,6 +98,14 @@
   '(bar window-number " " buffer-default-directory)
   '(misc-info fancy-battery mu4e github debug " " major-mode process))
 
+(doom-modeline-def-modeline 'package
+  '(bar window-number package)
+  '(misc-info " " major-mode process))
+
+(doom-modeline-def-modeline 'info
+  '(bar window-number buffer-info info buffer-position parrot selection-info)
+  '(misc-info buffer-encoding major-mode))
+
 (doom-modeline-def-modeline 'media
   '(bar window-number buffer-size buffer-info)
   '(misc-info media-info major-mode process vcs))
@@ -105,10 +113,6 @@
 (doom-modeline-def-modeline 'pdf
   '(bar window-number buffer-size buffer-info pdf-pages)
   '(misc-info " " major-mode process vcs))
-
-(doom-modeline-def-modeline 'package
-  '(bar window-number package)
-  '(misc-info " " major-mode process))
 
 
 ;;
@@ -138,24 +142,29 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   (doom-modeline-set-modeline 'special))
 
 ;;;###autoload
-(defun doom-modeline-set-media-modeline ()
-  "Set media mode-line."
-  (doom-modeline-set-modeline 'media))
-
-;;;###autoload
 (defun doom-modeline-set-project-modeline ()
   "Set project mode-line."
   (doom-modeline-set-modeline 'project))
 
 ;;;###autoload
-(defun doom-modeline-set-pdf-modeline ()
-  "Set pdf mode-line."
-  (doom-modeline-set-modeline 'pdf))
+(defun doom-modeline-set-info-modeline ()
+  "Set Info mode-line."
+  (doom-modeline-set-modeline 'info))
 
 ;;;###autoload
 (defun doom-modeline-set-package-modeline ()
   "Set package mode-line."
   (doom-modeline-set-modeline 'package))
+
+;;;###autoload
+(defun doom-modeline-set-media-modeline ()
+  "Set media mode-line."
+  (doom-modeline-set-modeline 'media))
+
+;;;###autoload
+(defun doom-modeline-set-pdf-modeline ()
+  "Set pdf mode-line."
+  (doom-modeline-set-modeline 'pdf))
 
 
 ;;
@@ -181,6 +190,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
             (with-current-buffer bname
               (doom-modeline-set-main-modeline))))
         ;; Add hooks
+        (add-hook 'Info-mode-hook #'doom-modeline-set-info-modeline)
         (add-hook 'magit-mode-hook #'doom-modeline-set-project-modeline)
         (add-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
         (add-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
@@ -191,6 +201,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
       ;; Restore mode-line
       (setq-default mode-line-format doom-modeline--default-mode-line)
       ;; Remove hooks
+      (remove-hook 'Info-mode-hook #'doom-modeline-set-info-modeline)
       (remove-hook 'magit-mode-hook #'doom-modeline-set-project-modeline)
       (remove-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
       (remove-hook 'image-mode-hook #'doom-modeline-set-media-modeline)

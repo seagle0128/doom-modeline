@@ -39,6 +39,9 @@
 ;; Externals
 ;;
 
+(defvar Info-current-file)
+(defvar Info-current-node)
+(defvar Info-mode-line-node-keymap)
 (defvar anzu--cached-count)
 (defvar anzu--current-position)
 (defvar anzu--overflow-p)
@@ -1518,6 +1521,36 @@ mouse-3: Describe current input method")
 
 
 ;;
+;; Info
+;;
+
+(doom-modeline-def-segment info
+  "The segment for `Info-mode'."
+  (let ((active (doom-modeline--active)))
+    (concat
+     " ("
+     ;; topic
+     (propertize (if (stringp Info-current-file)
+                     (replace-regexp-in-string
+                      "%" "%%"
+                      (file-name-sans-extension
+                       (file-name-nondirectory Info-current-file)))
+                   (format "*%S*" Info-current-file))
+                 'face (if active 'doom-modeline-info 'mode-line-inactive))
+     ") "
+     ;; node
+     (if Info-current-node
+         (propertize (replace-regexp-in-string
+                      "%" "%%" Info-current-node)
+                     'face (if active 'doom-modeline-buffer-path 'mode-line-inactive)
+                     'help-echo
+                     "mouse-1: scroll forward, mouse-3: scroll back"
+                     'mouse-face 'mode-line-highlight
+                     'local-map Info-mode-line-node-keymap)
+       ""))))
+
+
+;;
 ;; LSP
 ;;
 
@@ -2065,7 +2098,7 @@ we don't want to remove that so we just return the original."
 
      (when (and doom-modeline-icon doom-modeline-major-mode-icon)
        (concat " "
-               (let ((icon (doom-modeline-icon-for-mode 'paradox-menu-mode)))
+               (let ((icon (doom-modeline-icon-for-mode 'paradox-menu-mode :v-adjust -0.15)))
                  (propertize icon 'face `(:inherit
                                           ,(let ((props (get-text-property 0 'face icon)))
                                              (if doom-modeline-major-mode-color-icon
