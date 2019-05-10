@@ -201,7 +201,7 @@ buffer where knowing the current project directory is important."
              :face face
              :v-adjust -0.05
              :height 1.25)
-            (if (display-graphic-p) " ")
+            (if doom-modeline-icon " ")
             (propertize (abbreviate-file-name default-directory) 'face face))))
 
 ;;
@@ -2136,6 +2136,8 @@ The cdr can also be a function that returns a name to use.")
   (when (bound-and-true-p helm-alive-p)
     (concat
      " "
+     (doom-modeline-icon-fileicon "elisp" :height 1.0 :v-adjust -0.1 :face 'all-the-icons-dpurple)
+     (if doom-modeline-icon " ")
      (propertize
       (let ((custom (cdr (assoc (buffer-name) doom-modeline--helm-buffer-ids)))
             (case-fold-search t)
@@ -2186,7 +2188,6 @@ The cdr can also be a function that returns a name to use.")
              doom-modeline--helm-current-source
              (eq 1 (cdr (assq 'follow doom-modeline--helm-current-source))))
     "HF"))
-
 
 (provide 'doom-modeline-segments)
 

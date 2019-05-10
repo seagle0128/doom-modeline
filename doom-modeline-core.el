@@ -491,6 +491,11 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
   (when doom-modeline-icon
     (apply #'all-the-icons-alltheicon args)))
 
+(defun doom-modeline-icon-fileicon (&rest args)
+  "Display fileicon via ARGS."
+  (when doom-modeline-icon
+    (apply #'all-the-icons-fileicon args)))
+
 (defun doom-modeline-icon-for-mode (&rest args)
   "Display icon for major mode via ARGS."
   (when doom-modeline-icon

@@ -96,10 +96,10 @@ The `doom-modeline` was designed for minimalism, and offers:
 ![package](https://user-images.githubusercontent.com/140797/57503916-e769d380-7324-11e9-906d-44c79f7408a3.png
 "Package")
 
-![info](https://user-images.githubusercontent.com/140797/57504082-9d352200-7325-11e9-94e4-9f89e1f63190.png
+![info](https://user-images.githubusercontent.com/140797/57506248-d96c8080-732d-11e9-8167-644c8fc4e0db.png
 "Info")
 
-![helm](https://user-images.githubusercontent.com/140797/57504021-5515ff80-7325-11e9-92b4-5c0213fa1ba3.png
+![helm](https://user-images.githubusercontent.com/140797/57506112-6531dd00-732d-11e9-8a5e-22166f42dd4c.png
 "Helm")
 
 ## Install
