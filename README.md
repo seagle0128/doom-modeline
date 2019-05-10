@@ -93,6 +93,15 @@ The `doom-modeline` was designed for minimalism, and offers:
 ![battery](https://user-images.githubusercontent.com/140797/53593622-ba35d200-3bcb-11e9-85b3-38d64d05c127.png
 "Fancy Battery")
 
+![package](https://user-images.githubusercontent.com/140797/57503916-e769d380-7324-11e9-906d-44c79f7408a3.png
+"Package")
+
+![info](https://user-images.githubusercontent.com/140797/57504082-9d352200-7325-11e9-94e4-9f89e1f63190.png
+"Info")
+
+![helm](https://user-images.githubusercontent.com/140797/57504021-5515ff80-7325-11e9-92b4-5c0213fa1ba3.png
+"Helm")
+
 ## Install
 
 ### Manual
