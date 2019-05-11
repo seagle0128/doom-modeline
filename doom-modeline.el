@@ -106,7 +106,7 @@
   '(misc-info " " major-mode process))
 
 (doom-modeline-def-modeline 'info
-  '(bar window-number buffer-info info buffer-position parrot selection-info)
+  '(bar window-number buffer-info info-nodes buffer-position parrot selection-info)
   '(misc-info buffer-encoding major-mode))
 
 (doom-modeline-def-modeline 'media

@@ -1527,8 +1527,8 @@ mouse-3: Describe current input method")
 ;; Info
 ;;
 
-(doom-modeline-def-segment info
-  "The segment for `Info-mode'."
+(doom-modeline-def-segment info-nodes
+  "The topic and nodes in the Info buffer."
   (let ((active (doom-modeline--active)))
     (concat
      " ("
