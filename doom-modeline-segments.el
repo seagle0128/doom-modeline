@@ -1884,15 +1884,12 @@ mouse-1: Toggle Debug on Quit"
          (format "  P%d/%d "
                  (eval `(pdf-view-current-page))
                  (pdf-cache-number-of-pages))
-         'face (if (doom-modeline--active)
-                   'mode-line
-                 'mode-line-inactive))))
+         'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive))))
 (add-hook 'pdf-view-change-page-hook #'doom-modeline-update-pdf-pages)
 
 (doom-modeline-def-segment pdf-pages
   "Display PDF pages."
-  (when (eq major-mode 'pdf-view-mode)
-    doom-modeline--pdf-pages))
+  doom-modeline--pdf-pages)
 
 
 ;;

@@ -208,7 +208,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (add-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
         (add-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
         (add-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
-        (add-hook 'pdf-tools-enabled-hook #'doom-modeline-set-pdf-modeline)
+        (add-hook 'pdf-view-mode-hook #'doom-modeline-set-pdf-modeline)
         (add-hook 'paradox-menu-mode-hook #'doom-modeline-set-package-modeline)
         ;; Add advice
         (advice-add #'helm-display-mode-line :override #'doom-modeline-set-helm-modeline))
@@ -221,7 +221,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
       (remove-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
       (remove-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
       (remove-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
-      (remove-hook 'pdf-tools-enabled-hook #'doom-modeline-set-pdf-modeline)
+      (remove-hook 'pdf-view-mode-hook #'doom-modeline-set-pdf-modeline)
       (remove-hook 'paradox-menu-mode-hook #'doom-modeline-set-package-modeline)
       ;; Remove advices
       (advice-remove #'helm-display-mode-line #'doom-modeline-set-helm-modeline))))
