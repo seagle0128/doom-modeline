@@ -1257,7 +1257,7 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
               (t ""))))
     (if (and (< 0 (length num))
              (< (if (active-minibuffer-window) 2 1)
-                (length (window-list))))
+                (length (cl-mapcan #'window-list (visible-frame-list)))))
         (propertize (format " %s " num)
                     'face (if (doom-modeline--active)
                               'doom-modeline-buffer-major-mode
