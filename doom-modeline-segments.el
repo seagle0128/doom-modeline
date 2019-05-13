@@ -419,21 +419,22 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 (doom-modeline-def-segment buffer-encoding
   "Displays the encoding and eol style of the buffer the same way Atom does."
-  (propertize
-   (concat (pcase (coding-system-eol-type buffer-file-coding-system)
-             (0 " LF")
-             (1 " RLF")
-             (2 " CR"))
-           (let ((sys (coding-system-plist buffer-file-coding-system)))
-             (cond ((memq (plist-get sys :category)
-                          '(coding-category-undecided coding-category-utf-8))
-                    " UTF-8 ")
-                   (t (upcase (symbol-name (plist-get sys :name))))))
-           " ")
-   'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
-   'help-echo 'mode-line-mule-info-help-echo
-   'mouse-face '(:box 0)
-   'local-map mode-line-coding-system-map))
+  (when doom-modeline-buffer-encoding
+    (propertize
+     (concat (pcase (coding-system-eol-type buffer-file-coding-system)
+               (0 " LF")
+               (1 " RLF")
+               (2 " CR"))
+             (let ((sys (coding-system-plist buffer-file-coding-system)))
+               (cond ((memq (plist-get sys :category)
+                            '(coding-category-undecided coding-category-utf-8))
+                      " UTF-8 ")
+                     (t (upcase (symbol-name (plist-get sys :name))))))
+             " ")
+     'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
+     'help-echo 'mode-line-mule-info-help-echo
+     'mouse-face '(:box 0)
+     'local-map mode-line-coding-system-map)))
 
 
 ;;
@@ -442,9 +443,10 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 (doom-modeline-def-segment indent-info
   "Displays the indentation information."
-  (propertize (format " %s %d "
-                      (if indent-tabs-mode "TAB" "SPC") tab-width)
-              'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)))
+  (when doom-modeline-indent-info
+    (propertize (format " %s %d "
+                        (if indent-tabs-mode "TAB" "SPC") tab-width)
+                'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive))))
 
 ;;
 ;; remote host

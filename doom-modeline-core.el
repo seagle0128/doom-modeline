@@ -149,6 +149,12 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
 (defvar doom-modeline-major-mode-color-icon t
   "Whether display color icons for `major-mode'. It respects `doom-modeline-icon' and `all-the-icons-color-icons'.")
 
+(defvar doom-modeline-buffer-encoding t
+  "Whether display buffer encoding.")
+
+(defvar doom-modeline-indent-info nil
+  "Whether display indentation information.")
+
 (defvar doom-modeline-buffer-state-icon t
   "Whether display icons for buffer states. It respects `doom-modeline-icon'.")
 
