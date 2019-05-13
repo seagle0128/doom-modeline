@@ -181,6 +181,12 @@ Strongly recommend to use
 ;; If non-nil, a word count will be added to the selection-info modeline segment.
 (setq doom-modeline-enable-word-count nil)
 
+;; Whether display buffer encoding.
+(setq doom-modeline-buffer-encoding t)
+
+;; Whether display indentation information.
+(set doom-modeline-indent-info nil)
+
 ;; If non-nil, only display one number for checker information if applicable.
 (setq doom-modeline-checker-simple-format t)
   
