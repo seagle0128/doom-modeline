@@ -722,10 +722,12 @@ mouse-2: Show help for minor mode")
                          (concat
                           (if flycheck-current-errors
                               (let-alist (flycheck-count-errors flycheck-current-errors)
-                                (format "error: %d, warning: %d, info: %d\n" (or .error 0) (or .warning 0) (or .info 0))))
+                                (format "error: %d, warning: %d, info: %d\n"
+                                        (or .error 0) (or .warning 0) (or .info 0))))
                           "mouse-1: Show all errors
-mouse-3: Next error
-wheel-up/wheel-down: Previous/next error"))
+mouse-3: Next error"
+                          (if (featurep 'mwheel)
+                              "\nwheel-up/wheel-down: Previous/next error")))
                         ('running "Running...")
                         ('no-checker "No Checker")
                         ('errored "Error")
@@ -737,19 +739,20 @@ wheel-up/wheel-down: Previous/next error"))
                           #'flycheck-list-errors)
                         (define-key map [mode-line mouse-3]
                           #'flycheck-next-error)
-                        (define-key map (vector 'mode-line
-                                                mouse-wheel-down-event)
-                          (lambda (event)
-                            (interactive "e")
-                            (with-selected-window (posn-window (event-start event))
-                              (flycheck-previous-error 1))))
-                        (define-key map (vector 'mode-line
-                                                mouse-wheel-up-event)
-                          (lambda (event)
-                            (interactive "e")
-                            (with-selected-window (posn-window (event-start event))
-                              (flycheck-next-error 1))))
-                        map)))))
+                        (when (featurep 'mwheel)
+                          (define-key map (vector 'mode-line
+                                                  mouse-wheel-down-event)
+                            (lambda (event)
+                              (interactive "e")
+                              (with-selected-window (posn-window (event-start event))
+                                (flycheck-previous-error 1))))
+                          (define-key map (vector 'mode-line
+                                                  mouse-wheel-up-event)
+                            (lambda (event)
+                              (interactive "e")
+                              (with-selected-window (posn-window (event-start event))
+                                (flycheck-next-error 1))))
+                          map))))))
 (add-hook 'flycheck-status-changed-functions #'doom-modeline-update-flycheck-text)
 (add-hook 'flycheck-mode-hook #'doom-modeline-update-flycheck-text)
 
@@ -880,26 +883,28 @@ mouse-2: Show help for minor mode"
                          ((null known) "No Checker")
                          (all-disabled "All Checkers Disabled")
                          (t (format "error: %d, warning: %d, note: %d
-mouse-1: List all problems
-wheel-up/wheel-down: Previous/next problem"
+mouse-1: List all problems%s"
+                                    (if (featurep 'mwheel)
+                                        "\nwheel-up/wheel-down: Previous/next problem")
                                     .error .warning .note)))
              'mouse-face 'mode-line-highlight
              'local-map (let ((map (make-sparse-keymap)))
                           (define-key map [mode-line mouse-1]
                             #'flymake-show-diagnostics-buffer)
-                          (define-key map (vector 'mode-line
-                                                  mouse-wheel-down-event)
-                            (lambda (event)
-                              (interactive "e")
-                              (with-selected-window (posn-window (event-start event))
-                                (flymake-goto-prev-error 1 nil t))))
-                          (define-key map (vector 'mode-line
-                                                  mouse-wheel-up-event)
-                            (lambda (event)
-                              (interactive "e")
-                              (with-selected-window (posn-window (event-start event))
-                                (flymake-goto-next-error 1 nil t))))
-                          map))))))
+                          (when (featurep 'mwheel)
+                            (define-key map (vector 'mode-line
+                                                    mouse-wheel-down-event)
+                              (lambda (event)
+                                (interactive "e")
+                                (with-selected-window (posn-window (event-start event))
+                                  (flymake-goto-prev-error 1 nil t))))
+                            (define-key map (vector 'mode-line
+                                                    mouse-wheel-up-event)
+                              (lambda (event)
+                                (interactive "e")
+                                (with-selected-window (posn-window (event-start event))
+                                  (flymake-goto-next-error 1 nil t))))
+                            map)))))))
 (advice-add #'flymake--handle-report :after #'doom-modeline-update-flymake-text)
 
 (doom-modeline-def-segment checker
