@@ -412,7 +412,11 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                ((doom-modeline--active) 'doom-modeline-buffer-file)
                (t 'mode-line-inactive))))
 
+
 ;;
+;; encoding
+;;
+
 (doom-modeline-def-segment buffer-encoding
   "Displays the encoding and eol style of the buffer the same way Atom does."
   (propertize
@@ -431,6 +435,16 @@ directory, the file name, and its state (modified, read-only or non-existent)."
    'mouse-face '(:box 0)
    'local-map mode-line-coding-system-map))
 
+
+;;
+;; indentation
+;;
+
+(doom-modeline-def-segment indent-info
+  "Displays the indentation information."
+  (propertize (format " %s %d "
+                      (if indent-tabs-mode "TAB" "SPC") tab-width)
+              'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)))
 
 ;;
 ;; remote host
