@@ -1588,42 +1588,39 @@ mouse-3: Describe current input method")
 (defun doom-modeline-update-lsp (&rest _)
   "Update `lsp-mode' status."
   (setq doom-modeline--lsp
-        (concat
-         " "
-         (let* ((workspaces (lsp-workspaces))
-                (face (if workspaces 'success 'warning))
-                (icon (doom-modeline-lsp-icon "LSP" face)))
-           (propertize icon
-                       'face `(:inherit ,(get-text-property 0 'face icon))
-                       'help-echo (if workspaces
-                                      (concat "LSP Connected "
-                                              (string-join (--map (format "[%s]\n" (lsp--workspace-print it))
-                                                                  workspaces))
-                                              "C-mouse-1: Switch to another workspace folder
+        (let* ((workspaces (lsp-workspaces))
+               (face (if workspaces 'success 'warning))
+               (icon (doom-modeline-lsp-icon "LSP" face)))
+          (propertize icon
+                      'face `(:inherit ,(get-text-property 0 'face icon))
+                      'help-echo (if workspaces
+                                     (concat "LSP Connected "
+                                             (string-join (--map (format "[%s]\n" (lsp--workspace-print it))
+                                                                 workspaces))
+                                             "C-mouse-1: Switch to another workspace folder
 mouse-1: Describe current session
 mouse-2: Quit server
 mouse-3: Reconnect to server")
-                                    "LSP Disconnected
+                                   "LSP Disconnected
 mouse-1: Reload to start server")
-                       'mouse-face '(:box 0)
-                       'local-map (let ((map (make-sparse-keymap)))
-                                    (if workspaces
-                                        (progn
-                                          (define-key map [mode-line C-mouse-1]
-                                            #'lsp-workspace-folders-switch)
-                                          (define-key map [mode-line mouse-1]
-                                            #'lsp-describe-session)
-                                          (define-key map [mode-line mouse-2]
-                                            #'lsp-shutdown-workspace)
-                                          (define-key map [mode-line mouse-3]
-                                            #'lsp-restart-workspace))
-                                      (progn
-                                        (define-key map [mode-line mouse-1]
-                                          (lambda ()
-                                            (interactive)
-                                            (revert-buffer t t)))))
-                                    map)))
-         "  ")))
+                      'mouse-face '(:box 0)
+                      'local-map (let ((map (make-sparse-keymap)))
+                                   (if workspaces
+                                       (progn
+                                         (define-key map [mode-line C-mouse-1]
+                                           #'lsp-workspace-folders-switch)
+                                         (define-key map [mode-line mouse-1]
+                                           #'lsp-describe-session)
+                                         (define-key map [mode-line mouse-2]
+                                           #'lsp-shutdown-workspace)
+                                         (define-key map [mode-line mouse-3]
+                                           #'lsp-restart-workspace))
+                                     (progn
+                                       (define-key map [mode-line mouse-1]
+                                         (lambda ()
+                                           (interactive)
+                                           (revert-buffer t t)))))
+                                   map)))))
 (add-hook 'lsp-mode-hook #'doom-modeline-update-lsp)
 (add-hook 'lsp-after-uninitialized-hook #'doom-modeline-update-lsp)
 
@@ -1644,60 +1641,61 @@ mouse-1: Reload to start server")
                             (nick 'success)
                             (t 'mode-line)))
                      (icon (doom-modeline-lsp-icon "EGLOT" face)))
-          (concat
-           " "
-           (propertize icon
-                       'face `(:inherit ,(get-text-property 0 'face icon))
-                       'help-echo (cond
-                                   (last-error
-                                    (format "EGLOT\nAn error occured: %s
+          (propertize icon
+                      'face `(:inherit ,(get-text-property 0 'face icon))
+                      'help-echo (cond
+                                  (last-error
+                                   (format "EGLOT\nAn error occured: %s
 mouse-3: clear this status" (plist-get last-error :message)))
-                                   ((and doing (not done-p))
-                                    (format "EGLOT\n%s%s" doing
-                                            (if detail (format "%s" detail) "")))
-                                   ((and pending (cl-plusp pending))
-                                    (format "EGLOT\n%d outstanding requests" pending))
-                                   (nick (format "EGLOT Connected (%s/%s)
+                                  ((and doing (not done-p))
+                                   (format "EGLOT\n%s%s" doing
+                                           (if detail (format "%s" detail) "")))
+                                  ((and pending (cl-plusp pending))
+                                   (format "EGLOT\n%d outstanding requests" pending))
+                                  (nick (format "EGLOT Connected (%s/%s)
 C-mouse-1: Disply server errors
 mouse-1: Display server events
 mouse-2: Quit server
 mouse-3: Reconnect to server" nick (eglot--major-mode server)))
-                                   (t "EGLOT Disconnected"))
-                       'mouse-face '(:box 0)
-                       'local-map (let ((map (make-sparse-keymap)))
-                                    (cond
-                                     (last-error
-                                      (define-key map [mode-line mouse-3]
-                                        #'eglot-clear-status))
-                                     ((and pending (cl-plusp pending))
-                                      (define-key map [mode-line mouse-3]
-                                        #'eglot-forget-pending-continuations))
-                                     (nick
-                                      (define-key map [mode-line C-mouse-1]
-                                        #'eglot-stderr-buffer)
-                                      (define-key map [mode-line mouse-1]
-                                        #'eglot-events-buffer)
-                                      (define-key map [mode-line mouse-2]
-                                        #'eglot-shutdown)
-                                      (define-key map [mode-line mouse-3]
-                                        #'eglot-reconnect)))
-                                    map))
-           "  "))))
+                                  (t "EGLOT Disconnected"))
+                      'mouse-face '(:box 0)
+                      'local-map (let ((map (make-sparse-keymap)))
+                                   (cond
+                                    (last-error
+                                     (define-key map [mode-line mouse-3]
+                                       #'eglot-clear-status))
+                                    ((and pending (cl-plusp pending))
+                                     (define-key map [mode-line mouse-3]
+                                       #'eglot-forget-pending-continuations))
+                                    (nick
+                                     (define-key map [mode-line C-mouse-1]
+                                       #'eglot-stderr-buffer)
+                                     (define-key map [mode-line mouse-1]
+                                       #'eglot-events-buffer)
+                                     (define-key map [mode-line mouse-2]
+                                       #'eglot-shutdown)
+                                     (define-key map [mode-line mouse-3]
+                                       #'eglot-reconnect)))
+                                   map)))))
 (add-hook 'eglot--managed-mode-hook #'doom-modeline-update-eglot)
 
 (doom-modeline-def-segment lsp
   "The LSP server state."
   (when doom-modeline-lsp
-    (when-let ((icon (cond ((bound-and-true-p lsp-mode)
+    (when-let ((active (doom-modeline--active))
+               (icon (cond ((bound-and-true-p lsp-mode)
                             doom-modeline--lsp)
                            ((bound-and-true-p eglot--managed-mode)
                             doom-modeline--eglot))))
-      (propertize icon 'face `(:inherit
-                               ,(get-text-property 1 'face icon)
-                               :inherit
-                               ,(if (doom-modeline--active)
-                                    'mode-line
-                                  'mode-line-inactive))))))
+      (concat
+       (propertize " " 'face (if active 'mode-line 'mode-line-inactive))
+       (propertize icon 'face `(:inherit
+                                ,(get-text-property 0 'face icon)
+                                :inherit
+                                ,(if (doom-modeline--active)
+                                     'mode-line
+                                   'mode-line-inactive)))
+       (propertize " " 'face (if active 'mode-line 'mode-line-inactive))))))
 
 (defun doom-modeline-override-eglot-modeline ()
   "Override `eglot' mode-line."
