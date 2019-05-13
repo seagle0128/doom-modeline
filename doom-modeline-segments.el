@@ -1607,7 +1607,7 @@ mouse-1: Reload to start server")
                                             (interactive)
                                             (revert-buffer t t)))))
                                     map)))
-         " ")))
+         "  ")))
 (add-hook 'lsp-mode-hook #'doom-modeline-update-lsp)
 (add-hook 'lsp-after-uninitialized-hook #'doom-modeline-update-lsp)
 
@@ -1666,7 +1666,7 @@ mouse-3: Reconnect to server" nick (eglot--major-mode server)))
                                       (define-key map [mode-line mouse-3]
                                         #'eglot-reconnect)))
                                     map))
-           " "))))
+           "  "))))
 (add-hook 'eglot--managed-mode-hook #'doom-modeline-update-eglot)
 
 (doom-modeline-def-segment lsp
