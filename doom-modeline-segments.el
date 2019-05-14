@@ -195,13 +195,13 @@ buffer where knowing the current project directory is important."
   (let ((face (if (doom-modeline--active)
                   'doom-modeline-buffer-path
                 'mode-line-inactive)))
-    (concat " "
+    (concat (doom-modeline-whitespace)
             (doom-modeline-icon-octicon
              "file-directory"
              :face face
              :v-adjust -0.05
              :height 1.25)
-            (if doom-modeline-icon " ")
+            (when doom-modeline-icon (doom-modeline-whitespace))
             (propertize (abbreviate-file-name default-directory) 'face face))))
 
 ;;
@@ -368,7 +368,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 directory, the file name, and its state (modified, read-only or non-existent)."
   (let ((active (doom-modeline--active)))
     (concat
-     (propertize " " 'face (if active 'mode-line 'mode-line-inactive))
+     (doom-modeline-whitespace)
 
      ;; major mode icon
      (when (and doom-modeline-icon doom-modeline-major-mode-icon)
@@ -376,13 +376,22 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                             (doom-modeline-update-buffer-file-icon))))
          (unless (string-empty-p icon)
            (concat
-            (propertize icon 'face `(:inherit
-                                     ,(let ((props (get-text-property 0 'face icon)))
-                                        (if doom-modeline-major-mode-color-icon
-                                            props
-                                          (remove :inherit props)))
-                                     :inherit
-                                     ,(if active 'mode-line 'mode-line-inactive)))
+            (propertize icon 'face
+                        (if active
+                            `(:inherit
+                              mode-line
+                              :inherit
+                              ,(let ((props (get-text-property 0 'face icon)))
+                                 (if doom-modeline-major-mode-color-icon
+                                     props
+                                   (remove :inherit props))))
+                          `(:inherit
+                            ,(let ((props (get-text-property 0 'face icon)))
+                               (if doom-modeline-major-mode-color-icon
+                                   props
+                                 (remove :inherit props)))
+                            :inherit
+                            mode-line-inactive)))
             (if active doom-modeline-vspc doom-modeline-inactive-vspc)))))
 
      ;; state icon
@@ -390,10 +399,15 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                           (doom-modeline-update-buffer-file-state-icon))))
        (unless (string-empty-p icon)
          (concat
-          (propertize icon 'face `(:inherit
-                                   ,(get-text-property 0 'face icon)
+          (propertize icon 'face
+                      (if active `(:inherit
+                                   mode-line
                                    :inherit
-                                   ,(if active 'mode-line 'mode-line-inactive)))
+                                   ,(get-text-property 0 'face icon))
+                        `(:inherit
+                          ,(get-text-property 0 'face icon)
+                          :inherit
+                          mode-line-inactive)))
           (if active doom-modeline-vspc doom-modeline-inactive-vspc))))
 
      ;; buffer file name
@@ -512,7 +526,7 @@ mouse-3: Toggle minor modes"
     (let ((active (doom-modeline--active)))
       (if (bound-and-true-p minions-mode)
           (concat
-           " "
+           (doom-modeline-whitespace)
            (propertize minions-mode-line-lighter
                        'face (if active
                                  'doom-modeline-buffer-minor-mode
@@ -522,7 +536,7 @@ mouse-1: Display minor modes menu"
                        'mouse-face 'mode-line-highlight
                        'local-map (make-mode-line-mouse-map
                                    'mouse-1 #'minions-minor-modes-menu))
-           " ")
+           (doom-modeline-whitespace))
         (propertize
          (concat
           (replace-regexp-in-string (regexp-quote "%")
@@ -608,18 +622,28 @@ Uses `all-the-icons-octicon' to fetch the icon."
     (when-let ((icon (or doom-modeline--vcs-icon (doom-modeline-update-vcs-icon)))
                (text (or doom-modeline--vcs-text (doom-modeline-update-vcs-text))))
       (concat
-       (propertize "  " 'face (if active 'mode-line 'mode-line-inactive))
-       (propertize icon 'face `(:inherit
-                                ,(get-text-property 0 'face icon)
+       (doom-modeline-whitespace)
+       (propertize icon 'face
+                   (if active `(:inherit
+                                mode-line
                                 :inherit
-                                ,(if active 'mode-line 'mode-line-inactive)))
+                                ,(get-text-property 0 'face icon))
+                     `(:inherit
+                       ,(get-text-property 0 'face icon)
+                       :inherit
+                       mode-line-inactive)))
        (if doom-modeline-icon
            (if active doom-modeline-vspc doom-modeline-inactive-vspc))
-       (propertize text 'face `(:inherit
+       (propertize text 'face
+                   (if active `(:inherit
                                 ,(get-text-property 0 'face text)
                                 :inherit
-                                ,(if active 'mode-line 'mode-line-inactive)))
-       (propertize " " 'face (if active 'mode-line 'mode-line-inactive))))))
+                                mode-line)
+                     `(:inherit
+                       ,(get-text-property 0 'face text)
+                       :inherit
+                       mode-line-inactive)))
+       (doom-modeline-whitespace)))))
 
 
 ;;
@@ -725,7 +749,8 @@ mouse-2: Show help for minor mode")
                                                                         'doom-modeline-warning)
                                             (doom-modeline-checker-text (number-to-string info)
                                                                         'doom-modeline-info)))))))
-                (`running     nil)
+                (`running     doom-modeline--flycheck-text)
+                (`not-checked doom-modeline--flycheck-text)
                 (`no-checker  (doom-modeline-checker-text "-" 'doom-modeline-debug))
                 (`errored     (doom-modeline-checker-text "Error" 'doom-modeline-urgent))
                 (`interrupted (doom-modeline-checker-text "Interrupted" 'doom-modeline-debug))
@@ -875,7 +900,7 @@ mouse-2: Show help for minor mode"
           (when-let
               ((text
                 (cond
-                 (some-waiting "Running..." "")
+                 (some-waiting doom-modeline--flymake-text)
                  ((null known) (doom-modeline-checker-text "-" 'doom-modeline-debug))
                  (all-disabled (doom-modeline-checker-text "-" 'doom-modeline-urgent))
                  (t (let ((num (+ .error .warning .note)))
@@ -936,21 +961,24 @@ icons."
         (let ((icon (car seg))
               (text (cdr seg)))
           (concat
-           (propertize (if vc-mode " " "  ")
-                       'face (if active 'mode-line 'mode-line-inactive))
+           (doom-modeline-whitespace)
            (when icon
-             (propertize icon 'face `(:inherit
-                                      ,(get-text-property 0 'face icon)
+             (propertize icon 'face
+                         (if active `(:inherit
+                                      mode-line
                                       :inherit
-                                      ,(if active 'mode-line 'mode-line-inactive))))
+                                      ,(get-text-property 0 'face icon))
+                           `(:inherit
+                             ,(get-text-property 0 'face icon)
+                             :inherit
+                             mode-line-inactive))))
            (when (and doom-modeline-icon icon text)
              (if active doom-modeline-vspc doom-modeline-inactive-vspc))
            (when text
-             (propertize text 'face `(:inherit
-                                      ,(if active
-                                           (get-text-property 0 'face text)
-                                         'mode-line-inactive))))
-           " "))
+             (if active
+                 text
+               (propertize text 'face 'mode-line-inactive)))
+           (doom-modeline-whitespace)))
       "")))
 
 
@@ -1323,7 +1351,7 @@ Requires `eyebrowse-mode' to be enabled."
                  (name (safe-persp-name persp)))
             (unless (string-equal persp-nil-name name)
               (concat
-               " "
+               (doom-modeline-whitespace)
                (propertize
                 (format "#%s" name)
                 'face (if (and persp
@@ -1341,7 +1369,7 @@ mouse-2: Show help for minor mode"
                                  (interactive)
                                  (describe-function 'persp-mode)))
                              map))
-               " "))))))
+               (doom-modeline-whitespace)))))))
 
 (add-hook 'find-file-hook #'doom-modeline-update-persp-name)
 (add-hook 'buffer-list-update-hook #'doom-modeline-update-persp-name)
@@ -1688,14 +1716,17 @@ mouse-3: Reconnect to server" nick (eglot--major-mode server)))
                            ((bound-and-true-p eglot--managed-mode)
                             doom-modeline--eglot))))
       (concat
-       (propertize " " 'face (if active 'mode-line 'mode-line-inactive))
-       (propertize icon 'face `(:inherit
-                                ,(get-text-property 0 'face icon)
-                                :inherit
-                                ,(if (doom-modeline--active)
-                                     'mode-line
-                                   'mode-line-inactive)))
-       (propertize " " 'face (if active 'mode-line 'mode-line-inactive))))))
+       (doom-modeline-whitespace)
+       (propertize icon 'face (if active
+                                  `(:inherit
+                                    mode-line
+                                    :inherit
+                                    ,(get-text-property 0 'face icon))
+                                `(:inherit
+                                  ,(get-text-property 0 'face icon)
+                                  :inherit
+                                  mode-line-inactive)))
+       (doom-modeline-whitespace)))))
 
 (defun doom-modeline-override-eglot-modeline ()
   "Override `eglot' mode-line."
@@ -1773,7 +1804,7 @@ Example:
            (doom-modeline--active)
            (> doom-modeline--github-notifications-number 0))
       (concat
-       " "
+       (doom-modeline-whitespace)
        (propertize
         (concat
          (if doom-modeline-icon
@@ -1803,7 +1834,7 @@ mouse-3: Fetch notifications"
                          (message "Fetching github notifications...")
                          (doom-modeline--github-fetch-notifications)))
                      map))
-       " ")))
+       (doom-modeline-whitespace))))
 
 
 ;;
@@ -1923,7 +1954,7 @@ mouse-1: Toggle Debug on Quit"
     ;; don't display if the unread mails count is zero
     (if (> mu4e-alert-mode-line 0)
         (concat
-         " "
+         (doom-modeline-whitespace)
          (propertize
           (concat
            (if doom-modeline-icon
@@ -1941,7 +1972,7 @@ mouse-1: Toggle Debug on Quit"
           'help-echo (if (= mu4e-alert-mode-line 1)
                          "You have an unread email"
                        (format "You have %s unread emails" mu4e-alert-mode-line)))
-         " "))))
+         (doom-modeline-whitespace)))))
 
 (defun doom-modeline-override-mu4e-alert-modeline (&rest _)
   "Delete `mu4e-alert-mode-line' from global modeline string."
@@ -1994,7 +2025,9 @@ we don't want to remove that so we just return the original."
              (boundp 'tracking-mode-line-buffers)
              (derived-mode-p 'circe-mode))
     ;; add a space at the end to pad against the following segment
-    (concat " " (doom-modeline--tracking-buffers tracking-buffers) " ")))
+    (concat (doom-modeline-whitespace)
+            (doom-modeline--tracking-buffers tracking-buffers)
+            (doom-modeline-whitespace))))
 
 (doom-modeline-def-segment irc
   "A notification icon for any unread irc buffer."
@@ -2003,7 +2036,7 @@ we don't want to remove that so we just return the original."
              (boundp 'tracking-mode-line-buffers)
              (> (length tracking-buffers) 0))
     (concat
-     " "
+     (doom-modeline-whitespace)
      (propertize (if doom-modeline-icon
                      (doom-modeline-icon-material "message"
                                                   :height 1.1
@@ -2015,7 +2048,7 @@ we don't want to remove that so we just return the original."
                  'help-echo (format "IRC Notifications: %s"
                                     (doom-modeline--tracking-buffers
                                      tracking-buffers)))
-     " ")))
+     (doom-modeline-whitespace))))
 
 
 ;;
@@ -2066,7 +2099,7 @@ we don't want to remove that so we just return the original."
                               (battery-format battery-echo-area-format status)
                             "Battery status not available")))
           (concat
-           " "
+           (doom-modeline-whitespace)
            (if percent-str
                (concat
                 (propertize icon 'face `(:inherit
@@ -2084,7 +2117,7 @@ we don't want to remove that so we just return the original."
                (propertize "N/A"
                            'face 'error
                            'help-echo "Battery status not available")))
-           " "))))
+           (doom-modeline-whitespace)))))
 (add-hook 'fancy-battery-status-update-functions #'doom-modeline-update-battery-status)
 
 (doom-modeline-def-segment fancy-battery
@@ -2116,7 +2149,7 @@ we don't want to remove that so we just return the original."
          (propertize front 'face 'mode-line-inactives)))
 
      (when (and doom-modeline-icon doom-modeline-major-mode-icon)
-       (concat " "
+       (concat (doom-modeline-whitespace)
                (let ((icon (doom-modeline-icon-for-mode 'paradox-menu-mode :v-adjust -0.15)))
                  (propertize icon 'face `(:inherit
                                           ,(let ((props (get-text-property 0 'face icon)))
@@ -2152,7 +2185,10 @@ The cdr can also be a function that returns a name to use.")
   (when (bound-and-true-p helm-alive-p)
     (concat
      " "
-     (doom-modeline-icon-fileicon "elisp" :height 1.0 :v-adjust -0.1 :face 'all-the-icons-dpurple)
+     (doom-modeline-icon-fileicon "elisp" :height 1.0 :v-adjust -0.15
+                                  :face (if doom-modeline-major-mode-color-icon
+                                            'all-the-icons-purple
+                                          'mode-line))
      (if doom-modeline-icon " ")
      (propertize
       (let ((custom (cdr (assoc (buffer-name) doom-modeline--helm-buffer-ids)))
