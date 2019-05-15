@@ -900,9 +900,9 @@ mouse-2: Show help for minor mode"
                          (all-disabled "All Checkers Disabled")
                          (t (format "error: %d, warning: %d, note: %d
 mouse-1: List all problems%s"
+                                    .error .warning .note
                                     (if (featurep 'mwheel)
-                                        "\nwheel-up/wheel-down: Previous/next problem")
-                                    .error .warning .note)))
+                                        "\nwheel-up/wheel-down: Previous/next problem"))))
              'mouse-face 'mode-line-highlight
              'local-map (let ((map (make-sparse-keymap)))
                           (define-key map [mode-line mouse-1]
