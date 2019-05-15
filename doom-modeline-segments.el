@@ -2113,7 +2113,7 @@ we don't want to remove that so we just return the original."
      (let ((front (format-mode-line 'mode-line-front-space)))
        (if active
            front
-         (propertize front 'face 'mode-line-inactives)))
+         (propertize front 'face 'mode-line-inactive)))
 
      (when (and doom-modeline-icon doom-modeline-major-mode-icon)
        (concat " "
