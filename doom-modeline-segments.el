@@ -622,7 +622,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
     (when-let ((icon (or doom-modeline--vcs-icon (doom-modeline-update-vcs-icon)))
                (text (or doom-modeline--vcs-text (doom-modeline-update-vcs-text))))
       (concat
-       (doom-modeline-whitespace)
+       (doom-modeline-whitespace) (doom-modeline-whitespace)
        (propertize icon 'face
                    (if active `(:inherit
                                 mode-line
@@ -962,6 +962,7 @@ icons."
               (text (cdr seg)))
           (concat
            (doom-modeline-whitespace)
+           (if vc-mode (doom-modeline-whitespace))
            (when icon
              (propertize icon 'face
                          (if active `(:inherit
@@ -1003,7 +1004,7 @@ lines are selected, or the NxM dimensions of a block selection."
           (cons (region-beginning) (region-end)))
       (propertize
        (let ((lines (count-lines beg (min end (point-max)))))
-         (concat " "
+         (concat (doom-modeline-whitespace)
                  (cond ((or (bound-and-true-p rectangle-mark-mode)
                             (and (bound-and-true-p evil-visual-selection)
                                  (eq 'block evil-visual-selection)))
@@ -1018,7 +1019,7 @@ lines are selected, or the NxM dimensions of a block selection."
                        ((format "%dC" (- end beg))))
                  (when doom-modeline-enable-word-count
                    (format " %dW" (count-words beg end)))
-                 " "))
+                 (doom-modeline-whitespace)))
        'face 'doom-modeline-highlight))))
 
 
@@ -1436,20 +1437,23 @@ See `mode-line-percent-position'.")
     (if (and (bound-and-true-p nyan-mode)
              active
              (>= (window-width) nyan-minimum-window-width))
-        (concat "  " (nyan-create) " "
+        (concat (doom-modeline-whitespace)
+                (doom-modeline-whitespace)
+                (nyan-create)
+                (doom-modeline-whitespace)
                 (propertize (format-mode-line lc)
                             'help-echo "Buffer position\n\
 mouse-1: Display Line and Column Mode Menu"
                             'mouse-face '(:box 0)
                             'local-map mode-line-column-line-number-mode-map))
       (propertize
-       (concat " "
+       (concat (doom-modeline-whitespace)
                (format-mode-line lc)
                (if doom-modeline-percent-position
                    (format-mode-line '(" " doom-modeline-percent-position "%%")))
                (if (or line-number-mode
                        column-number-mode doom-modeline-percent-position)
-                   " "))
+                   (doom-modeline-whitespace)))
        'face (if active 'mode-line 'mode-line-inactive)
        'help-echo "Buffer position\n\
 mouse-1: Display Line and Column Mode Menu"
@@ -1463,7 +1467,10 @@ mouse-1: Display Line and Column Mode Menu"
   "The party parrot animated icon. Requires `parrot-mode' to be enabled."
   (when (and (bound-and-true-p parrot-mode)
              (doom-modeline--active))
-    (concat "  " (parrot-create) " ")))
+    (concat (doom-modeline-whitespace)
+            (doom-modeline-whitespace)
+            (parrot-create)
+            (doom-modeline-whitespace))))
 
 ;;
 ;; modals (evil, god, ryo and xah-fly-keys, etc.)
@@ -1551,13 +1558,15 @@ mouse-1: Display Line and Column Mode Menu"
   (propertize
    (cond
     (current-input-method
-     (concat " " current-input-method-title " "))
+     (concat (doom-modeline-whitespace)
+             current-input-method-title
+             (doom-modeline-whitespace)))
     ((and (bound-and-true-p evil-local-mode)
           (bound-and-true-p evil-input-method))
      (concat
-      " "
+      (doom-modeline-whitespace)
       (nth 3 (assoc default-input-method input-method-alist))
-      " "))
+      (doom-modeline-whitespace)))
     (t ""))
    'face (if (doom-modeline--active)
              'doom-modeline-buffer-major-mode
