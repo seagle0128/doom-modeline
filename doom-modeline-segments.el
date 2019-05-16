@@ -392,7 +392,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                                  (remove :inherit props)))
                             :inherit
                             mode-line-inactive)))
-            (if active doom-modeline-vspc doom-modeline-inactive-vspc)))))
+            (doom-modeline-vspc)))))
 
      ;; state icon
      (when-let ((icon (or doom-modeline--buffer-file-state-icon
@@ -408,7 +408,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                           ,(get-text-property 0 'face icon)
                           :inherit
                           mode-line-inactive)))
-          (if active doom-modeline-vspc doom-modeline-inactive-vspc))))
+          (doom-modeline-vspc))))
 
      ;; buffer file name
      (when-let ((name (or doom-modeline--buffer-file-name
@@ -444,7 +444,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                             '(coding-category-undecided coding-category-utf-8))
                       " UTF-8 ")
                      (t (upcase (symbol-name (plist-get sys :name))))))
-             " ")
+             (doom-modeline-whitespace))
      'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
      'help-echo 'mode-line-mule-info-help-echo
      'mouse-face '(:box 0)
@@ -633,7 +633,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
                        :inherit
                        mode-line-inactive)))
        (if doom-modeline-icon
-           (if active doom-modeline-vspc doom-modeline-inactive-vspc))
+           (doom-modeline-vspc))
        (propertize text 'face
                    (if active `(:inherit
                                 ,(get-text-property 0 'face text)
@@ -973,7 +973,7 @@ icons."
                              :inherit
                              mode-line-inactive))))
            (when (and doom-modeline-icon icon text)
-             (if active doom-modeline-vspc doom-modeline-inactive-vspc))
+             (doom-modeline-vspc))
            (when text
              (if active
                  text
@@ -1168,7 +1168,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
               (if doom-modeline-icon
                   (doom-modeline-icon-faicon "i-cursor" :face face :v-adjust -0.0575)
                 (propertize "I" 'face `(:inherit ,face :height 1.4) 'display '(raise -0.085)))
-              (propertize doom-modeline-vspc 'face `(:inherit (variable-pitch ,face)))
+              (propertize (doom-modeline-vspc) 'face `(:inherit (variable-pitch ,face)))
               (propertize (format "%d " count)
                           'face face)))))
 
@@ -1812,7 +1812,7 @@ Example:
               (doom-modeline-icon-faicon "github"
                                          :v-adjust -0.0575
                                          :face 'doom-modeline-warning)
-              doom-modeline-vspc)
+              (doom-modeline-vspc))
            (propertize "#" 'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
          (propertize (number-to-string doom-modeline--github-notifications-number)
                      'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
@@ -1856,7 +1856,7 @@ mouse-3: Fetch notifications"
      (and (or debug-on-error debug-on-quit
               (bound-and-true-p edebug-mode)
               (bound-and-true-p edebug-x-mode))
-          " ")
+          (doom-modeline-whitespace))
 
      ;; For `dap-mode'
      (when (and (bound-and-true-p dap-mode)
@@ -1919,7 +1919,7 @@ mouse-1: Toggle Debug on Quit"
      (and (or debug-on-error debug-on-quit
               (bound-and-true-p edebug-mode)
               (bound-and-true-p edebug-x-mode))
-          " "))))
+          (doom-modeline-whitespace)))))
 
 
 ;;
@@ -1963,7 +1963,7 @@ mouse-1: Toggle Debug on Quit"
                                              :height 1.1
                                              :v-adjust -0.225
                                              :face 'doom-modeline-warning)
-                doom-modeline-vspc)
+                (doom-modeline-vspc))
              (propertize "#"
                          'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
            (propertize (number-to-string mu4e-alert-mode-line)
@@ -2106,8 +2106,7 @@ we don't want to remove that so we just return the original."
                                          ,(get-text-property 0 'face icon)
                                          :inherit ,face)
                             'help-echo help-echo)
-                (if doom-modeline-icon
-                    (propertize doom-modeline-vspc 'help-echo help-echo))
+                (if doom-modeline-icon (doom-modeline-vspc))
                 (propertize  percent-str
                              'face face
                              'help-echo help-echo))
@@ -2184,12 +2183,12 @@ The cdr can also be a function that returns a name to use.")
   "Helm session identifier."
   (when (bound-and-true-p helm-alive-p)
     (concat
-     " "
+     (doom-modeline-whitespace)
      (doom-modeline-icon-fileicon "elisp" :height 1.0 :v-adjust -0.15
                                   :face (if doom-modeline-major-mode-color-icon
                                             'all-the-icons-purple
                                           'mode-line))
-     (if doom-modeline-icon " ")
+     (if doom-modeline-icon (doom-modeline-whitespace))
      (propertize
       (let ((custom (cdr (assoc (buffer-name) doom-modeline--helm-buffer-ids)))
             (case-fold-search t)
@@ -2200,7 +2199,7 @@ The cdr can also be a function that returns a name to use.")
                (string-match "\\*helm:? \\(mode \\)?\\([^\\*]+\\)\\*" name)
                (concat "HELM " (capitalize (match-string 2 name))))))
       'face 'doom-modeline-buffer-file)
-     " ")))
+     (doom-modeline-whitespace))))
 
 (doom-modeline-def-segment helm-number
   "Number of helm candidates."

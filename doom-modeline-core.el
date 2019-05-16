@@ -469,13 +469,21 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
 ;; Modeline helpers
 ;;
 
-(defvar doom-modeline-vspc
-  (propertize " " 'face 'variable-pitch)
-  "Text style with icons in mode-line.")
+(defun doom-modeline--active ()
+  "Whether is an active window."
+  (eq (selected-window) doom-modeline-current-window))
 
-(defvar doom-modeline-inactive-vspc
-  (propertize " " 'face '(:inherit (variable-pitch mode-line-inactive)))
-  "Text style with icons in inactive mode-line.")
+(defsubst doom-modeline-vspc ()
+  "Text style with icons in mode-line."
+  (propertize " " 'face (if (doom-modeline--active)
+                            'variable-pitch
+                          '(:inherit (variable-pitch mode-line-inactive)))))
+
+(defsubst doom-modeline-whitespace ()
+  "Text style with whitespace."
+  (propertize " " 'face (if (doom-modeline--active)
+                            'mode-line
+                          'mode-line-inactive)))
 
 (defun doom-modeline-icon-octicon (&rest args)
   "Display octicon via ARGS."
@@ -511,13 +519,6 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
   "Display icon for major mode via ARGS."
   (when doom-modeline-icon
     (apply #'all-the-icons-icon-for-file args)))
-
-(defun doom-modeline--active ()
-  "Whether is an active window."
-  (eq (selected-window) doom-modeline-current-window))
-
-(defsubst doom-modeline-whitespace ()
-  (propertize " " 'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)))
 
 (defvar-local doom-modeline-project-root nil)
 (defun doom-modeline-project-root ()
