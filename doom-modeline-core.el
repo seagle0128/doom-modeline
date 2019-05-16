@@ -516,6 +516,9 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
   "Whether is an active window."
   (eq (selected-window) doom-modeline-current-window))
 
+(defsubst doom-modeline-whitespace ()
+  (propertize " " 'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)))
+
 (defvar-local doom-modeline-project-root nil)
 (defun doom-modeline-project-root ()
   "Get the path to the root of your project.
