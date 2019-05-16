@@ -962,6 +962,7 @@ icons."
               (text (cdr seg)))
           (concat
            (doom-modeline-whitespace)
+           (unless vc-mode (doom-modeline-whitespace))
            (when icon
              (propertize icon 'face
                          (if active `(:inherit
