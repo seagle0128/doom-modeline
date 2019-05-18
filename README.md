@@ -185,7 +185,7 @@ Strongly recommend to use
 (setq doom-modeline-buffer-encoding t)
 
 ;; Whether display indentation information.
-(set doom-modeline-indent-info nil)
+(setq doom-modeline-indent-info nil)
 
 ;; If non-nil, only display one number for checker information if applicable.
 (setq doom-modeline-checker-simple-format t)
