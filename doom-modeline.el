@@ -45,7 +45,7 @@
 ;; - A workspace number segment for eyebrowse
 ;; - A perspective name segment for persp-mode
 ;; - A window number segment for winum and window-numbering
-;; - An indicator for modal editing state, including evil, god, ryo and
+;; - An indicator for modal editing state, including evil, overwrite, god, ryo and
 ;;   xah-fly-keys, etc.
 ;; - An indicator for remote host
 ;; - An indicator for current input method

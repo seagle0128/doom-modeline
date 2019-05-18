@@ -1473,6 +1473,13 @@ mouse-1: Display Line and Column Mode Menu"
                             ((evil-replace-state-p) 'doom-modeline-evil-replace-state))
                     'mode-line-inactive)))))
 
+(defsubst doom-modeline--overwrite ()
+  "The current overwrite state. Requires `overwrite-mode' to be enabled."
+  (when (bound-and-true-p overwrite-mode)
+    (propertize " <O> " 'face (if (doom-modeline--active)
+                                  'doom-modeline-urgent
+                                'mode-line-inactive))))
+
 (defsubst doom-modeline--god ()
   "The current god state. Requires `god-mode' to be enabled."
   (when (bound-and-true-p god-local-mode)
@@ -1490,16 +1497,19 @@ mouse-1: Display Line and Column Mode Menu"
 (defsubst doom-modeline--xah-fly-keys ()
   "The current `xah-fly-keys' state."
   (when (boundp 'xah-fly-insert-state-q)
-    (propertize (if xah-fly-insert-state-q
-                    " <I> "
-                  " <C> ")
-                'face (if (doom-modeline--active)
-                          'doom-modeline-evil-normal-state
-                        'mode-line-inactive))))
+    (let ((active (doom-modeline--active)))
+      (if xah-fly-insert-state-q
+          (propertize " <I> " 'face (if active
+                                        'doom-modeline-evil-insert-state
+                                      'mode-line-inactive))
+        (propertize " <C> " 'face (if active
+                                      'doom-modeline-evil-normal-state
+                                    'mode-line-inactive))))))
 
 (doom-modeline-def-segment modals
-  "Displays modal editing states, including `evil', `god', `ryo' and `xha-fly-kyes', etc. "
+  "Displays modal editing states, including `evil', `overwrite', `god', `ryo' and `xha-fly-kyes', etc."
   (concat (doom-modeline--evil)
+          (doom-modeline--overwrite)
           (doom-modeline--god)
           (doom-modeline--ryo)
           (doom-modeline--xah-fly-keys)))
