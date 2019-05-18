@@ -86,6 +86,21 @@ It returns a file name which can be used directly as argument of
     ;; multiple-cursors
     ("i-cursor" . "\xf246")
 
+    ;; vcs
+    ("git-compare" . "\xf0ac")
+    ("git-merge" . "\xf023")
+    ("arrow-down" . "\xf03f")
+    ("alert" . "\xf02d")
+    ("git-branch" . "\xf020")
+
+    ;; checker: flycheck/flymake
+    ("do_not_disturb_alt" . "\xe611")
+    ("check" . "\xe5ca")
+    ("access_time" . "\xe192")
+    ("sim_card_alert" . "\xe624")
+    ("pause" . "\xe034")
+    ("priority_high" . "\xe645")
+
     ;; LSP
     ("rocket" . "\xf135")
 
@@ -128,7 +143,7 @@ It returns a file name which can be used directly as argument of
 (defvar doom-modeline-buffer-file-name-style 'truncate-upto-project
   "Determines the style used by `doom-modeline-buffer-file-name'.
 
-Given ~/Projects/FOSS/emacs/lisp/comint.el
+  Given ~/Projects/FOSS/emacs/lisp/comint.el
   truncate-upto-project => ~/P/F/emacs/lisp/comint.el
   truncate-from-project => ~/Projects/FOSS/emacs/l/comint.el
   truncate-with-project => emacs/l/comint.el
@@ -373,9 +388,9 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
                " "
                'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
                'display `((space :align-to (- (+ right right-fringe right-margin)
-                                              ,(+ 1 (string-width
-                                                     (format-mode-line
-                                                      (cons "" rhs-forms))))))))
+                                              ,(string-width
+                                                (format-mode-line
+                                                 (cons "" rhs-forms)))))))
               rhs-forms))
       (concat "Modeline:\n"
               (format "  %s\n  %s"
