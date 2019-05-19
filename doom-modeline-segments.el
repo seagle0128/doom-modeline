@@ -1719,16 +1719,16 @@ mouse-3: Reconnect to server" nick (eglot--major-mode server)))
                        doom-modeline--lsp)
                       ((bound-and-true-p eglot--managed-mode)
                        doom-modeline--eglot))))
-      (concat
-       (doom-modeline-whitespace)
-       (when icon
+      (when icon
+        (concat
+         (doom-modeline-whitespace)
          (if active
              icon
            (propertize icon 'face `(:inherit
                                     ,(get-text-property 0 'face icon)
                                     :inherit
-                                    mode-line-inactive))))
-       (doom-modeline-whitespace)))))
+                                    mode-line-inactive)))
+         (doom-modeline-whitespace))))))
 
 (defun doom-modeline-override-eglot-modeline ()
   "Override `eglot' mode-line."
