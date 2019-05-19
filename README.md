@@ -42,6 +42,7 @@ The `doom-modeline` was designed for minimalism, and offers:
 - New mode-line for `Info-mode` buffers
 - New package mode-line for `paradox`
 - New mode-line for `helm` buffers
+- New mode-line for `git-timemachine` buffers
   
 ## Screenshots
 

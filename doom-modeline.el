@@ -4,7 +4,7 @@
 
 ;; Author: Vincent Zhang <seagle0128@gmail.com>
 ;; Homepage: https://github.com/seagle0128/doom-modeline
-;; Version: 2.2.1
+;; Version: 2.3.0
 ;; Package-Requires: ((emacs "25.1") (all-the-icons "1.0.0") (shrink-path "0.2.0") (dash "2.11.0"))
 ;; Keywords: faces mode-line
 
@@ -63,6 +63,7 @@
 ;; - New mode-line for Info-mode buffers
 ;; - New package mode-line for paradox
 ;; - New mode-line for helm buffers
+;; - New mode-line for git-timemachine buffers
 ;;
 ;; Installation:
 ;; From melpa, `M-x package-install RET doom-modeline RET`.
