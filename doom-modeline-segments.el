@@ -371,48 +371,53 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
            (if buffer-file-name
                (doom-modeline-update-buffer-file-name))))))))
 
+(defsubst doom-modeline--buffer-mode-icon ()
+  "The icon of the current major mode."
+  (when (and doom-modeline-icon doom-modeline-major-mode-icon)
+    (when-let ((icon (or doom-modeline--buffer-file-icon
+                         (doom-modeline-update-buffer-file-icon))))
+      (when icon
+        (concat
+         (if (doom-modeline--active)
+             icon
+           (propertize icon 'face `(:inherit
+                                    ,(let* ((props (get-text-property 0 'face icon)))
+                                       (if doom-modeline-major-mode-color-icon
+                                           props (remove :inherit props)))
+                                    :inherit
+                                    mode-line-inactive)))
+         (doom-modeline-vspc))))))
+
+(defsubst doom-modeline--buffer-state-icon ()
+  "The icon of the current buffer state."
+  (when-let ((icon (or doom-modeline--buffer-file-state-icon
+                       (doom-modeline-update-buffer-file-state-icon))))
+    (when icon
+      (concat
+       (if (doom-modeline--active)
+           icon
+         (propertize icon 'face `(:inherit
+                                  ,(get-text-property 0 'face icon)
+                                  :inherit
+                                  mode-line-inactive)))
+       (doom-modeline-vspc)))))
+
+(defsubst doom-modeline--buffer-name ()
+  "The current buffer name."
+  (when-let ((name (or doom-modeline--buffer-file-name
+                       (doom-modeline-update-buffer-file-name))))
+    (if (doom-modeline--active)
+        name
+      (propertize name 'face 'mode-line-inactive))))
+
 (doom-modeline-def-segment buffer-info
   "Combined information about the current buffer, including the current working
 directory, the file name, and its state (modified, read-only or non-existent)."
-  (let ((active (doom-modeline--active)))
-    (concat
-     (doom-modeline-whitespace)
-
-     ;; major mode icon
-     (when (and doom-modeline-icon doom-modeline-major-mode-icon)
-       (when-let ((icon (or doom-modeline--buffer-file-icon
-                            (doom-modeline-update-buffer-file-icon))))
-         (when icon
-           (concat
-            (if active
-                icon
-              (propertize icon 'face `(:inherit
-                                       ,(let* ((props (get-text-property 0 'face icon)))
-                                          (if doom-modeline-major-mode-color-icon
-                                              props (remove :inherit props)))
-                                       :inherit
-                                       mode-line-inactive)))
-            (doom-modeline-vspc)))))
-
-     ;; state icon
-     (when-let ((icon (or doom-modeline--buffer-file-state-icon
-                          (doom-modeline-update-buffer-file-state-icon))))
-       (when icon
-         (concat
-          (if active
-              icon
-            (propertize icon 'face `(:inherit
-                                     ,(get-text-property 0 'face icon)
-                                     :inherit
-                                     mode-line-inactive)))
-          (doom-modeline-vspc))))
-
-     ;; buffer file name
-     (when-let ((name (or doom-modeline--buffer-file-name
-                          (doom-modeline-update-buffer-file-name))))
-       (if active
-           name
-         (propertize name 'face 'mode-line-inactive))))))
+  (concat
+   (doom-modeline-whitespace)
+   (doom-modeline--buffer-mode-icon)
+   (doom-modeline--buffer-state-icon)
+   (doom-modeline--buffer-name)))
 
 (doom-modeline-def-segment buffer-info-simple
   "Display only the current buffer's name, but with fontification."
@@ -2237,6 +2242,29 @@ The cdr can also be a function that returns a name to use.")
              doom-modeline--helm-current-source
              (eq 1 (cdr (assq 'follow doom-modeline--helm-current-source))))
     "HF"))
+
+;;
+;; git timemachine
+;;
+
+(doom-modeline-def-segment git-timemachine
+  (let ((active (doom-modeline--active)))
+    (concat
+     (doom-modeline-whitespace)
+
+     (doom-modeline--buffer-mode-icon)
+
+     ;; snapshot icon
+     (doom-modeline-buffer-file-state-icon
+      "camera_alt"
+      "%1*"
+      (if active 'doom-modeline-warning 'mode-line-inactive))
+     (doom-modeline-vspc)
+
+     ;; buffer name
+     (propertize "%b" 'face (if active
+                                'doom-modeline-buffer-file
+                              'mode-line-inactive)))))
 
 (provide 'doom-modeline-segments)
 

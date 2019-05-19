@@ -121,6 +121,9 @@
   '(bar helm-buffer-id helm-number helm-follow helm-prefix-argument)
   '(helm-help))
 
+(doom-modeline-def-modeline 'timemachine
+  '(bar window-number matches git-timemachine buffer-position parrot selection-info)
+  '(misc-info fancy-battery mu4e github debug minor-modes indent-info buffer-encoding major-mode))
 
 ;;
 ;; Interfaces
@@ -178,6 +181,11 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   "Set helm mode-line."
   (doom-modeline-set-modeline 'helm))
 
+;;;###autoload
+(defun doom-modeline-set-timemachine-modeline (&rest _)
+  "Set timemachine mode-line."
+  (doom-modeline-set-modeline 'timemachine))
+
 
 ;;
 ;; Mode
@@ -210,6 +218,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (add-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
         (add-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
         (add-hook 'pdf-view-mode-hook #'doom-modeline-set-pdf-modeline)
+        (add-hook 'git-timemachine-mode-hook #'doom-modeline-set-timemachine-modeline)
         (add-hook 'paradox-menu-mode-hook #'doom-modeline-set-package-modeline)
         ;; Add advice
         (advice-add #'helm-display-mode-line :override #'doom-modeline-set-helm-modeline))
@@ -224,6 +233,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
       (remove-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
       (remove-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
       (remove-hook 'pdf-view-mode-hook #'doom-modeline-set-pdf-modeline)
+      (remove-hook 'git-timemachine-mode-hook #'doom-modeline-set-timemachine-modeline)
       (remove-hook 'paradox-menu-mode-hook #'doom-modeline-set-package-modeline)
       ;; Remove advices
       (advice-remove #'helm-display-mode-line #'doom-modeline-set-helm-modeline))))
