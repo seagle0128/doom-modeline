@@ -1226,12 +1226,12 @@ Returns \"\" to not break --no-window-system."
         (doom-modeline--make-xpm 'doom-modeline-bar
                                  (or width doom-modeline-bar-width)
                                  (max (or height doom-modeline-height)
-                                      (frame-char-height)))
+                                      (ceiling (* 1.3 (frame-char-height)))))
         doom-modeline--bar-inactive
         (doom-modeline--make-xpm 'doom-modeline-inactive-bar
                                  (or width doom-modeline-bar-width)
                                  (max (or height doom-modeline-height)
-                                      (frame-char-height)))))
+                                      (ceiling (* 1.3 (frame-char-height)))))))
 
 (when (>= emacs-major-version 26)
   (add-variable-watcher
@@ -1247,6 +1247,8 @@ Returns \"\" to not break --no-window-system."
        (doom-modeline-refresh-bars val doom-modeline-height)))))
 
 (add-hook 'after-setting-font-hook #'doom-modeline-refresh-bars)
+(advice-add #'set-face-attribute :after #'(lambda (&rest _)
+                                            (doom-modeline-refresh-bars)))
 
 
 ;;
