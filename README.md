@@ -134,10 +134,11 @@ Strongly recommend to use
 ## Customize
 
 ``` emacs-lisp
-;; How tall the mode-line should be (only respected in GUI Emacs).
+;; How tall the mode-line should be. It's only respected in GUI.
+;; If the actual char height is larger, it respects the actual height.
 (setq doom-modeline-height 25)
 
-;; How wide the mode-line bar should be (only respected in GUI Emacs).
+;; How wide the mode-line bar should be. It's only respected in GUI.
 (setq doom-modeline-bar-width 3)
 
 ;; Determines the style used by `doom-modeline-buffer-file-name'.

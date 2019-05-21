@@ -1226,12 +1226,12 @@ Returns \"\" to not break --no-window-system."
         (doom-modeline--make-xpm 'doom-modeline-bar
                                  (or width doom-modeline-bar-width)
                                  (max (or height doom-modeline-height)
-                                      (ceiling (* 1.3 (frame-char-height)))))
+                                      (doom-modeline--char-height)))
         doom-modeline--bar-inactive
         (doom-modeline--make-xpm 'doom-modeline-inactive-bar
                                  (or width doom-modeline-bar-width)
                                  (max (or height doom-modeline-height)
-                                      (ceiling (* 1.3 (frame-char-height)))))))
+                                      (doom-modeline--char-height)))))
 
 (when (>= emacs-major-version 26)
   (add-variable-watcher

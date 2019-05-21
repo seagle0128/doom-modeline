@@ -131,14 +131,12 @@ It returns a file name which can be used directly as argument of
 ;; Variables
 ;;
 
-(defvar doom-modeline-height (let ((font (face-font 'mode-line)))
-                               (if (and font (fboundp 'font-info))
-                                   (* 2 (aref (font-info font) 2))
-                                 25))
-  "How tall the mode-line should be (only respected in GUI Emacs).")
+(defvar doom-modeline-height 25
+  "How tall the mode-line should be. It's only respected in GUI.
+If the actual char height is larger, it respects the actual char height.")
 
 (defvar doom-modeline-bar-width (if (eq system-type 'darwin) 3 6)
-  "How wide the mode-line bar should be (only respected in GUI Emacs).")
+  "How wide the mode-line bar should be. It's only respected in GUI.")
 
 (defvar doom-modeline-buffer-file-name-style 'truncate-upto-project
   "Determines the style used by `doom-modeline-buffer-file-name'.
@@ -487,6 +485,14 @@ It returns a file name which can be used directly as argument of
 (defun doom-modeline--active ()
   "Whether is an active window."
   (eq (selected-window) doom-modeline-current-window))
+
+(defun doom-modeline--char-height ()
+  "Calculate the actual char height of the mode-line."
+  (or
+   (let ((font (face-font 'mode-line)))
+     (when (and font (fboundp 'font-info))
+       (* 2 (aref (font-info font) 2))))
+   (round (* 1.3 (frame-char-height)))))
 
 (defsubst doom-modeline-vspc ()
   "Text style with icons in mode-line."
