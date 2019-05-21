@@ -344,6 +344,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 (add-hook 'evil-insert-state-exit-hook #'doom-modeline-update-buffer-file-name)
 (advice-add #'rename-buffer :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'set-visited-file-name :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'pop-to-buffer :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'undo :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'undo-tree-undo-1 :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'undo-tree-redo-1 :after #'doom-modeline-update-buffer-file-name)
