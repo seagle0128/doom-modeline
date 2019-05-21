@@ -942,32 +942,32 @@ mouse-1: List all problems%s"
 (advice-add #'flymake--handle-report :after #'doom-modeline-update-flymake-text)
 
 (doom-modeline-def-segment checker
-  "Displays color-coded error status in the current buffer with pretty
-icons."
+  "Displays color-coded error status in the current buffer with pretty icons."
   (let ((active (doom-modeline--active))
         (seg (cond ((and (bound-and-true-p flymake-mode)
                          (bound-and-true-p flymake--backend-state)) ; only support 26+
                     `(,doom-modeline--flymake-icon . ,doom-modeline--flymake-text))
                    ((bound-and-true-p flycheck-mode)
                     `(,doom-modeline--flycheck-icon . ,doom-modeline--flycheck-text)))))
-    (when seg
-      (let ((icon (car seg))
-            (text (cdr seg)))
-        (concat
-         (doom-modeline-whitespace)
-         (when icon
-           (if active
-               icon
-             (propertize icon 'face `(:inherit
-                                      ,(get-text-property 0 'face icon)
-                                      :inherit
-                                      mode-line-inactive))))
-         (when (and doom-modeline-icon icon text)
-           (doom-modeline-vspc))
-         (when text
-           (if active
-               text
-             (propertize text 'face 'mode-line-inactive))))))))
+    (if seg
+        (let ((icon (car seg))
+              (text (cdr seg)))
+          (concat
+           (doom-modeline-whitespace)
+           (when icon
+             (if active
+                 icon
+               (propertize icon 'face `(:inherit
+                                        ,(get-text-property 0 'face icon)
+                                        :inherit
+                                        mode-line-inactive))))
+           (when (and doom-modeline-icon icon text)
+             (doom-modeline-vspc))
+           (when text
+             (if active
+                 text
+               (propertize text 'face 'mode-line-inactive)))))
+      "")))
 
 
 ;;
