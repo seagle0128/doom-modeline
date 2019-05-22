@@ -500,7 +500,7 @@ If the actual char height is larger, it respects the actual char height.")
                             'variable-pitch
                           '(:inherit (variable-pitch mode-line-inactive)))))
 
-(defsubst doom-modeline-whitespace ()
+(defsubst doom-modeline-spc ()
   "Text style with whitespace."
   (propertize " " 'face (if (doom-modeline--active)
                             'mode-line
