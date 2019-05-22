@@ -744,7 +744,7 @@ mouse-2: Show help for minor mode")
                                             (doom-modeline-checker-text (number-to-string info)
                                                                         'doom-modeline-info)))))))
                 (`running     nil)
-                (`no-checker  (doom-modeline-checker-text "No Checker" 'doom-modeline-debug))
+                (`no-checker  nil)
                 (`errored     (doom-modeline-checker-text "Error" 'doom-modeline-urgent))
                 (`interrupted (doom-modeline-checker-text "Interrupted" 'doom-modeline-debug))
                 (`suspicious  (doom-modeline-checker-text "Suspicious" 'doom-modeline-urgent))
@@ -894,8 +894,8 @@ mouse-2: Show help for minor mode"
               ((text
                 (cond
                  (some-waiting doom-modeline--flymake-text)
-                 ((null known) (doom-modeline-checker-text "-" 'doom-modeline-debug))
-                 (all-disabled (doom-modeline-checker-text "-" 'doom-modeline-urgent))
+                 ((null known) nil)
+                 (all-disabled nil)
                  (t (let ((num (+ .error .warning .note)))
                       (when (> num 0)
                         (if doom-modeline-checker-simple-format
