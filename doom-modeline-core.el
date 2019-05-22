@@ -200,7 +200,6 @@ If the actual char height is larger, it respects the actual char height.")
 
 (defvar doom-modeline-env-version t
   "Whether display environment version or not.")
-(define-obsolete-variable-alias 'doom-modeline-version 'doom-modeline-env-version "1.7.4")
 
 (defvar doom-modeline-mu4e t
   "Whether display mu4e notifications or not. Requires `mu4e-alert' package.")
