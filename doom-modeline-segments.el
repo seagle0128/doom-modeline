@@ -2260,7 +2260,9 @@ The cdr can also be a function that returns a name to use.")
      (doom-modeline-buffer-file-state-icon
       "camera_alt"
       "%1*"
-      (if active 'doom-modeline-warning 'mode-line-inactive))
+      (if active 'warning 'mode-line-inactive)
+      1.1
+      -0.25)
      (doom-modeline-vspc)
 
      ;; buffer name
