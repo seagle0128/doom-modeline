@@ -1247,8 +1247,7 @@ Returns \"\" to not break --no-window-system."
        (doom-modeline-refresh-bars val doom-modeline-height)))))
 
 (add-hook 'after-setting-font-hook #'doom-modeline-refresh-bars)
-(advice-add #'set-face-attribute :after #'(lambda (&rest _)
-                                            (doom-modeline-refresh-bars)))
+(add-hook 'window-configuration-change-hook #'doom-modeline-refresh-bars)
 
 
 ;;
