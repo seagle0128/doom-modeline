@@ -485,14 +485,6 @@ If the actual char height is larger, it respects the actual char height.")
   "Whether is an active window."
   (eq (selected-window) doom-modeline-current-window))
 
-(defun doom-modeline--char-height ()
-  "Calculate the actual char height of the mode-line."
-  (or
-   (let ((font (face-font 'mode-line)))
-     (when (and font (fboundp 'font-info))
-       (* 2 (aref (font-info font) 2))))
-   (round (* 1.3 (frame-char-height)))))
-
 (defsubst doom-modeline-vspc ()
   "Text style with icons in mode-line."
   (propertize " " 'face (if (doom-modeline--active)
@@ -504,6 +496,10 @@ If the actual char height is larger, it respects the actual char height.")
   (propertize " " 'face (if (doom-modeline--active)
                             'mode-line
                           'mode-line-inactive)))
+
+(defsubst doom-modeline--char-height ()
+  "Calculate the actual char height of the mode-line."
+  (ceiling (* 1.68 (frame-char-height))))
 
 (defun doom-modeline-icon-octicon (&rest args)
   "Display octicon via ARGS."
@@ -558,30 +554,31 @@ If the actual char height is larger, it respects the actual char height.")
 
 (defun doom-modeline--make-xpm (face width height)
   "Create an XPM bitmap via FACE, WIDTH and HEIGHT. Inspired by `powerline''s `pl/make-xpm'."
-  (propertize
-   " " 'display
-   (let ((data (make-list height (make-list width 1)))
-         (color (or (face-background face nil t) "None")))
-     (ignore-errors
-       (create-image
-        (concat
-         (format "/* XPM */\nstatic char * percent[] = {\n\"%i %i 2 1\",\n\". c %s\",\n\"  c %s\","
-                 (length (car data))
-                 (length data)
-                 color
-                 color)
-         (apply #'concat
-                (cl-loop with idx = 0
-                         with len = (length data)
-                         for dl in data
-                         do (cl-incf idx)
-                         collect
-                         (concat "\""
-                                 (cl-loop for d in dl
-                                          if (= d 0) collect (string-to-char " ")
-                                          else collect (string-to-char "."))
-                                 (if (eq idx len) "\"};" "\",\n")))))
-  'xpm t :ascent 'center)))))
+  (when (and (display-graphic-p)
+             (image-type-available-p 'xpm))
+    (propertize
+     " " 'display
+     (let ((data (make-list height (make-list width 1)))
+           (color (or (face-background face nil t) "None")))
+       (ignore-errors
+         (create-image
+          (concat
+           (format
+            "/* XPM */\nstatic char * percent[] = {\n\"%i %i 2 1\",\n\". c %s\",\n\"  c %s\","
+            (length (car data)) (length data) color color)
+           (apply #'concat
+                  (cl-loop with idx = 0
+                           with len = (length data)
+                           for dl in data
+                           do (cl-incf idx)
+                           collect
+                           (concat
+                            "\""
+                            (cl-loop for d in dl
+                                     if (= d 0) collect (string-to-char " ")
+                                     else collect (string-to-char "."))
+                            (if (eq idx len) "\"};" "\",\n")))))
+          'xpm t :ascent 'center))))))
 
 ;; Fix: invalid-regexp "Trailing backslash" while handling $HOME on Windows
 (defun doom-modeline-shrink-path--dirs-internal (full-path &optional truncate-all)

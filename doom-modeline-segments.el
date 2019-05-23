@@ -1212,13 +1212,10 @@ of active `multiple-cursors'."
 (defvar doom-modeline--bar-active nil)
 (defvar doom-modeline--bar-inactive nil)
 (doom-modeline-def-segment bar
-  "The bar regulates the height of the mode-line in GUI Emacs.
-Returns \"\" to not break --no-window-system."
-  (if (display-graphic-p)
-      (if (doom-modeline--active)
-          doom-modeline--bar-active
-        doom-modeline--bar-inactive)
-    ""))
+  "The bar regulates the height of the mode-line in GUI."
+  (if (doom-modeline--active)
+      doom-modeline--bar-active
+    doom-modeline--bar-inactive))
 
 (defun doom-modeline-refresh-bars (&optional width height)
   "Refresh mode-line bars with `WIDTH' and `HEIGHT'."
@@ -1226,12 +1223,12 @@ Returns \"\" to not break --no-window-system."
         (doom-modeline--make-xpm 'doom-modeline-bar
                                  (or width doom-modeline-bar-width)
                                  (max (or height doom-modeline-height)
-                                      (doom-modeline--char-height)))
+                                      (doom-modeline--font-height)))
         doom-modeline--bar-inactive
         (doom-modeline--make-xpm 'doom-modeline-inactive-bar
                                  (or width doom-modeline-bar-width)
                                  (max (or height doom-modeline-height)
-                                      (doom-modeline--char-height)))))
+                                      (doom-modeline--font-height)))))
 
 (when (>= emacs-major-version 26)
   (add-variable-watcher
