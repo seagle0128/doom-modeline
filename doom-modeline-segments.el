@@ -685,26 +685,26 @@ Uses `all-the-icons-material' to fetch the icon."
                 (`interrupted (doom-modeline-checker-icon "pause" "." 'doom-modeline-debug))
                 (`suspicious  (doom-modeline-checker-icon "priority_high" "?" 'doom-modeline-urgent))
                 (_ nil))))
-          (when icon
-            (propertize icon
-                        'help-echo (concat "Flycheck\n"
-                                           (pcase status
-                                             ('finished "mouse-1: Display minor mode menu
+          (propertize
+           icon
+           'help-echo (concat "Flycheck\n"
+                              (pcase status
+                                ('finished "mouse-1: Display minor mode menu
 mouse-2: Show help for minor mode")
-                                             ('running "Running...")
-                                             ('no-checker "No Checker")
-                                             ('errored "Error")
-                                             ('interrupted "Interrupted")
-                                             ('suspicious "Suspicious")))
-                        'mouse-face '(:box 0)
-                        'local-map (let ((map (make-sparse-keymap)))
-                                     (define-key map [mode-line down-mouse-1]
-                                       flycheck-mode-menu-map)
-                                     (define-key map [mode-line mouse-2]
-                                       (lambda ()
-                                         (interactive)
-                                         (describe-function 'flycheck-mode)))
-                                     map))))))
+                                ('running "Running...")
+                                ('no-checker "No Checker")
+                                ('errored "Error")
+                                ('interrupted "Interrupted")
+                                ('suspicious "Suspicious")))
+           'mouse-face '(:box 0)
+           'local-map (let ((map (make-sparse-keymap)))
+                        (define-key map [mode-line down-mouse-1]
+                          flycheck-mode-menu-map)
+                        (define-key map [mode-line mouse-2]
+                          (lambda ()
+                            (interactive)
+                            (describe-function 'flycheck-mode)))
+                        map)))))
 (add-hook 'flycheck-status-changed-functions #'doom-modeline-update-flycheck-icon)
 (add-hook 'flycheck-mode-hook #'doom-modeline-update-flycheck-icon)
 
