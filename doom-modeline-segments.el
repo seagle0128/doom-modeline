@@ -486,7 +486,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
   (propertize
    (concat
     (doom-modeline-spc)
-    (propertize mode-name
+    (propertize (format-mode-line mode-name)
                 'help-echo "Major mode\n\
 mouse-1: Display major mode menu\n\
 mouse-2: Show help for major mode\n\
@@ -517,7 +517,7 @@ mouse-3: Toggle minor modes"
   (if (doom-modeline--active)
       mode-line-process
     (propertize
-     (format-mode-line '("" mode-line-process))
+     (format-mode-line mode-line-process)
      'face 'mode-line-inactive)))
 
 
@@ -545,7 +545,7 @@ mouse-1: Display minor modes menu"
          (concat
           (replace-regexp-in-string (regexp-quote "%")
                                     "%%%%"
-                                    (format-mode-line '("" minor-mode-alist))
+                                    (format-mode-line minor-mode-alist)
                                     t t)
           (doom-modeline-spc))
          'face (if active
