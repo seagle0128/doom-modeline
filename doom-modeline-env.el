@@ -60,6 +60,7 @@ Example: 'doom-modeline-env--ruby")
   "Update environment info on mode-line."
   (when (and doom-modeline-env-version
              doom-modeline-env--command
+             (executable-find doom-modeline-env--command)
              doom-modeline-env--command-args
              doom-modeline-env--parser)
     (let ((default-directory (doom-modeline-project-root))
