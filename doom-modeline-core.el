@@ -542,15 +542,13 @@ If the actual char height is larger, it respects the actual char height.")
   Return `default-directory' if no project was found."
   (or doom-modeline-project-root
       (setq doom-modeline-project-root
-            (file-local-name
-             (or
-              (when (bound-and-true-p projectile-mode)
-                (ignore-errors (projectile-project-root)))
-              (when (fboundp 'project-current)
-                (ignore-errors
-                  (when-let ((project (project-current)))
-                    (expand-file-name (car (project-roots project))))))
-              default-directory)))))
+            (or (and (bound-and-true-p projectile-mode)
+                     (ignore-errors (projectile-project-root)))
+                (and (fboundp 'project-current)
+                     (ignore-errors
+                       (when-let ((project (project-current)))
+                         (expand-file-name (car (project-roots project))))))
+                default-directory))))
 
 (defun doom-modeline--make-xpm (face width height)
   "Create an XPM bitmap via FACE, WIDTH and HEIGHT. Inspired by `powerline''s `pl/make-xpm'."
@@ -663,7 +661,7 @@ If TRUNCATE-TAIL is t also truncate the parent directory of the file."
 
 (defun doom-modeline--buffer-file-name-relative (_file-path true-file-path &optional include-project)
   "Propertized variable `buffer-file-name' showing directories relative to project's root only."
-  (let ((root (doom-modeline-project-root))
+  (let ((root (file-local-name (doom-modeline-project-root)))
         (active (doom-modeline--active)))
     (if (null root)
         (propertize "%b" 'face (if active 'doom-modeline-buffer-file))
@@ -695,7 +693,7 @@ If HIDE-PROJECT-ROOT-PARENT is non-nil will hide project root parent.
 
 Example:
   ~/Projects/FOSS/emacs/lisp/comint.el => emacs/lisp/comint.el"
-  (let ((project-root (doom-modeline-project-root))
+  (let ((project-root (file-local-name (doom-modeline-project-root)))
         (active (doom-modeline--active))
         (modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified)))
     (let ((sp-faces       (or modified-faces (if active 'doom-modeline-project-parent-dir)))
