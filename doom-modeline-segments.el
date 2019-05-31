@@ -485,7 +485,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
   (propertize
    (concat
     (doom-modeline-whitespace)
-    (propertize mode-name
+    (propertize (format-mode-line mode-name)
                 'help-echo "Major mode\n\
 mouse-1: Display major mode menu\n\
 mouse-2: Show help for major mode\n\
