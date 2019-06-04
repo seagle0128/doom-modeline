@@ -380,7 +380,13 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
       (when icon
         (concat
          (if (doom-modeline--active)
-             icon
+             (if doom-modeline-major-mode-color-icon
+                 icon
+               (propertize icon 'face `(:inherit
+                                        ,(let ((props (get-text-property 0 'face icon)))
+                                           props (remove :inherit props))
+                                        :inherit
+                                        mode-line)))
            (propertize icon 'face `(:inherit
                                     ,(get-text-property 0 'face icon)
                                     :inherit
