@@ -7,8 +7,9 @@
 
 A fancy and fast mode-line inspired by minimalism design.
 
-It's integrated into [Doom Emacs](https://github.com/hlissner/doom-emacs) and
-[Centaur Emacs](https://github.com/seagle0128/.emacs.d).
+It's integrated into [Centaur Emacs](https://github.com/seagle0128/.emacs.d), [Doom
+Emacs](https://github.com/hlissner/doom-emacs) and
+[Spacemacs](https://github.com/syl20bnr/spacemacs).
 
 ## Feature
 
