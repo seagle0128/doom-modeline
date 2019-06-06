@@ -1362,9 +1362,9 @@ mouse-2: Show help for minor mode"
                (doom-modeline-spc)))))))
 
 (add-hook 'find-file-hook #'doom-modeline-update-persp-name)
-(add-hook 'buffer-list-update-hook #'doom-modeline-update-persp-name)
 (add-hook 'persp-activated-functions #'doom-modeline-update-persp-name)
 (add-hook 'persp-renamed-functions #'doom-modeline-update-persp-name)
+(advice-add #'select-window :after #'doom-modeline-update-persp-name)
 
 (doom-modeline-def-segment persp-name
   "The current perspective name."
