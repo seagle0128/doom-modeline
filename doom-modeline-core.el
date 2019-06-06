@@ -438,9 +438,9 @@ If the actual char height is larger, it respects the actual char height.")
 
 (add-hook 'window-configuration-change-hook #'doom-modeline-set-selected-window)
 (add-hook 'buffer-list-update-hook #'doom-modeline-set-selected-window)
+(add-hook 'after-make-frame-functions #'doom-modeline-set-selected-window)
+(add-hook 'delete-frame-functions #'doom-modeline-set-selected-window)
 (advice-add #'handle-switch-frame :after #'doom-modeline-set-selected-window)
-(advice-add #'make-frame :after #'doom-modeline-set-selected-window)
-(advice-add #'delete-frame :after #'doom-modeline-set-selected-window)
 (with-no-warnings
   (cond ((not (boundp 'after-focus-change-function))
          (add-hook 'focus-in-hook #'doom-modeline-set-selected-window)
