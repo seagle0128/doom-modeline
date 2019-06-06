@@ -1656,7 +1656,7 @@ mouse-1: Reload to start server")
                             (define-key map [mode-line mouse-1]
                               (lambda ()
                                 (interactive)
-                                (revert-buffer t t)))))
+                                (ignore-errors (revert-buffer t t))))))
                         map)))))
 (add-hook 'lsp-mode-hook #'doom-modeline-update-lsp)
 (add-hook 'lsp-after-uninitialized-hook #'doom-modeline-update-lsp)
