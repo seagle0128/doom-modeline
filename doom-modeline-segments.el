@@ -327,15 +327,16 @@ Uses `all-the-icons-material' to fetch the icon."
 (defun doom-modeline-update-buffer-file-name (&rest _)
   "Update buffer file name in mode-line."
   (setq doom-modeline--buffer-file-name
-        (if buffer-file-name
-            (doom-modeline-buffer-file-name)
-          (propertize "%b"
-                      'face (if (doom-modeline--active)
-                                'doom-modeline-buffer-file
-                              'mode-line-inactive)
-                      'help-echo "Buffer name
+        (save-match-data
+          (if buffer-file-name
+              (doom-modeline-buffer-file-name)
+            (propertize "%b"
+                        'face (if (doom-modeline--active)
+                                  'doom-modeline-buffer-file
+                                'mode-line-inactive)
+                        'help-echo "Buffer name
 mouse-1: Previous buffer\nmouse-3: Next buffer"
-                      'local-map mode-line-buffer-identification-keymap))))
+                        'local-map mode-line-buffer-identification-keymap)))))
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'after-save-hook #'doom-modeline-update-buffer-file-name)
