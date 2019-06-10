@@ -441,9 +441,6 @@ If the actual char height is larger, it respects the actual char height.")
 (add-hook 'after-make-frame-functions #'doom-modeline-set-selected-window)
 (add-hook 'delete-frame-functions #'doom-modeline-set-selected-window)
 (advice-add #'handle-switch-frame :after #'doom-modeline-set-selected-window)
-(advice-add #'handle-switch-frame :after #'(lambda (&rest _)
-                                             "Rever the current buffer."
-                                             (ignore-errors (revert-buffer t t))))
 (with-no-warnings
   (cond ((not (boundp 'after-focus-change-function))
          (add-hook 'focus-in-hook #'doom-modeline-set-selected-window)
