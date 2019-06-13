@@ -1621,7 +1621,7 @@ mouse-3: Describe current input method")
       (doom-modeline-icon-faicon "rocket" :height 1.0 :face face :v-adjust -0.0575)
     (propertize text 'face face)))
 
-(defvar doom-modeline--lsp nil)
+(defvar-local doom-modeline--lsp nil)
 (defun doom-modeline-update-lsp (&rest _)
   "Update `lsp-mode' status."
   (setq doom-modeline--lsp
@@ -1662,7 +1662,7 @@ mouse-1: Reload to start server")
 (add-hook 'lsp-mode-hook #'doom-modeline-update-lsp)
 (add-hook 'lsp-after-uninitialized-hook #'doom-modeline-update-lsp)
 
-(defvar doom-modeline--eglot nil)
+(defvar-local doom-modeline--eglot nil)
 (defun doom-modeline-update-eglot ()
   "Update `eglot' status."
   (setq doom-modeline--eglot
