@@ -1862,59 +1862,69 @@ mouse-3: Fetch notifications"
   "The current debug state."
   (when (doom-modeline--active)
     (concat
-     (and (or debug-on-error debug-on-quit
-              (bound-and-true-p edebug-mode)
-              (bound-and-true-p edebug-x-mode))
-          (doom-modeline-spc))
+     (when (or (and (bound-and-true-p dap-mode)
+                    (bound-and-true-p lsp-mode)
+                    (dap--cur-session))
+               (bound-and-true-p edebug-mode)
+               (bound-and-true-p edebug-x-mode)
+               debug-on-error
+               debug-on-quit)
+       (doom-modeline-spc))
 
      ;; For `dap-mode'
      (when (and (bound-and-true-p dap-mode)
                 (bound-and-true-p lsp-mode)
                 (dap--cur-session))
-       (propertize
-        (doom-modeline-debug-icon 'doom-modeline-warning)
-        'help-echo (format "DAP (%s)
+       (concat
+        (propertize
+         (doom-modeline-debug-icon 'doom-modeline-warning)
+         'help-echo (format "DAP (%s)
 mouse-1: Display debug hydra
 mouse-2: Display recent configurations
 mouse-3: Disconnect session"
-                           (dap-mode-line))
-        'mouse-face '(:box 0)
-        'local-map (let ((map (make-sparse-keymap)))
-                     (define-key map [mode-line mouse-1]
-                       #'dap-hydra)
-                     (define-key map [mode-line mouse-2]
-                       #'dap-debug-recent)
-                     (define-key map [mode-line mouse-3]
-                       #'dap-disconnect)
-                     map)))
+                            (dap-mode-line))
+         'mouse-face '(:box 0)
+         'local-map (let ((map (make-sparse-keymap)))
+                      (define-key map [mode-line mouse-1]
+                        #'dap-hydra)
+                      (define-key map [mode-line mouse-2]
+                        #'dap-debug-recent)
+                      (define-key map [mode-line mouse-3]
+                        #'dap-disconnect)
+                      map))
+        (doom-modeline-vspc)))
 
      ;; For `edebug'
      (when (or (bound-and-true-p edebug-mode)
                (bound-and-true-p edebug-x-mode))
-       (propertize
-        (doom-modeline-debug-icon 'doom-modeline-warning)
-        'help-echo (format "EDebug (%s)
+       (concat
+        (propertize
+         (doom-modeline-debug-icon 'doom-modeline-warning)
+         'help-echo (format "EDebug (%s)
 mouse-1: Show help
 mouse-2: Next
 mouse-3: Stop debugging"
-                           edebug-execution-mode)
-        'mouse-face '(:box 0)
-        'local-map (let ((map (make-sparse-keymap)))
-                     (define-key map [mode-line mouse-1]
-                       #'edebug-help)
-                     (define-key map [mode-line mouse-2]
-                       #'edebug-next-mode)
-                     (define-key map [mode-line mouse-3]
-                       #'edebug-stop)
-                     map)))
+                            edebug-execution-mode)
+         'mouse-face '(:box 0)
+         'local-map (let ((map (make-sparse-keymap)))
+                      (define-key map [mode-line mouse-1]
+                        #'edebug-help)
+                      (define-key map [mode-line mouse-2]
+                        #'edebug-next-mode)
+                      (define-key map [mode-line mouse-3]
+                        #'edebug-stop)
+                      map))
+        (doom-modeline-vspc)))
 
      ;; For `debug-on-error'
      (when debug-on-error
-       (propertize (doom-modeline-debug-icon 'doom-modeline-urgent)
-                   'help-echo "Debug on Error
+       (concat
+        (propertize (doom-modeline-debug-icon 'doom-modeline-urgent)
+                    'help-echo "Debug on Error
 mouse-1: Toggle Debug on Error"
-                   'mouse-face '(:box 0)
-                   'local-map (make-mode-line-mouse-map 'mouse-1 #'toggle-debug-on-error)))
+                    'mouse-face '(:box 0)
+                    'local-map (make-mode-line-mouse-map 'mouse-1 #'toggle-debug-on-error))
+        (doom-modeline-vspc)))
 
      ;; For `debug-on-quit'
      (when debug-on-quit
@@ -1925,10 +1935,14 @@ mouse-1: Toggle Debug on Quit"
         'mouse-face '(:box 0)
         'local-map (make-mode-line-mouse-map 'mouse-1 #'toggle-debug-on-quit)))
 
-     (and (or debug-on-error debug-on-quit
-              (bound-and-true-p edebug-mode)
-              (bound-and-true-p edebug-x-mode))
-          (doom-modeline-spc)))))
+     (when (or (and (bound-and-true-p dap-mode)
+                    (bound-and-true-p lsp-mode)
+                    (dap--cur-session))
+               (bound-and-true-p edebug-mode)
+               (bound-and-true-p edebug-x-mode)
+               debug-on-error
+               debug-on-quit)
+       (doom-modeline-spc)))))
 
 
 ;;
