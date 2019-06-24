@@ -1925,13 +1925,12 @@ mouse-1: Toggle Debug on Quit"
            (on-error (doom-modeline--debug-on-error))
            (on-quit (doom-modeline--debug-on-quit))
            (splitter (and (or dap edebug on-error on-quit) (doom-modeline-spc))))
-      (concat
-       splitter
-       (when dap (concat dap (doom-modeline-vspc)))
-       (when edebug (concat edebug (doom-modeline-vspc)))
-       (when on-error (concat on-error (doom-modeline-vspc)))
-       on-quit
-       splitter))))
+      (concat splitter
+              (when dap (concat dap (doom-modeline-vspc)))
+              (when edebug (concat edebug (doom-modeline-vspc)))
+              (when on-error (concat on-error (doom-modeline-vspc)))
+              on-quit
+              splitter))))
 
 
 ;;
