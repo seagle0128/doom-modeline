@@ -1591,7 +1591,7 @@ mouse-3: Describe current input method")
   "The topic and nodes in the Info buffer."
   (let ((active (doom-modeline--active)))
     (concat
-     (propertize " (" (if active 'mode-line 'mode-line-inactive))
+     (propertize " (" 'face (if active 'mode-line 'mode-line-inactive))
      ;; topic
      (propertize (if (stringp Info-current-file)
                      (replace-regexp-in-string
@@ -1600,17 +1600,16 @@ mouse-3: Describe current input method")
                        (file-name-nondirectory Info-current-file)))
                    (format "*%S*" Info-current-file))
                  'face (if active 'doom-modeline-info 'mode-line-inactive))
-     (propertize ") " (if active 'mode-line 'mode-line-inactive))
+     (propertize ") " 'face (if active 'mode-line 'mode-line-inactive))
      ;; node
-     (if Info-current-node
-         (propertize (replace-regexp-in-string
-                      "%" "%%" Info-current-node)
-                     'face (if active 'doom-modeline-buffer-path 'mode-line-inactive)
-                     'help-echo
-                     "mouse-1: scroll forward, mouse-3: scroll back"
-                     'mouse-face 'mode-line-highlight
-                     'local-map Info-mode-line-node-keymap)
-       ""))))
+     (when Info-current-node
+       (propertize (replace-regexp-in-string
+                    "%" "%%" Info-current-node)
+                   'face (if active 'doom-modeline-buffer-path 'mode-line-inactive)
+                   'help-echo
+                   "mouse-1: scroll forward, mouse-3: scroll back"
+                   'mouse-face 'mode-line-highlight
+                   'local-map Info-mode-line-node-keymap)))))
 
 
 ;;
