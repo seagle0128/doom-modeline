@@ -264,31 +264,32 @@ Uses `all-the-icons-material' to fetch the icon."
 (defun doom-modeline-update-buffer-file-state-icon (&rest _)
   "Update the buffer or file state in mode-line."
   (setq doom-modeline--buffer-file-state-icon
-        (cond (buffer-read-only
-               (doom-modeline-buffer-file-state-icon
-                "lock"
-                "%1*"
-                'doom-modeline-warning))
-              ((and buffer-file-name (buffer-modified-p)
-                    doom-modeline-buffer-modification-icon)
-               (doom-modeline-buffer-file-state-icon
-                "save"
-                "%1*"
-                'doom-modeline-buffer-modified))
-              ((and buffer-file-name
-                    (not (file-exists-p buffer-file-name)))
-               (doom-modeline-buffer-file-state-icon
-                "do_not_disturb_alt"
-                "!"
-                'doom-modeline-urgent))
-              ((or (buffer-narrowed-p)
-                   (and (bound-and-true-p fancy-narrow-mode)
-                        (fancy-narrow-active-p)))
-               (doom-modeline-buffer-file-state-icon
-                "vertical_align_center"
-                "><"
-                'doom-modeline-warning))
-              (t ""))))
+        (ignore-errors
+          (cond (buffer-read-only
+                 (doom-modeline-buffer-file-state-icon
+                  "lock"
+                  "%1*"
+                  'doom-modeline-warning))
+                ((and buffer-file-name (buffer-modified-p)
+                      doom-modeline-buffer-modification-icon)
+                 (doom-modeline-buffer-file-state-icon
+                  "save"
+                  "%1*"
+                  'doom-modeline-buffer-modified))
+                ((and buffer-file-name
+                      (not (file-exists-p buffer-file-name)))
+                 (doom-modeline-buffer-file-state-icon
+                  "do_not_disturb_alt"
+                  "!"
+                  'doom-modeline-urgent))
+                ((or (buffer-narrowed-p)
+                     (and (bound-and-true-p fancy-narrow-mode)
+                          (fancy-narrow-active-p)))
+                 (doom-modeline-buffer-file-state-icon
+                  "vertical_align_center"
+                  "><"
+                  'doom-modeline-warning))
+                (t "")))))
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-save-hook #'doom-modeline-update-buffer-file-state-icon)
@@ -327,16 +328,17 @@ Uses `all-the-icons-material' to fetch the icon."
 (defun doom-modeline-update-buffer-file-name (&rest _)
   "Update buffer file name in mode-line."
   (setq doom-modeline--buffer-file-name
-        (save-match-data
-          (if buffer-file-name
-              (doom-modeline-buffer-file-name)
-            (propertize "%b"
-                        'face (if (doom-modeline--active)
-                                  'doom-modeline-buffer-file
-                                'mode-line-inactive)
-                        'help-echo "Buffer name
+        (ignore-errors
+          (save-match-data
+            (if buffer-file-name
+                (doom-modeline-buffer-file-name)
+              (propertize "%b"
+                          'face (if (doom-modeline--active)
+                                    'doom-modeline-buffer-file
+                                  'mode-line-inactive)
+                          'help-echo "Buffer name
 mouse-1: Previous buffer\nmouse-3: Next buffer"
-                        'local-map mode-line-buffer-identification-keymap)))))
+                          'local-map mode-line-buffer-identification-keymap))))))
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'after-save-hook #'doom-modeline-update-buffer-file-name)
