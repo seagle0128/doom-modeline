@@ -202,10 +202,8 @@ buffer where knowing the current project directory is important."
               (concat
                (if active
                    icon
-                 (propertize icon 'face `(:inherit
-                                          ,(get-text-property 0 'face icon)
-                                          :inherit
-                                          mode-line-inactive)))
+                 (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
+                                          :inherit mode-line-inactive)))
                (doom-modeline-spc)))
             (propertize (abbreviate-file-name default-directory)
                         'face (if active
@@ -249,9 +247,9 @@ buffer where knowing the current project directory is important."
   "Displays an ICON with FACE, HEIGHT and VOFFSET.
 TEXT is the alternative if it is not applicable.
 Uses `all-the-icons-material' to fetch the icon."
-    (if (and doom-modeline-icon
-             doom-modeline-buffer-state-icon
-             icon)
+  (if (and doom-modeline-icon
+           doom-modeline-buffer-state-icon
+           icon)
       (doom-modeline-icon-material
        icon
        :face face
@@ -358,10 +356,11 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 
 (with-no-warnings
   (if (boundp 'after-focus-change-function)
-      (add-function :after after-focus-change-function
-                    (lambda ()
-                      (when (frame-focus-state)
-                        (doom-modeline-update-buffer-file-name))))
+      (add-function
+       :after after-focus-change-function
+       (lambda ()
+         (when (frame-focus-state)
+           (doom-modeline-update-buffer-file-name))))
     (add-hook 'focus-in-hook #'doom-modeline-update-buffer-file-name t)))
 
 (when (>= emacs-major-version 26)
@@ -385,15 +384,11 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
          (if (doom-modeline--active)
              (if doom-modeline-major-mode-color-icon
                  icon
-               (propertize icon 'face `(:inherit
-                                        ,(let ((props (get-text-property 0 'face icon)))
-                                           props (remove :inherit props))
-                                        :inherit
-                                        mode-line)))
-           (propertize icon 'face `(:inherit
-                                    ,(get-text-property 0 'face icon)
-                                    :inherit
-                                    mode-line-inactive)))
+               (propertize icon 'face `(:inherit ,(let ((props (get-text-property 0 'face icon)))
+                                                    props (remove :inherit props))
+                                        :inherit mode-line)))
+           (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
+                                    :inherit mode-line-inactive)))
          (doom-modeline-vspc))))))
 
 (defsubst doom-modeline--buffer-state-icon ()
@@ -404,10 +399,8 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
       (concat
        (if (doom-modeline--active)
            icon
-         (propertize icon 'face `(:inherit
-                                  ,(get-text-property 0 'face icon)
-                                  :inherit
-                                  mode-line-inactive)))
+         (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
+                                  :inherit mode-line-inactive)))
        (doom-modeline-vspc)))))
 
 (defsubst doom-modeline--buffer-name ()
@@ -636,10 +629,8 @@ Uses `all-the-icons-octicon' to fetch the icon."
        (doom-modeline-spc)
        (if active
            icon
-         (propertize icon 'face `(:inherit
-                                  ,(get-text-property 0 'face icon)
-                                  :inherit
-                                  mode-line-inactive)))
+         (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
+                                  :inherit mode-line-inactive)))
        (if doom-modeline-icon (doom-modeline-vspc))
        (if active
            text
@@ -964,10 +955,8 @@ mouse-1: List all problems%s"
            (when icon
              (if active
                  icon
-               (propertize icon 'face `(:inherit
-                                        ,(get-text-property 0 'face icon)
-                                        :inherit
-                                        mode-line-inactive))))
+               (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
+                                        :inherit mode-line-inactive))))
            (when (and doom-modeline-icon icon text)
              (doom-modeline-vspc))
            (when text
@@ -1732,10 +1721,8 @@ mouse-3: Reconnect to server" nick (eglot--major-mode server)))
          (doom-modeline-spc)
          (if active
              icon
-           (propertize icon 'face `(:inherit
-                                    ,(get-text-property 0 'face icon)
-                                    :inherit
-                                    mode-line-inactive)))
+           (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
+                                    :inherit mode-line-inactive)))
          (doom-modeline-spc))))))
 
 (defun doom-modeline-override-eglot-modeline ()
@@ -2115,8 +2102,7 @@ we don't want to remove that so we just return the original."
            (doom-modeline-spc)
            (if percent-str
                (concat
-                (propertize icon 'face `(:inherit
-                                         ,(get-text-property 0 'face icon)
+                (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
                                          :inherit ,face)
                             'help-echo help-echo)
                 (if doom-modeline-icon (doom-modeline-vspc))
@@ -2170,8 +2156,7 @@ we don't want to remove that so we just return the original."
                                                (if doom-modeline-major-mode-color-icon
                                                    props
                                                  (remove :inherit props)))
-                                            :inherit
-                                            mode-line-inactive))))))
+                                            :inherit mode-line-inactive))))))
      (let ((info (format-mode-line 'mode-line-buffer-identification)))
        (if active
            info
