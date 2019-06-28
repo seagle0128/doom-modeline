@@ -1622,8 +1622,10 @@ mouse-3: Describe current input method")
                       'help-echo
                       (if workspaces
                           (concat "LSP Connected "
-                                  (string-join (--map (format "[%s]\n" (lsp--workspace-print it))
-                                                      workspaces))
+                                  (string-join
+                                   (mapcar (lambda (w)
+                                             (format "[%s]\n" (lsp--workspace-print w)))
+                                           workspaces))
                                   "C-mouse-1: Switch to another workspace folder
 mouse-1: Describe current session
 mouse-2: Quit server
@@ -1631,28 +1633,28 @@ mouse-3: Reconnect to server")
                         "LSP Disconnected
 mouse-1: Reload to start server")
                       'mouse-face '(:box 0)
-                      'local-map
-                      (let ((map (make-sparse-keymap)))
-                        (if workspaces
-                            (progn
-                              (define-key map [mode-line C-mouse-1]
-                                #'lsp-workspace-folders-open)
-                              (define-key map [mode-line mouse-1]
-                                #'lsp-describe-session)
-                              (define-key map [mode-line mouse-2]
-                                #'lsp-workspace-shutdown)
-                              (define-key map [mode-line mouse-3]
-                                #'lsp-workspace-restart))
-                          (progn
-                            (define-key map [mode-line mouse-1]
-                              (lambda ()
-                                (interactive)
-                                (ignore-errors (revert-buffer t t))))))
-                        map)))))
+                      'local-map (let ((map (make-sparse-keymap)))
+                                   (if workspaces
+                                       (progn
+                                         (define-key map [mode-line C-mouse-1]
+                                           #'lsp-workspace-folders-open)
+                                         (define-key map [mode-line mouse-1]
+                                           #'lsp-describe-session)
+                                         (define-key map [mode-line mouse-2]
+                                           #'lsp-workspace-shutdown)
+                                         (define-key map [mode-line mouse-3]
+                                           #'lsp-workspace-restart))
+                                     (progn
+                                       (define-key map [mode-line mouse-1]
+                                         (lambda ()
+                                           (interactive)
+                                           (ignore-errors (revert-buffer t t))))))
+                                   map)))))
+(add-hook 'lsp-before-initialize-hook #'doom-modeline-update-lsp)
 (add-hook 'lsp-after-initialize-hook #'doom-modeline-update-lsp)
 (add-hook 'lsp-after-uninitialized-hook #'doom-modeline-update-lsp)
+(add-hook 'lsp-before-open-hook #'doom-modeline-update-lsp)
 (add-hook 'lsp-after-open-hook #'doom-modeline-update-lsp)
-(add-hook 'lsp-workspace-folders-changed-hook #'doom-modeline-update-lsp)
 
 (defvar-local doom-modeline--eglot nil)
 (defun doom-modeline-update-eglot ()
