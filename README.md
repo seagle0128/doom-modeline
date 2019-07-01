@@ -297,3 +297,14 @@ Strongly recommend to use
 
    (add-hook 'doom-modeline-mode-hook 'setup-custom-doom-modeline)
    ```
+
+1. How to specify font size in modeline?
+
+    For example:
+
+    ``` emacs-lisp
+    (setq doom-modeline-height 1)
+    (set-face-attribute 'mode-line nil :height 100)
+    (set-face-attribute 'mode-line-inactive nil :height 100)
+    ```
+    Please refer to #189.
