@@ -497,7 +497,7 @@ If the actual char height is larger, it respects the actual char height.")
                             'mode-line
                           'mode-line-inactive)))
 
-(defsubst doom-modeline--font-height ()
+(defun doom-modeline--font-height ()
   "Calculate the actual char height of the mode-line."
   (round (* 1.68 (frame-char-height))))
 
