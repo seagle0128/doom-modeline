@@ -189,6 +189,9 @@ If the actual char height is larger, it respects the actual char height.")
 (defvar doom-modeline-persp-name t
   "Whether display perspective name or not. Non-nil to display in mode-line.")
 
+(defvar doom-modeline-persp-name-icon nil
+  "Whether display icon for persp name. Nil to display a # sign. It respects `doom-modeline-icon'.")
+
 (defvar doom-modeline-lsp t
   "Whether display `lsp' state or not. Non-nil to display in mode-line.")
 
