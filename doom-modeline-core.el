@@ -499,7 +499,10 @@ If the actual char height is larger, it respects the actual char height.")
 
 (defun doom-modeline--font-height ()
   "Calculate the actual char height of the mode-line."
-  (round (* 0.168 (face-attribute 'mode-line :height))))
+  (let ((height (face-attribute 'mode-line :height)))
+    (round (* 0.168 (if (number-or-marker-p height)
+                        height
+                      (* (frame-char-height) 10))))))
 
 (defun doom-modeline-icon-octicon (&rest args)
   "Display octicon via ARGS."
