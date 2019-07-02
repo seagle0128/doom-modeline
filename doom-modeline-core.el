@@ -101,6 +101,9 @@ It returns a file name which can be used directly as argument of
     ("pause" . "\xe034")
     ("priority_high" . "\xe645")
 
+    ;; Persp
+    ("aspect_ratio" . "\xe85b")
+
     ;; LSP
     ("rocket" . "\xf135")
 
