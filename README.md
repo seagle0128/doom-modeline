@@ -310,4 +310,10 @@ Strongly recommend to use
     (set-face-attribute 'mode-line nil :height 100)
     (set-face-attribute 'mode-line-inactive nil :height 100)
     ```
+    or
+    ```emacs-lisp
+    (custom-set-faces
+      `(mode-line ((t (:height 0.9))))
+      `(mode-line-inactive ((t (:height 0.9)))))
+    ```
     Please refer to #189.
