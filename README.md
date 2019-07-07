@@ -313,7 +313,7 @@ Strongly recommend to use
     or
     ```emacs-lisp
     (custom-set-faces
-      `(mode-line ((t (:height 0.9))))
-      `(mode-line-inactive ((t (:height 0.9)))))
+      '(mode-line ((t (:height 0.9))))
+      '(mode-line-inactive ((t (:height 0.9)))))
     ```
     Please refer to #189.
