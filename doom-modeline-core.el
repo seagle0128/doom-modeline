@@ -391,9 +391,13 @@ If the actual char height is larger, it respects the actual char height.")
                " "
                'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
                'display `((space :align-to (- (+ right right-fringe right-margin)
-                                              ,(string-width
-                                                (format-mode-line
-                                                 (cons "" rhs-forms)))))))
+                                              ,(* (if (number-or-marker-p (face-attribute 'mode-line :height))
+                                                      (/ (window-font-width nil 'mode-line)
+                                                         (frame-char-width) 1.0)
+                                                    1)
+                                                  (string-width
+                                                   (format-mode-line
+                                                    (cons "" rhs-forms))))))))
               rhs-forms))
       (concat "Modeline:\n"
               (format "  %s\n  %s"
