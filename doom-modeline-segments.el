@@ -92,6 +92,7 @@
 (declare-function aw-window-list 'ace-window)
 (declare-function battery-format 'battery)
 (declare-function dap--cur-session 'dap-mode)
+(declare-function dap--session-running 'dap-mode)
 (declare-function dap-debug-recent 'dap-mode)
 (declare-function dap-disconnect 'dap-mode)
 (declare-function dap-hydra 'dap-hydra)
@@ -1859,7 +1860,7 @@ mouse-3: Fetch notifications"
   "The current `dap-mode' state."
   (when (and (bound-and-true-p dap-mode)
              (bound-and-true-p lsp-mode)
-             (dap--cur-session))
+             (dap--session-running (dap--cur-session)))
     (propertize (doom-modeline-debug-icon 'doom-modeline-warning)
                 'help-echo (format "DAP (%s)
 mouse-1: Display debug hydra
