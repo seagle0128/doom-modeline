@@ -239,6 +239,13 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 (setq doom-modeline-env-go-executable "go")
 (setq doom-modeline-env-elixir-executable "iex")
 (setq doom-modeline-env-rust-executable "rustc")
+
+;; What to dispaly as the version while a new one is being loaded
+(setq doom-modeline-env-load-string "...")
+
+;; Hooks that run before/after the modeline version string is updated
+(setq doom-modeline-before-update-env-hook nil)
+(setq doom-modeline-after-update-env-hook nil)
 ```
 
 ## FAQ

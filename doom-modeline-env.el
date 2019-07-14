@@ -38,7 +38,8 @@
   "The environment parser for doom-modeline."
   :group 'doom-modeline)
 
-(defcustom doom-modeline-env-python-executable "python"
+(defcustom doom-modeline-env-python-executable
+  (or (bound-and-true-p python-shell-interpreter) "python")
   "The executable to parse Python version."
   :type 'string
   :group 'doom-modeline-env)
@@ -73,13 +74,13 @@
   :type 'string
   :group 'doom-modeline-env)
 
-(defcustom doom-modeline-after-update-env-hook nil
-  "Hooks that run after the modeline version string is updated."
+(defcustom doom-modeline-before-update-env-hook nil
+  "Hooks that run before the modeline version string is updated."
   :type 'hook
   :group 'doom-modeline-env)
 
-(defcustom doom-modeline-before-update-env-hook nil
-  "Hooks that run before the modeline version string is updated."
+(defcustom doom-modeline-after-update-env-hook nil
+  "Hooks that run after the modeline version string is updated."
   :type 'hook
   :group 'doom-modeline-env)
 
