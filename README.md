@@ -223,14 +223,6 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 (setq doom-modeline-env-enable-elixir t)
 (setq doom-modeline-env-enable-rust t)
 
-;; Change the executables to use for the language version string
-(setq doom-modeline-env-python-executable "python")
-(setq doom-modeline-env-ruby-executable "ruby")
-(setq doom-modeline-env-perl-executable "perl")
-(setq doom-modeline-env-go-executable "go")
-(setq doom-modeline-env-elixir-executable "iex")
-(setq doom-modeline-env-rust-executable "rustc")
-
 ;; Whether display mu4e notifications or not. Requires `mu4e-alert' package.
 (setq doom-modeline-mu4e t)
 
@@ -239,6 +231,14 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
 ;; Function to stylize the irc buffer names.
 (setq doom-modeline-irc-stylize 'identity)
+
+;; Change the executables to use for the language version string
+(setq doom-modeline-env-python-executable "python") ; or `python-shell-interpreter'
+(setq doom-modeline-env-ruby-executable "ruby")
+(setq doom-modeline-env-perl-executable "perl")
+(setq doom-modeline-env-go-executable "go")
+(setq doom-modeline-env-elixir-executable "iex")
+(setq doom-modeline-env-rust-executable "rustc")
 ```
 
 ## FAQ
