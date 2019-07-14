@@ -30,6 +30,9 @@
 (require 'subr-x)
 (require 'doom-modeline-core)
 
+;; Externals
+(defvar python-shell-interpreter)
+
 ;;
 ;; Customizations
 ;;
@@ -37,37 +40,6 @@
 (defgroup doom-modeline-env nil
   "The environment parser for doom-modeline."
   :group 'doom-modeline)
-
-(defcustom doom-modeline-env-python-executable
-  (or (bound-and-true-p python-shell-interpreter) "python")
-  "The executable to parse Python version."
-  :type 'string
-  :group 'doom-modeline-env)
-
-(defcustom doom-modeline-env-ruby-executable "ruby"
-  "The executable to parse Ruby version."
-  :type 'string
-  :group 'doom-modeline-env)
-
-(defcustom doom-modeline-env-perl-executable "perl"
-  "The executable to parse Perl version."
-  :type 'string
-  :group 'doom-modeline-env)
-
-(defcustom doom-modeline-env-go-executable "go"
-  "The executable to parse Golang version."
-  :type 'string
-  :group 'doom-modeline-env)
-
-(defcustom doom-modeline-env-elixir-executable "iex"
-  "The executable to parse Elixir version."
-  :type 'string
-  :group 'doom-modeline-env)
-
-(defcustom doom-modeline-env-rust-executable "rustc"
-  "The executable to parse Rust version."
-  :type 'string
-  :group 'doom-modeline-env)
 
 (defcustom doom-modeline-env-load-string "..."
   "What to dispaly as the version while a new one is being loaded."
@@ -83,7 +55,6 @@
   "Hooks that run after the modeline version string is updated."
   :type 'hook
   :group 'doom-modeline-env)
-
 
 ;; Show version string for multi-version managers like rvm, rbenv, pyenv, etc.
 (defvar-local doom-modeline-env--version nil
@@ -222,16 +193,20 @@ PARSER should be a function for parsing COMMAND's output line-by-line, to
   :command (lambda () (cond ((and (fboundp 'pipenv-project-p)
                              (pipenv-project-p))
                         (list "pipenv" "run"
-                              doom-modeline-env-python-executable
+                              (or doom-modeline-env-python-executable
+                                  python-shell-interpreter
+                                  "python")
                               "--version"))
-                       ((list doom-modeline-env-python-executable
+                       ((list (or doom-modeline-env-python-executable
+                                  python-shell-interpreter
+                                  "python")
                               "--version"))))
   :parser  (lambda (line) (cadr (split-string line))))
 
 ;;;###autoload (autoload 'doom-modeline-env-setup-ruby "doom-modeline-env")
 (doom-modeline-def-env ruby
   :hooks   '(ruby-mode-hook enh-ruby-mode-hook)
-  :command (lambda () (list doom-modeline-env-ruby-executable "--version"))
+  :command (lambda () (list (or doom-modeline-env-ruby-executable "ruby") "--version"))
   :parser  (lambda (line)
              (car (split-string
                    (cadr
@@ -241,7 +216,7 @@ PARSER should be a function for parsing COMMAND's output line-by-line, to
 ;;;###autoload (autoload 'doom-modeline-env-setup-perl "doom-modeline-env")
 (doom-modeline-def-env perl
   :hooks   'perl-mode-hook
-  :command (lambda () (list doom-modeline-env-perl-executable "--version"))
+  :command (lambda () (list (or doom-modeline-env-perl-executable "perl") "--version"))
   :parser  (lambda (line)
              (cadr
               (split-string
@@ -255,7 +230,7 @@ PARSER should be a function for parsing COMMAND's output line-by-line, to
 ;;;###autoload (autoload 'doom-modeline-env-setup-go "doom-modeline-env")
 (doom-modeline-def-env go
   :hooks   'go-mode-hook
-  :command (lambda () (list doom-modeline-env-go-executable "version"))
+  :command (lambda () (list (or doom-modeline-env-go-executable "go") "version"))
   :parser  (lambda (line)
              (cadr
               (split-string
@@ -267,13 +242,13 @@ PARSER should be a function for parsing COMMAND's output line-by-line, to
 ;;;###autoload (autoload 'doom-modeline-env-setup-elixir "doom-modeline-env")
 (doom-modeline-def-env elixir
   :hooks   'elixir-mode-hook
-  :command (lambda () (list doom-modeline-env-elixir-executable "--version"))
+  :command (lambda () (list (or doom-modeline-env-elixir-executable "iex") "--version"))
   :parser  (lambda (line) (cadr (split-string line))))
 
 ;;;###autoload (autoload 'doom-modeline-env-setup-rust "doom-modeline-env")
 (doom-modeline-def-env rust
   :hooks   'rust-mode-hook
-  :command (lambda () (list doom-modeline-env-rust-executable "--version"))
+  :command (lambda () (list (or doom-modeline-env-rust-executable "rustc") "--version"))
   :parser  (lambda (line)
              (car
               (split-string

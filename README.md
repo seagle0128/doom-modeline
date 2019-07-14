@@ -213,6 +213,15 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; The interval of checking github.
 (setq doom-modeline-github-interval (* 30 60))
 
+;; Whether display mu4e notifications or not. Requires `mu4e-alert' package.
+(setq doom-modeline-mu4e t)
+
+;; Whether display irc notifications or not. Requires `circe' package.
+(setq doom-modeline-irc t)
+
+;; Function to stylize the irc buffer names.
+(setq doom-modeline-irc-stylize 'identity)
+
 ;; Whether display environment version or not
 (setq doom-modeline-env-version t)
 ;; Or for individual languages
@@ -222,15 +231,6 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 (setq doom-modeline-env-enable-go t)
 (setq doom-modeline-env-enable-elixir t)
 (setq doom-modeline-env-enable-rust t)
-
-;; Whether display mu4e notifications or not. Requires `mu4e-alert' package.
-(setq doom-modeline-mu4e t)
-
-;; Whether display irc notifications or not. Requires `circe' package.
-(setq doom-modeline-irc t)
-
-;; Function to stylize the irc buffer names.
-(setq doom-modeline-irc-stylize 'identity)
 
 ;; Change the executables to use for the language version string
 (setq doom-modeline-env-python-executable "python") ; or `python-shell-interpreter'
