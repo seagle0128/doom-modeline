@@ -143,17 +143,21 @@ PARSER should be a function for parsing COMMAND's output line-by-line, to
         (parser-var  (intern (format "doom-modeline-env-%s-parser-fn" name)))
         (exe-var     (intern (format "doom-modeline-env-%s-executable" name))))
     (macroexp-progn
-     `((defvar ,enable-var t
-         (format "Whether to display the version string for %s buffers." ',name))
+     `((defcustom ,enable-var t
+         (format "Whether to display the version string for %s buffers." ',name)
+         :type 'boolean
+         :group 'doom-modeline-env)
        (defvar ,command-var ',action-fn
          (concat "A function that returns the shell command and arguments (as a list) to\n"
                  "produce a version string."))
        (defvar ,parser-var ',parse-fn
          (format "The function for parsing each line of `%s's output." ',command-var))
-       (defvar ,exe-var nil
+       (defcustom ,exe-var nil
          (format (concat "What executable to use for the version indicator in %s buffers.\n\n"
                          "If nil, the default binary for this language is used.")
-                 ',name))
+                 ',name)
+         :type 'string
+         :group 'doom-modeline-env)
        (defalias ',parse-fn ,parser
          (format "The line parser for %s buffers.\n\nUsed by `%s'."
                  ',name ',update-fn))
