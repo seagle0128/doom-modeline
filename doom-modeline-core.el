@@ -131,98 +131,12 @@ It returns a file name which can be used directly as argument of
 
 
 ;;
-;; Variables
-;;
-
-(defvar doom-modeline-height 25
-  "How tall the mode-line should be. It's only respected in GUI.
-If the actual char height is larger, it respects the actual char height.")
-
-(defvar doom-modeline-bar-width (if (eq system-type 'darwin) 3 6)
-  "How wide the mode-line bar should be. It's only respected in GUI.")
-
-(defvar doom-modeline-buffer-file-name-style 'truncate-upto-project
-  "Determines the style used by `doom-modeline-buffer-file-name'.
-
-  Given ~/Projects/FOSS/emacs/lisp/comint.el
-  truncate-upto-project => ~/P/F/emacs/lisp/comint.el
-  truncate-from-project => ~/Projects/FOSS/emacs/l/comint.el
-  truncate-with-project => emacs/l/comint.el
-  truncate-except-project => ~/P/F/emacs/l/comint.el
-  truncate-upto-root => ~/P/F/e/lisp/comint.el
-  truncate-all => ~/P/F/e/l/comint.el
-  relative-from-project => emacs/lisp/comint.el
-  relative-to-project => lisp/comint.el
-  file-name => comint.el
-  buffer-name => comint.el<2> (uniquify buffer name)")
-
-(defvar doom-modeline-icon (display-graphic-p)
-  "Whether display icons in mode-line or not.")
-
-(defvar doom-modeline-major-mode-icon t
-  "Whether display the icon for major mode. It respects `doom-modeline-icon'.")
-
-(defvar doom-modeline-major-mode-color-icon t
-  "Whether display color icons for `major-mode'. It respects `doom-modeline-icon' and `all-the-icons-color-icons'.")
-
-(defvar doom-modeline-buffer-state-icon t
-  "Whether display icons for buffer states. It respects `doom-modeline-icon'.")
-
-(defvar doom-modeline-buffer-modification-icon t
-  "Whether display buffer modification icon. It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'.")
-
-(defvar doom-modeline-minor-modes nil
-  "Whether display minor modes in mode-line or not.")
-
-(defvar doom-modeline-enable-word-count nil
-  "If non-nil, a word count will be added to the selection-info modeline segment.")
-
-(defvar doom-modeline-buffer-encoding t
-  "Whether display buffer encoding.")
-
-(defvar doom-modeline-indent-info nil
-  "Whether display indentation information.")
-
-(defvar doom-modeline-checker-simple-format t
-  "If non-nil, only display one number for checker information if applicable.")
-
-(defvar doom-modeline-vcs-max-length 12
-  "The maximum displayed length of the branch name of version control.")
-
-(defvar doom-modeline-persp-name t
-  "Whether display perspective name or not. Non-nil to display in mode-line.")
-
-(defvar doom-modeline-persp-name-icon nil
-  "Whether display icon for persp name. Nil to display a # sign. It respects `doom-modeline-icon'.")
-
-(defvar doom-modeline-lsp t
-  "Whether display `lsp' state or not. Non-nil to display in mode-line.")
-
-(defvar doom-modeline-github nil
-  "Whether display github notifications or not. Requires `ghub' package.")
-
-(defvar doom-modeline-github-interval (* 30 60)
-  "The interval of checking github.")
-
-(defvar doom-modeline-env-version t
-  "Whether display environment version or not.")
-
-(defvar doom-modeline-mu4e t
-  "Whether display mu4e notifications or not. Requires `mu4e-alert' package.")
-
-(defvar doom-modeline-irc t
-  "Whether display irc notifications or not. Requires `circe' package.")
-
-(defvar doom-modeline-irc-stylize 'identity
-  "Function to stylize the irc buffer names.")
-
-;;
-;; Custom faces
+;; Customizations
 ;;
 
 (defgroup doom-modeline nil
-  "Doom mode-line faces."
-  :group 'faces)
+  "A minimal and modern mode-line."
+  :group 'mode-line)
 
 (defface doom-modeline-buffer-path
   '((t (:inherit (mode-line-emphasis bold))))
@@ -328,6 +242,146 @@ If the actual char height is larger, it respects the actual char height.")
 (defface doom-modeline-persp-buffer-not-in-persp
   '((t (:inherit (font-lock-doc-face bold italic))))
   "Face for the replace state tag in evil state indicator.")
+
+(defcustom doom-modeline-height 25
+  "How tall the mode-line should be. It's only respected in GUI.
+If the actual char height is larger, it respects the actual char height."
+  :group 'doom-modeline
+  :type 'integer)
+
+(defcustom doom-modeline-bar-width (if (eq system-type 'darwin) 3 6)
+  "How wide the mode-line bar should be. It's only respected in GUI."
+  :type 'integer
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-buffer-file-name-style 'truncate-upto-project
+  "Determines the style used by `doom-modeline-buffer-file-name'.
+
+  Given ~/Projects/FOSS/emacs/lisp/comint.el
+  truncate-upto-project => ~/P/F/emacs/lisp/comint.el
+  truncate-from-project => ~/Projects/FOSS/emacs/l/comint.el
+  truncate-with-project => emacs/l/comint.el
+  truncate-except-project => ~/P/F/emacs/l/comint.el
+  truncate-upto-root => ~/P/F/e/lisp/comint.el
+  truncate-all => ~/P/F/e/l/comint.el
+  relative-from-project => emacs/lisp/comint.el
+  relative-to-project => lisp/comint.el
+  file-name => comint.el
+  buffer-name => comint.el<2> (uniquify buffer name)"
+  :group'doom-modeline
+  :type '(choice (const truncate-upto-project)
+                 (const truncate-upto-project)
+                 (const truncate-from-project)
+                 (const truncate-with-project)
+                 (const truncate-except-project)
+                 (const truncate-upto-root)
+                 (const truncate-all)
+                 (const relative-from-project)
+                 (const relative-to-project)
+                 (const file-name)
+                 (const buffer-name)))
+
+(defcustom doom-modeline-icon (display-graphic-p)
+  "Whether display icons in mode-line or not."
+  :group 'doom-modeline
+  :type 'boolean)
+
+(defcustom doom-modeline-major-mode-icon t
+  "Whether display the icon for major mode. It respects `doom-modeline-icon'."
+  :group 'doom-modeline
+  :type 'boolean)
+
+(defcustom doom-modeline-major-mode-color-icon t
+  "Whether display color icons for `major-mode'. It respects `doom-modeline-icon' and `all-the-icons-color-icons'."
+  :group 'doom-modeline
+  :type 'boolean)
+
+(defcustom doom-modeline-buffer-state-icon t
+  "Whether display icons for buffer states. It respects `doom-modeline-icon'."
+  :group 'doom-modeline
+  :type 'boolean)
+
+(defcustom doom-modeline-buffer-modification-icon t
+  "Whether display buffer modification icon. It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'."
+  :group 'doom-modeline
+  :type 'boolean)
+
+(defcustom doom-modeline-minor-modes nil
+  "Whether display minor modes in mode-line or not."
+  :group 'doom-modeline
+  :type 'boolean)
+
+(defcustom doom-modeline-enable-word-count nil
+  "If non-nil, a word count will be added to the selection-info modeline segment."
+  :group 'doom-modeline
+  :type 'boolean)
+
+(defcustom doom-modeline-buffer-encoding t
+  "Whether display buffer encoding."
+  :group 'doom-modeline
+  :type 'boolean)
+
+(defcustom doom-modeline-indent-info nil
+  "Whether display indentation information."
+  :group 'doom-modeline
+  :type 'boolean)
+
+
+(defcustom doom-modeline-checker-simple-format t
+  "If non-nil, only display one number for checker information if applicable."
+  :group 'doom-modeline
+  :type 'boolean)
+
+(defcustom doom-modeline-vcs-max-length 12
+  "The maximum displayed length of the branch name of version control."
+  :group 'doom-modeline
+  :type 'integer)
+
+(defcustom doom-modeline-persp-name t
+  "Whether display perspective name or not. Non-nil to display in mode-line."
+  :group 'doom-modeline
+  :type 'boolean)
+
+(defcustom doom-modeline-persp-name-icon nil
+  "Whether display icon for persp name. Nil to display a # sign. It respects `doom-modeline-icon'."
+  :group 'doom-modeline
+  :type 'boolean)
+
+(defcustom doom-modeline-lsp t
+  "Whether display `lsp' state or not. Non-nil to display in mode-line."
+  :group 'doom-modeline
+  :type 'boolean)
+
+(defcustom doom-modeline-github nil
+  "Whether display github notifications or not. Requires `ghub' package."
+  :group 'doom-modeline
+  :type 'boolean)
+
+(defcustom doom-modeline-github-interval 1800 ; (* 30 60)
+  "The interval of checking github."
+  :group 'doom-modeline
+  :type 'integer)
+
+(defcustom doom-modeline-env-version t
+  "Whether display environment version or not."
+  :group 'doom-modeline
+  :type 'boolean)
+
+(defcustom doom-modeline-mu4e t
+  "Whether display mu4e notifications or not. Requires `mu4e-alert' package."
+  :group 'doom-modeline
+  :type 'boolean)
+
+(defcustom doom-modeline-irc t
+  "Whether display irc notifications or not. Requires `circe' package."
+  :group 'doom-modeline
+  :type 'boolean)
+
+(defcustom doom-modeline-irc-stylize 'identity
+  "Function to stylize the irc buffer names."
+  :group 'doom-modeline
+  :type 'function)
+
 
 ;;
 ;; Externals

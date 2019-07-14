@@ -134,6 +134,8 @@ Strongly recommend to use
 
 ## Customize
 
+Run `M-x customize-group RET doom-modeline RET` or set the variables.
+
 ``` emacs-lisp
 ;; How tall the mode-line should be. It's only respected in GUI.
 ;; If the actual char height is larger, it respects the actual height.
