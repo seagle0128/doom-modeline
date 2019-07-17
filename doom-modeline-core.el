@@ -37,11 +37,11 @@
 ;; Compatibilities
 ;;
 
-(unless (>= emacs-major-version 26)
-  (with-no-warnings
+(eval-and-compile
+  (unless (>= emacs-major-version 26)
     ;; Define `if-let*' and `when-let*' variants for 25 users.
-    (defalias 'if-let* #'if-let)
-    (defalias 'when-let* #'when-let)))
+    (unless (fboundp 'if-let*) (defalias 'if-let* #'if-let))
+    (unless (fboundp 'when-let*) (defalias 'when-let* #'when-let))))
 
 ;; Don’t compact font caches during GC.
 (if (eq system-type 'windows-nt)
