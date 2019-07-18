@@ -2255,21 +2255,20 @@ The cdr can also be a function that returns a name to use.")
     (concat
      (doom-modeline-spc)
 
-     (let (doom-modeline-major-mode-color-icon)
-       (doom-modeline--buffer-mode-icon))
+     (doom-modeline--buffer-mode-icon)
 
      ;; snapshot icon
      (doom-modeline-buffer-file-state-icon
       "camera_alt"
       "%1*"
-      (if active 'mode-line 'mode-line-inactive)
-      1.2
+      (if active 'warning 'mode-line-inactive)
+      1.1
       -0.25)
      (doom-modeline-vspc)
 
      ;; buffer name
-     (propertize "%b" 'face (if active
-                                '(inherit (font-lock-doc-face bold))
+     (propertize "*%b*" 'face (if active
+                                'doom-modeline-buffer-file
                               'mode-line-inactive)))))
 
 (provide 'doom-modeline-segments)
