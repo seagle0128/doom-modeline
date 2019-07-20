@@ -136,17 +136,22 @@ It returns a file name which can be used directly as argument of
 
 (defgroup doom-modeline nil
   "A minimal and modern mode-line."
-  :group 'mode-line)
+  :group 'mode-line
+  :link '(url-link :tag "Homepage" "https://github.com/seagle0128/doom-modeline"))
 
 (defcustom doom-modeline-height 25
   "How tall the mode-line should be. It's only respected in GUI.
 If the actual char height is larger, it respects the actual char height."
-  :group 'doom-modeline
-  :type 'integer)
+  :type 'integer
+  :set (lambda (sym val)
+         (set sym (if (> val 0) val 1)))
+  :group 'doom-modeline)
 
 (defcustom doom-modeline-bar-width (if (eq system-type 'darwin) 3 6)
   "How wide the mode-line bar should be. It's only respected in GUI."
   :type 'integer
+  :set (lambda (sym val)
+         (set sym (if (> val 0) val 1)))
   :group 'doom-modeline)
 
 (defcustom doom-modeline-buffer-file-name-style 'truncate-upto-project
@@ -178,8 +183,8 @@ If the actual char height is larger, it respects the actual char height."
 
 (defcustom doom-modeline-icon (display-graphic-p)
   "Whether display icons in mode-line or not."
-  :group 'doom-modeline
-  :type 'boolean)
+  :type 'boolean
+  :group 'doom-modeline)
 
 (defcustom doom-modeline-major-mode-icon t
   "Whether display the icon for major mode. It respects `doom-modeline-icon'."
@@ -284,7 +289,8 @@ If the actual char height is larger, it respects the actual char height."
 (defgroup doom-modeline-faces nil
   "The faces of `doom-modeline'."
   :group 'doom-modeline
-  :group 'faces)
+  :group 'faces
+  :link '(url-link :tag "Homepage" "https://github.com/seagle0128/doom-modeline"))
 
 (defface doom-modeline-buffer-path
   '((t (:inherit (mode-line-emphasis bold))))

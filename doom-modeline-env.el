@@ -39,7 +39,8 @@
 
 (defgroup doom-modeline-env nil
   "The environment parser for doom-modeline."
-  :group 'doom-modeline)
+  :group 'doom-modeline
+  :link '(url-link :tag "Homepage" "https://github.com/seagle0128/doom-modeline"))
 
 (defcustom doom-modeline-env-load-string "..."
   "What to dispaly as the version while a new one is being loaded."
