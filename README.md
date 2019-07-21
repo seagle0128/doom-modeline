@@ -325,4 +325,4 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
       '(mode-line ((t (:height 0.9))))
       '(mode-line-inactive ((t (:height 0.9)))))
     ```
-    Please refer to #189.
+    Please refer to [#189](https://github.com/seagle0128/doom-modeline/issues/189).
