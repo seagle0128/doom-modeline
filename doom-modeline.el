@@ -4,7 +4,7 @@
 
 ;; Author: Vincent Zhang <seagle0128@gmail.com>
 ;; Homepage: https://github.com/seagle0128/doom-modeline
-;; Version: 2.4.0
+;; Version: 2.4.1
 ;; Package-Requires: ((emacs "25.1") (all-the-icons "1.0.0") (shrink-path "0.2.0") (dash "2.11.0"))
 ;; Keywords: faces mode-line
 
@@ -192,8 +192,11 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; Mode
 ;;
 
-(defvar doom-modeline--default-mode-line mode-line-format)
-(declare-function helm-display-mode-line 'helm)
+(defvar doom-modeline--old-format mode-line-format
+  "Storage for the old `mode-line-format', so it can be restored when
+`doom-modeline-mode' is disabled.")
+
+(declare-function helm-display-mode-line 'helm) ; suppress warnings
 
 ;;;###autoload
 (define-minor-mode doom-modeline-mode
@@ -203,7 +206,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   :lighter nil
   (if doom-modeline-mode
       (progn
-        (doom-modeline-refresh-bars)    ; create bars
+        (doom-modeline-refresh-bars)        ; create bars
         (doom-modeline-set-main-modeline t) ; set default mode-line
         (unless after-init-time
           ;; These buffers are already created and don't get modelines. For the love
@@ -225,7 +228,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (advice-add #'helm-display-mode-line :override #'doom-modeline-set-helm-modeline))
     (progn
       ;; Restore mode-line
-      (setq-default mode-line-format doom-modeline--default-mode-line)
+      (setq-default mode-line-format doom-modeline--old-format)
       ;; Remove hooks
       (remove-hook 'Info-mode-hook #'doom-modeline-set-info-modeline)
       (remove-hook 'dired-mode-hook #'doom-modeline-set-project-modeline)
