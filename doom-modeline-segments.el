@@ -2188,46 +2188,58 @@ The cdr can also be a function that returns a name to use.")
 (doom-modeline-def-segment helm-buffer-id
   "Helm session identifier."
   (when (bound-and-true-p helm-alive-p)
-    (concat
-     (doom-modeline-spc)
-     (doom-modeline-icon-fileicon "elisp" :height 1.0 :v-adjust -0.15
-                                  :face (if doom-modeline-major-mode-color-icon
-                                            'all-the-icons-purple
-                                          'mode-line))
-     (if doom-modeline-icon (doom-modeline-spc))
-     (propertize
-      (let ((custom (cdr (assoc (buffer-name) doom-modeline--helm-buffer-ids)))
-            (case-fold-search t)
-            (name (replace-regexp-in-string "-" " " (buffer-name))))
-        (cond ((stringp custom) custom)
-              ((functionp custom) (funcall custom))
-              (t
-               (string-match "\\*helm:? \\(mode \\)?\\([^\\*]+\\)\\*" name)
-               (concat "HELM " (capitalize (match-string 2 name))))))
-      'face 'doom-modeline-buffer-file)
-     (doom-modeline-spc))))
+    (let ((active (doom-modeline--active)))
+      (concat
+       (doom-modeline-spc)
+       (doom-modeline-icon-fileicon "elisp"
+                                    :height 1.0
+                                    :v-adjust -0.15
+                                    :face (if active
+                                              (if doom-modeline-major-mode-color-icon
+                                                  'all-the-icons-purple
+                                                'mode-line)
+                                            'mode-line-inactive))
+       (when doom-modeline-icon (doom-modeline-spc))
+       (propertize
+        (let ((custom (cdr (assoc (buffer-name) doom-modeline--helm-buffer-ids)))
+              (case-fold-search t)
+              (name (replace-regexp-in-string "-" " " (buffer-name))))
+          (cond ((stringp custom) custom)
+                ((functionp custom) (funcall custom))
+                (t
+                 (string-match "\\*helm:? \\(mode \\)?\\([^\\*]+\\)\\*" name)
+                 (concat "HELM " (capitalize (match-string 2 name))))))
+        'face (if active' doom-modeline-buffer-file 'mode-line-inactive))
+       (doom-modeline-spc)))))
 
 (doom-modeline-def-segment helm-number
   "Number of helm candidates."
   (when (bound-and-true-p helm-alive-p)
-    (concat
-     (propertize (format " %d/%d"
-                         (helm-candidate-number-at-point)
-                         (helm-get-candidate-number t))
-                 'face 'doom-modeline-buffer-path)
-     (propertize (format " (%d total) " (helm-get-candidate-number))
-                 'face 'doom-modeline-info))))
+    (let ((active (doom-modeline--active)))
+      (concat
+       (propertize (format " %d/%d"
+                           (helm-candidate-number-at-point)
+                           (helm-get-candidate-number t))
+                   'face (if active 'doom-modeline-buffer-path 'mode-line-inactive))
+       (propertize (format " (%d total) " (helm-get-candidate-number))
+                   'face (if active 'doom-modeline-info 'mode-line-inactive))))))
 
 (doom-modeline-def-segment helm-help
   "Helm keybindings help."
   (when (bound-and-true-p helm-alive-p)
-    (-interleave
-     (mapcar (lambda (s)
-               (propertize (substitute-command-keys s) 'face 'doom-modeline-buffer-file))
-             '("\\<helm-map>\\[helm-help]"
-               "\\<helm-map>\\[helm-select-action]"
-               "\\<helm-map>\\[helm-maybe-exit-minibuffer]/F1/F2..."))
-     '("(help) " "(actions) " "(action) "))))
+    (let ((active (doom-modeline--active)))
+      (-interleave
+       (mapcar (lambda (s)
+                 (propertize (substitute-command-keys s)
+                             'face (if active
+                                       'doom-modeline-buffer-file
+                                     'mode-line-inactive)))
+               '("\\<helm-map>\\[helm-help]"
+                 "\\<helm-map>\\[helm-select-action]"
+                 "\\<helm-map>\\[helm-maybe-exit-minibuffer]/F1/F2..."))
+       (mapcar (lambda (s)
+                 (propertize s 'face (if active 'mode-line 'mode-line-inactive)))
+               '("(help) " "(actions) " "(action) "))))))
 
 (doom-modeline-def-segment helm-prefix-argument
   "Helm prefix argument."
@@ -2235,7 +2247,10 @@ The cdr can also be a function that returns a name to use.")
              helm--mode-line-display-prefarg)
     (let ((arg (prefix-numeric-value (or prefix-arg current-prefix-arg))))
       (unless (= arg 1)
-        (propertize (format "C-u %s" arg) 'face 'doom-modeline-info)))))
+        (propertize (format "C-u %s" arg)
+                    'face (if (doom-modeline--active)
+                              'doom-modeline-info
+                            'mode-line-inactive))))))
 
 (defvar doom-modeline--helm-current-source nil
   "The currently active helm source.")
@@ -2244,7 +2259,9 @@ The cdr can also be a function that returns a name to use.")
   (when (and (bound-and-true-p helm-alive-p)
              doom-modeline--helm-current-source
              (eq 1 (cdr (assq 'follow doom-modeline--helm-current-source))))
-    "HF"))
+    (propertize "HF" 'face (if (doom-modeline--active)
+                               'mode-line
+                             'mode-line-inactive))))
 
 ;;
 ;; git timemachine
@@ -2268,8 +2285,8 @@ The cdr can also be a function that returns a name to use.")
 
      ;; buffer name
      (propertize "*%b*" 'face (if active
-                                'doom-modeline-buffer-file
-                              'mode-line-inactive)))))
+                                  'doom-modeline-buffer-file
+                                'mode-line-inactive)))))
 
 (provide 'doom-modeline-segments)
 
