@@ -193,23 +193,16 @@
 (doom-modeline-def-segment buffer-default-directory
   "Displays `default-directory'. This is for special buffers like the scratch
 buffer where knowing the current project directory is important."
-  (let ((active (doom-modeline--active))
-        (icon (doom-modeline-icon-octicon "file-directory"
-                                          :face 'doom-modeline-buffer-path
-                                          :v-adjust -0.05
-                                          :height 1.25)))
+  (let* ((active (doom-modeline--active))
+         (face (if active 'doom-modeline-buffer-path 'mode-line-inactive)))
     (concat (doom-modeline-spc)
-            (when doom-modeline-icon
-              (concat
-               (if active
-                   icon
-                 (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
-                                          :inherit mode-line-inactive)))
-               (doom-modeline-spc)))
+            (doom-modeline-icon-octicon "file-directory"
+                                        :face face
+                                        :v-adjust -0.05
+                                        :height 1.25)
+            (when doom-modeline-icon (doom-modeline-spc))
             (propertize (abbreviate-file-name default-directory)
-                        'face (if active
-                                  'doom-modeline-buffer-path
-                                'mode-line-inactive)))))
+                        'face face))))
 
 ;;
 (defvar-local doom-modeline--buffer-file-icon nil)
@@ -2079,27 +2072,40 @@ we don't want to remove that so we just return the original."
                (icon (cond
                       (charging?
                        (if doom-modeline-icon
-                           (doom-modeline-icon-alltheicon "battery-charging" :height 1.4 :v-adjust -0.1)
+                           (doom-modeline-icon-alltheicon "battery-charging"
+                                                          :face face
+                                                          :height 1.4
+                                                          :v-adjust -0.1)
                          "+"))
                       ((> percentage-number 95)
                        (if doom-modeline-icon
-                           (doom-modeline-icon-faicon "battery-full" :v-adjust -0.0575)
+                           (doom-modeline-icon-faicon "battery-full"
+                                                      :face face
+                                                      :v-adjust -0.0575)
                          "-"))
                       ((> percentage-number 70)
                        (if doom-modeline-icon
-                           (doom-modeline-icon-faicon "battery-three-quarters" :v-adjust -0.0575)
+                           (doom-modeline-icon-faicon "battery-three-quarters"
+                                                      :face face
+                                                      :v-adjust -0.0575)
                          "-"))
                       ((> percentage-number 40)
                        (if doom-modeline-icon
-                           (doom-modeline-icon-faicon "battery-half" :v-adjust -0.0575)
+                           (doom-modeline-icon-faicon "battery-half"
+                                                      :face face
+                                                      :v-adjust -0.0575)
                          "-"))
                       ((> percentage-number 15)
                        (if doom-modeline-icon
-                           (doom-modeline-icon-faicon "battery-quarter" :v-adjust -0.0575)
+                           (doom-modeline-icon-faicon "battery-quarter"
+                                                      :face face
+                                                      :v-adjust -0.0575)
                          "-"))
                       (t
                        (if doom-modeline-icon
-                           (doom-modeline-icon-faicon "battery-empty" :v-adjust -0.0575)
+                           (doom-modeline-icon-faicon "battery-empty"
+                                                      :face face
+                                                      :v-adjust -0.0575)
                          "!"))))
                (percent-str (and percentage (concat percentage "%%")))
                (help-echo (if battery-echo-area-format
@@ -2109,13 +2115,9 @@ we don't want to remove that so we just return the original."
            (doom-modeline-spc)
            (if percent-str
                (concat
-                (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
-                                         :inherit ,face)
-                            'help-echo help-echo)
+                (propertize icon 'help-echo help-echo)
                 (if doom-modeline-icon (doom-modeline-vspc))
-                (propertize percent-str
-                            'face face
-                            'help-echo help-echo))
+                (propertize percent-str 'face face 'help-echo help-echo))
              ;; Battery status is not available
              (if doom-modeline-icon
                  (doom-modeline-icon-faicon "battery-empty" :v-adjust -0.0575 :face 'error)
@@ -2155,15 +2157,13 @@ we don't want to remove that so we just return the original."
 
      (when (and doom-modeline-icon doom-modeline-major-mode-icon)
        (concat (doom-modeline-spc)
-               (let ((icon (doom-modeline-icon-for-mode 'paradox-menu-mode :v-adjust -0.15)))
-                 (if active
-                     icon
-                   (propertize icon 'face `(:inherit
-                                            ,(let ((props (get-text-property 0 'face icon)))
-                                               (if doom-modeline-major-mode-color-icon
-                                                   props
-                                                 (remove :inherit props)))
-                                            :inherit mode-line-inactive))))))
+               (doom-modeline-icon-for-mode
+                'paradox-menu-mode
+                :v-adjust -0.15
+                :face (if active
+                          (unless doom-modeline-major-mode-color-icon
+                            'mode-line)
+                        'mode-line-inactive))))
      (let ((info (format-mode-line 'mode-line-buffer-identification)))
        (if active
            info
