@@ -343,7 +343,6 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 (advice-add #'undo :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'undo-tree-undo-1 :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'undo-tree-redo-1 :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'fill-paragraph :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'symbol-overlay-rename :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'popup-create :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'popup-delete :after #'doom-modeline-update-buffer-file-name)
