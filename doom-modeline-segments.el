@@ -1611,7 +1611,7 @@ mouse-3: Describe current input method")
   "Update `lsp-mode' status."
   (setq doom-modeline--lsp
         (let* ((workspaces (lsp-workspaces))
-               (face (if workspaces 'doom-modeline-lsp-success 'error))
+               (face (if workspaces 'doom-modeline-lsp-success 'doom-modeline-lsp-warning))
                (icon (doom-modeline-lsp-icon "LSP" face)))
           (propertize icon
                       'help-echo
