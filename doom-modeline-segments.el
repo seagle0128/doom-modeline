@@ -479,13 +479,14 @@ directory, the file name, and its state (modified, read-only or non-existent)."
   (propertize
    (concat
     (doom-modeline-spc)
-    (propertize (format-mode-line mode-name)
-                'help-echo "Major mode\n\
+    (format-mode-line
+     `(:propertize ("" mode-name)
+       help-echo "Major mode\n\
 mouse-1: Display major mode menu\n\
 mouse-2: Show help for major mode\n\
 mouse-3: Toggle minor modes"
-                'mouse-face 'mode-line-highlight
-                'local-map mode-line-major-mode-keymap)
+       mouse-face mode-line-highlight
+       local-map ,mode-line-major-mode-keymap))
     (when (and doom-modeline-env-version doom-modeline-env--version)
       (format " %s" doom-modeline-env--version))
     (and (boundp 'text-scale-mode-amount)
@@ -534,16 +535,13 @@ mouse-1: Display minor modes menu"
                        'local-map (make-mode-line-mouse-map
                                    'mouse-1 #'minions-minor-modes-menu))
            (doom-modeline-spc))
-        (propertize
-         (concat
-          (replace-regexp-in-string (regexp-quote "%")
-                                    "%%%%"
-                                    (format-mode-line minor-mode-alist)
-                                    t t)
-          (doom-modeline-spc))
-         'face (if active
-                   'doom-modeline-buffer-minor-mode
-                 'mode-line-inactive))))))
+        (concat
+         (format-mode-line
+          `(:propertize ("" minor-mode-alist)
+            face ,(if active
+                      'doom-modeline-buffer-minor-mode
+                    'mode-line-inactive)))
+         (doom-modeline-vspc))))))
 
 
 ;;
