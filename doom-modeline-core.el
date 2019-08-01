@@ -422,6 +422,21 @@ If the actual char height is larger, it respects the actual char height."
   "Face for the replace state tag in evil state indicator."
   :group 'doom-modeline-faces)
 
+(defface doom-modeline-lsp-success
+  '((t (:inherit success)))
+  "Face for success state in LSP."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-lsp-warning
+  '((t (:inherit warning)))
+  "Face for warning state in LSP."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-lsp-error
+  '((t (:inherit error)))
+  "Face for error state in LSP."
+  :group 'doom-modeline-faces)
+
 
 ;;
 ;; Externals

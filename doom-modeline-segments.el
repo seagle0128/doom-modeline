@@ -1613,7 +1613,7 @@ mouse-3: Describe current input method")
   "Update `lsp-mode' status."
   (setq doom-modeline--lsp
         (let* ((workspaces (lsp-workspaces))
-               (face (if workspaces 'success 'warning))
+               (face (if workspaces 'doom-modeline-lsp-success 'error))
                (icon (doom-modeline-lsp-icon "LSP" face)))
           (propertize icon
                       'help-echo
@@ -1664,10 +1664,10 @@ mouse-1: Reload to start server")
                      (`(,_id ,doing ,done-p ,detail) (and server (eglot--spinner server)))
                      (last-error (and server (jsonrpc-last-error server)))
                      (face (cond
-                            (last-error 'error)
+                            (last-error 'doom-modeline-lsp-error)
                             ((and doing (not done-p)) 'compilation-mode-line-run)
-                            ((and pending (cl-plusp pending)) 'warning)
-                            (nick 'success)
+                            ((and pending (cl-plusp pending)) 'doom-modeline-lsp-warning)
+                            (nick 'doom-modeline-lsp-success)
                             (t 'mode-line)))
                      (icon (doom-modeline-lsp-icon "EGLOT" face)))
           (propertize icon
