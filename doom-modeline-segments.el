@@ -479,14 +479,16 @@ directory, the file name, and its state (modified, read-only or non-existent)."
   (propertize
    (concat
     (doom-modeline-spc)
-    (format-mode-line
-     `(:propertize ("" mode-name)
-       help-echo "Major mode\n\
+    (propertize (format-mode-line
+                 (or (and (boundp 'delighted-modes)
+                          (cadr (assq major-mode delighted-modes)))
+                     mode-name))
+                'help-echo "Major mode\n\
 mouse-1: Display major mode menu\n\
 mouse-2: Show help for major mode\n\
 mouse-3: Toggle minor modes"
-       mouse-face mode-line-highlight
-       local-map ,mode-line-major-mode-keymap))
+                'mouse-face 'mode-line-highlight
+                'local-map mode-line-major-mode-keymap)
     (when (and doom-modeline-env-version doom-modeline-env--version)
       (format " %s" doom-modeline-env--version))
     (and (boundp 'text-scale-mode-amount)
@@ -521,14 +523,14 @@ mouse-3: Toggle minor modes"
 
 (doom-modeline-def-segment minor-modes
   (when doom-modeline-minor-modes
-    (let ((active (doom-modeline--active)))
+    (let ((face (if (doom-modeline--active)
+                    'doom-modeline-buffer-minor-mode
+                  'mode-line-inactive)))
       (if (bound-and-true-p minions-mode)
           (concat
            (doom-modeline-spc)
            (propertize minions-mode-line-lighter
-                       'face (if active
-                                 'doom-modeline-buffer-minor-mode
-                               'mode-line-inactive)
+                       'face face
                        'help-echo "Minions
 mouse-1: Display minor modes menu"
                        'mouse-face 'mode-line-highlight
@@ -536,12 +538,12 @@ mouse-1: Display minor modes menu"
                                    'mouse-1 #'minions-minor-modes-menu))
            (doom-modeline-spc))
         (concat
-         (format-mode-line
-          `(:propertize ("" minor-mode-alist)
-            face ,(if active
-                      'doom-modeline-buffer-minor-mode
-                    'mode-line-inactive)))
-         (doom-modeline-vspc))))))
+         (propertize (replace-regexp-in-string
+                      (regexp-quote "%") "%%%%"
+                      (format-mode-line minor-mode-alist)
+                      t t)
+                     'face face)
+         (doom-modeline-spc))))))
 
 
 ;;
