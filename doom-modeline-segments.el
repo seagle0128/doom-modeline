@@ -539,7 +539,7 @@ mouse-1: Display minor modes menu"
            (doom-modeline-spc))
         (concat
          (propertize (replace-regexp-in-string
-                      (regexp-quote "%") "%%%%"
+                      "%" "%%%%"
                       (format-mode-line minor-mode-alist)
                       t t)
                      'face face)
