@@ -1471,7 +1471,8 @@ mouse-1: Display Line and Column Mode Menu"
 
 (defsubst doom-modeline--overwrite ()
   "The current overwrite state. Requires `overwrite-mode' to be enabled."
-  (when (bound-and-true-p overwrite-mode)
+  (when (and (bound-and-true-p overwrite-mode)
+             (not (bound-and-true-p evil-local-mode)))
     (propertize " <O> " 'face (if (doom-modeline--active)
                                   'doom-modeline-urgent
                                 'mode-line-inactive))))
