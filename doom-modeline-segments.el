@@ -299,6 +299,7 @@ Uses `all-the-icons-material' to fetch the icon."
 (advice-add #'org-narrow-to-block :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'org-narrow-to-element :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'org-narrow-to-subtree :after #'doom-modeline-update-buffer-file-state-icon)
+(advice-add #'org-edit-src-save :after #'doom-modeline-update-buffer-file-state-icon)
 
 (when (>= emacs-major-version 26)
   (add-variable-watcher
@@ -346,6 +347,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 (advice-add #'symbol-overlay-rename :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'popup-create :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'popup-delete :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'org-edit-src-save :after #'doom-modeline-update-buffer-file-name)
 
 (with-no-warnings
   (if (boundp 'after-focus-change-function)
