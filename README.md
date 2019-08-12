@@ -164,7 +164,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 (setq doom-modeline-buffer-file-name-style 'truncate-upto-project)
 
 ;; Whether display icons in mode-line or not.
-(setq doom-modeline-icon t)
+(setq doom-modeline-icon (display-graphic-p))
 
 ;; Whether display the icon for major mode. It respects `doom-modeline-icon'.
 (setq doom-modeline-major-mode-icon t)
@@ -181,7 +181,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 (setq doom-modeline-buffer-modification-icon t)
 
 ;; Whether display minor modes in mode-line or not.
-(setq doom-modeline-minor-modes nil)
+(setq doom-modeline-minor-modes (featurep 'minions))
 
 ;; If non-nil, a word count will be added to the selection-info modeline segment.
 (setq doom-modeline-enable-word-count nil)

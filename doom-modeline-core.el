@@ -206,7 +206,7 @@ If the actual char height is larger, it respects the actual char height."
   :type 'boolean
   :group 'doom-modeline)
 
-(defcustom doom-modeline-minor-modes nil
+(defcustom doom-modeline-minor-modes (featurep 'minions)
   "Whether display minor modes in mode-line or not."
   :type 'boolean
   :group 'doom-modeline)

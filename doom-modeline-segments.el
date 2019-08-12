@@ -159,6 +159,7 @@
 (declare-function mu4e-alert-default-mode-line-formatter 'mu4e-alert)
 (declare-function mu4e-alert-enable-mode-line-display 'mu4e-alert)
 (declare-function nyan-create 'nyan-mode)
+(declare-function org-edit-src-save 'org-src)
 (declare-function org-narrow-to-block 'org)
 (declare-function org-narrow-to-element 'org)
 (declare-function org-narrow-to-subtree 'org)
