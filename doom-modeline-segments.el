@@ -65,6 +65,7 @@
 (defvar flymake--backend-state)
 (defvar flymake--mode-line-format)
 (defvar flymake-menu)
+(defvar grip-port)
 (defvar helm--mode-line-display-prefarg)
 (defvar iedit-occurrences-overlays)
 (defvar mc/mode-line)
@@ -140,6 +141,7 @@
 (declare-function flymake-running-backends 'flymake)
 (declare-function flymake-show-diagnostics-buffer 'flymake)
 (declare-function flymake-start 'flymake)
+(declare-function grip-mode 'grip-mode)
 (declare-function helm-candidate-number-at-point 'helm)
 (declare-function helm-get-candidate-number 'helm)
 (declare-function iedit-find-current-occurrence-overlay 'iedit-lib)
@@ -2290,6 +2292,29 @@ The cdr can also be a function that returns a name to use.")
      (propertize "*%b*" 'face (if active
                                   'doom-modeline-buffer-file
                                 'mode-line-inactive)))))
+
+;;
+;; Markdown/org preview
+;;
+
+(doom-modeline-def-segment grip
+  (when (bound-and-true-p grip-mode)
+    (concat
+     (doom-modeline-spc)
+     (propertize
+      (if (display-graphic-p)
+          (doom-modeline-icon-material "pageview"
+                                       :face (if (doom-modeline--active)
+                                                 'all-the-icons-lblue
+                                               'mode-line-inactive)
+                                       :height 1.1
+                                       :v-adjust -0.225)
+        "G")
+      'help-echo (format "Preview with grip: http://localhost:%d
+mouse-1: Exit preview" grip-port)
+      'mouse-face '(:box 0)
+      'local-map (make-mode-line-mouse-map 'mouse-1 #'grip-mode))
+     (doom-modeline-spc))))
 
 (provide 'doom-modeline-segments)
 
