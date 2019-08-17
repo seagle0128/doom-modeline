@@ -2310,10 +2310,19 @@ The cdr can also be a function that returns a name to use.")
                                        :height 1.1
                                        :v-adjust -0.225)
         "G")
-      'help-echo (format "Preview with grip: http://localhost:%d
-mouse-1: Exit preview" grip-port)
+      'help-echo (format "Preview on: http://localhost:%d
+mouse-1: Open browser
+mouse-2: Stop preview"
+                         grip-port)
       'mouse-face '(:box 0)
-      'local-map (make-mode-line-mouse-map 'mouse-1 #'grip-mode))
+      'local-map (let ((map (make-sparse-keymap)))
+                   (define-key map [mode-line mouse-1]
+                     (lambda ()
+                       (interactive)
+                       (browse-url (format "http://localhost:%d" grip-port))))
+                   (define-key map [mode-line mouse-2]
+                     #'grip-mode)
+                   map))
      (doom-modeline-spc))))
 
 (provide 'doom-modeline-segments)
