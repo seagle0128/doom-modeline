@@ -31,7 +31,7 @@ The `doom-modeline` was designed for minimalism, and offers:
 - An indicator for debug state
 - An indicator for current input method
 - An indicator for LSP state with `lsp-mode` or `eglot`
-- An indicator for github notifications
+- An indicator for GitHub notifications
 - An indicator for unread emails with `mu4e-alert`
 - An indicator for irc notifications with `circe`
 - An indicator for buffer position which is compatible with `nyan-mode`
@@ -208,10 +208,10 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether display `lsp' state or not. Non-nil to display in mode-line.
 (setq doom-modeline-lsp t)
 
-;; Whether display github notifications or not. Requires `ghub` package.
+;; Whether display GitHub notifications or not. Requires `ghub` package.
 (setq doom-modeline-github nil)
 
-;; The interval of checking github.
+;; The interval of checking GitHub.
 (setq doom-modeline-github-interval (* 30 60))
 
 ;; Whether display mu4e notifications or not. Requires `mu4e-alert' package.

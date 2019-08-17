@@ -252,12 +252,12 @@ If the actual char height is larger, it respects the actual char height."
   :group 'doom-modeline)
 
 (defcustom doom-modeline-github nil
-  "Whether display github notifications or not. Requires `ghub' package."
+  "Whether display GitHub notifications or not. Requires `ghub' package."
   :type 'boolean
   :group 'doom-modeline)
 
 (defcustom doom-modeline-github-interval 1800 ; (* 30 60)
-  "The interval of checking github."
+  "The interval of checking GitHub."
   :type 'integer
   :group 'doom-modeline)
 
