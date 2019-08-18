@@ -104,10 +104,13 @@ It returns a file name which can be used directly as argument of
     ;; Persp
     ("aspect_ratio" . "\xe85b")
 
+    ;; Preview
+    ("pageview" . "\xe8a0")
+
     ;; LSP
     ("rocket" . "\xf135")
 
-    ;; github
+    ;; GitHub
     ("github" . "\xf09b")
 
     ;; debug
@@ -115,7 +118,6 @@ It returns a file name which can be used directly as argument of
 
     ;; mu4e
     ("email" . "\xe0be")
-    ;; ("mail" . "\xe158")
 
     ;; irc
     ("message" . "\xe0c9")
