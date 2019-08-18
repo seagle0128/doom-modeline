@@ -66,6 +66,7 @@
 (defvar flymake--mode-line-format)
 (defvar flymake-menu)
 (defvar grip-port)
+(defvar grip-process)
 (defvar helm--mode-line-display-prefarg)
 (defvar iedit-occurrences-overlays)
 (defvar mc/mode-line)
@@ -2301,28 +2302,37 @@ The cdr can also be a function that returns a name to use.")
   (when (bound-and-true-p grip-mode)
     (concat
      (doom-modeline-spc)
-     (propertize
-      (if (display-graphic-p)
-          (doom-modeline-icon-material "pageview"
-                                       :face (if (doom-modeline--active)
-                                                 'all-the-icons-lblue
-                                               'mode-line-inactive)
-                                       :height 1.1
-                                       :v-adjust -0.225)
-        "G")
-      'help-echo (format "Preview on: http://localhost:%d
+
+     (let ((face (if (doom-modeline--active)
+                     (if grip-process
+                         (pcase (process-status grip-process)
+                           ('run 'all-the-icons-lblue)
+                           ('exit 'warning)
+                           (_ 'error))
+                       'error)
+                   'mode-line-inactive)))
+       (propertize
+        (if doom-modeline-icon
+            (doom-modeline-icon-material
+             "pageview"
+             :face face
+             :height 1.2
+             :v-adjust -0.2)
+          (propertize "G" 'face `(:inherit (,face bold))))
+        'help-echo (format "Preview on: http://localhost:%d
 mouse-1: Open browser
 mouse-2: Stop preview"
-                         grip-port)
-      'mouse-face '(:box 0)
-      'local-map (let ((map (make-sparse-keymap)))
-                   (define-key map [mode-line mouse-1]
-                     (lambda ()
-                       (interactive)
-                       (browse-url (format "http://localhost:%d" grip-port))))
-                   (define-key map [mode-line mouse-2]
-                     #'grip-mode)
-                   map))
+                           grip-port)
+        'mouse-face '(:box 0)
+        'local-map (let ((map (make-sparse-keymap)))
+                     (define-key map [mode-line mouse-1]
+                       (lambda ()
+                         (interactive)
+                         (browse-url (format "http://localhost:%d" grip-port))))
+                     (define-key map [mode-line mouse-2]
+                       #'grip-mode)
+                     map)))
+
      (doom-modeline-spc))))
 
 (provide 'doom-modeline-segments)
