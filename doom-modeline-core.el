@@ -677,12 +677,12 @@ If the actual char height is larger, it respects the actual char height."
   Return `default-directory' if no project was found."
   (or doom-modeline-project-root
       (setq doom-modeline-project-root
-            (or (and (bound-and-true-p projectile-mode)
-                     (ignore-errors (projectile-project-root)))
-                (and (fboundp 'project-current)
+            (or (and (fboundp 'project-current)
                      (ignore-errors
                        (when-let ((project (project-current)))
                          (expand-file-name (car (project-roots project))))))
+                (and (bound-and-true-p projectile-mode)
+                     (ignore-errors (projectile-project-root)))
                 default-directory))))
 
 (defun doom-modeline--make-xpm (face width height)
