@@ -78,15 +78,8 @@ It returns a file name which can be used directly as argument of
     (doom-modeline--set-char-widths
      `((2 . ,fonts)))))
 
-(defconst doom-modeline-icons-alist
-  '(;; macro
-    ("fiber_manual_record" . "\xe061")
-    ("triangle-right" . "\xf05a")
-
-    ;; multiple-cursors
-    ("i-cursor" . "\xf246")
-
-    ;; vcs
+(defconst doom-modeline-rhs-icons-alist
+  '(;; vcs
     ("git-compare" . "\xf0ac")
     ("git-merge" . "\xf023")
     ("arrow-down" . "\xf03f")
@@ -129,7 +122,7 @@ It returns a file name which can be used directly as argument of
     ("battery-half" . "\xf242")
     ("battery-quarter" . "\xf243")
     ("battery-three-quarters" . "\xf241")))
-(doom-moddeline--set-font-widths doom-modeline-icons-alist)
+(doom-moddeline--set-font-widths doom-modeline-rhs-icons-alist)
 
 
 ;;
