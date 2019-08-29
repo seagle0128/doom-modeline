@@ -59,7 +59,7 @@ The `doom-modeline` was designed for minimalism, and offers:
 - New package mode-line for `paradox`
 - New mode-line for `helm` buffers
 - New mode-line for `git-timemachine` buffers
-  
+
 ## Screenshots
 
 ![modeline](https://user-images.githubusercontent.com/140797/49694177-10dcd280-fbc0-11e8-8d21-971ede6afdb5.png
@@ -344,3 +344,4 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
     ```
 
     Please refer to [#189](https://github.com/seagle0128/doom-modeline/issues/189).
+    This is no recommended due to the performance issue.
