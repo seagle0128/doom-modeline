@@ -344,4 +344,3 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
     ```
 
     Please refer to [#189](https://github.com/seagle0128/doom-modeline/issues/189).
-    This is no recommended due to the performance issue.

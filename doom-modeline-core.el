@@ -446,9 +446,8 @@ If the actual char height is larger, it respects the actual char height."
 ;; Modeline library
 ;;
 
-(eval-and-compile
-  (defvar doom-modeline-fn-alist ())
-  (defvar doom-modeline-var-alist ()))
+(defvar doom-modeline-fn-alist ())
+(defvar doom-modeline-var-alist ())
 
 (defmacro doom-modeline-def-segment (name &rest body)
   "Defines a modeline segment NAME with BODY and byte compiles it."
@@ -485,6 +484,15 @@ If the actual char height is larger, it respects the actual char height."
             ((error "%s is not a valid segment" seg))))
     (nreverse forms)))
 
+(defvar doom-modeline--width-cache nil)
+(defun doom-modeline--window-font-width ()
+  "Cache the font width."
+  (let ((attributes (face-all-attributes 'default)))
+    (or (cdr (assoc attributes doom-modeline--width-cache))
+        (let ((width (window-font-width nil 'mode-line)))
+          (push (cons attributes width) doom-modeline--width-cache)
+          width))))
+
 (defun doom-modeline-def-modeline (name lhs &optional rhs)
   "Defines a modeline format and byte-compiles it.
   NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
@@ -507,7 +515,7 @@ If the actual char height is larger, it respects the actual char height."
                'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
                'display `((space :align-to (- (+ right right-fringe right-margin)
                                               ,(* (if (number-or-marker-p (face-attribute 'mode-line :height))
-                                                      (/ (window-font-width nil 'mode-line)
+                                                      (/ (doom-modeline--window-font-width)
                                                          (frame-char-width) 1.0)
                                                     1)
                                                   (string-width
