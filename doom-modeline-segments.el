@@ -376,7 +376,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
                (doom-modeline-update-buffer-file-name))))))))
 
 ;; Optimize: just update the face of the buffer name in `after-change-functions', since
-;; `doom-modeline--buffer-file-name' may consume lots fof CPU if it's called too frequently.
+;; `doom-modeline--buffer-file-name' may consume lots of CPU if it's called too frequently.
 (defun doom-modeline-update-buffer-file-name-face (&rest _)
   "Update the face of buffer file name in mode-line."
   (when (and doom-modeline--buffer-file-name (buffer-modified-p))
