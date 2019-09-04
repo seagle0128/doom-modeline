@@ -201,6 +201,11 @@ If the actual char height is larger, it respects the actual char height."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-unicode-fallback nil
+  "Wheter to use unicode as a fallback (instead of ASCII) when not using icons"
+  :type 'boolean
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-minor-modes (featurep 'minions)
   "Whether display minor modes in mode-line or not."
   :type 'boolean
@@ -276,6 +281,40 @@ If the actual char height is larger, it respects the actual char height."
   :type 'function
   :group 'doom-modeline)
 
+(defcustom doom-modeline-icons
+  '((:buffer-read-only . ((:name . "lock") (:icon-set . :material)
+                          (:unicode-fallback .  "🔒")
+                          (:ascii-fallback . "%1*")))
+    (:buffer-modified . ((:name  "save")  (:icon-set . :material)
+                          (:unicode-fallback .  "💾")
+                          (:ascii-fallback . "%1*")))
+    (:buffer-no-file . ((:name  "do_not_disturb_alt")  (:icon-set . :material)
+                          (:unicode-fallback .  "🚫")
+                          (:ascii-fallback . "!")))
+    (:buffer-narrowed . ((:name  "vertical_align_center")  (:icon-set . :material)
+                          (:unicode-fallback .  "↕")
+                          (:ascii-fallback . "><")))
+    (:project-directory . ((:name . "file-directory")  (:icon-set . :octicon)
+                           (:unicode-fallback .  "🗁")
+                           (:ascii-fallback . nil))) ;; TODO: how do be consistent about absence?
+    (:vcs-modified . ((:name  "git-compare")  (:icon-set . :octicon)
+                      (:unicode-fallback .  "⇆")
+                      (:ascii-fallback . "*")))
+    (:vcs-needs-merge . ((:name  "git-merge")  (:icon-set . :octicon)
+                         (:unicode-fallback .  "⛙")
+                         (:ascii-fallback . "?")))
+    (:vcs-needs-update . ((:name  "arrow-down")  (:icon-set . :octicon)
+                          (:unicode-fallback .  "↓")
+                          (:ascii-fallback . "!")))
+    (:vcs-warning . ((:name  "alert")  (:icon-set . :octicon)
+                     (:unicode-fallback .  "⚠")
+                     (:ascii-fallback . "!")))
+    (:vcs-default . ((:name  "git-branch")  (:icon-set . :octicon)
+                     (:unicode-fallback .  "@")
+                     (:ascii-fallback . "@")))
+    )
+  "docs"
+  :group 'doom-modeline)
 
 ;;
 ;; Faces
@@ -637,6 +676,24 @@ If the actual char height is larger, it respects the actual char height."
                          ((floatp height) (* height (frame-char-height)))
                          (t (frame-char-height)))))))
 
+(defun doom-modeline--fallback-text (icon)
+  "TODO!"
+  (if doom-modeline-unicode-fallback
+      (alist-get :unicode-fallback icon)
+    (alist-get :ascii-fallback icon)))
+
+(defun doom-modeline--icon (icon-set &rest args)
+  "Display the icon from the given all-the-icons set via ARGS.
+icon-set must be one of the all-the-icons fonts :octicon,
+:faicon, :material, or :alltheicon"
+  (when doom-modeline-icon
+    (pcase icon-set
+      (:octicon (apply #'all-the-icons-octicon args))
+      (:faicon (apply #'all-the-icons-faicon args))
+      (:material (apply #'all-the-icons-material args))
+      (:alltheicon (apply #'all-the-icons-alltheicon args)))))
+
+;; TODO: remove the ones below? Or impiment in terms of above?
 (defun doom-modeline-icon-octicon (&rest args)
   "Display octicon via ARGS."
   (when doom-modeline-icon
@@ -656,6 +713,9 @@ If the actual char height is larger, it respects the actual char height."
   "Display alltheicon via ARGS."
   (when doom-modeline-icon
     (apply #'all-the-icons-alltheicon args)))
+;;;;
+
+
 
 (defun doom-modeline-icon-fileicon (&rest args)
   "Display fileicon via ARGS."

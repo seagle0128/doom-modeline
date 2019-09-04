@@ -198,12 +198,16 @@
   "Displays `default-directory'. This is for special buffers like the scratch
 buffer where knowing the current project directory is important."
   (let* ((active (doom-modeline--active))
-         (face (if active 'doom-modeline-buffer-path 'mode-line-inactive)))
+         (face (if active 'doom-modeline-buffer-path 'mode-line-inactive))
+         (icon (alist-get :project-directory doom-modeline-icons)))
     (concat (doom-modeline-spc)
-            (doom-modeline-icon-octicon "file-directory"
-                                        :face face
-                                        :v-adjust -0.05
-                                        :height 1.25)
+            (if doom-modeline-icon
+                (doom-modeline--icon (alist-get :icon-set icon)
+                                    (alist-get :name icon)
+                                    :face face
+                                    :v-adjust -0.05
+                                    :height 1.25)
+              (if doom-modeline-unicode-fallback (alist-get :unicode-fallback icon)))
             (when doom-modeline-icon (doom-modeline-spc))
             (propertize (abbreviate-file-name default-directory)
                         'face face))))
@@ -241,20 +245,19 @@ buffer where knowing the current project directory is important."
          (with-current-buffer buf
            (doom-modeline-update-buffer-file-icon)))))))
 
-(defun doom-modeline-buffer-file-state-icon (icon &optional text face height voffset)
+(defun doom-modeline-buffer-file-state-icon (icon &optional face height voffset)
   "Displays an ICON with FACE, HEIGHT and VOFFSET.
-TEXT is the alternative if it is not applicable.
-Uses `all-the-icons-material' to fetch the icon."
+TEXT is the alternative if it is not applicable."
   (if (and doom-modeline-icon
            doom-modeline-buffer-state-icon
            icon)
-      (doom-modeline-icon-material
-       icon
+      (doom-modeline--icon
+       (alist-get :icon-set icon)
+       (alist-get :name icon)
        :face face
        :height (or height 1.1)
        :v-adjust (or voffset -0.225))
-    (when text
-      (propertize text 'face face))))
+    (propertize (doom-modeline--fallback-text icon) 'face face)))
 
 (defvar-local doom-modeline--buffer-file-state-icon nil)
 (defun doom-modeline-update-buffer-file-state-icon (&rest _)
@@ -263,29 +266,26 @@ Uses `all-the-icons-material' to fetch the icon."
         (ignore-errors
           (cond (buffer-read-only
                  (doom-modeline-buffer-file-state-icon
-                  "lock"
-                  "%1*"
+                  (alist-get :buffer-read-only doom-modeline-icons)
                   'doom-modeline-warning))
                 ((and buffer-file-name (buffer-modified-p)
                       doom-modeline-buffer-modification-icon)
                  (doom-modeline-buffer-file-state-icon
-                  "save"
-                  "%1*"
+                  (alist-get :buffer-modified doom-modeline-icons)
                   'doom-modeline-buffer-modified))
                 ((and buffer-file-name
                       (not (file-exists-p buffer-file-name)))
                  (doom-modeline-buffer-file-state-icon
-                  "do_not_disturb_alt"
-                  "!"
+                  (alist-get :buffer-no-file doom-modeline-icons)
                   'doom-modeline-urgent))
                 ((or (buffer-narrowed-p)
                      (and (bound-and-true-p fancy-narrow-mode)
                           (fancy-narrow-active-p)))
                  (doom-modeline-buffer-file-state-icon
-                  "vertical_align_center"
-                  "><"
+                  (alist-get :buffer-narrowed doom-modeline-icons)
                   'doom-modeline-warning))
                 (t "")))))
+
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-save-hook #'doom-modeline-update-buffer-file-state-icon)
@@ -567,15 +567,16 @@ mouse-1: Display minor modes menu"
 ;; vcs
 ;;
 
-(defun doom-modeline-vcs-icon (icon &optional text face voffset)
+(defun doom-modeline-vcs-icon (icon &optional face voffset)
   "Displays the vcs ICON with FACE and VOFFSET.
 TEXT is the alternative if it is not applicable.
 Uses `all-the-icons-octicon' to fetch the icon."
   (if doom-modeline-icon
-      (when icon
-        (doom-modeline-icon-octicon icon :face face :v-adjust (or voffset -0.1)))
-    (when text
-      (propertize text 'face face))))
+      (doom-modeline--icon
+       (alist-get :icon-set icon)
+       (alist-get :name icon)
+       (doom-modeline-icon-octicon icon :face face :v-adjust (or voffset -0.1)))
+    (propertize (doom-modeline--fallback-text icon) 'face face)))
 
 (defvar-local doom-modeline--vcs-icon nil)
 (defun doom-modeline-update-vcs-icon (&rest _)
@@ -585,15 +586,20 @@ Uses `all-the-icons-octicon' to fetch the icon."
           (let* ((backend (vc-backend buffer-file-name))
                  (state   (vc-state buffer-file-name backend)))
             (cond ((memq state '(edited added))
-                   (doom-modeline-vcs-icon "git-compare" "*" 'doom-modeline-info -0.05))
+                   (doom-modeline-vcs-icon (alist-get :vcs-modified doom-modeline-icons)
+                                           'doom-modeline-info -0.05))
                   ((eq state 'needs-merge)
-                   (doom-modeline-vcs-icon "git-merge" "?" 'doom-modeline-info))
+                   (doom-modeline-vcs-icon (alist-get :vcs-needs-merge doom-modeline-icons)
+                                           'doom-modeline-info))
                   ((eq state 'needs-update)
-                   (doom-modeline-vcs-icon "arrow-down" "!" 'doom-modeline-warning))
+                   (doom-modeline-vcs-icon (alist-get :vcs-needs-update doom-modeline-icons)
+                                           'doom-modeline-warning))
                   ((memq state '(removed conflict unregistered))
-                   (doom-modeline-vcs-icon "alert" "!" 'doom-modeline-urgent))
+                   (doom-modeline-vcs-icon (alist-get :vcs-warning doom-modeline-icons)
+                                           'doom-modeline-urgent))
                   (t
-                   (doom-modeline-vcs-icon "git-branch" "@" 'doom-modeline-info -0.05)))))))
+                   (doom-modeline-vcs-icon (alist-get :vcs-default doom-modeline-icons)
+                                           'doom-modeline-info -0.05)))))))
 (add-hook 'find-file-hook #'doom-modeline-update-vcs-icon t)
 (add-hook 'after-save-hook #'doom-modeline-update-vcs-icon)
 (advice-add #'vc-refresh-state :after #'doom-modeline-update-vcs-icon)
