@@ -438,6 +438,7 @@ If the actual char height is larger, it respects the actual char height."
 ;;
 
 (declare-function face-remap-remove-relative 'face-remap)
+(declare-function ffip-get-project-root-directory 'find-file-in-project)
 (declare-function project-roots 'project)
 (declare-function projectile-project-root 'projectile)
 
@@ -682,6 +683,8 @@ If the actual char height is larger, it respects the actual char height."
                      (ignore-errors
                        (when-let ((project (project-current)))
                          (expand-file-name (car (project-roots project))))))
+                (and (fboundp 'ffip-get-project-root-directory)
+                     (ignore-errors (ffip-get-project-root-directory)))
                 (and (bound-and-true-p projectile-mode)
                      (ignore-errors (projectile-project-root)))
                 default-directory))))

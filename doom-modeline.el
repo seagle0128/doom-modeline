@@ -45,8 +45,8 @@
 ;; - A workspace number segment for eyebrowse
 ;; - A perspective name segment for persp-mode
 ;; - A window number segment for winum and window-numbering
-;; - An indicator for modal editing state, including evil, overwrite, god, ryo and
-;;   xah-fly-keys, etc.
+;; - An indicator for modal editing state, including evil, overwrite, god, ryo
+;;   and xah-fly-keys, etc.
 ;; - An indicator for remote host
 ;; - An indicator for current input method
 ;; - An indicator for debug state
@@ -60,7 +60,8 @@
 ;; - An indicator for markdown/org preivews with grip
 ;; - An indicator for battery status with fancy-battery
 ;; - Truncated file name, file icon, buffer state and project name in buffer
-;;   information segment, which is compatible with projectile and project
+;;   information segment, which is compatible with project, find-file-in-project
+;;   and projectile
 ;; - New mode-line for Info-mode buffers
 ;; - New package mode-line for paradox
 ;; - New mode-line for helm buffers
