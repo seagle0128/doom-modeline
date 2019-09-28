@@ -344,3 +344,15 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
     ```
 
     Please refer to [#189](https://github.com/seagle0128/doom-modeline/issues/189).
+
+## Donate
+
+If you think it's helpful for you, please consider pay a cup of coffee for me. Thank you! :smile:
+
+<img
+src="https://user-images.githubusercontent.com/140797/65818854-44204900-e248-11e9-9cc5-3e6339587cd8.png"
+width="150"/>
+&nbsp;&nbsp;
+<img
+src="https://user-images.githubusercontent.com/140797/65818844-366ac380-e248-11e9-931c-4bd872d0566b.png"
+width="150"/>
