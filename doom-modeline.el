@@ -198,6 +198,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   "Storage for the old `mode-line-format', so it can be restored when
 `doom-modeline-mode' is disabled.")
 
+(defvar doom-modeline-mode-map (make-sparse-keymap))
+
 (declare-function helm-display-mode-line 'helm) ; suppress warnings
 
 ;;;###autoload
@@ -206,6 +208,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   :group 'doom-modeline
   :global t
   :lighter nil
+  :keymap doom-modeline-mode-map
   (if doom-modeline-mode
       (progn
         (doom-modeline-refresh-bars)        ; create bars
