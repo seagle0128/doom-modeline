@@ -88,6 +88,7 @@
 (declare-function anzu--reset-status 'anzu)
 (declare-function anzu--where-is-here 'anzu)
 (declare-function async-inject-variables 'async)
+(declare-function async-start 'async)
 (declare-function avy-traverse 'avy)
 (declare-function avy-tree 'avy)
 (declare-function aw-update 'ace-window)
@@ -142,6 +143,7 @@
 (declare-function flymake-running-backends 'flymake)
 (declare-function flymake-show-diagnostics-buffer 'flymake)
 (declare-function flymake-start 'flymake)
+(declare-function grip-browse-preview 'grip-mode)
 (declare-function grip-mode 'grip-mode)
 (declare-function helm-candidate-number-at-point 'helm)
 (declare-function helm-get-candidate-number 'helm)
@@ -1773,16 +1775,12 @@ Example:
 (defun doom-modeline--github-fetch-notifications ()
   "Fetch GitHub notifications."
   (when (and doom-modeline-github
-             (fboundp 'async-start))
-    ;; load `async' if it exists but is not loaded
-    (unless (fboundp 'async-inject-variables)
-      (require 'async nil t))
+             (require 'async nil t))
     (async-start
      `(lambda ()
         ,(async-inject-variables "\\`\\(load-path\\|auth-sources\\|doom-modeline-before-github-fetch-notification-hook\\)\\'")
         (run-hooks 'doom-modeline-before-github-fetch-notification-hook)
-        (require 'ghub nil t)
-        (when (fboundp 'ghub-get)
+        (when (require 'ghub nil t)
           (with-timeout (10)
             (ignore-errors
               (if (ghub--token ghub-default-host
@@ -2344,9 +2342,7 @@ mouse-2: Stop preview"
         'mouse-face '(:box 0)
         'local-map (let ((map (make-sparse-keymap)))
                      (define-key map [mode-line mouse-1]
-                       (lambda ()
-                         (interactive)
-                         (browse-url (format "http://localhost:%d" grip-port))))
+                       #'grip-browse-preview)
                      (define-key map [mode-line mouse-2]
                        #'grip-mode)
                      map)))
