@@ -159,6 +159,15 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; How wide the mode-line bar should be. It's only respected in GUI.
 (setq doom-modeline-bar-width 3)
 
+;; How to detect the project root.
+;; The default priority of detection is `ffip' > `projectile' > `project'.
+;; nil means to use `default-directory'.
+;; The project management packages have some issues on detecting project root.
+;; e.g. `projectile' doesn't handle symlink folders well, while `project' is unable
+;; to hanle sub-projects.
+;; You can specify one if you encounter the issue.
+(setq doom-modeline-project-detection 'project)
+
 ;; Determines the style used by `doom-modeline-buffer-file-name'.
 ;;
 ;; Given ~/Projects/FOSS/emacs/lisp/comint.el
@@ -344,6 +353,23 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
     ```
 
     Please refer to [#189](https://github.com/seagle0128/doom-modeline/issues/189).
+
+1. How to disable symbolic links expanding in mode-line?
+
+   If you encounter the issue like this
+
+   ![Screenshot](https://user-images.githubusercontent.com/9449246/62822565-c3f93380-bb74-11e9-95f6-f9c24a6cbd14.png)
+
+   please try this setting
+
+   ```elisp
+   ;; built-in `project' on 26+
+   (setq doom-modeline-project-detection 'project)
+   ;; or `find-in-porject' if it's installed
+   (setq doom-modeline-project-detection 'ffip)
+   ```
+
+   For more details, refer to [#209](https://github.com/seagle0128/doom-modeline/issues/209) and [#224](https://github.com/seagle0128/doom-modeline/issues/224).
 
 ## Donate
 

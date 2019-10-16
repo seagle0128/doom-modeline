@@ -149,6 +149,27 @@ If the actual char height is larger, it respects the actual char height."
          (set sym (if (> val 0) val 1)))
   :group 'doom-modeline)
 
+(defcustom doom-modeline-project-detection
+  (cond ((fboundp 'ffip-get-project-root-directory) 'ffip)
+        ((fboundp 'projectile-project-root) 'projectile)
+        ((fboundp 'project-current) 'project)
+        (t nil))
+  "How to detect the project root.
+
+The default priority is `ffip' > `projectile' > `project'.
+nil means to use `default-directory'.
+
+The project management packages have some issues on detecting project root.
+e.g. `projectile' doesn't handle symlink folders well, while `project' is
+unable to hanle sub-projects.
+Specify another one if you encounter the issue."
+  :type '(choice
+          (const :tag "Find File in Project" ffip)
+          (const :tag "Projectile" projectile)
+          (const :tag "Built-in Project" project)
+          (const :tag "Disable" nil))
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-buffer-file-name-style 'truncate-upto-project
   "Determines the style used by `doom-modeline-buffer-file-name'.
 
@@ -677,18 +698,21 @@ If the actual char height is larger, it respects the actual char height."
 (defun doom-modeline-project-root ()
   "Get the path to the root of your project.
   Return `default-directory' if no project was found."
-  (or doom-modeline-project-root
-      (setq doom-modeline-project-root
-            (or (and (fboundp 'project-current)
-                     (ignore-errors
-                       (when-let ((project (project-current)))
-                         (expand-file-name (car (project-roots project))))))
-                (and (fboundp 'ffip-get-project-root-directory)
-                     (let ((inhibit-message t))
-                       (ignore-errors (ffip-get-project-root-directory))))
-                (and (bound-and-true-p projectile-mode)
-                     (ignore-errors (projectile-project-root)))
-                default-directory))))
+  (setq doom-modeline-project-root
+        (or doom-modeline-project-root
+            (pcase doom-modeline-project-detection
+              ('ffip
+               (when (fboundp 'ffip-get-project-root-directory)
+                 (let ((inhibit-message t))
+                   (ffip-get-project-root-directory))))
+              ('projectile
+               (when (fboundp 'projectile-project-root)
+                 (projectile-project-root)))
+              ('project
+               (when (fboundp 'project-current)
+                 (when-let ((project (project-current)))
+                   (car (project-roots project))))))
+            default-directory)))
 
 (defun doom-modeline--make-xpm (face width height)
   "Create an XPM bitmap via FACE, WIDTH and HEIGHT. Inspired by `powerline''s `pl/make-xpm'."
