@@ -1121,8 +1121,8 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
     (propertize
      (let ((this-oc (or (let ((inhibit-message t))
                           (iedit-find-current-occurrence-overlay))
-                        (progn (iedit-prev-occurrence)
-                               (iedit-find-current-occurrence-overlay))))
+                        (save-excursion (iedit-prev-occurrence)
+                                        (iedit-find-current-occurrence-overlay))))
            (length (length iedit-occurrences-overlays)))
        (format " %s/%d "
                (if this-oc
