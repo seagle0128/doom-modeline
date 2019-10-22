@@ -359,23 +359,23 @@ Specify another one if you encounter the issue."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-debug
-  '((t (:inherit font-lock-doc-face)))
-  "Face for debug-level messages in the modeline. Used by `*flycheck'."
+  '((t (:inherit (font-lock-doc-face bold))))
+  "Face for debug-level messages in the modeline. Used by `*checker'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-info
   '((t (:inherit (success bold))))
-  "Face for info-level messages in the modeline. Used by `*vc'."
+  "Face for info-level messages in the modeline. Used by `*vc' and `*chcker'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-warning
   '((t (:inherit (warning bold))))
-  "Face for warnings in the modeline. Used by `*flycheck'."
+  "Face for warnings in the modeline. Used by `*checker'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-urgent
   '((t (:inherit (error bold))))
-  "Face for errors in the modeline. Used by `*flycheck'."
+  "Face for errors in the modeline. Used by `*checker'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-unread-number
