@@ -242,14 +242,14 @@ buffer where knowing the current project directory is important."
          (with-current-buffer buf
            (doom-modeline-update-buffer-file-icon)))))))
 
-(defun doom-modeline-buffer-file-state-icon (icon unicode text face &optional height voffset)
-  "Displays an ICON with FACE, HEIGHT and VOFFSET.
+(defun doom-modeline-buffer-file-state-icon (icon unicode text face)
+  "Displays an ICON of buffer state with FACE.
 TEXT is the alternative if it is not applicable.
 Uses `all-the-icons-material' to fetch the icon."
   (when doom-modeline-buffer-state-icon
     (doom-modeline-icon 'material icon unicode text face
-                        :height (or height 1.1)
-                        :v-adjust (or voffset -0.225))))
+                        :height  1.1
+                        :v-adjust -0.225)))
 
 (defvar-local doom-modeline--buffer-file-state-icon nil)
 (defun doom-modeline-update-buffer-file-state-icon (&rest _)
@@ -2305,13 +2305,10 @@ The cdr can also be a function that returns a name to use.")
 
      (doom-modeline--buffer-mode-icon)
 
-     ;; snapshot icon
-     (doom-modeline-buffer-file-state-icon
-      "camera_alt"
-      "%1*"
-      (if active 'warning 'mode-line-inactive)
-      1.1
-      -0.25)
+     ;; Snapshot icon
+     (doom-modeline-icon 'material "camera_alt" "📷" "%1*"
+                         (if active 'warning 'mode-line-inactive)
+                         :height 1.1 :v-adjust -0.25)
      (doom-modeline-vspc)
 
      ;; buffer name
