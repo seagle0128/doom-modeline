@@ -583,7 +583,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
                   ((memq state '(removed conflict unregistered))
                    (doom-modeline-vcs-icon "alert" "⚠" "!" 'doom-modeline-urgent))
                   (t
-                   (doom-modeline-vcs-icon "git-branch" "@" "@" 'doom-modeline-info -0.05)))))))
+                   (doom-modeline-vcs-icon "git-branch" "⑆" "@" 'doom-modeline-info -0.05)))))))
 (add-hook 'find-file-hook #'doom-modeline-update-vcs-icon t)
 (add-hook 'after-save-hook #'doom-modeline-update-vcs-icon)
 (advice-add #'vc-refresh-state :after #'doom-modeline-update-vcs-icon)
