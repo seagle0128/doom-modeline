@@ -204,6 +204,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; and `doom-modeline-buffer-state-icon'.
 (setq doom-modeline-buffer-modification-icon t)
 
+;; Whether to use unicode as a fallback (instead of ASCII) when not using icons.
+(setq doom-modeline-unicode-fallback t)
+
 ;; Whether display minor modes in mode-line or not.
 (setq doom-modeline-minor-modes (featurep 'minions))
 
@@ -224,9 +227,6 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
 ;; Whether display perspective name or not. Non-nil to display in mode-line.
 (setq doom-modeline-persp-name t)
-
-;; Whether display icon for persp name. Nil to display a # sign. It respects `doom-modeline-icon'
-(setq doom-modeline-persp-name-icon nil)
 
 ;; Whether display `lsp' state or not. Non-nil to display in mode-line.
 (setq doom-modeline-lsp t)
