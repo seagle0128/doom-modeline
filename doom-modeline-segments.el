@@ -2063,64 +2063,65 @@ we don't want to remove that so we just return the original."
 (defun doom-modeline-update-battery-status (&optional status)
   "Update battery STATUS."
   (setq doom-modeline--battery-status
-        (let* ((status (or status fancy-battery-last-status))
-               (charging?  (string-equal "AC" (cdr (assoc ?L status))))
-               (percentage (cdr (assq ?p status)))
-               (percentage-number (string-to-number percentage))
-               (face (cond
-                      (charging? 'fancy-battery-charging)
-                      ((< percentage-number 10) 'fancy-battery-critical)
-                      ((< percentage-number 25) 'fancy-battery-discharging)
-                      ((< percentage-number 95) 'mode-line)
-                      (t 'fancy-battery-charging)))
-               (icon (cond
-                      (charging?
-                       (doom-modeline-icon 'alltheicon
-                                           "battery-charging"
-                                           "🔋"
-                                           "+"
-                                           face
-                                           :height 1.4
-                                           :v-adjust -0.1))
-                      ((> percentage-number 95)
-                       (doom-modeline-icon 'faicon
-                                           "battery-full"
-                                           "🔋"
-                                           "-"
-                                           face
-                                           :v-adjust -0.0575))
-                      ((> percentage-number 70)
-                       (doom-modeline-icon 'faicon
-                                           "battery-three-quarters"
-                                           "🔋"
-                                           "-"
-                                           face
-                                           :v-adjust -0.0575))
-                      ((> percentage-number 40)
-                       (doom-modeline-icon 'faicon
-                                           "battery-half"
-                                           "🔋"
-                                           "-"
-                                           face
-                                           :v-adjust -0.0575))
-                      ((> percentage-number 15)
-                       (doom-modeline-icon 'faicon
-                                           "battery-quarter"
-                                           "🔋"
-                                           "-"
-                                           face
-                                           :v-adjust -0.0575))
-                      (t
-                       (doom-modeline-icon 'faicon
-                                           "battery-empty"
-                                           "🔋"
-                                           "!"
-                                           face
-                                           :v-adjust -0.0575))))
-               (percent-str (and percentage (concat percentage "%%")))
-               (help-echo (if battery-echo-area-format
-                              (battery-format battery-echo-area-format status)
-                            "Battery status not available")))
+        (when-let*
+            ((status (or status (bound-and-true-p fancy-battery-last-status)))
+             (charging?  (string-equal "AC" (cdr (assoc ?L status))))
+             (percentage (cdr (assq ?p status)))
+             (percentage-number (string-to-number percentage))
+             (face (cond
+                    (charging? 'fancy-battery-charging)
+                    ((< percentage-number 10) 'fancy-battery-critical)
+                    ((< percentage-number 25) 'fancy-battery-discharging)
+                    ((< percentage-number 95) 'mode-line)
+                    (t 'fancy-battery-charging)))
+             (icon (cond
+                    (charging?
+                     (doom-modeline-icon 'alltheicon
+                                         "battery-charging"
+                                         "🔋"
+                                         "+"
+                                         face
+                                         :height 1.4
+                                         :v-adjust -0.1))
+                    ((> percentage-number 95)
+                     (doom-modeline-icon 'faicon
+                                         "battery-full"
+                                         "🔋"
+                                         "-"
+                                         face
+                                         :v-adjust -0.0575))
+                    ((> percentage-number 70)
+                     (doom-modeline-icon 'faicon
+                                         "battery-three-quarters"
+                                         "🔋"
+                                         "-"
+                                         face
+                                         :v-adjust -0.0575))
+                    ((> percentage-number 40)
+                     (doom-modeline-icon 'faicon
+                                         "battery-half"
+                                         "🔋"
+                                         "-"
+                                         face
+                                         :v-adjust -0.0575))
+                    ((> percentage-number 15)
+                     (doom-modeline-icon 'faicon
+                                         "battery-quarter"
+                                         "🔋"
+                                         "-"
+                                         face
+                                         :v-adjust -0.0575))
+                    (t
+                     (doom-modeline-icon 'faicon
+                                         "battery-empty"
+                                         "🔋"
+                                         "!"
+                                         face
+                                         :v-adjust -0.0575))))
+             (percent-str (and percentage (concat percentage "%%")))
+             (help-echo (if battery-echo-area-format
+                            (battery-format battery-echo-area-format status)
+                          "Battery status not available")))
           (concat
            (doom-modeline-spc)
            (if percent-str
