@@ -190,12 +190,12 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether display icons in mode-line.
 (setq doom-modeline-icon (display-graphic-p))
 
-;; Whether display color icons in mode-line.
-(setq doom-modeline-color-icons t)
-
 ;; Whether display the icon for buffers.
 ;; It respects `doom-modeline-icon' and `doom-modeline-color-icons'.
 (setq doom-modeline-buffer-icon t)
+
+;; Whether display colorful icons for buffers.
+(setq doom-modeline-buffer-color-icon t)
 
 ;; Whether display icons for buffer states.
 ;; It respects `doom-modeline-icon' and `doom-modeline-color-icons'.

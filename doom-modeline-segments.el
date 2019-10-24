@@ -217,7 +217,7 @@ buffer where knowing the current project directory is important."
 (defun doom-modeline-update-buffer-file-icon (&rest _)
   "Update file icon in mode-line."
   (setq doom-modeline--buffer-file-icon
-        (when (and doom-modeline-icon doom-modeline-major-mode-icon)
+        (when (and doom-modeline-icon doom-modeline-buffer-icon)
           (let* ((icon (if (and (buffer-file-name)
                                 (all-the-icons-auto-mode-match?))
                            (all-the-icons-icon-for-file (file-name-nondirectory (buffer-file-name)))
@@ -382,13 +382,17 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 
 (defsubst doom-modeline--buffer-mode-icon ()
   "The icon of the current major mode."
-  (when (and doom-modeline-icon doom-modeline-major-mode-icon)
+  (when (and doom-modeline-icon doom-modeline-buffer-icon)
     (when-let ((icon (or doom-modeline--buffer-file-icon
                          (doom-modeline-update-buffer-file-icon))))
       (when icon
         (concat
          (if (doom-modeline--active)
-             icon
+             (if doom-modeline-buffer-color-icon
+                 icon
+               (propertize icon 'face `(:inherit ,(let ((props (get-text-property 0 'face icon)))
+                                                    props (remove :inherit props))
+                                        :inherit mode-line)))
            (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
                                     :inherit mode-line-inactive)))
          (doom-modeline-vspc))))))
@@ -2070,78 +2074,79 @@ we don't want to remove that so we just return the original."
 (defun doom-modeline-update-battery-status ()
   "Update battery status."
   (setq doom-modeline--battery-status
-        (let* ((data (and (bound-and-true-p battery-status-function)
-                          (funcall battery-status-function)))
-               (charging?  (string-equal "AC" (cdr (assoc ?L data))))
-               (percentage (min (car (read-from-string (cdr (assq ?p data))))
-                                battery-mode-line-limit))
-               (face (when (numberp percentage)
-                       (cond (charging? 'success)
-                             ((< percentage battery-load-critical) 'error)
-                             ((< percentage 25) 'warning)
-                             ((< percentage 95) 'mode-line)
-                             (t 'success))))
-               (icon (if (numberp percentage)
-                         (cond (charging?
-                                (doom-modeline-icon 'alltheicon
-                                                    "battery-charging"
-                                                    "🔋"
-                                                    "+"
-                                                    face
-                                                    :height 1.4
-                                                    :v-adjust -0.1))
-                               ((> percentage 95)
-                                (doom-modeline-icon 'faicon
-                                                    "battery-full"
-                                                    "🔋"
-                                                    "-"
-                                                    face
-                                                    :v-adjust -0.0575))
-                               ((> percentage 70)
-                                (doom-modeline-icon 'faicon
-                                                    "battery-three-quarters"
-                                                    "🔋"
-                                                    "-"
-                                                    face
-                                                    :v-adjust -0.0575))
-                               ((> percentage 40)
-                                (doom-modeline-icon 'faicon
-                                                    "battery-half"
-                                                    "🔋"
-                                                    "-"
-                                                    face
-                                                    :v-adjust -0.0575))
-                               ((> percentage battery-load-critical)
-                                (doom-modeline-icon 'faicon
-                                                    "battery-quarter"
-                                                    "🔋"
-                                                    "-"
-                                                    face
-                                                    :v-adjust -0.0575))
-                               (t (doom-modeline-icon 'faicon
-                                                      "battery-empty"
+        (when (bound-and-true-p display-battery-mode)
+          (let* ((data (and (bound-and-true-p battery-status-function)
+                            (funcall battery-status-function)))
+                 (charging?  (string-equal "AC" (cdr (assoc ?L data))))
+                 (percentage (min (car (read-from-string (cdr (assq ?p data))))
+                                  battery-mode-line-limit))
+                 (face (when (numberp percentage)
+                         (cond (charging? 'success)
+                               ((< percentage battery-load-critical) 'error)
+                               ((< percentage 25) 'warning)
+                               ((< percentage 95) 'mode-line)
+                               (t 'success))))
+                 (icon (if (numberp percentage)
+                           (cond (charging?
+                                  (doom-modeline-icon 'alltheicon
+                                                      "battery-charging"
                                                       "🔋"
-                                                      "!"
+                                                      "+"
                                                       face
-                                                      :v-adjust -0.0575)))
-                       (doom-modeline-icon 'faicon
-                                           "battery-empty"
-                                           "⚠"
-                                           "N/A"
-                                           'error
-                                           :v-adjust -0.0575)))
-               (text (if (numberp percentage)
-                         (format "%d%%%%" percentage)
-                       ""))
-               (help-echo (if (and battery-echo-area-format (numberp percentage))
-                              (battery-format battery-echo-area-format data)
-                            "Battery status not available")))
-          (concat (doom-modeline-spc)
-                  (propertize (concat icon
-                                      (doom-modeline-vspc)
-                                      (propertize text 'face face))
-                              'help-echo help-echo)
-                  (doom-modeline-spc)))))
+                                                      :height 1.4
+                                                      :v-adjust -0.1))
+                                 ((> percentage 95)
+                                  (doom-modeline-icon 'faicon
+                                                      "battery-full"
+                                                      "🔋"
+                                                      "-"
+                                                      face
+                                                      :v-adjust -0.0575))
+                                 ((> percentage 70)
+                                  (doom-modeline-icon 'faicon
+                                                      "battery-three-quarters"
+                                                      "🔋"
+                                                      "-"
+                                                      face
+                                                      :v-adjust -0.0575))
+                                 ((> percentage 40)
+                                  (doom-modeline-icon 'faicon
+                                                      "battery-half"
+                                                      "🔋"
+                                                      "-"
+                                                      face
+                                                      :v-adjust -0.0575))
+                                 ((> percentage battery-load-critical)
+                                  (doom-modeline-icon 'faicon
+                                                      "battery-quarter"
+                                                      "🔋"
+                                                      "-"
+                                                      face
+                                                      :v-adjust -0.0575))
+                                 (t (doom-modeline-icon 'faicon
+                                                        "battery-empty"
+                                                        "🔋"
+                                                        "!"
+                                                        face
+                                                        :v-adjust -0.0575)))
+                         (doom-modeline-icon 'faicon
+                                             "battery-empty"
+                                             "⚠"
+                                             "N/A"
+                                             'error
+                                             :v-adjust -0.0575)))
+                 (text (if (numberp percentage)
+                           (format "%d%%%%" percentage)
+                         ""))
+                 (help-echo (if (and battery-echo-area-format (numberp percentage))
+                                (battery-format battery-echo-area-format data)
+                              "Battery status not available")))
+            (concat (doom-modeline-spc)
+                    (propertize (concat icon
+                                        (doom-modeline-vspc)
+                                        (propertize text 'face face))
+                                'help-echo help-echo)
+                    (doom-modeline-spc))))))
 
 (when (>= emacs-major-version 26)
   (add-variable-watcher
@@ -2195,12 +2200,14 @@ we don't want to remove that so we just return the original."
            front
          (propertize front 'face 'mode-line-inactive)))
 
-     (when (and doom-modeline-icon doom-modeline-major-mode-icon)
+     (when (and doom-modeline-icon doom-modeline-buffer-icon)
        (concat (doom-modeline-spc)
                (doom-modeline-icon-for-mode 'paradox-menu-mode
                                             :v-adjust -0.15
                                             :face (if active
-                                                      'all-the-icons-silver
+                                                      (if doom-modeline-buffer-color-icon
+                                                          'all-the-icons-silver
+                                                        'mode-line)
                                                     'mode-line-inactive))))
      (let ((info (format-mode-line 'mode-line-buffer-identification)))
        (if active
@@ -2234,7 +2241,9 @@ The cdr can also be a function that returns a name to use.")
                                     :height 1.0
                                     :v-adjust -0.15
                                     :face (if active
-                                              'all-the-icons-purple
+                                              (if doom-modeline-buffer-color-icon
+                                                  'all-the-icons-purple
+                                                'mode-line)
                                             'mode-line-inactive))
        (when doom-modeline-icon (doom-modeline-spc))
        (propertize

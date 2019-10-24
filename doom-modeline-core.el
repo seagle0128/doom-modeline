@@ -202,22 +202,19 @@ Specify another one if you encounter the issue."
   :type 'boolean
   :group 'doom-modeline)
 
-(defcustom doom-modeline-color-icons t
-  "Whether display color icons in mode-line.
-
-It respects `doom-modeline-icon' and `doom-modeline-color-icons'."
-  :type 'boolean
-  :set (lambda (sym val)
-         (set sym val)
-         (setq all-the-icons-color-icons val))
-  :group 'doom-modeline)
-
 (defcustom doom-modeline-buffer-icon t
   "Whether display the icon for buffers.
 
   It respects `doom-modeline-icon' and `doom-modeline-color-icons'."
   :type 'boolean
   :group'doom-modeline)
+
+(defcustom doom-modeline-buffer-color-icon t
+  "Whether display colorful icons for buffers.
+
+It respects `doom-modeline-icon' and `doom-modeline-color-icons'."
+  :type 'boolean
+  :group 'doom-modeline)
 
 (defcustom doom-modeline-major-mode-icon t
   "Whether display the icon for major mode.
@@ -236,10 +233,10 @@ It respects `doom-modeline-icon' and `all-the-icons-color-icons'."
   :type 'boolean
   :set (lambda (sym val)
          (set sym val)
-         (setq doom-modeline-buffer-icon val))
+         (setq doom-modeline-color-icons val))
   :group'doom-modeline)
 (make-obsolete-variable doom-modeline-major-mode-color-icon
-                        doom-modeline-color-icons
+                        doom-modeline-buffer-color-icon
                         "2.7.0")
 
 (defcustom doom-modeline-buffer-state-icon t
