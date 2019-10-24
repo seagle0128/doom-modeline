@@ -187,21 +187,23 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Please refer to https://github.com/bbatsov/projectile/issues/657.
 (setq doom-modeline-buffer-file-name-style 'truncate-upto-project)
 
-;; Whether display icons in mode-line or not.
+;; Whether display icons in mode-line.
 (setq doom-modeline-icon (display-graphic-p))
 
-;; Whether display the icon for major mode. It respects `doom-modeline-icon'.
-(setq doom-modeline-major-mode-icon t)
+;; Whether display color icons in mode-line.
+(setq doom-modeline-color-icons t)
 
-;; Whether display color icons for `major-mode'. It respects
-;; `doom-modeline-icon' and `all-the-icons-color-icons'.
-(setq doom-modeline-major-mode-color-icon t)
+;; Whether display the icon for buffers.
+;; It respects `doom-modeline-icon' and `doom-modeline-color-icons'.
+(setq doom-modeline-buffer-icon t)
 
-;; Whether display icons for buffer states. It respects `doom-modeline-icon'.
+;; Whether display icons for buffer states.
+;; It respects `doom-modeline-icon' and `doom-modeline-color-icons'.
 (setq doom-modeline-buffer-state-icon t)
 
-;; Whether display buffer modification icon. It respects `doom-modeline-icon'
-;; and `doom-modeline-buffer-state-icon'.
+;; Whether display buffer modification icon.
+;; It respects `doom-modeline-icon', `doom-modeline-buffer-state-icon'
+;; and `doom-modeline-color-icons'.
 (setq doom-modeline-buffer-modification-icon t)
 
 ;; Whether to use unicode as a fallback (instead of ASCII) when not using icons.

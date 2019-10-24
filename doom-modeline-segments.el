@@ -385,11 +385,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
       (when icon
         (concat
          (if (doom-modeline--active)
-             (if doom-modeline-major-mode-color-icon
-                 icon
-               (propertize icon 'face `(:inherit ,(let ((props (get-text-property 0 'face icon)))
-                                                    props (remove :inherit props))
-                                        :inherit mode-line)))
+             icon
            (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
                                     :inherit mode-line-inactive)))
          (doom-modeline-vspc))))))
@@ -2189,13 +2185,11 @@ we don't want to remove that so we just return the original."
 
      (when (and doom-modeline-icon doom-modeline-major-mode-icon)
        (concat (doom-modeline-spc)
-               (doom-modeline-icon-for-mode
-                'paradox-menu-mode
-                :v-adjust -0.15
-                :face (if active
-                          (unless doom-modeline-major-mode-color-icon
-                            'mode-line)
-                        'mode-line-inactive))))
+               (doom-modeline-icon-for-mode 'paradox-menu-mode
+                                            :v-adjust -0.15
+                                            :face (if active
+                                                      'all-the-icons-silver
+                                                    'mode-line-inactive))))
      (let ((info (format-mode-line 'mode-line-buffer-identification)))
        (if active
            info
@@ -2217,6 +2211,7 @@ we don't want to remove that so we just return the original."
                              (car (split-string helm-ag-base-command))))))
   "Alist of custom helm buffer names to use.
 The cdr can also be a function that returns a name to use.")
+
 (doom-modeline-def-segment helm-buffer-id
   "Helm session identifier."
   (when (bound-and-true-p helm-alive-p)
@@ -2227,9 +2222,7 @@ The cdr can also be a function that returns a name to use.")
                                     :height 1.0
                                     :v-adjust -0.15
                                     :face (if active
-                                              (if doom-modeline-major-mode-color-icon
-                                                  'all-the-icons-purple
-                                                'mode-line)
+                                              'all-the-icons-purple
                                             'mode-line-inactive))
        (when doom-modeline-icon (doom-modeline-spc))
        (propertize

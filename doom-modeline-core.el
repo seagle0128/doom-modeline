@@ -199,27 +199,62 @@ Specify another one if you encounter the issue."
   :group'doom-modeline)
 
 (defcustom doom-modeline-icon (display-graphic-p)
-  "Whether display icons in mode-line or not."
+  "Whether display icons in mode-line."
   :type 'boolean
   :group 'doom-modeline)
 
-(defcustom doom-modeline-major-mode-icon t
-  "Whether display the icon for major mode. It respects `doom-modeline-icon'."
+(defcustom doom-modeline-color-icons t
+  "Whether display color icons in mode-line.
+
+It respects `doom-modeline-icon' and `doom-modeline-color-icons'."
+  :type 'boolean
+  :set (lambda (sym val)
+         (set sym val)
+         (setq all-the-icons-color-icons val))
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-buffer-icon t
+  "Whether display the icon for buffers.
+
+  It respects `doom-modeline-icon' and `doom-modeline-color-icons'."
   :type 'boolean
   :group'doom-modeline)
 
-(defcustom doom-modeline-major-mode-color-icon t
-  "Whether display color icons for `major-mode'. It respects `doom-modeline-icon' and `all-the-icons-color-icons'."
+(defcustom doom-modeline-major-mode-icon t
+  "Whether display the icon for major mode.
+
+It respects `doom-modeline-icon'."
   :type 'boolean
-  :group 'doom-modeline)
+  :group'doom-modeline)
+(make-obsolete-variable doom-modeline-major-mode-icon
+                        doom-modeline-buffer-icon
+                        "2.7.0")
+
+(defcustom doom-modeline-major-mode-color-icon t
+  "Whether display color icons for `major-mode'.
+
+It respects `doom-modeline-icon' and `all-the-icons-color-icons'."
+  :type 'boolean
+  :set (lambda (sym val)
+         (set sym val)
+         (setq doom-modeline-buffer-icon val))
+  :group'doom-modeline)
+(make-obsolete-variable doom-modeline-major-mode-color-icon
+                        doom-modeline-color-icons
+                        "2.7.0")
 
 (defcustom doom-modeline-buffer-state-icon t
-  "Whether display icons for buffer states. It respects `doom-modeline-icon'."
+  "Whether display icons for buffer states.
+
+  It respects `doom-modeline-icon' and `doom-modeline-color-icons'."
   :type 'boolean
   :group 'doom-modeline)
 
 (defcustom doom-modeline-buffer-modification-icon t
-  "Whether display buffer modification icon. It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'."
+  "Whether display buffer modification icon.
+
+  It respects `doom-modeline-icon', `doom-modeline-buffer-state-icon'
+  and `doom-modeline-color-icons'."
   :type 'boolean
   :group 'doom-modeline)
 
@@ -663,8 +698,8 @@ Specify another one if you encounter the issue."
 (defun doom-modeline-icon (icon-set icon-name unicode text face &rest args)
   "Display icon of ICON-NAME with FACE and ARGS in mode-line.
 
-ICON-SET includes `octicon', `faicon', `material', `alltheicons' and `fileicon'.
-UNICODE is the unicode char fallback. TEXT is the ASCII char fallback."
+  ICON-SET includes `octicon', `faicon', `material', `alltheicons' and `fileicon'.
+  UNICODE is the unicode char fallback. TEXT is the ASCII char fallback."
   (let ((face (or face 'mode-line)))
     (or (when (and icon-name (not (string-empty-p icon-name)))
           (pcase icon-set
