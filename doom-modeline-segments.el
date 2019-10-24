@@ -96,6 +96,7 @@
 (declare-function aw-update 'ace-window)
 (declare-function aw-window-list 'ace-window)
 (declare-function battery-format 'battery)
+(declare-function battery-update 'battery)
 (declare-function dap--cur-session 'dap-mode)
 (declare-function dap--session-running 'dap-mode)
 (declare-function dap-debug-recent 'dap-mode)
