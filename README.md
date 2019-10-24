@@ -224,6 +224,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; If non-nil, only display one number for checker information if applicable.
 (setq doom-modeline-checker-simple-format t)
 
+;; The maximum number displayed for notifications.
+(setq doom-modeline-number-limit 99)
+
 ;; The maximum displayed length of the branch name of version control.
 (setq doom-modeline-vcs-max-length 12)
 

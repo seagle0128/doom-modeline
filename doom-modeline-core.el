@@ -288,6 +288,11 @@ It respects `doom-modeline-icon' and `all-the-icons-color-icons'."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-number-limit 99
+  "The maximum number displayed for notifications."
+  :type 'integer
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-vcs-max-length 12
   "The maximum displayed length of the branch name of version control."
   :type 'integer

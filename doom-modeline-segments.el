@@ -51,6 +51,7 @@
 (defvar aw-keys)
 (defvar battery-echo-area-format)
 (defvar battery-load-critical)
+(defvar battery-mode-line-limit)
 (defvar battery-status-function)
 (defvar edebug-execution-mode)
 (defvar evil-ex-active-highlights-alist)
@@ -1766,7 +1767,7 @@ mouse-3: Reconnect to server" nick (eglot--major-mode server)))
 ;; github
 ;;
 
-(defvar doom-modeline--github-notifications-number 0)
+(defvar doom-modeline--github-notification-counts 0)
 (defvar doom-modeline-before-github-fetch-notification-hook nil
   "Hooks before fetching GitHub notifications.
 Example:
@@ -1792,7 +1793,7 @@ Example:
                             :noerror t))))))
      (lambda (result)
        (message "")                     ; suppress message
-       (setq doom-modeline--github-notifications-number
+       (setq doom-modeline--github-notification-counts
              (length result))))))
 
 (defvar doom-modeline--github-timer nil)
@@ -1820,15 +1821,18 @@ Example:
   "The GitHub notifications."
   (if (and doom-modeline-github
            (doom-modeline--active)
-           (> doom-modeline--github-notifications-number 0))
+           (> doom-modeline--github-notification-counts 0))
       (concat
        (doom-modeline-spc)
        (propertize
         (concat
          (doom-modeline-icon 'faicon "github" "⌗" "#" 'doom-modeline-warning :v-adjust -0.0575)
          (doom-modeline-vspc)
-         (propertize (number-to-string doom-modeline--github-notifications-number)
-                     'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
+         (propertize
+          (if (> doom-modeline--github-notification-counts doom-modeline-number-limit)
+              (format "%d+" doom-modeline-number-limit)
+            (number-to-string doom-modeline--github-notification-counts))
+          'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
         'help-echo "Github Notifications
 mouse-1: Show notifications
 mouse-3: Fetch notifications"
@@ -1962,23 +1966,27 @@ mouse-1: Toggle Debug on Quit"
   "Show notifications of any unread emails in `mu4e'."
   (when (and doom-modeline-mu4e
              (doom-modeline--active)
-             (bound-and-true-p mu4e-alert-mode-line))
-    ;; don't display if the unread mails count is zero
-    (if (> mu4e-alert-mode-line 0)
-        (concat
-         (doom-modeline-spc)
-         (propertize
-          (concat
-           (doom-modeline-icon 'material "email" "📧" "#" 'doom-modeline-warning
-                               :height 1.1 :v-adjust -0.225)
-           (doom-modeline-vspc)
-           (propertize (number-to-string mu4e-alert-mode-line)
-                       'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
-          'mouse-face '(:box 0)
-          'help-echo (if (= mu4e-alert-mode-line 1)
-                         "You have an unread email"
-                       (format "You have %s unread emails" mu4e-alert-mode-line)))
-         (doom-modeline-spc)))))
+             (bound-and-true-p mu4e-alert-mode-line)
+             (numberp mu4e-alert-mode-line)
+             ;; don't display if the unread mails count is zero
+             (> mu4e-alert-mode-line 0))
+    (concat
+     (doom-modeline-spc)
+     (propertize
+      (concat
+       (doom-modeline-icon 'material "email" "📧" "#" 'doom-modeline-warning
+                           :height 1.1 :v-adjust -0.225)
+       (doom-modeline-vspc)
+       (propertize
+        (if (> mu4e-alert-mode-line doom-modeline-number-limit)
+            (format "%d+" doom-modeline-number-limit)
+          (number-to-string mu4e-alert-mode-line))
+        'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
+      'mouse-face '(:box 0)
+      'help-echo (if (= mu4e-alert-mode-line 1)
+                     "You have an unread email"
+                   (format "You have %s unread emails" mu4e-alert-mode-line)))
+     (doom-modeline-spc))))
 
 (defun doom-modeline-override-mu4e-alert-modeline (&rest _)
   "Delete `mu4e-alert-mode-line' from global modeline string."
@@ -1992,7 +2000,8 @@ mouse-1: Toggle Debug on Quit"
           (setq mu4e-alert-modeline-formatter #'identity))
       ;; Recover default settings
       (setq mu4e-alert-modeline-formatter #'mu4e-alert-default-mode-line-formatter))))
-(advice-add #'mu4e-alert-enable-mode-line-display :after #'doom-modeline-override-mu4e-alert-modeline)
+(advice-add #'mu4e-alert-enable-mode-line-display
+            :after #'doom-modeline-override-mu4e-alert-modeline)
 (add-hook 'doom-modeline-mode-hook #'doom-modeline-override-mu4e-alert-modeline)
 
 
@@ -2063,7 +2072,8 @@ we don't want to remove that so we just return the original."
         (let* ((data (and (bound-and-true-p battery-status-function)
                           (funcall battery-status-function)))
                (charging?  (string-equal "AC" (cdr (assoc ?L data))))
-               (percentage (car (read-from-string (cdr (assq ?p data)))))
+               (percentage (min (car (read-from-string (cdr (assq ?p data))))
+                                battery-mode-line-limit))
                (face (when (numberp percentage)
                        (cond (charging? 'success)
                              ((< percentage battery-load-critical) 'error)
