@@ -41,9 +41,10 @@ The `doom-modeline` was designed for minimalism, and offers:
 - A window number segment for `ace-window`, `winum` and `window-numbering`
 - An indicator for modal editing state, including `evil`, `overwrite`, `god`, `ryo` and
   `xah-fly-keys`, etc.
-- An indicator for remote host
-- An indicator for debug state
+- An indicator for battery status
 - An indicator for current input method
+- An indicator for debug state
+- An indicator for remote host
 - An indicator for LSP state with `lsp-mode` or `eglot`
 - An indicator for GitHub notifications
 - An indicator for unread emails with `mu4e-alert`
@@ -52,7 +53,6 @@ The `doom-modeline` was designed for minimalism, and offers:
 - An indicator for party parrot
 - An indicator for PDF page number with `pdf-tools`
 - An indicator for markdown/org preview with `grip`
-- An indicator for battery status with `fancy-battery`
 - Truncated file name, file icon, buffer state and project name in buffer information segment, which
   is compatible with `project`, `find-file-in-project` and `projectile`.
 - New mode-line for `Info-mode` buffers
