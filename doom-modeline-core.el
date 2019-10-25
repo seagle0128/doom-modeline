@@ -198,59 +198,37 @@ Specify another one if you encounter the issue."
   :group'doom-modeline)
 
 (defcustom doom-modeline-icon (display-graphic-p)
-  "Whether display icons in mode-line."
-  :type 'boolean
-  :group 'doom-modeline)
+  "Whether display icons in mode-line.
 
-(defcustom doom-modeline-buffer-icon t
-  "Whether display the icon for buffers.
-
-  It respects `doom-modeline-icon' and `doom-modeline-color-icons'."
-  :type 'boolean
-  :group'doom-modeline)
-
-(defcustom doom-modeline-buffer-color-icon t
-  "Whether display colorful icons for buffers.
-
-It respects `doom-modeline-icon' and `doom-modeline-color-icons'."
+It respects `all-the-icons-color-icons'."
   :type 'boolean
   :group 'doom-modeline)
 
 (defcustom doom-modeline-major-mode-icon t
-  "Whether display the icon for major mode.
+  "Whether display the icon for `major-mode'.
 
 It respects `doom-modeline-icon'."
   :type 'boolean
   :group'doom-modeline)
-(make-obsolete-variable doom-modeline-major-mode-icon
-                        doom-modeline-buffer-icon
-                        "2.7.0")
 
 (defcustom doom-modeline-major-mode-color-icon t
-  "Whether display color icons for `major-mode'.
+  "Whether display the colorful icon for `major-mode'.
 
-It respects `doom-modeline-icon' and `all-the-icons-color-icons'."
+It respects `doom-modeline-major-mode-icon'."
   :type 'boolean
-  :set (lambda (sym val)
-         (set sym val)
-         (setq doom-modeline-buffer-color-icon val))
   :group'doom-modeline)
-(make-obsolete-variable doom-modeline-major-mode-color-icon
-                        doom-modeline-buffer-color-icon
-                        "2.7.0")
 
 (defcustom doom-modeline-buffer-state-icon t
-  "Whether display icons for buffer states.
+  "Whether display the icon for the buffer state.
 
-  It respects `doom-modeline-icon' and `doom-modeline-color-icons'."
+It respects `doom-modeline-icon'."
   :type 'boolean
   :group 'doom-modeline)
 
 (defcustom doom-modeline-buffer-modification-icon t
-  "Whether display buffer modification icon.
+  "Whether display the modification icon for the buffer.
 
-  It respects `doom-modeline-icon', `doom-modeline-buffer-state-icon'
-  and `doom-modeline-color-icons'."
+It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'."
   :type 'boolean
   :group 'doom-modeline)
 
@@ -260,7 +238,7 @@ It respects `doom-modeline-icon' and `all-the-icons-color-icons'."
   :group 'doom-modeline)
 
 (defcustom doom-modeline-minor-modes (featurep 'minions)
-  "Whether display minor modes in mode-line or not."
+  "Whether display minor modes in mode-line."
   :type 'boolean
   :group 'doom-modeline)
 
@@ -295,17 +273,23 @@ It respects `doom-modeline-icon' and `all-the-icons-color-icons'."
   :group 'doom-modeline)
 
 (defcustom doom-modeline-persp-name t
-  "Whether display perspective name or not. Non-nil to display in mode-line."
+  "Whether display perspective name.
+
+Non-nil to display in mode-line."
   :type 'boolean
   :group 'doom-modeline)
 
 (defcustom doom-modeline-lsp t
-  "Whether display `lsp' state or not. Non-nil to display in mode-line."
+  "Whether display `lsp' state.
+
+Non-nil to display in mode-line."
   :type 'boolean
   :group 'doom-modeline)
 
 (defcustom doom-modeline-github nil
-  "Whether display GitHub notifications or not. Requires `ghub' package."
+  "Whether display GitHub notifications/
+
+It requires `ghub' and `async' packages."
   :type 'boolean
   :group 'doom-modeline)
 
@@ -315,17 +299,21 @@ It respects `doom-modeline-icon' and `all-the-icons-color-icons'."
   :group 'doom-modeline)
 
 (defcustom doom-modeline-env-version t
-  "Whether display environment version or not."
+  "Whether display environment version."
   :type 'boolean
   :group 'doom-modeline)
 
 (defcustom doom-modeline-mu4e t
-  "Whether display mu4e notifications or not. Requires `mu4e-alert' package."
+  "Whether display mu4e notifications.
+
+It requires `mu4e-alert' package."
   :type 'boolean
   :group 'doom-modeline)
 
 (defcustom doom-modeline-irc t
-  "Whether display irc notifications or not. Requires `circe' package."
+  "Whether display irc notifications.
+
+It requires `circe' package."
   :type 'boolean
   :group 'doom-modeline)
 
@@ -610,17 +598,17 @@ It respects `doom-modeline-icon' and `all-the-icons-color-icons'."
 
 (defun doom-modeline-redisplay (&rest _)
   "Call `redisplay' to trigger mode-line height calculations.
-Certain functions, including e.g. `fit-window-to-buffer', base
-their size calculations on values which are incorrect if the
-mode-line has a height different from that of the `default' face
-and certain other calculations have not yet taken place for the
-window in question.
-These calculations can be triggered by calling `redisplay'
-explicitly at the appropriate time and this functions purpose
-is to make it easier to do so.
-This function is like `redisplay' with non-nil FORCE argument.
-It accepts an arbitrary number of arguments making it suitable
-as a `:before' advice for any function."
+  Certain functions, including e.g. `fit-window-to-buffer', base
+  their size calculations on values which are incorrect if the
+  mode-line has a height different from that of the `default' face
+  and certain other calculations have not yet taken place for the
+  window in question.
+  These calculations can be triggered by calling `redisplay'
+  explicitly at the appropriate time and this functions purpose
+  is to make it easier to do so.
+  This function is like `redisplay' with non-nil FORCE argument.
+  It accepts an arbitrary number of arguments making it suitable
+  as a `:before' advice for any function."
   (redisplay t))
 
 (advice-add #'fit-window-to-buffer :before #'doom-modeline-redisplay)
@@ -820,7 +808,7 @@ as a `:before' advice for any function."
                                      if (= d 0) collect (string-to-char " ")
                                      else collect (string-to-char "."))
                             (if (eq idx len) "\"};" "\",\n")))))
-          'xpm t :ascent 'center))))))
+  'xpm t :ascent 'center))))))
 
 ;; Fix: invalid-regexp "Trailing backslash" while handling $HOME on Windows
 (defun doom-modeline-shrink-path--dirs-internal (full-path &optional truncate-all)

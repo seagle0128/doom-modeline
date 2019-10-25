@@ -187,29 +187,27 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Please refer to https://github.com/bbatsov/projectile/issues/657.
 (setq doom-modeline-buffer-file-name-style 'truncate-upto-project)
 
-;; Whether display icons in mode-line.
+;; Whether display icons in mode-line. It respects `all-the-icons-color-icons'.
 (setq doom-modeline-icon (display-graphic-p))
 
-;; Whether display the icon for buffers.
-;; It respects `doom-modeline-icon' and `doom-modeline-color-icons'.
-(setq doom-modeline-buffer-icon t)
+;; Whether display the icon for `major-mode'. It respects `doom-modeline-icon'.
+(setq doom-modeline-major-mode-icon t)
 
-;; Whether display colorful icons for buffers.
-(setq doom-modeline-buffer-color-icon t)
+;; Whether display the colorful icon for `major-mode'.
+;; It respects `doom-modeline-major-mode-icon'.
+(setq doom-modeline-major-mode-color-icon t)
 
-;; Whether display icons for buffer states.
-;; It respects `doom-modeline-icon' and `doom-modeline-color-icons'.
+;; Whether display the icon for the buffer state. It respects `doom-modeline-icon'.
 (setq doom-modeline-buffer-state-icon t)
 
-;; Whether display buffer modification icon.
-;; It respects `doom-modeline-icon', `doom-modeline-buffer-state-icon'
-;; and `doom-modeline-color-icons'.
+;; Whether display the modification icon for the buffer.
+;; It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'.
 (setq doom-modeline-buffer-modification-icon t)
 
 ;; Whether to use unicode as a fallback (instead of ASCII) when not using icons.
 (setq doom-modeline-unicode-fallback t)
 
-;; Whether display minor modes in mode-line or not.
+;; Whether display minor modes in mode-line.
 (setq doom-modeline-minor-modes (featurep 'minions))
 
 ;; If non-nil, a word count will be added to the selection-info modeline segment.
@@ -230,28 +228,28 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; The maximum displayed length of the branch name of version control.
 (setq doom-modeline-vcs-max-length 12)
 
-;; Whether display perspective name or not. Non-nil to display in mode-line.
+;; Whether display perspective name. Non-nil to display in mode-line.
 (setq doom-modeline-persp-name t)
 
-;; Whether display `lsp' state or not. Non-nil to display in mode-line.
+;; Whether display `lsp' state. Non-nil to display in mode-line.
 (setq doom-modeline-lsp t)
 
-;; Whether display GitHub notifications or not. Requires `ghub` package.
+;; Whether display GitHub notifications. It requires `ghub` package.
 (setq doom-modeline-github nil)
 
 ;; The interval of checking GitHub.
 (setq doom-modeline-github-interval (* 30 60))
 
-;; Whether display mu4e notifications or not. Requires `mu4e-alert' package.
+;; Whether display mu4e notifications. It requires `mu4e-alert' package.
 (setq doom-modeline-mu4e t)
 
-;; Whether display irc notifications or not. Requires `circe' package.
+;; Whether display irc notifications. It requires `circe' package.
 (setq doom-modeline-irc t)
 
 ;; Function to stylize the irc buffer names.
 (setq doom-modeline-irc-stylize 'identity)
 
-;; Whether display environment version or not
+;; Whether display environment version.
 (setq doom-modeline-env-version t)
 ;; Or for individual languages
 (setq doom-modeline-env-enable-python t)

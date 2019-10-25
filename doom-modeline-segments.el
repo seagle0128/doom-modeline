@@ -217,7 +217,7 @@ buffer where knowing the current project directory is important."
 (defun doom-modeline-update-buffer-file-icon (&rest _)
   "Update file icon in mode-line."
   (setq doom-modeline--buffer-file-icon
-        (when (and doom-modeline-icon doom-modeline-buffer-icon)
+        (when (and doom-modeline-icon doom-modeline-major-mode-icon)
           (let* ((icon (if (and (buffer-file-name)
                                 (all-the-icons-auto-mode-match?))
                            (all-the-icons-icon-for-file (file-name-nondirectory (buffer-file-name)))
@@ -382,13 +382,13 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 
 (defsubst doom-modeline--buffer-mode-icon ()
   "The icon of the current major mode."
-  (when (and doom-modeline-icon doom-modeline-buffer-icon)
+  (when (and doom-modeline-icon doom-modeline-major-mode-icon)
     (when-let ((icon (or doom-modeline--buffer-file-icon
                          (doom-modeline-update-buffer-file-icon))))
       (when icon
         (concat
          (if (doom-modeline--active)
-             (if doom-modeline-buffer-color-icon
+             (if doom-modeline-major-mode-color-icon
                  icon
                (propertize icon 'face `(:inherit ,(let ((props (get-text-property 0 'face icon)))
                                                     props (remove :inherit props))
@@ -2200,12 +2200,12 @@ we don't want to remove that so we just return the original."
            front
          (propertize front 'face 'mode-line-inactive)))
 
-     (when (and doom-modeline-icon doom-modeline-buffer-icon)
+     (when (and doom-modeline-icon doom-modeline-major-mode-icon)
        (concat (doom-modeline-spc)
                (doom-modeline-icon-for-mode 'paradox-menu-mode
                                             :v-adjust -0.15
                                             :face (if active
-                                                      (if doom-modeline-buffer-color-icon
+                                                      (if doom-modeline-major-mode-color-icon
                                                           'all-the-icons-silver
                                                         'mode-line)
                                                     'mode-line-inactive))))
@@ -2241,7 +2241,7 @@ The cdr can also be a function that returns a name to use.")
                                     :height 1.0
                                     :v-adjust -0.15
                                     :face (if active
-                                              (if doom-modeline-buffer-color-icon
+                                              (if doom-modeline-major-mode-color-icon
                                                   'all-the-icons-purple
                                                 'mode-line)
                                             'mode-line-inactive))
