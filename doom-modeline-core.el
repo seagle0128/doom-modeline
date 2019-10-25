@@ -233,7 +233,7 @@ It respects `doom-modeline-icon' and `all-the-icons-color-icons'."
   :type 'boolean
   :set (lambda (sym val)
          (set sym val)
-         (setq doom-modeline-color-icons val))
+         (setq doom-modeline-buffer-color-icon val))
   :group'doom-modeline)
 (make-obsolete-variable doom-modeline-major-mode-color-icon
                         doom-modeline-buffer-color-icon
