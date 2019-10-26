@@ -443,20 +443,38 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 (doom-modeline-def-segment buffer-encoding
   "Displays the encoding and eol style of the buffer the same way Atom does."
   (when doom-modeline-buffer-encoding
-    (propertize
-     (concat (pcase (coding-system-eol-type buffer-file-coding-system)
-               (0 " LF")
-               (1 " CRLF")
-               (2 " CR"))
-             (let ((sys (coding-system-plist buffer-file-coding-system)))
-               (cond ((memq (plist-get sys :category)
-                            '(coding-category-undecided coding-category-utf-8))
-                      " UTF-8 ")
-                     (t (upcase (symbol-name (plist-get sys :name)))))))
-     'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
-     'help-echo 'mode-line-mule-info-help-echo
-     'mouse-face '(:box 0)
-     'local-map mode-line-coding-system-map)))
+    (let ((face (if (doom-modeline--active) 'mode-line 'mode-line-inactive))
+          (mouse-face '(:box 0)))
+      (concat
+       ;; eol type
+       (let ((eol (coding-system-eol-type buffer-file-coding-system)))
+         (propertize
+          (pcase eol
+            (0 " LF")
+            (1 " CRLF")
+            (2 " CR"))
+          'face face
+          'mouse-face mouse-face
+          'help-echo (format "End-of-line style: %s\nmouse-1: Cycle"
+                             (pcase eol
+                               (0 "Unix-style LF")
+                               (1 "DOS-style CRLF")
+                               (2 "Mac-style CR")
+                               (_ "Undecided")))
+          'local-map (let ((map (make-sparse-keymap)))
+		               (define-key map [mode-line mouse-1] 'mode-line-change-eol)
+		               map)))
+       ;; coding sytem
+       (propertize
+        (let ((sys (coding-system-plist buffer-file-coding-system)))
+          (cond ((memq (plist-get sys :category)
+                       '(coding-category-undecided coding-category-utf-8))
+                 " UTF-8 ")
+                (t (upcase (symbol-name (plist-get sys :name))))))
+        'face face
+        'mouse-face mouse-face
+        'help-echo 'mode-line-mule-info-help-echo
+        'local-map mode-line-coding-system-map)))))
 
 
 ;;
