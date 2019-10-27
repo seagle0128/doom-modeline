@@ -452,7 +452,8 @@ directory, the file name, and its state (modified, read-only or non-existent)."
           (pcase eol
             (0 " LF")
             (1 " CRLF")
-            (2 " CR"))
+            (2 " CR")
+            (_ ""))
           'face face
           'mouse-face mouse-face
           'help-echo (format "End-of-line style: %s\nmouse-1: Cycle"
