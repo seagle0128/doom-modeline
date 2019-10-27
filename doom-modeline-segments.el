@@ -1006,11 +1006,12 @@ mouse-1: List all problems%s"
                  icon
                (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
                                         :inherit mode-line-inactive))))
-           (doom-modeline-vspc)
            (when text
-             (if active
-                 text
-               (propertize text 'face 'mode-line-inactive)))))
+             (concat
+              (doom-modeline-vspc)
+              (if active
+                  text
+                (propertize text 'face 'mode-line-inactive))))))
       "")))
 
 
