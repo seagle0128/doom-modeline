@@ -234,6 +234,9 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
     (progn
       ;; Restore mode-line
       (setq-default mode-line-format doom-modeline--old-format)
+      (dolist (bname '("*scratch*" "*Messages*"))
+        (with-current-buffer bname
+          (setq mode-line-format doom-modeline--old-format)))
       ;; Remove hooks
       (remove-hook 'Info-mode-hook #'doom-modeline-set-info-modeline)
       (remove-hook 'dired-mode-hook #'doom-modeline-set-project-modeline)
