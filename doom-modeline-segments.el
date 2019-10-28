@@ -1940,7 +1940,7 @@ mouse-1: Toggle Debug on Error"
 (defsubst doom-modeline--debug-on-quit ()
   "The current `debug-on-quit' state."
   (when debug-on-quit
-    (propertize (doom-modeline-debug-icon 'doom-modeline-buffer-path)
+    (propertize (doom-modeline-debug-icon 'doom-modeline-info)
                 'help-echo "Debug on Quit
 mouse-1: Toggle Debug on Quit"
                 'mouse-face '(:box 0)
