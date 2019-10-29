@@ -325,9 +325,7 @@ Uses `all-the-icons-material' to fetch the icon."
             (if buffer-file-name
                 (doom-modeline-buffer-file-name)
               (propertize "%b"
-                          'face (if (doom-modeline--active)
-                                    'doom-modeline-buffer-file
-                                  'mode-line-inactive)
+                          'face 'doom-modeline-buffer-file
                           'help-echo "Buffer name
 mouse-1: Previous buffer\nmouse-3: Next buffer"
                           'local-map mode-line-buffer-identification-keymap))))))
