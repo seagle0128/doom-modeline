@@ -267,7 +267,9 @@ Uses `all-the-icons-material' to fetch the icon."
                  (doom-modeline-buffer-file-state-icon
                   "save" "💾" "%1*" 'doom-modeline-buffer-modified))
                 ((and buffer-file-name
-                      (not (file-exists-p buffer-file-name)))
+                      (or
+                       (string= _ " *temp*")
+                       (not (file-exists-p buffer-file-name))))
                  (doom-modeline-buffer-file-state-icon
                   "do_not_disturb_alt" "🚫" "!" 'doom-modeline-urgent))
                 ((or (buffer-narrowed-p)
