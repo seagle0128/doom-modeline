@@ -262,7 +262,7 @@ Uses `all-the-icons-material' to fetch the icon."
           (cond (buffer-read-only
                  (doom-modeline-buffer-file-state-icon
                   "lock" "🔒" "%1*" 'doom-modeline-warning))
-                ((and buffer-file-name (buffer-modified-p)
+                ((and (buffer-modified-p)
                       doom-modeline-buffer-modification-icon)
                  (doom-modeline-buffer-file-state-icon
                   "save" "💾" "%1*" 'doom-modeline-buffer-modified))
@@ -287,7 +287,6 @@ Uses `all-the-icons-material' to fetch the icon."
 (advice-add #'undo-tree-undo-1 :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'undo-tree-redo-1 :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'fill-paragraph :after #'doom-modeline-update-buffer-file-state-icon)
-(advice-add #'generate-new-buffer :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'not-modified :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'narrow-to-region :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'widen :after #'doom-modeline-update-buffer-file-state-icon)
