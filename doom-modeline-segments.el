@@ -439,7 +439,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 ;;
 
 (doom-modeline-def-segment buffer-encoding
-  "Displays the encoding and eol style of the buffer the same way Atom does."
+  "Displays the eol and the encoding style of the buffer the same way Atom does."
   (when doom-modeline-buffer-encoding
     (let ((face (if (doom-modeline--active) 'mode-line 'mode-line-inactive))
           (mouse-face '(:box 0)))
@@ -463,7 +463,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
           'local-map (let ((map (make-sparse-keymap)))
 		               (define-key map [mode-line mouse-1] 'mode-line-change-eol)
 		               map)))
-       ;; coding sytem
+       ;; coding system
        (propertize
         (let ((sys (coding-system-plist buffer-file-coding-system)))
           (cond ((memq (plist-get sys :category)
