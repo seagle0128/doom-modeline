@@ -465,11 +465,14 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 		               map)))
        ;; coding system
        (propertize
-        (let ((sys (coding-system-plist buffer-file-coding-system)))
-          (cond ((memq (plist-get sys :category)
-                       '(coding-category-undecided coding-category-utf-8))
-                 " UTF-8 ")
-                (t (upcase (symbol-name (plist-get sys :name))))))
+        (concat
+         (doom-modeline-spc)
+         (let ((sys (coding-system-plist buffer-file-coding-system)))
+           (cond ((memq (plist-get sys :category)
+                        '(coding-category-undecided coding-category-utf-8))
+                  "UTF-8")
+                 (t (upcase (symbol-name (plist-get sys :name))))))
+         (doom-modeline-spc))
         'face face
         'mouse-face mouse-face
         'help-echo 'mode-line-mule-info-help-echo
