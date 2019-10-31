@@ -597,6 +597,7 @@ It requires `circe' package."
 ;; Plugins
 ;;
 
+(defvar-local doom-modeline--size-hacked-p nil)
 (defun doom-modeline-redisplay (&rest _)
   "Call `redisplay' to trigger mode-line height calculations.
   Certain functions, including e.g. `fit-window-to-buffer', base
@@ -610,8 +611,9 @@ It requires `circe' package."
   This function is like `redisplay' with non-nil FORCE argument.
   It accepts an arbitrary number of arguments making it suitable
   as a `:before' advice for any function."
-  (redisplay t))
-
+  (unless doom-modeline--size-hacked-p
+    (setq doom-modeline--size-hacked-p t)
+    (redisplay t)))
 (advice-add #'fit-window-to-buffer :before #'doom-modeline-redisplay)
 (advice-add #'resize-temp-buffer-window :before #'doom-modeline-redisplay)
 
