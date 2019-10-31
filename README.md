@@ -188,6 +188,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 (setq doom-modeline-buffer-file-name-style 'truncate-upto-project)
 
 ;; Whether display icons in mode-line. It respects `all-the-icons-color-icons'.
+;; While using the server mode in GUI, should set the value explicitly.
 (setq doom-modeline-icon (display-graphic-p))
 
 ;; Whether display the icon for `major-mode'. It respects `doom-modeline-icon'.
