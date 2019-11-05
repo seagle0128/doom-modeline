@@ -191,7 +191,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
 
 ;;
-;; Mode
+;; Minor mode
 ;;
 
 (defvar doom-modeline--old-format mode-line-format
@@ -200,8 +200,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
 (defvar doom-modeline-mode-map (make-sparse-keymap))
 
- ;; suppress warnings
-(declare-function battery-update 'battery)
+;; Suppress warnings
 (declare-function helm-display-mode-line 'helm)
 
 ;;;###autoload
@@ -213,8 +212,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   :keymap doom-modeline-mode-map
   (if doom-modeline-mode
       (progn
-        (doom-modeline-refresh-bars)        ; create bars
-        (doom-modeline-set-main-modeline t) ; set default mode-line
+        (doom-modeline-refresh-bars)        ; Create bars
+        (doom-modeline-set-main-modeline t) ; Set default mode-line
         ;; These buffers are already created and don't get modelines
         (dolist (bname '("*scratch*" "*Messages*"))
           (if (buffer-live-p bname)
