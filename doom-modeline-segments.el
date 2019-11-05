@@ -1507,7 +1507,7 @@ mouse-1: Display Line and Column Mode Menu"
             (doom-modeline-spc))))
 
 ;;
-;; modals (evil, god, ryo and xah-fly-keys, etc.)
+;; modals (evil, overwrite, god, ryo and xah-fly-keys, etc.)
 ;;
 
 (defsubst doom-modeline--evil ()
@@ -1538,35 +1538,65 @@ mouse-1: Display Line and Column Mode Menu"
   "The current overwrite state. Requires `overwrite-mode' to be enabled."
   (when (and (bound-and-true-p overwrite-mode)
              (not (bound-and-true-p evil-local-mode)))
-    (propertize " <O> " 'face (if (doom-modeline--active)
-                                  'doom-modeline-urgent
-                                'mode-line-inactive))))
+    (propertize (concat
+                 (doom-modeline-spc)
+                 (doom-modeline-icon 'material "fiber_manual_record" "●" "<O>"
+                                     (if (doom-modeline--active)
+                                         'doom-modeline-urgent
+                                       'mode-line-inactive)
+                                     :v-adjust -0.225)
+                 (doom-modeline-spc))
+                'help-echo "Overwrite state")))
 
 (defsubst doom-modeline--god ()
   "The current god state. Requires `god-mode' to be enabled."
   (when (bound-and-true-p god-local-mode)
-    (propertize " <G> " 'face (if (doom-modeline--active)
-                                  'doom-modeline-evil-normal-state
-                                'mode-line-inactive))))
+    (propertize (concat
+                 (doom-modeline-spc)
+                 (doom-modeline-icon 'material "fiber_manual_record" "●" "<G>"
+                                     (if (doom-modeline--active)
+                                         'doom-modeline-evil-normal-state
+                                       'mode-line-inactive)
+                                     :v-adjust -0.225)
+                 (doom-modeline-spc))
+                'help-echo "God mode")))
 
 (defsubst doom-modeline--ryo ()
   "The current ryo-modal state. Requires `ryo-modal-mode' to be enabled."
   (when (bound-and-true-p ryo-modal-mode)
-    (propertize " <R> " 'face (if (doom-modeline--active)
-                                  'doom-modeline-evil-normal-state
-                                'mode-line-inactive))))
+    (propertize (concat
+                 (doom-modeline-spc)
+                 (doom-modeline-icon 'material "fiber_manual_record" "●" "<R>"
+                                     (if (doom-modeline--active)
+                                         'doom-modeline-evil-normal-state
+                                       'mode-line-inactive)
+                                     :v-adjust -0.225)
+                 (doom-modeline-spc))
+                'help-echo "Ryo modal")))
 
 (defsubst doom-modeline--xah-fly-keys ()
   "The current `xah-fly-keys' state."
   (when (boundp 'xah-fly-insert-state-q)
     (let ((active (doom-modeline--active)))
       (if xah-fly-insert-state-q
-          (propertize " <I> " 'face (if active
-                                        'doom-modeline-evil-insert-state
-                                      'mode-line-inactive))
-        (propertize " <C> " 'face (if active
-                                      'doom-modeline-evil-normal-state
-                                    'mode-line-inactive))))))
+          (propertize (concat
+                       (doom-modeline-spc)
+                       (doom-modeline-icon 'material "fiber_manual_record" "●" "<I>"
+                                           (if active
+                                               'doom-modeline-evil-insert-state
+                                             'mode-line-inactive)
+                                           :v-adjust -0.225)
+                       (doom-modeline-spc))
+                      'help-echo "Xah-fly insert state")
+        (propertize (concat
+                     (doom-modeline-spc)
+                     (doom-modeline-icon 'material "fiber_manual_record" "●" "<C>"
+                                         (if active
+                                             'doom-modeline-evil-normal-state
+                                           'mode-line-inactive)
+                                         :v-adjust -0.225)
+                     (doom-modeline-spc))
+                    'help-echo "Xah-fly normal state")))))
 
 (doom-modeline-def-segment modals
   "Displays modal editing states, including `evil', `overwrite', `god', `ryo' and `xha-fly-kyes', etc."
