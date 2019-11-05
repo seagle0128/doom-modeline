@@ -208,16 +208,16 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether to use unicode as a fallback (instead of ASCII) when not using icons.
 (setq doom-modeline-unicode-fallback t)
 
-;; Whether display minor modes in mode-line.
+;; Whether display the minor modes in mode-line.
 (setq doom-modeline-minor-modes (featurep 'minions))
 
 ;; If non-nil, a word count will be added to the selection-info modeline segment.
 (setq doom-modeline-enable-word-count nil)
 
-;; Whether display buffer encoding.
+;; Whether display the buffer encoding.
 (setq doom-modeline-buffer-encoding t)
 
-;; Whether display indentation information.
+;; Whether display the indentation information.
 (setq doom-modeline-indent-info nil)
 
 ;; If non-nil, only display one number for checker information if applicable.
@@ -229,28 +229,31 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; The maximum displayed length of the branch name of version control.
 (setq doom-modeline-vcs-max-length 12)
 
-;; Whether display perspective name. Non-nil to display in mode-line.
+;; Whether display the perspective name. Non-nil to display in mode-line.
 (setq doom-modeline-persp-name t)
 
-;; Whether display `lsp' state. Non-nil to display in mode-line.
+;; Whether display the `lsp' state. Non-nil to display in mode-line.
 (setq doom-modeline-lsp t)
 
-;; Whether display GitHub notifications. It requires `ghub` package.
+;; Whether display the GitHub notifications. It requires `ghub` package.
 (setq doom-modeline-github nil)
 
 ;; The interval of checking GitHub.
 (setq doom-modeline-github-interval (* 30 60))
 
-;; Whether display mu4e notifications. It requires `mu4e-alert' package.
+;; Whether display the `evil' state icon.
+(setq doom-modeline-evil-state-icon t)
+
+;; Whether display the mu4e notifications. It requires `mu4e-alert' package.
 (setq doom-modeline-mu4e t)
 
-;; Whether display irc notifications. It requires `circe' package.
+;; Whether display the irc notifications. It requires `circe' package.
 (setq doom-modeline-irc t)
 
 ;; Function to stylize the irc buffer names.
 (setq doom-modeline-irc-stylize 'identity)
 
-;; Whether display environment version.
+;; Whether display the environment version.
 (setq doom-modeline-env-version t)
 ;; Or for individual languages
 (setq doom-modeline-env-enable-python t)

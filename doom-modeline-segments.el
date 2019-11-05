@@ -1513,8 +1513,13 @@ mouse-1: Display Line and Column Mode Menu"
 (defsubst doom-modeline--evil ()
   "The current evil state. Requires `evil-mode' to be enabled."
   (when (bound-and-true-p evil-local-mode)
-    (let ((tag (evil-state-property evil-state :tag t)))
-      (propertize tag 'face
+    (propertize (concat
+                 (doom-modeline-spc)
+                 (doom-modeline-icon
+                  'material
+                  (when doom-modeline-evil-state-icon "fiber_manual_record")
+                  "●"
+                  (string-trim (evil-state-property evil-state :tag t))
                   (if (doom-modeline--active)
                       (cond ((evil-normal-state-p) 'doom-modeline-evil-normal-state)
                             ((evil-emacs-state-p) 'doom-modeline-evil-emacs-state)
@@ -1522,8 +1527,12 @@ mouse-1: Display Line and Column Mode Menu"
                             ((evil-motion-state-p) 'doom-modeline-evil-motion-state)
                             ((evil-visual-state-p) 'doom-modeline-evil-visual-state)
                             ((evil-operator-state-p) 'doom-modeline-evil-operator-state)
-                            ((evil-replace-state-p) 'doom-modeline-evil-replace-state))
-                    'mode-line-inactive)))))
+                            ((evil-replace-state-p) 'doom-modeline-evil-replace-state)
+                            (t 'mode-line))
+                    'mode-line-inactive)
+                  :v-adjust -0.225)
+                 (doom-modeline-spc))
+                'help-echo (evil-state-property evil-state :name t))))
 
 (defsubst doom-modeline--overwrite ()
   "The current overwrite state. Requires `overwrite-mode' to be enabled."
@@ -1584,14 +1593,13 @@ mouse-1: Display Line and Column Mode Menu"
   "The current objed state."
   (when (and doom-modeline--objed-active
              (doom-modeline--active))
-    (propertize
-     (format " %s(%s) "
-             (symbol-name objed--object)
-             (char-to-string (aref (symbol-name objed--obj-state) 0)))
-     'face 'doom-modeline-evil-emacs-state
-     'help-echo (format "Objed object: %s (%s)"
+    (propertize (format " %s(%s) "
                         (symbol-name objed--object)
-                        (symbol-name objed--obj-state)))))
+                        (char-to-string (aref (symbol-name objed--obj-state) 0)))
+                'face 'doom-modeline-evil-emacs-state
+                'help-echo (format "Objed object: %s (%s)"
+                                   (symbol-name objed--object)
+                                   (symbol-name objed--obj-state)))))
 
 
 ;;
@@ -1600,30 +1608,28 @@ mouse-1: Display Line and Column Mode Menu"
 
 (doom-modeline-def-segment input-method
   "The current input method."
-  (propertize
-   (cond
-    (current-input-method
-     (concat (doom-modeline-spc)
-             current-input-method-title
-             (doom-modeline-spc)))
-    ((and (bound-and-true-p evil-local-mode)
-          (bound-and-true-p evil-input-method))
-     (concat
-      (doom-modeline-spc)
-      (nth 3 (assoc default-input-method input-method-alist))
-      (doom-modeline-spc)))
-    (t ""))
-   'face (if (doom-modeline--active)
-             'doom-modeline-buffer-major-mode
-           'mode-line-inactive)
-   'help-echo (concat
-               "Current input method: "
-               current-input-method
-               "\n\
+  (propertize (cond (current-input-method
+                     (concat (doom-modeline-spc)
+                             current-input-method-title
+                             (doom-modeline-spc)))
+                    ((and (bound-and-true-p evil-local-mode)
+                          (bound-and-true-p evil-input-method))
+                     (concat
+                      (doom-modeline-spc)
+                      (nth 3 (assoc default-input-method input-method-alist))
+                      (doom-modeline-spc)))
+                    (t ""))
+              'face (if (doom-modeline--active)
+                        'doom-modeline-buffer-major-mode
+                      'mode-line-inactive)
+              'help-echo (concat
+                          "Current input method: "
+                          current-input-method
+                          "\n\
 mouse-2: Disable input method\n\
 mouse-3: Describe current input method")
-   'mouse-face 'mode-line-highlight
-   'local-map mode-line-input-method-map))
+              'mouse-face 'mode-line-highlight
+              'local-map mode-line-input-method-map))
 
 
 ;;
@@ -1718,12 +1724,11 @@ mouse-1: Reload to start server")
                                            (jsonrpc--request-continuations server))))
                      (`(,_id ,doing ,done-p ,detail) (and server (eglot--spinner server)))
                      (last-error (and server (jsonrpc-last-error server)))
-                     (face (cond
-                            (last-error 'doom-modeline-lsp-error)
-                            ((and doing (not done-p)) 'compilation-mode-line-run)
-                            ((and pending (cl-plusp pending)) 'doom-modeline-lsp-warning)
-                            (nick 'doom-modeline-lsp-success)
-                            (t 'mode-line)))
+                     (face (cond (last-error 'doom-modeline-lsp-error)
+                                 ((and doing (not done-p)) 'compilation-mode-line-run)
+                                 ((and pending (cl-plusp pending)) 'doom-modeline-lsp-warning)
+                                 (nick 'doom-modeline-lsp-success)
+                                 (t 'mode-line)))
                      (icon (doom-modeline-lsp-icon "EGLOT" face)))
           (propertize icon
                       'help-echo (cond
@@ -1743,22 +1748,21 @@ mouse-3: Reconnect to server" nick (eglot--major-mode server)))
                                   (t "EGLOT Disconnected"))
                       'mouse-face '(:box 0)
                       'local-map (let ((map (make-sparse-keymap)))
-                                   (cond
-                                    (last-error
-                                     (define-key map [mode-line mouse-3]
-                                       #'eglot-clear-status))
-                                    ((and pending (cl-plusp pending))
-                                     (define-key map [mode-line mouse-3]
-                                       #'eglot-forget-pending-continuations))
-                                    (nick
-                                     (define-key map [mode-line C-mouse-1]
-                                       #'eglot-stderr-buffer)
-                                     (define-key map [mode-line mouse-1]
-                                       #'eglot-events-buffer)
-                                     (define-key map [mode-line mouse-2]
-                                       #'eglot-shutdown)
-                                     (define-key map [mode-line mouse-3]
-                                       #'eglot-reconnect)))
+                                   (cond (last-error
+                                          (define-key map [mode-line mouse-3]
+                                            #'eglot-clear-status))
+                                         ((and pending (cl-plusp pending))
+                                          (define-key map [mode-line mouse-3]
+                                            #'eglot-forget-pending-continuations))
+                                         (nick
+                                          (define-key map [mode-line C-mouse-1]
+                                            #'eglot-stderr-buffer)
+                                          (define-key map [mode-line mouse-1]
+                                            #'eglot-events-buffer)
+                                          (define-key map [mode-line mouse-2]
+                                            #'eglot-shutdown)
+                                          (define-key map [mode-line mouse-3]
+                                            #'eglot-reconnect)))
                                    map)))))
 (add-hook 'eglot--managed-mode-hook #'doom-modeline-update-eglot)
 
