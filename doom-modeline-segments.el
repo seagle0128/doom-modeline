@@ -1471,36 +1471,46 @@ See `mode-line-percent-position'.")
 
 (doom-modeline-def-segment buffer-position
   "The buffer position information."
-  (let ((active (doom-modeline--active))
-        (lc '(line-number-mode
-              (column-number-mode
-               (doom-modeline-column-zero-based "%l:%c" "%l:%C")
-               "%l")
-              (column-number-mode (doom-modeline-column-zero-based ":%c" ":%C")))))
-    (if (and (bound-and-true-p nyan-mode)
-             active
-             (>= (window-width) nyan-minimum-window-width))
-        (concat (doom-modeline-spc)
-                (doom-modeline-spc)
-                (nyan-create)
-                (doom-modeline-spc)
-                (propertize (format-mode-line lc)
-                            'help-echo "Buffer position\n\
-mouse-1: Display Line and Column Mode Menu"
-                            'mouse-face 'mode-line-highlight
-                            'local-map mode-line-column-line-number-mode-map))
-      (concat (doom-modeline-spc)
-              (doom-modeline-spc)
-              (propertize (concat (format-mode-line lc)
-                                  (when doom-modeline-percent-position
-                                    (format-mode-line '(" " doom-modeline-percent-position "%%"))))
-                          'face (if active 'mode-line 'mode-line-inactive)
-                          'help-echo "Buffer position\n\
-mouse-1: Display Line and Column Mode Menu"
-                          'mouse-face 'mode-line-highlight
-                          'local-map mode-line-column-line-number-mode-map)
-              (when (or line-number-mode column-number-mode doom-modeline-percent-position)
-                (doom-modeline-spc))))))
+  (let* ((active (doom-modeline--active))
+         (lc '(line-number-mode
+               (column-number-mode
+                (doom-modeline-column-zero-based "%l:%c" "%l:%C")
+                "%l")
+               (column-number-mode (doom-modeline-column-zero-based ":%c" ":%C"))))
+         (face (if active 'mode-line 'mode-line-inactive))
+         (mouse-face 'mode-line-highlight)
+         (help-echo "Buffer position\n\
+mouse-1: Display Line and Column Mode Menu")
+         (local-map mode-line-column-line-number-mode-map))
+    (concat
+     (doom-modeline-spc)
+     (doom-modeline-spc)
+     (if (and active
+              (bound-and-true-p nyan-mode)
+              (>= (window-width) nyan-minimum-window-width))
+         (concat
+          (nyan-create)
+          (doom-modeline-spc)
+          (propertize (format-mode-line lc)
+                      'help-echo help-echo
+                      'mouse-face mouse-face
+                      'local-map local-map))
+       (concat
+        (propertize (format-mode-line lc)
+                    'face face
+                    'help-echo help-echo
+                    'mouse-face mouse-face
+                    'local-map local-map)
+        (when doom-modeline-percent-position
+          (concat
+           (doom-modeline-spc)
+           (propertize (format-mode-line '("" doom-modeline-percent-position "%%"))
+                       'face face
+                       'help-echo help-echo
+                       'mouse-face mouse-face
+                       'local-map local-map)))
+        (when (or line-number-mode column-number-mode doom-modeline-percent-position)
+          (doom-modeline-spc)))))))
 
 ;;
 ;; party parrot
