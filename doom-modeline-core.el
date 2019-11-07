@@ -873,6 +873,7 @@ directory too."
                          (and (doom-modeline--active)
                               'doom-modeline-buffer-file))))
            (when face `(:inherit ,face))))))
+     'mouse-face 'mode-line-highlight
      'help-echo (concat buffer-file-truename
                         (unless (string= (file-name-nondirectory buffer-file-truename)
                                          (buffer-name))
