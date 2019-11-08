@@ -1213,16 +1213,15 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 
 (defsubst doom-modeline--buffer-size ()
   "Show buffer size."
-  (concat
-   (doom-modeline-spc)
-   (if (and buffer-file-name size-indication-mode)
-       (propertize "%I"
-                   'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
-                   'help-echo "Buffer size
+  (when size-indication-mode
+    (concat (doom-modeline-spc)
+            (propertize "%I"
+                        'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
+                        'help-echo "Buffer size
 mouse-1: Display Line and Column Mode Menu"
-                   'mouse-face 'mode-line-highlight
-                   'local-map mode-line-column-line-number-mode-map))
-   (doom-modeline-spc)))
+                        'mouse-face 'mode-line-highlight
+                        'local-map mode-line-column-line-number-mode-map)
+            (doom-modeline-spc))))
 
 (doom-modeline-def-segment matches
   "Displays: 1. the currently recording macro, 2. A current/total for the
