@@ -1768,52 +1768,53 @@ mouse-1: Reload to start server")
 (defun doom-modeline-update-eglot ()
   "Update `eglot' status."
   (setq doom-modeline--eglot
-        (pcase-let* ((server (eglot--current-server))
-                     (nick (and server (eglot--project-nickname server)))
-                     (pending (and server (hash-table-count
-                                           (jsonrpc--request-continuations server))))
-                     (`(,_id ,doing ,done-p ,detail) (and server (eglot--spinner server)))
-                     (last-error (and server (jsonrpc-last-error server)))
-                     (face (cond (last-error 'doom-modeline-lsp-error)
-                                 ((and doing (not done-p)) 'compilation-mode-line-run)
-                                 ((and pending (cl-plusp pending)) 'doom-modeline-lsp-warning)
-                                 (nick 'doom-modeline-lsp-success)
-                                 (t 'mode-line)))
-                     (icon (doom-modeline-lsp-icon "EGLOT" face)))
-          (propertize icon
-                      'help-echo (cond
-                                  (last-error
-                                   (format "EGLOT\nAn error occured: %s
+        (when eglot--managed-mode
+          (pcase-let* ((server (eglot--current-server))
+                       (nick (and server (eglot--project-nickname server)))
+                       (pending (and server (hash-table-count
+                                             (jsonrpc--request-continuations server))))
+                       (`(,_id ,doing ,done-p ,detail) (and server (eglot--spinner server)))
+                       (last-error (and server (jsonrpc-last-error server)))
+                       (face (cond (last-error 'doom-modeline-lsp-error)
+                                   ((and doing (not done-p)) 'compilation-mode-line-run)
+                                   ((and pending (cl-plusp pending)) 'doom-modeline-lsp-warning)
+                                   (nick 'doom-modeline-lsp-success)
+                                   (t 'mode-line)))
+                       (icon (doom-modeline-lsp-icon "EGLOT" face)))
+            (propertize icon
+                        'help-echo (cond
+                                    (last-error
+                                     (format "EGLOT\nAn error occured: %s
 mouse-3: clear this status" (plist-get last-error :message)))
-                                  ((and doing (not done-p))
-                                   (format "EGLOT\n%s%s" doing
-                                           (if detail (format "%s" detail) "")))
-                                  ((and pending (cl-plusp pending))
-                                   (format "EGLOT\n%d outstanding requests" pending))
-                                  (nick (format "EGLOT Connected (%s/%s)
+                                    ((and doing (not done-p))
+                                     (format "EGLOT\n%s%s" doing
+                                             (if detail (format "%s" detail) "")))
+                                    ((and pending (cl-plusp pending))
+                                     (format "EGLOT\n%d outstanding requests" pending))
+                                    (nick (format "EGLOT Connected (%s/%s)
 C-mouse-1: Disply server errors
 mouse-1: Display server events
 mouse-2: Quit server
 mouse-3: Reconnect to server" nick (eglot--major-mode server)))
-                                  (t "EGLOT Disconnected"))
-                      'mouse-face 'mode-line-highlight
-                      'local-map (let ((map (make-sparse-keymap)))
-                                   (cond (last-error
-                                          (define-key map [mode-line mouse-3]
-                                            #'eglot-clear-status))
-                                         ((and pending (cl-plusp pending))
-                                          (define-key map [mode-line mouse-3]
-                                            #'eglot-forget-pending-continuations))
-                                         (nick
-                                          (define-key map [mode-line C-mouse-1]
-                                            #'eglot-stderr-buffer)
-                                          (define-key map [mode-line mouse-1]
-                                            #'eglot-events-buffer)
-                                          (define-key map [mode-line mouse-2]
-                                            #'eglot-shutdown)
-                                          (define-key map [mode-line mouse-3]
-                                            #'eglot-reconnect)))
-                                   map)))))
+                                    (t "EGLOT Disconnected"))
+                        'mouse-face 'mode-line-highlight
+                        'local-map (let ((map (make-sparse-keymap)))
+                                     (cond (last-error
+                                            (define-key map [mode-line mouse-3]
+                                              #'eglot-clear-status))
+                                           ((and pending (cl-plusp pending))
+                                            (define-key map [mode-line mouse-3]
+                                              #'eglot-forget-pending-continuations))
+                                           (nick
+                                            (define-key map [mode-line C-mouse-1]
+                                              #'eglot-stderr-buffer)
+                                            (define-key map [mode-line mouse-1]
+                                              #'eglot-events-buffer)
+                                            (define-key map [mode-line mouse-2]
+                                              #'eglot-shutdown)
+                                            (define-key map [mode-line mouse-3]
+                                              #'eglot-reconnect)))
+                                     map))))))
 (add-hook 'eglot--managed-mode-hook #'doom-modeline-update-eglot)
 
 (doom-modeline-def-segment lsp
