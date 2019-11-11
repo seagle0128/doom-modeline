@@ -389,6 +389,11 @@ It requires `circe' package."
   "Face for 'X out of Y' segments, such as `anzu', `evil-substitute' and`iedit', etc."
   :group 'doom-modeline-faces)
 
+(defface doom-modeline-host
+  '((t (:inherit italic)))
+  "Face for remote hosts in the modeline."
+  :group 'doom-modeline-faces)
+
 (defface doom-modeline-debug
   '((t (:inherit (font-lock-doc-face bold))))
   "Face for debug-level messages in the modeline. Used by `*checker'."

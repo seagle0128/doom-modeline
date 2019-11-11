@@ -506,7 +506,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
     (when-let ((host (file-remote-p default-directory 'host)))
       (propertize
        (concat "@" host)
-       'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)))))
+       'face (if (doom-modeline--active) 'doom-modeline-host 'mode-line-inactive)))))
 
 
 ;;
