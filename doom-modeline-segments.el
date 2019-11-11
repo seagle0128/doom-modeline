@@ -107,11 +107,12 @@
 (declare-function edebug-help 'edebug)
 (declare-function edebug-next-mode 'edebug)
 (declare-function edebug-stop 'edebug)
-(declare-function eglot-current-server 'eglot)
+(declare-function eglot 'eglot)
 (declare-function eglot--major-mode 'eglot)
 (declare-function eglot--project-nickname 'eglot)
 (declare-function eglot--spinner 'eglot)
 (declare-function eglot-clear-status 'eglot)
+(declare-function eglot-current-server 'eglot)
 (declare-function eglot-events-buffer 'eglot)
 (declare-function eglot-forget-pending-continuations 'eglot)
 (declare-function eglot-reconnect 'eglot)
@@ -1779,7 +1780,7 @@ mouse-1: Reload to start server")
                                  ((and doing (not done-p)) 'doom-modeline-lsp-running)
                                  ((and pending (cl-plusp pending)) 'doom-modeline-lsp-warning)
                                  (nick 'doom-modeline-lsp-success)
-                                 (t 'mode-line)))
+                                 (t 'doom-modeline-lsp-warning)))
                      (icon (doom-modeline-lsp-icon "EGLOT" face)))
           (propertize icon
                       'help-echo (cond
@@ -1796,7 +1797,8 @@ C-mouse-1: Go to server errors
 mouse-1: Go to server events
 mouse-2: Quit server
 mouse-3: Reconnect to server" nick (eglot--major-mode server)))
-                                  (t "EGLOT Disconnected"))
+                                  (t "EGLOT Disconnected
+mouse-1: Start server"))
                       'mouse-face 'mode-line-highlight
                       'local-map (let ((map (make-sparse-keymap)))
                                    (cond (last-error
@@ -1813,7 +1815,9 @@ mouse-3: Reconnect to server" nick (eglot--major-mode server)))
                                           (define-key map [mode-line mouse-2]
                                             #'eglot-shutdown)
                                           (define-key map [mode-line mouse-3]
-                                            #'eglot-reconnect)))
+                                            #'eglot-reconnect))
+                                         (t (define-key map [mode-line mouse-1]
+                                              #'eglot)))
                                    map)))))
 (add-hook 'eglot--managed-mode-hook #'doom-modeline-update-eglot)
 
