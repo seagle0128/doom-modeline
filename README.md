@@ -206,7 +206,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 (setq doom-modeline-buffer-modification-icon t)
 
 ;; Whether to use unicode as a fallback (instead of ASCII) when not using icons.
-(setq doom-modeline-unicode-fallback t)
+(setq doom-modeline-unicode-fallback nil)
 
 ;; Whether display the minor modes in mode-line.
 (setq doom-modeline-minor-modes (featurep 'minions))

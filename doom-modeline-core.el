@@ -233,7 +233,7 @@ It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'."
   :type 'boolean
   :group 'doom-modeline)
 
-(defcustom doom-modeline-unicode-fallback t
+(defcustom doom-modeline-unicode-fallback nil
   "Whether to use unicode as a fallback (instead of ASCII) when not using icons."
   :type 'boolean
   :group 'doom-modeline)
