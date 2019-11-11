@@ -107,7 +107,7 @@
 (declare-function edebug-help 'edebug)
 (declare-function edebug-next-mode 'edebug)
 (declare-function edebug-stop 'edebug)
-(declare-function eglot--current-server 'eglot)
+(declare-function eglot--current-server-or-lose 'eglot)
 (declare-function eglot--major-mode 'eglot)
 (declare-function eglot--project-nickname 'eglot)
 (declare-function eglot--spinner 'eglot)
@@ -1770,7 +1770,7 @@ mouse-1: Reload to start server")
   "Update `eglot' status."
   (setq doom-modeline--eglot
         (when eglot--managed-mode
-          (pcase-let* ((server (eglot--current-server))
+          (pcase-let* ((server (eglot--current-server-or-lose))
                        (nick (and server (eglot--project-nickname server)))
                        (pending (and server (hash-table-count
                                              (jsonrpc--request-continuations server))))
