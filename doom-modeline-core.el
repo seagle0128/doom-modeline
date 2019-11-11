@@ -489,6 +489,11 @@ It requires `circe' package."
   "Face for error state in LSP."
   :group 'doom-modeline-faces)
 
+(defface doom-modeline-lsp-running
+  '((t (:inherit compilation-mode-line-run)))
+  "Face for running state in LSP."
+  :group 'doom-modeline-faces)
+
 
 ;;
 ;; Externals
