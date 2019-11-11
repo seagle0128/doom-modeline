@@ -54,6 +54,7 @@
 (defvar battery-mode-line-limit)
 (defvar battery-status-function)
 (defvar edebug-execution-mode)
+(defvar eglot--managed-mode)
 (defvar evil-ex-active-highlights-alist)
 (defvar evil-ex-argument)
 (defvar evil-ex-range)
