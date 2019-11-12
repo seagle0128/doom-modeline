@@ -372,8 +372,8 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
        (setq doom-modeline-buffer-file-name-style val)
        (dolist (buf (buffer-list))
          (with-current-buffer buf
-           (if buffer-file-name
-               (doom-modeline-update-buffer-file-name))))))))
+           (when buffer-file-name
+             (doom-modeline-update-buffer-file-name))))))))
 
 ;; Optimize: just update the face of the buffer name in `after-change-functions', since
 ;; `doom-modeline--buffer-file-name' may consume lots of CPU if it's called too frequently.
