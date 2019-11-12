@@ -57,7 +57,6 @@
 (defvar edebug-execution-mode)
 (defvar eglot--managed-mode)
 (defvar erc-modified-channels-alist)
-(defvar erc-track-mode)
 (defvar evil-ex-active-highlights-alist)
 (defvar evil-ex-argument)
 (defvar evil-ex-range)
@@ -2132,7 +2131,7 @@ we don't want to remove that so we just return the original."
 
 (defun doom-modeline--erc-active ()
   "Checks if `erc' is active"
-  (and erc-track-mode
+  (and (bound-and-true-p erc-track-mode)
        (boundp 'erc-modified-channels-alist)))
 
 (defun doom-modeline--get-buffers ()
