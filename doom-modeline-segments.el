@@ -55,6 +55,8 @@
 (defvar battery-status-function)
 (defvar edebug-execution-mode)
 (defvar eglot--managed-mode)
+(defvar erc-modified-channels-alist)
+(defvar erc-track-mode)
 (defvar evil-ex-active-highlights-alist)
 (defvar evil-ex-argument)
 (defvar evil-ex-range)
@@ -2103,7 +2105,8 @@ One key difference is that when `tracking-shorten' returns nil we
 will instead return the original value of name. This is necessary
 in cases where the user has stylized the name to be an icon and
 we don't want to remove that so we just return the original."
-  (or (car (tracking-shorten (list name)))
+  (or (and (boundp 'tracking-shorten)
+           (car (tracking-shorten (list name))))
       name))
 
 (defun doom-modeline--tracking-buffers (buffers)
@@ -2119,33 +2122,55 @@ we don't want to remove that so we just return the original."
    ;; it to be a bit more compact
    (propertize " · " 'display '(space-width 0.4))))
 
+(defun doom-modeline--circe-active ()
+  "Checks if `circe' is active"
+  (and (boundp 'tracking-mode-line-buffers)
+       (derived-mode-p 'circe-mode)))
+
+(defun doom-modeline--erc-active ()
+  "Checks if `erc' is active"
+  (and erc-track-mode
+       (boundp 'erc-modified-channels-alist)))
+
+(defun doom-modeline--get-buffers ()
+  "Gets the buffers that have activity"
+  (cond
+   ((doom-modeline--circe-active)
+    tracking-buffers)
+   ((doom-modeline--erc-active)
+    (map 'list (lambda (l)
+                 (buffer-name (car l)))
+         erc-modified-channels-alist))))
+
 ;; create a modeline segment that contains all the irc tracked buffers
 (doom-modeline-def-segment irc-buffers
   "The list of shortened, unread irc buffers."
   (when (and doom-modeline-irc
              (doom-modeline--active)
-             (boundp 'tracking-mode-line-buffers)
-             (derived-mode-p 'circe-mode))
+             (or (doom-modeline--circe-active)
+                 (doom-modeline--erc-active)))
     ;; add a space at the end to pad against the following segment
     (concat (doom-modeline-spc)
-            (doom-modeline--tracking-buffers tracking-buffers)
+            (doom-modeline--tracking-buffers (doom-modeline--get-buffers))
             (doom-modeline-spc))))
 
 (doom-modeline-def-segment irc
   "A notification icon for any unread irc buffer."
-  (when (and doom-modeline-irc
-             (doom-modeline--active)
-             (boundp 'tracking-mode-line-buffers)
-             (> (length tracking-buffers) 0))
-    (concat
-     (doom-modeline-spc)
-     (propertize (doom-modeline-icon 'material "message" "🗊" "#"
-                                     'doom-modeline-warning
-                                     :height 1.1 :v-adjust -0.225)
-                 'help-echo (format "IRC Notifications: %s"
-                                    (doom-modeline--tracking-buffers
-                                     tracking-buffers)))
-     (doom-modeline-spc))))
+  (let ((buffers (doom-modeline--get-buffers)))
+    (when (and doom-modeline-irc
+               (doom-modeline--active)
+               (or (boundp 'tracking-mode-line-buffers)
+                   (boundp 'erc-modified-channels-alist))
+               (> (length buffers) 0))
+      (concat
+       (doom-modeline-spc)
+       (propertize (doom-modeline-icon 'material "message" "🗊" "#"
+                                       'doom-modeline-warning
+                                       :height 1.1 :v-adjust -0.225)
+                   'help-echo (format "IRC Notifications: %s"
+                                      (doom-modeline--tracking-buffers
+                                       buffers)))
+       (doom-modeline-spc)))))
 
 
 ;;

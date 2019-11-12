@@ -319,7 +319,7 @@ It requires `mu4e-alert' package."
 (defcustom doom-modeline-irc t
   "Whether display the irc notifications.
 
-It requires `circe' package."
+It requires `circe' or `erc' package."
   :type 'boolean
   :group 'doom-modeline)
 
