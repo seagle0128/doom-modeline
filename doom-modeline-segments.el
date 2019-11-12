@@ -30,6 +30,7 @@
 ;;; Code:
 
 (require 'all-the-icons)
+(require 'cl-extra)
 (require 'subr-x)
 (require 'doom-modeline-core)
 (require 'doom-modeline-env)
@@ -2138,9 +2139,9 @@ we don't want to remove that so we just return the original."
    ((doom-modeline--circe-active)
     tracking-buffers)
    ((doom-modeline--erc-active)
-    (map 'list (lambda (l)
-                 (buffer-name (car l)))
-         erc-modified-channels-alist))))
+    (mapcar (lambda (l)
+              (buffer-name (car l)))
+            erc-modified-channels-alist))))
 
 ;; create a modeline segment that contains all the irc tracked buffers
 (doom-modeline-def-segment irc-buffers
