@@ -1487,46 +1487,45 @@ See `mode-line-percent-position'.")
                (column-number-mode (doom-modeline-column-zero-based ":%c" ":%C"))))
          (face (if active 'mode-line 'mode-line-inactive))
          (mouse-face 'mode-line-highlight)
-         (help-echo "Buffer position\n\
-mouse-1: Display Line and Column Mode Menu")
          (local-map mode-line-column-line-number-mode-map))
     (concat
      (doom-modeline-spc)
      (doom-modeline-spc)
+
+     (propertize (format-mode-line lc)
+                 'face face
+                 'help-echo "Buffer position\n\
+mouse-1: Display Line and Column Mode Menu"
+                 'mouse-face mouse-face
+                 'local-map local-map)
+
      (if (and active
               (bound-and-true-p nyan-mode)
               (>= (window-width) nyan-minimum-window-width))
          (concat
-          (nyan-create)
           (doom-modeline-spc)
-          (propertize (format-mode-line lc)
-                      'help-echo help-echo
+          (doom-modeline-spc)
+          (propertize (nyan-create) 'mouse-face mouse-face))
+       (when doom-modeline-percent-position
+         (concat
+          (doom-modeline-spc)
+          (propertize (format-mode-line '("" doom-modeline-percent-position "%%"))
+                      'face face
+                      'help-echo "Buffer percentage\n\
+mouse-1: Display Line and Column Mode Menu"
                       'mouse-face mouse-face
-                      'local-map local-map))
-       (concat
-        (propertize (format-mode-line lc)
-                    'face face
-                    'help-echo help-echo
-                    'mouse-face mouse-face
-                    'local-map local-map)
-        (when doom-modeline-percent-position
-          (concat
-           (doom-modeline-spc)
-           (propertize (format-mode-line '("" doom-modeline-percent-position "%%"))
-                       'face face
-                       'help-echo help-echo
-                       'mouse-face mouse-face
-                       'local-map local-map)))
-        (when (or line-number-mode column-number-mode doom-modeline-percent-position)
-          (doom-modeline-spc)))))))
+                      'local-map local-map))))
+
+     (when (or line-number-mode column-number-mode doom-modeline-percent-position)
+       (doom-modeline-spc)))))
 
 ;;
 ;; party parrot
 ;;
 (doom-modeline-def-segment parrot
   "The party parrot animated icon. Requires `parrot-mode' to be enabled."
-  (when (and (bound-and-true-p parrot-mode)
-             (doom-modeline--active))
+  (when (and (doom-modeline--active)
+             (bound-and-true-p parrot-mode))
     (concat (doom-modeline-spc)
             (doom-modeline-spc)
             (parrot-create)
