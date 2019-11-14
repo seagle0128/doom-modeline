@@ -424,7 +424,7 @@ It requires `circe' or `erc' package."
   "The face used for the left-most bar on the mode-line of an active window."
   :group 'doom-modeline-faces)
 
-(defface doom-modeline-inactive-bar
+(defface doom-modeline-bar-inactive
   `((t (:background ,(face-foreground 'mode-line-inactive))))
   "The face used for the left-most bar on the mode-line of an inactive window."
   :group 'doom-modeline-faces)

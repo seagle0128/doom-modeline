@@ -1281,16 +1281,13 @@ of active `multiple-cursors'."
 
 (defun doom-modeline-refresh-bars (&optional width height)
   "Refresh mode-line bars with `WIDTH' and `HEIGHT'."
-  (setq doom-modeline--bar-active
-        (doom-modeline--make-xpm 'doom-modeline-bar
-                                 (or width doom-modeline-bar-width)
-                                 (max (or height doom-modeline-height)
-                                      (doom-modeline--font-height)))
-        doom-modeline--bar-inactive
-        (doom-modeline--make-xpm 'doom-modeline-inactive-bar
-                                 (or width doom-modeline-bar-width)
-                                 (max (or height doom-modeline-height)
-                                      (doom-modeline--font-height)))))
+  (let ((width (or width doom-modeline-bar-width))
+        (height (max (or height doom-modeline-height)
+                     (doom-modeline--font-height))))
+    (setq doom-modeline--bar-active
+          (doom-modeline--make-xpm 'doom-modeline-bar width height)
+          doom-modeline--bar-inactive
+          (doom-modeline--make-xpm 'doom-modeline-bar-inactive width height))))
 
 (when (>= emacs-major-version 26)
   (add-variable-watcher
