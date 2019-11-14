@@ -2453,8 +2453,8 @@ The cdr can also be a function that returns a name to use.")
                          (pcase (process-status grip-process)
                            ('run '(:inherit (all-the-icons-lblue bold)))
                            ('exit 'doom-modeline-warning)
-                           (_ 'doom-modeline-error))
-                       'doom-modeline-error)
+                           (_ 'doom-modeline-urgent))
+                       'doom-modeline-urgent)
                    'mode-line-inactive)))
        (propertize
         (doom-modeline-icon 'material "pageview" "🗐" "@"
