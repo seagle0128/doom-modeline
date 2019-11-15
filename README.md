@@ -48,7 +48,7 @@ The `doom-modeline` was designed for minimalism, and offers:
 - An indicator for LSP state with `lsp-mode` or `eglot`
 - An indicator for GitHub notifications
 - An indicator for unread emails with `mu4e-alert`
-- An indicator for irc notifications with `circe`
+- An indicator for irc notifications with `circe` or `erc`
 - An indicator for buffer position which is compatible with `nyan-mode`
 - An indicator for party parrot
 - An indicator for PDF page number with `pdf-tools`
@@ -247,7 +247,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether display the mu4e notifications. It requires `mu4e-alert' package.
 (setq doom-modeline-mu4e t)
 
-;; Whether display the irc notifications. It requires `circe' package.
+;; Whether display the irc notifications. It requires `circe' or `erc' package.
 (setq doom-modeline-irc t)
 
 ;; Function to stylize the irc buffer names.

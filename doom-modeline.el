@@ -54,7 +54,7 @@
 ;; - An indicator for LSP state with lsp-mode or eglot
 ;; - An indicator for github notifications
 ;; - An indicator for unread emails with mu4e-alert
-;; - An indicator for irc notifications with circe
+;; - An indicator for irc notifications with circe or erc.
 ;; - An indicator for buffer position which is compatible with nyan-mode
 ;; - An indicator for party parrot
 ;; - An indicator for PDF page number with pdf-tools
@@ -90,7 +90,7 @@
 
 (doom-modeline-def-modeline 'main
   '(bar workspace-name window-number modals matches buffer-info remote-host buffer-position parrot selection-info)
-  '(objed-state misc-info persp-name battery grip irc mu4e github debug lsp minor-modes input-method indent-info buffer-encoding major-mode process vcs checker))
+  '(objed-state misc-info persp-name battery grip irc irc-buffers mu4e github debug lsp minor-modes input-method indent-info buffer-encoding major-mode process vcs checker))
 
 (doom-modeline-def-modeline 'minimal
   '(bar matches buffer-info-simple)

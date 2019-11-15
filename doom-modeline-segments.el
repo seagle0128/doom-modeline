@@ -120,6 +120,7 @@
 (declare-function eglot-reconnect 'eglot)
 (declare-function eglot-shutdown 'eglot)
 (declare-function eglot-stderr-buffer 'eglot)
+(declare-function erc-switch-to-buffer 'erc)
 (declare-function evil-delimited-arguments 'evil-common)
 (declare-function evil-emacs-state-p 'evil-states)
 (declare-function evil-force-normal-state 'evil-commands)
@@ -188,6 +189,8 @@
 (declare-function symbol-overlay-get-list 'symbol-overlay)
 (declare-function symbol-overlay-get-symbol 'symbol-overlay)
 (declare-function symbol-overlay-rename 'symbol-overlay)
+(declare-function tracking-next-buffer 'tracking)
+(declare-function tracking-previous-buffer 'tracking)
 (declare-function tracking-shorten 'tracking)
 (declare-function undo-tree-redo-1 'undo-tree)
 (declare-function undo-tree-undo-1 'undo-tree)
@@ -289,7 +292,8 @@ Uses `all-the-icons-material' to fetch the icon."
 (add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'evil-insert-state-exit-hook #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'erc-insert-done-hook #'doom-modeline-update-buffer-file-state-icon)
-(add-hook 'rcirc-activity-functions #'doom-modeline-update-buffer-file-state-icon)
+(add-hook 'rcirc-print-functions #'doom-modeline-update-buffer-file-state-icon)
+(add-hook 'rcirc-update-activity-string-hook #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'undo :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'undo-tree-undo-1 :after #'doom-modeline-update-buffer-file-state-icon)
 (advice-add #'undo-tree-redo-1 :after #'doom-modeline-update-buffer-file-state-icon)
@@ -2113,12 +2117,15 @@ we don't want to remove that so we just return the original."
    (lambda (b)
      (propertize
       (doom-modeline--shorten-irc (funcall doom-modeline-irc-stylize b))
-      'face '(:inherit (warning doom-modeline-unread-number))
+      'face '(:inherit (doom-modeline-warning doom-modeline-unread-number)
+              :weight normal)
       'help-echo b))
    buffers
    ;; `space-width' only affects the width of the spaces here, so we can tighten
    ;; it to be a bit more compact
-   (propertize " · " 'display '(space-width 0.4))))
+   (propertize " · "
+               'display '(space-width 0.4)
+               'face 'doom-modeline-warning)))
 
 (defun doom-modeline--circe-active ()
   "Checks if `circe' is active"
@@ -2154,21 +2161,38 @@ we don't want to remove that so we just return the original."
 
 (doom-modeline-def-segment irc
   "A notification icon for any unread irc buffer."
-  (let ((buffers (doom-modeline--get-buffers)))
-    (when (and doom-modeline-irc
-               (doom-modeline--active)
-               (or (boundp 'tracking-mode-line-buffers)
-                   (boundp 'erc-modified-channels-alist))
-               (> (length buffers) 0))
-      (concat
-       (doom-modeline-spc)
-       (propertize (doom-modeline-icon 'material "message" "🗊" "#"
-                                       'doom-modeline-warning
-                                       :height 1.1 :v-adjust -0.225)
-                   'help-echo (format "IRC Notifications: %s"
-                                      (doom-modeline--tracking-buffers
-                                       buffers)))
-       (doom-modeline-spc)))))
+  (when (and doom-modeline-irc
+             (doom-modeline--active)
+             (or (doom-modeline--circe-active)
+                 (doom-modeline--erc-active)))
+    (let ((buffers (doom-modeline--get-buffers)))
+      (when (> (length buffers) 0)
+        (concat
+         (doom-modeline-spc)
+         (propertize (doom-modeline-icon 'material "message" "🗊" "#"
+                                         'doom-modeline-warning
+                                         :height 1.0 :v-adjust -0.225)
+                     'help-echo (format "IRC Notifications: %s\n%s"
+                                        (doom-modeline--tracking-buffers buffers)
+                                        (cond
+                                         ((doom-modeline--circe-active)
+                                          "mouse-1: Switch to next buffer
+mouse-3: Switch to previous buffer")
+                                         ((doom-modeline--erc-active)
+                                          "mouse-1: Switch to buffer")))
+                     'mouse-face 'mode-line-highlight
+                     'local-map (let ((map (make-sparse-keymap)))
+                                  (cond
+                                   ((doom-modeline--circe-active)
+                                    (define-key map [mode-line mouse-1]
+                                      #'tracking-next-buffer)
+                                    (define-key map [mode-line mouse-3]
+                                      #'tracking-previous-buffer))
+                                   ((doom-modeline--erc-active)
+                                    (define-key map [mode-line mouse-1]
+                                      #'erc-switch-to-buffer)))
+                                  map))
+         (doom-modeline-spc))))))
 
 
 ;;
@@ -2399,7 +2423,9 @@ The cdr can also be a function that returns a name to use.")
 
      ;; Snapshot icon
      (doom-modeline-icon 'material "camera_alt" "📷" "%1*"
-                         (if active 'warning 'mode-line-inactive)
+                         (if active
+                             '(:inherit doom-modeline-warning :weight normal)
+                           'mode-line-inactive)
                          :height 1.1 :v-adjust -0.25)
      (doom-modeline-vspc)
 
