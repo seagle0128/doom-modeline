@@ -476,22 +476,52 @@ It requires `circe' or `erc' package."
 
 (defface doom-modeline-lsp-success
   '((t (:inherit success)))
-  "Face for success state in LSP."
+  "Face for LSP success state."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-lsp-warning
   '((t (:inherit warning)))
-  "Face for warning state in LSP."
+  "Face for LSP warning state."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-lsp-error
   '((t (:inherit error)))
-  "Face for error state in LSP."
+  "Face for LSP error state."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-lsp-running
   '((t (:inherit compilation-mode-line-run)))
-  "Face for running state in LSP."
+  "Face for LSP running state."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-battery-charging
+  '((t (:inherit success)))
+  "Face for battery charging statues."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-battery-full
+  '((t (:inherit success)))
+  "Face for battery full statues."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-battery-normal
+  '((t (:inherit mode-line)))
+  "Face for battery normal statues."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-battery-warning
+  '((t (:inherit warning)))
+  "Face for battery warning statues."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-battery-critical
+  '((t (:inherit error)))
+  "Face for battery critical statues."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-battery-error
+  '((t (:inherit error)))
+  "Face for battery error statues."
   :group 'doom-modeline-faces)
 
 
