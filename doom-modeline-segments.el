@@ -724,7 +724,7 @@ Uses `all-the-icons-material' to fetch the icon."
                 ('running     (doom-modeline-checker-icon "access_time" "⏰" "*" 'doom-modeline-debug))
                 ('no-checker  (doom-modeline-checker-icon "sim_card_alert" "⚠" "-" 'doom-modeline-debug))
                 ('errored     (doom-modeline-checker-icon "sim_card_alert" "❗" "!" 'doom-modeline-urgent))
-                ('interrupted (doom-modeline-checker-icon "pause" "·" "." 'doom-modeline-debug))
+                ('interrupted (doom-modeline-checker-icon "pause" "⏸" "=" 'doom-modeline-debug))
                 ('suspicious  (doom-modeline-checker-icon "priority_high" "❓" "?" 'doom-modeline-urgent))
                 (_ nil))))
           (propertize icon
