@@ -2176,8 +2176,8 @@ we don't want to remove that so we just return the original."
                                         (doom-modeline--tracking-buffers buffers)
                                         (cond
                                          ((doom-modeline--circe-active)
-                                          "mouse-1: Switch to next buffer
-mouse-3: Switch to previous buffer")
+                                          "mouse-1: Switch to previous buffer
+mouse-3: Switch to next buffer")
                                          ((doom-modeline--erc-active)
                                           "mouse-1: Switch to buffer")))
                      'mouse-face 'mode-line-highlight
@@ -2185,9 +2185,9 @@ mouse-3: Switch to previous buffer")
                                   (cond
                                    ((doom-modeline--circe-active)
                                     (define-key map [mode-line mouse-1]
-                                      #'tracking-next-buffer)
+                                      #'tracking-previous-buffer)
                                     (define-key map [mode-line mouse-3]
-                                      #'tracking-previous-buffer))
+                                      #'tracking-next-buffer))
                                    ((doom-modeline--erc-active)
                                     (define-key map [mode-line mouse-1]
                                       #'erc-switch-to-buffer)))
