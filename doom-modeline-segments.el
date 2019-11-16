@@ -2275,7 +2275,7 @@ mouse-3: Switch to next unread buffer")))
   "Display battery status."
   (when (and (doom-modeline--active)
              (bound-and-true-p display-battery-mode))
-    (or doom-modeline--battery-status (doom-modeline-update-battery-status))))
+    doom-modeline--battery-status))
 
 (defun doom-modeline-override-battery-modeline ()
   "Override default battery mode-line."
