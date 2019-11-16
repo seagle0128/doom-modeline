@@ -673,8 +673,8 @@ Uses `all-the-icons-octicon' to fetch the icon."
 (doom-modeline-def-segment vcs
 "Displays the current branch, colored based on its state."
 (let ((active (doom-modeline--active)))
-  (when-let ((icon (or doom-modeline--vcs-icon (doom-modeline-update-vcs-icon)))
-             (text (or doom-modeline--vcs-text (doom-modeline-update-vcs-text))))
+  (when-let ((icon doom-modeline--vcs-icon)
+             (text doom-modeline--vcs-text))
     (concat
      (doom-modeline-spc)
      (propertize
