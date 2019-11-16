@@ -98,7 +98,7 @@
 
 (doom-modeline-def-modeline 'special
   '(bar window-number modals matches buffer-info buffer-position parrot selection-info)
-  '(objed-state misc-info battery irc-buffers debug lsp minor-modes input-method indent-info buffer-encoding major-mode process checker))
+  '(objed-state misc-info battery irc debug lsp minor-modes input-method indent-info buffer-encoding major-mode process checker))
 
 (doom-modeline-def-modeline 'project
   '(bar window-number buffer-default-directory)

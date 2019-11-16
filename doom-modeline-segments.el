@@ -2123,7 +2123,7 @@ to be an icon and we don't want to remove that so we just return the original."
       (doom-modeline--shorten-irc (funcall doom-modeline-irc-stylize b))
       'face '(:inherit (doom-modeline-warning doom-modeline-unread-number)
               :weight normal)
-      'help-echo "mouse-1: Switch to buffer"
+      'help-echo (format "mouse-1: Switch to buffer \"%s\"" b)
       'mouse-face 'mode-line-highlight
       'local-map (make-mode-line-mouse-map 'mouse-1
                                            (lambda ()
@@ -2131,11 +2131,7 @@ to be an icon and we don't want to remove that so we just return the original."
                                              (when (buffer-live-p (get-buffer b))
                                                (switch-to-buffer b))))))
    buffers
-   ;; `space-width' only affects the width of the spaces here, so we can tighten
-   ;; it to be a bit more compact
-   (propertize " · "
-               'display '(space-width 0.4)
-               'face 'doom-modeline-warning)))
+   (doom-modeline-vspc)))
 
 (defun doom-modeline--circe-active ()
   "Checks if `circe' is active"
@@ -2156,18 +2152,6 @@ to be an icon and we don't want to remove that so we just return the original."
     (mapcar (lambda (l)
               (buffer-name (car l)))
             erc-modified-channels-alist))))
-
-;; create a modeline segment that contains all the irc tracked buffers
-(doom-modeline-def-segment irc-buffers
-  "The list of shortened, unread irc buffers."
-  (when (and doom-modeline-irc
-             (doom-modeline--active)
-             (or (doom-modeline--circe-active)
-                 (doom-modeline--erc-active)))
-    ;; add a space at the end to pad against the following segment
-    (concat (doom-modeline-spc)
-            (doom-modeline--tracking-buffers (doom-modeline--get-buffers))
-            (doom-modeline-spc))))
 
 (doom-modeline-def-segment irc
   "A notification icon for any unread irc buffer."
@@ -2202,6 +2186,13 @@ mouse-3: Switch to next buffer")
                                     (define-key map [mode-line mouse-1]
                                       #'erc-switch-to-buffer)))
                                   map))
+
+         ;; Disaplay the unread irc buffers
+         (when doom-modeline-irc-buffers
+           (concat
+            (doom-modeline-vspc)
+            (doom-modeline--tracking-buffers (doom-modeline--get-buffers))))
+
          (doom-modeline-spc))))))
 
 

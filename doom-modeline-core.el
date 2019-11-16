@@ -323,6 +323,11 @@ It requires `circe' or `erc' package."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-irc-buffers nil
+  "Whether display the unread irc buffers."
+  :type 'boolean
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-irc-stylize 'identity
   "Function to stylize the irc buffer names."
   :type 'function
