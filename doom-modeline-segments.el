@@ -2101,14 +2101,18 @@ mouse-1: Toggle Debug on Quit"
 ;;
 
 (defun doom-modeline--shorten-irc (name)
-  "Wrapper for `tracking-shorten' that only takes one NAME.
+  "Wrapper for `tracking-shorten' and `erc-track-shorten-function'that only
+takes one NAME.
 
-One key difference is that when `tracking-shorten' returns nil we
-will instead return the original value of name. This is necessary
-in cases where the user has stylized the name to be an icon and
-we don't want to remove that so we just return the original."
+One key difference is that when `tracking-shorten' and
+`erc-track-shorten-function' returns nil we will instead return the original
+value of name. This is necessary in cases where the user has stylized the name
+to be an icon and we don't want to remove that so we just return the original."
   (or (and (boundp 'tracking-shorten)
            (car (tracking-shorten (list name))))
+      (and (boundp 'erc-track-shorten-function)
+           (functionp erc-track-shorten-function)
+		   (car (funcall erc-track-shorten-function (list name))))
       name))
 
 (defun doom-modeline--tracking-buffers (buffers)
@@ -2119,7 +2123,13 @@ we don't want to remove that so we just return the original."
       (doom-modeline--shorten-irc (funcall doom-modeline-irc-stylize b))
       'face '(:inherit (doom-modeline-warning doom-modeline-unread-number)
               :weight normal)
-      'help-echo b))
+      'help-echo "mouse-1: Switch to buffer"
+      'mouse-face 'mode-line-highlight
+      'local-map (make-mode-line-mouse-map 'mouse-1
+                                           (lambda ()
+                                             (interactive)
+                                             (when (buffer-live-p b)
+                                               (switch-to-buffer b))))))
    buffers
    ;; `space-width' only affects the width of the spaces here, so we can tighten
    ;; it to be a bit more compact
