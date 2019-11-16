@@ -83,6 +83,12 @@ The `doom-modeline` was designed for minimalism, and offers:
 ![color_icon_elisp](https://user-images.githubusercontent.com/140797/50415381-9f568280-0855-11e9-9478-34a6dd614d96.png
 "Color Elisp icon")
 
+![evil_normal_state_icon](https://user-images.githubusercontent.com/140797/68988597-df12c800-0874-11ea-89e4-2a79f43c9471.png
+"Evil Normal State icon")
+
+![evil_insert_state_icon](https://user-images.githubusercontent.com/140797/68988600-eafe8a00-0874-11ea-8a3d-37b6919329f7.png
+"Evil Insert State icon")
+
 ![evil_normal_state](https://user-images.githubusercontent.com/140797/49694476-b8103880-fbc5-11e8-9c18-91f5e9258333.png
 "Evil Normal State")
 
