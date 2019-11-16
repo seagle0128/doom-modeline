@@ -2128,7 +2128,7 @@ to be an icon and we don't want to remove that so we just return the original."
       'local-map (make-mode-line-mouse-map 'mouse-1
                                            (lambda ()
                                              (interactive)
-                                             (when (buffer-live-p b)
+                                             (when (buffer-live-p (get-buffer b))
                                                (switch-to-buffer b))))))
    buffers
    ;; `space-width' only affects the width of the spaces here, so we can tighten
