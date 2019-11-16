@@ -2167,13 +2167,16 @@ to be an icon and we don't want to remove that so we just return the original."
                                          'doom-modeline-warning
                                          :height 1.0 :v-adjust -0.225)
                      'help-echo (format "IRC Notifications: %s\n%s"
-                                        (doom-modeline--tracking-buffers buffers)
+                                        (mapconcat
+                                         (lambda (b) (funcall doom-modeline-irc-stylize b))
+                                         buffers ", ")
                                         (cond
                                          ((doom-modeline--circe-active)
-                                          "mouse-1: Switch to previous buffer
-mouse-3: Switch to next buffer")
+                                          "mouse-1: Switch to previous unread buffer
+mouse-3: Switch to next unread buffer")
                                          ((doom-modeline--erc-active)
-                                          "mouse-1: Switch to buffer")))
+                                          "mouse-1: Switch to buffer
+mouse-3: Switch to next unread buffer")))
                      'mouse-face 'mode-line-highlight
                      'local-map (let ((map (make-sparse-keymap)))
                                   (cond
@@ -2184,15 +2187,14 @@ mouse-3: Switch to next buffer")
                                       #'tracking-next-buffer))
                                    ((doom-modeline--erc-active)
                                     (define-key map [mode-line mouse-1]
-                                      #'erc-switch-to-buffer)))
+                                      #'erc-switch-to-buffer)
+                                    (define-key map [mode-line mouse-3]
+                                      #'erc-track-switch-buffer)))
                                   map))
-
          ;; Disaplay the unread irc buffers
          (when doom-modeline-irc-buffers
-           (concat
-            (doom-modeline-vspc)
-            (doom-modeline--tracking-buffers (doom-modeline--get-buffers))))
-
+           (concat (doom-modeline-vspc)
+                   (doom-modeline--tracking-buffers buffers)))
          (doom-modeline-spc))))))
 
 
