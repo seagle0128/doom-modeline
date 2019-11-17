@@ -121,7 +121,6 @@
 (declare-function eglot-shutdown 'eglot)
 (declare-function eglot-stderr-buffer 'eglot)
 (declare-function erc-switch-to-buffer 'erc)
-(declare-function erc-track-switch-buffer 'erc-track)
 (declare-function evil-delimited-arguments 'evil-common)
 (declare-function evil-emacs-state-p 'evil-states)
 (declare-function evil-force-normal-state 'evil-commands)
@@ -190,10 +189,8 @@
 (declare-function symbol-overlay-get-list 'symbol-overlay)
 (declare-function symbol-overlay-get-symbol 'symbol-overlay)
 (declare-function symbol-overlay-rename 'symbol-overlay)
-(declare-function tracking-add-buffers 'tracking)
 (declare-function tracking-next-buffer 'tracking)
 (declare-function tracking-previous-buffer 'tracking)
-(declare-function tracking-removed-buffers 'tracking)
 (declare-function tracking-shorten 'tracking)
 (declare-function undo-tree-redo-1 'undo-tree)
 (declare-function undo-tree-undo-1 'undo-tree)
@@ -1104,7 +1101,7 @@ lines are selected, or the NxM dimensions of a block selection."
 ;; anzu and evil-anzu expose current/total state that can be displayed in the
 ;; mode-line.
 (defun doom-modeline-fix-anzu-count (positions here)
-  "Calulate anzu number via POSITIONS and HERE."
+  "Calulate anzu counts via POSITIONS and HERE."
   (cl-loop for (start . end) in positions
            collect t into before
            when (and (>= here start) (<= here end))
@@ -2155,70 +2152,49 @@ to be an icon and we don't want to remove that so we just return the original."
               (buffer-name (car l)))
             erc-modified-channels-alist))))
 
-(defvar doom-modeline--irc nil)
-(defun doom-modeline-update-irc (&rest _)
-  "Update irc status."
-  (setq doom-modeline--irc
-        (let* ((buffers (doom-modeline--get-buffers))
-               (number (length buffers)))
-          (when (> number 0)
-            (concat
-             (doom-modeline-spc)
-
-             (propertize (concat
-                          (doom-modeline-icon 'material "message" "🗊" "#"
-                                              'doom-modeline-warning
-                                              :height 1.0 :v-adjust -0.225)
-                          (doom-modeline-vspc)
-                          ;; Display the number of unread buffers
-                          (propertize (number-to-string number)
-                                      'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
-                         'help-echo (format "IRC Notifications: %s\n%s"
-                                            (mapconcat
-                                             (lambda (b) (funcall doom-modeline-irc-stylize b))
-                                             buffers ", ")
-                                            (cond
-                                             ((doom-modeline--circe-active)
-                                              "mouse-1: Switch to previous unread buffer
-mouse-3: Switch to next unread buffer")
-                                             ((doom-modeline--erc-active)
-                                              "mouse-1: Switch to buffer
-mouse-3: Switch to next unread buffer")))
-                         'mouse-face 'mode-line-highlight
-                         'local-map (let ((map (make-sparse-keymap)))
-                                      (cond
-                                       ((doom-modeline--circe-active)
-                                        (define-key map [mode-line mouse-1]
-                                          #'tracking-previous-buffer)
-                                        (define-key map [mode-line mouse-3]
-                                          #'tracking-next-buffer))
-                                       ((doom-modeline--erc-active)
-                                        (define-key map [mode-line mouse-1]
-                                          #'erc-switch-to-buffer)
-                                        (define-key map [mode-line mouse-3]
-                                          #'erc-track-switch-buffer)))
-                                      map))
-
-             ;; Disaplay the unread irc buffers
-             (when doom-modeline-irc-buffers
-               (concat
-                (doom-modeline-vspc)
-                (doom-modeline--tracking-buffers buffers)))
-
-             (doom-modeline-spc))))))
-(add-hook 'erc-kill-server-hook #'doom-modeline-update-irc)
-(add-hook 'erc-track-list-changed-hook #'doom-modeline-update-irc)
-(advice-add #'tracking-add-buffers :after #'doom-modeline-update-irc)
-(advice-add #'tracking-removed-buffers :after #'doom-modeline-update-irc)
-(advice-add #'tracking-next-buffer :after #'doom-modeline-update-irc)
-
 (doom-modeline-def-segment irc
   "A notification icon for any unread irc buffer."
   (when (and doom-modeline-irc
              (doom-modeline--active)
              (or (doom-modeline--circe-active)
                  (doom-modeline--erc-active)))
-    doom-modeline--irc))
+    (let ((buffers (doom-modeline--get-buffers)))
+      (when (> (length buffers) 0)
+        (concat
+         (doom-modeline-spc)
+         (propertize (doom-modeline-icon 'material "message" "🗊" "#"
+                                         'doom-modeline-warning
+                                         :height 1.0 :v-adjust -0.225)
+                     'help-echo (format "IRC Notifications: %s\n%s"
+                                        (mapconcat
+                                         (lambda (b) (funcall doom-modeline-irc-stylize b))
+                                         buffers ", ")
+                                        (cond
+                                         ((doom-modeline--circe-active)
+                                          "mouse-1: Switch to previous unread buffer
+mouse-3: Switch to next unread buffer")
+                                         ((doom-modeline--erc-active)
+                                          "mouse-1: Switch to buffer
+mouse-3: Switch to next unread buffer")))
+                     'mouse-face 'mode-line-highlight
+                     'local-map (let ((map (make-sparse-keymap)))
+                                  (cond
+                                   ((doom-modeline--circe-active)
+                                    (define-key map [mode-line mouse-1]
+                                      #'tracking-previous-buffer)
+                                    (define-key map [mode-line mouse-3]
+                                      #'tracking-next-buffer))
+                                   ((doom-modeline--erc-active)
+                                    (define-key map [mode-line mouse-1]
+                                      #'erc-switch-to-buffer)
+                                    (define-key map [mode-line mouse-3]
+                                      #'erc-track-switch-buffer)))
+                                  map))
+         ;; Disaplay the unread irc buffers
+         (when doom-modeline-irc-buffers
+           (concat (doom-modeline-vspc)
+                   (doom-modeline--tracking-buffers buffers)))
+         (doom-modeline-spc))))))
 
 
 ;;
