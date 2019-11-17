@@ -2274,12 +2274,8 @@ mouse-3: Switch to next unread buffer")))
                  (help-echo (if (and battery-echo-area-format data valid-percentage?)
                                 (battery-format battery-echo-area-format data)
                               "Battery status not available")))
-            (concat (doom-modeline-spc)
-                    (propertize (concat icon
-                                        (doom-modeline-vspc)
-                                        (propertize text 'face face))
-                                'help-echo help-echo)
-                    (doom-modeline-spc))))))
+            (cons (propertize icon 'help-echo help-echo)
+                  (propertize text 'face face 'help-echo help-echo))))))
 
 (when (>= emacs-major-version 26)
   (add-variable-watcher
@@ -2304,7 +2300,12 @@ mouse-3: Switch to next unread buffer")))
   "Display battery status."
   (when (and (doom-modeline--active)
              (bound-and-true-p display-battery-mode))
-    doom-modeline--battery-status))
+    (concat (doom-modeline-spc)
+            (concat
+             (car doom-modeline--battery-status)
+             (doom-modeline-vspc)
+             (cdr doom-modeline--battery-status))
+            (doom-modeline-spc))))
 
 (defun doom-modeline-override-battery-modeline ()
   "Override default battery mode-line."
