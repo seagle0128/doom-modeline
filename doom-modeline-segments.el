@@ -1861,43 +1861,7 @@ mouse-1: Start server"))
 ;; github
 ;;
 
-(defvar doom-modeline--github nil)
-(defun doom-modeline-update-github(result)
-  "Update github information with RESULT."
-  (setq doom-modeline--github
-        (let ((number (length result)))
-          (when (> number 0)
-            (concat
-             (doom-modeline-spc)
-             (propertize
-              (concat
-               (doom-modeline-icon 'faicon "github" "⌗" "#" 'doom-modeline-warning :v-adjust -0.0575)
-               (doom-modeline-vspc)
-               (propertize
-                (if (> number doom-modeline-number-limit)
-                    (format "%d+" doom-modeline-number-limit)
-                  (number-to-string number))
-                'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
-              'help-echo "Github Notifications
-mouse-1: Show notifications
-mouse-3: Fetch notifications"
-              'mouse-face 'mode-line-highlight
-              'local-map (let ((map (make-sparse-keymap)))
-                           (define-key map [mode-line mouse-1]
-                             (lambda ()
-                               "Open GitHub notifications page."
-                               (interactive)
-                               (run-with-timer 300 nil #'doom-modeline--github-fetch-notifications)
-                               (browse-url "https://github.com/notifications")))
-                           (define-key map [mode-line mouse-3]
-                             (lambda ()
-                               "Fetching GitHub notifications."
-                               (interactive)
-                               (message "Fetching GitHub notifications...")
-                               (doom-modeline--github-fetch-notifications)))
-                           map))
-             (doom-modeline-spc))))))
-
+(defvar doom-modeline--github-notification-counts 0)
 (defvar doom-modeline-before-github-fetch-notification-hook nil
   "Hooks before fetching GitHub notifications.
 Example:
@@ -1923,7 +1887,8 @@ Example:
                             :noerror t))))))
      (lambda (result)
        (message "")                     ; suppress message
-       (doom-modeline-update-github result)))))
+       (setq doom-modeline--github-notification-counts
+             (length result))))))
 
 (defvar doom-modeline--github-timer nil)
 (defun doom-modeline-github-timer ()
@@ -1948,9 +1913,39 @@ Example:
 
 (doom-modeline-def-segment github
   "The GitHub notifications."
-  (when (and doom-modeline-github
-             (doom-modeline--active))
-    doom-modeline--github))
+  (if (and doom-modeline-github
+           (doom-modeline--active)
+           (> doom-modeline--github-notification-counts 0))
+      (concat
+       (doom-modeline-spc)
+       (propertize
+        (concat
+         (doom-modeline-icon 'faicon "github" "⌗" "#" 'doom-modeline-warning :v-adjust -0.0575)
+         (doom-modeline-vspc)
+         (propertize
+          (if (> doom-modeline--github-notification-counts doom-modeline-number-limit)
+              (format "%d+" doom-modeline-number-limit)
+            (number-to-string doom-modeline--github-notification-counts))
+          'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
+        'help-echo "Github Notifications
+mouse-1: Show notifications
+mouse-3: Fetch notifications"
+        'mouse-face 'mode-line-highlight
+        'local-map (let ((map (make-sparse-keymap)))
+                     (define-key map [mode-line mouse-1]
+                       (lambda ()
+                         "Open GitHub notifications page."
+                         (interactive)
+                         (run-with-timer 300 nil #'doom-modeline--github-fetch-notifications)
+                         (browse-url "https://github.com/notifications")))
+                     (define-key map [mode-line mouse-3]
+                       (lambda ()
+                         "Fetching GitHub notifications."
+                         (interactive)
+                         (message "Fetching GitHub notifications...")
+                         (doom-modeline--github-fetch-notifications)))
+                     map))
+       (doom-modeline-spc))))
 
 
 ;;
