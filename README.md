@@ -113,6 +113,9 @@ The `doom-modeline` was designed for minimalism, and offers:
 ![nyan_parrot](https://user-images.githubusercontent.com/140797/51301061-da209480-1a68-11e9-9f64-905d889df9d6.png
 "Nyan and Parrot")
 
+![irc](https://user-images.githubusercontent.com/140797/69004814-20c67000-0954-11ea-8489-f5a527a80574.png
+"IRC Notifications")
+
 ![battery](https://user-images.githubusercontent.com/140797/53593622-ba35d200-3bcb-11e9-85b3-38d64d05c127.png
 "Fancy Battery")
 
