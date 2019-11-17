@@ -2128,7 +2128,7 @@ to be an icon and we don't want to remove that so we just return the original."
       (doom-modeline--shorten-irc (funcall doom-modeline-irc-stylize b))
       'face '(:inherit (doom-modeline-warning doom-modeline-unread-number)
               :weight normal)
-      'help-echo (format "mouse-1: Switch to buffer \"%s\"" b)
+      'help-echo (format "IRC Notification: %s\nmouse-1: Switch to buffer" b)
       'mouse-face 'mode-line-highlight
       'local-map (make-mode-line-mouse-map 'mouse-1
                                            (lambda ()
