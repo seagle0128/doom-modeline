@@ -83,6 +83,7 @@
 (defvar objed--object)
 (defvar objed-modeline-setup-func)
 (defvar persp-nil-name)
+(defvar rcirc-activity)
 (defvar symbol-overlay-keywords-alist)
 (defvar symbol-overlay-temp-symbol)
 (defvar text-scale-mode-amount)
@@ -186,6 +187,10 @@
 (declare-function persp-switch 'persp-mode)
 (declare-function popup-create 'popup)
 (declare-function popup-delete 'popup)
+(declare-function rcirc-next-active-buffer 'rcirc)
+(declare-function rcirc-short-buffer-name 'rcirc)
+(declare-function rcirc-switch-to-server-buffer 'rcirc)
+(declare-function rcirc-window-configuration-change 'rcirc)
 (declare-function symbol-overlay-assoc 'symbol-overlay)
 (declare-function symbol-overlay-get-list 'symbol-overlay)
 (declare-function symbol-overlay-get-symbol 'symbol-overlay)
@@ -2108,9 +2113,11 @@ value of name. This is necessary in cases where the user has stylized the name
 to be an icon and we don't want to remove that so we just return the original."
   (or (and (boundp 'tracking-shorten)
            (car (tracking-shorten (list name))))
+      (and (boundp 'rcirc-short-buffer-name)
+           (rcirc-short-buffer-name name))
       (and (boundp 'erc-track-shorten-function)
            (functionp erc-track-shorten-function)
-		   (car (funcall erc-track-shorten-function (list name))))
+	       (car (funcall erc-track-shorten-function (list name))))
       name))
 
 (defun doom-modeline--tracking-buffers (buffers)
@@ -2136,6 +2143,11 @@ to be an icon and we don't want to remove that so we just return the original."
   (and (boundp 'tracking-mode-line-buffers)
        (derived-mode-p 'circe-mode)))
 
+(defun doom-modeline--rcirc-active ()
+  "Checks if `rcirc' is active"
+  (and (bound-and-true-p rcirc-track-minor-mode)
+       (boundp 'rcirc-activity)))
+
 (defun doom-modeline--erc-active ()
   "Checks if `erc' is active"
   (and (bound-and-true-p erc-track-mode)
@@ -2146,6 +2158,10 @@ to be an icon and we don't want to remove that so we just return the original."
   (cond
    ((doom-modeline--circe-active)
     tracking-buffers)
+   ((doom-modeline--rcirc-active)
+    (mapcar (lambda (b)
+              (buffer-name b))
+            rcirc-activity))
    ((doom-modeline--erc-active)
     (mapcar (lambda (l)
               (buffer-name (car l)))
@@ -2156,6 +2172,7 @@ to be an icon and we don't want to remove that so we just return the original."
   (when (and doom-modeline-irc
              (doom-modeline--active)
              (or (doom-modeline--circe-active)
+                 (doom-modeline--rcirc-active)
                  (doom-modeline--erc-active)))
     (let* ((buffers (doom-modeline--get-buffers))
            (number (length buffers)))
@@ -2175,10 +2192,14 @@ to be an icon and we don't want to remove that so we just return the original."
                      'help-echo (format "IRC Notifications: %s\n%s"
                                         (mapconcat
                                          (lambda (b) (funcall doom-modeline-irc-stylize b))
-                                         buffers ", ")
+                                         buffers
+                                         ", ")
                                         (cond
                                          ((doom-modeline--circe-active)
                                           "mouse-1: Switch to previous unread buffer
+mouse-3: Switch to next unread buffer")
+                                         ((doom-modeline--rcirc-active)
+                                          "mouse-1: Switch to server buffer
 mouse-3: Switch to next unread buffer")
                                          ((doom-modeline--erc-active)
                                           "mouse-1: Switch to buffer
@@ -2191,6 +2212,11 @@ mouse-3: Switch to next unread buffer")))
                                       #'tracking-previous-buffer)
                                     (define-key map [mode-line mouse-3]
                                       #'tracking-next-buffer))
+                                   ((doom-modeline--rcirc-active)
+                                    (define-key map [mode-line mouse-1]
+                                      #'rcirc-switch-to-server-buffer)
+                                    (define-key map [mode-line mouse-3]
+                                      #'rcirc-next-active-buffer))
                                    ((doom-modeline--erc-active)
                                     (define-key map [mode-line mouse-1]
                                       #'erc-switch-to-buffer)
@@ -2204,6 +2230,18 @@ mouse-3: Switch to next unread buffer")))
                    (doom-modeline--tracking-buffers buffers)))
 
          (doom-modeline-spc))))))
+
+(defun doom-modeline-override-rcirc-modeline ()
+  "Override default `rcirc' mode-line."
+  (if (bound-and-true-p doom-modeline-mode)
+      (progn
+        (setq global-mode-string
+		      (delq 'rcirc-activity-string global-mode-string))
+        (remove-hook 'window-configuration-change-hook
+		             #'rcirc-window-configuration-change))
+    (when rcirc-track-minor-mode (rcirc-track-minor-mode 1))))
+(add-hook 'rcirc-track-minor-mode-hook #'doom-modeline-override-rcirc-modeline)
+(add-hook 'doom-modeline-mode-hook #'doom-modeline-override-rcirc-modeline)
 
 
 ;;
