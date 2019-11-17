@@ -561,9 +561,8 @@ mouse-3: Toggle minor modes"
   "The process info."
   (if (doom-modeline--active)
       mode-line-process
-    (propertize
-     (format-mode-line mode-line-process)
-     'face 'mode-line-inactive)))
+    (propertize (format-mode-line mode-line-process)
+                'face 'mode-line-inactive)))
 
 
 ;;
@@ -576,23 +575,21 @@ mouse-3: Toggle minor modes"
                     'doom-modeline-buffer-minor-mode
                   'mode-line-inactive)))
       (if (bound-and-true-p minions-mode)
-          (concat
-           (doom-modeline-spc)
-           (propertize minions-mode-line-lighter
-                       'face face
-                       'help-echo "Minions
+          (concat (doom-modeline-spc)
+                  (propertize minions-mode-line-lighter
+                              'face face
+                              'help-echo "Minions
 mouse-1: Display minor modes menu"
-                       'mouse-face 'mode-line-highlight
-                       'local-map (make-mode-line-mouse-map
-                                   'mouse-1 #'minions-minor-modes-menu))
-           (doom-modeline-spc))
-        (concat
-         (propertize (replace-regexp-in-string
-                      "%" "%%%%"
-                      (format-mode-line minor-mode-alist)
-                      t t)
-                     'face face)
-         (doom-modeline-spc))))))
+                              'mouse-face 'mode-line-highlight
+                              'local-map (make-mode-line-mouse-map
+                                          'mouse-1 #'minions-minor-modes-menu))
+                  (doom-modeline-spc))
+        (concat (propertize (replace-regexp-in-string
+                             "%" "%%%%"
+                             (format-mode-line minor-mode-alist)
+                             t t)
+                            'face face)
+                (doom-modeline-spc))))))
 
 
 ;;
