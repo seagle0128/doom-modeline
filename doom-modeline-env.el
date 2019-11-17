@@ -57,11 +57,6 @@
   :type 'hook
   :group 'doom-modeline-env)
 
-(defcustom doom-modeline-display-default-perspective-name nil
-  "If non nil the default perspective name is displayed in the mode-line."
-  :type 'boolean
-  :group 'doom-modeline-env)
-
 ;; Show version string for multi-version managers like rvm, rbenv, pyenv, etc.
 (defvar-local doom-modeline-env--version nil
   "The version to display with major-mode in mode-line.

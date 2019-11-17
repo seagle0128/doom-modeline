@@ -280,6 +280,11 @@ Non-nil to display in mode-line."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-display-default-persp-name nil
+  "If non nil the default perspective name is displayed in the mode-line."
+  :type 'boolean
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-lsp t
   "Whether display the `lsp' state.
 

@@ -1404,8 +1404,8 @@ Requires `eyebrowse-mode' to be enabled."
                                            `(:inherit ,face :slant normal)
                                            :height 1.1
                                            :v-adjust -0.225)))
-            (if (or doom-modeline-display-default-perspective-name
-                    (not (string-equal persp-nil-name name)))
+            (when (or doom-modeline-display-default-persp-name
+                      (not (string-equal persp-nil-name name)))
               (concat (doom-modeline-spc)
                       (propertize (concat icon
                                           (doom-modeline-vspc)
