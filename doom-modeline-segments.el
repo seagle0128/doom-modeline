@@ -121,6 +121,7 @@
 (declare-function eglot-shutdown 'eglot)
 (declare-function eglot-stderr-buffer 'eglot)
 (declare-function erc-switch-to-buffer 'erc)
+(declare-function erc-track-switch-buffer 'erc-track)
 (declare-function evil-delimited-arguments 'evil-common)
 (declare-function evil-emacs-state-p 'evil-states)
 (declare-function evil-force-normal-state 'evil-commands)
