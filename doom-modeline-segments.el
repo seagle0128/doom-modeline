@@ -2159,13 +2159,21 @@ to be an icon and we don't want to remove that so we just return the original."
              (doom-modeline--active)
              (or (doom-modeline--circe-active)
                  (doom-modeline--erc-active)))
-    (let ((buffers (doom-modeline--get-buffers)))
-      (when (> (length buffers) 0)
+    (let* ((buffers (doom-modeline--get-buffers))
+           (number (length buffers)))
+      (when (> number 0)
         (concat
          (doom-modeline-spc)
-         (propertize (doom-modeline-icon 'material "message" "🗊" "#"
-                                         'doom-modeline-warning
-                                         :height 1.0 :v-adjust -0.225)
+
+         (propertize (concat
+                      (doom-modeline-icon 'material "message" "🗊" "#"
+                                          'doom-modeline-warning
+                                          :height 1.0 :v-adjust -0.225)
+                      (doom-modeline-vspc)
+                      ;; Display the number of unread buffers
+                      (propertize (number-to-string number)
+                                  'face '(:inherit (doom-modeline-warning
+                                                    doom-modeline-unread-number))))
                      'help-echo (format "IRC Notifications: %s\n%s"
                                         (mapconcat
                                          (lambda (b) (funcall doom-modeline-irc-stylize b))
@@ -2191,10 +2199,12 @@ mouse-3: Switch to next unread buffer")))
                                     (define-key map [mode-line mouse-3]
                                       #'erc-track-switch-buffer)))
                                   map))
+
          ;; Disaplay the unread irc buffers
          (when doom-modeline-irc-buffers
-           (concat (doom-modeline-vspc)
+           (concat (doom-modeline-spc)
                    (doom-modeline--tracking-buffers buffers)))
+
          (doom-modeline-spc))))))
 
 
