@@ -467,9 +467,9 @@ directory, the file name, and its state (modified, read-only or non-existent)."
        (let ((eol (coding-system-eol-type buffer-file-coding-system)))
          (propertize
           (pcase eol
-            (0 "LF")
-            (1 "CRLF")
-            (2 "CR")
+            (0 "LF ")
+            (1 "CRLF ")
+            (2 "CR ")
             (_ ""))
           'face face
           'mouse-face mouse-face
@@ -482,8 +482,6 @@ directory, the file name, and its state (modified, read-only or non-existent)."
           'local-map (let ((map (make-sparse-keymap)))
 		               (define-key map [mode-line mouse-1] 'mode-line-change-eol)
 		               map)))
-
-       (doom-modeline-spc)
 
        ;; coding system
        (propertize
