@@ -2137,22 +2137,28 @@ to be an icon and we don't want to remove that so we just return the original."
    (doom-modeline-vspc)))
 
 (defun doom-modeline--circe-active ()
-  "Checks if `circe' is active"
+  "Checks if `circe' is active."
   (and (boundp 'tracking-mode-line-buffers)
        (derived-mode-p 'circe-mode)))
 
 (defun doom-modeline--erc-active ()
-  "Checks if `erc' is active"
+  "Checks if `erc' is active."
   (and (bound-and-true-p erc-track-mode)
        (boundp 'erc-modified-channels-alist)))
 
 (defun doom-modeline--rcirc-active ()
-  "Checks if `rcirc' is active"
+  "Checks if `rcirc' is active."
   (and (bound-and-true-p rcirc-track-minor-mode)
        (boundp 'rcirc-activity)))
 
+(defun doom-modeline--irc-active ()
+  "Checks if any IRC is active."
+  (or (doom-modeline--circe-active)
+      (doom-modeline--erc-active)
+      (doom-modeline--rcirc-active)))
+
 (defun doom-modeline--get-buffers ()
-  "Gets the buffers that have activity"
+  "Gets the buffers that have activity."
   (cond
    ((doom-modeline--circe-active)
     tracking-buffers)
@@ -2170,9 +2176,7 @@ to be an icon and we don't want to remove that so we just return the original."
   "The list of shortened, unread irc buffers."
   (when (and doom-modeline-irc
              (doom-modeline--active)
-             (or (doom-modeline--circe-active)
-                 (doom-modeline--erc-active)
-                 (doom-modeline--rcirc-active)))
+             (doom-modeline--irc-active))
     (let* ((buffers (doom-modeline--get-buffers))
            (number (length buffers)))
       (when (> number 0)
@@ -2185,9 +2189,7 @@ to be an icon and we don't want to remove that so we just return the original."
   "A notification icon for any unread irc buffer."
   (when (and doom-modeline-irc
              (doom-modeline--active)
-             (or (doom-modeline--circe-active)
-                 (doom-modeline--erc-active)
-                 (doom-modeline--rcirc-active)))
+             (doom-modeline--irc-active))
     (let* ((buffers (doom-modeline--get-buffers))
            (number (length buffers)))
       (when (> number 0)
