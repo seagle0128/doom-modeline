@@ -2025,9 +2025,9 @@ mouse-1: Toggle Debug on Quit"
            (sep (doom-modeline-vspc))
            (seg-sep (and (or dap edebug on-error on-quit) (doom-modeline-spc))))
       (concat seg-sep
-              (and dap (concat dap sep))
-              (and edebug (concat edebug sep))
-              (and on-error (concat on-error sep))
+              (and dap (concat dap (and (or edebug on-error on-quit) sep)))
+              (and edebug (concat edebug (and (or on-error on-quit) sep)))
+              (and on-error (concat on-error (and on-quit sep)))
               on-quit
               seg-sep))))
 
