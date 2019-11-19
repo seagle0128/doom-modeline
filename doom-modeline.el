@@ -98,11 +98,11 @@
 
 (doom-modeline-def-modeline 'special
   '(bar window-number modals matches buffer-info buffer-position parrot selection-info)
-  '(objed-state misc-info battery irc debug lsp minor-modes input-method indent-info buffer-encoding major-mode process checker))
+  '(objed-state misc-info battery irc-buffers debug minor-modes input-method indent-info buffer-encoding major-mode process))
 
 (doom-modeline-def-modeline 'project
   '(bar window-number buffer-default-directory)
-  '(misc-info battery mu4e github debug major-mode process))
+  '(misc-info battery irc mu4e github debug major-mode process))
 
 (doom-modeline-def-modeline 'package
   '(bar window-number package)
@@ -126,7 +126,7 @@
 
 (doom-modeline-def-modeline 'timemachine
   '(bar window-number matches git-timemachine buffer-position parrot selection-info)
-  '(misc-info battery mu4e github debug minor-modes indent-info buffer-encoding major-mode))
+  '(misc-info battery irc mu4e github debug minor-modes indent-info buffer-encoding major-mode))
 
 ;;
 ;; Interfaces
@@ -226,6 +226,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (add-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
         (add-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
         (add-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
+        (add-hook 'erc-mode-hook #'doom-modeline-set-special-modeline)
+        (add-hook 'rcirc-mode-hook #'doom-modeline-set-special-modeline)
         (add-hook 'pdf-view-mode-hook #'doom-modeline-set-pdf-modeline)
         (add-hook 'git-timemachine-mode-hook #'doom-modeline-set-timemachine-modeline)
         (add-hook 'paradox-menu-mode-hook #'doom-modeline-set-package-modeline)
@@ -245,6 +247,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
       (remove-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
       (remove-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
       (remove-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
+      (remove-hook 'erc-mode-hook #'doom-modeline-set-special-modeline)
+      (remove-hook 'rcirc-mode-hook #'doom-modeline-set-special-modeline)
       (remove-hook 'pdf-view-mode-hook #'doom-modeline-set-pdf-modeline)
       (remove-hook 'git-timemachine-mode-hook #'doom-modeline-set-timemachine-modeline)
       (remove-hook 'paradox-menu-mode-hook #'doom-modeline-set-package-modeline)

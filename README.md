@@ -262,9 +262,6 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether display the irc notifications. It requires `circe' or `erc' package.
 (setq doom-modeline-irc t)
 
-;; Whether display the unread irc buffers.
-(setq doom-modeline-irc-buffers nil)
-
 ;; Function to stylize the irc buffer names.
 (setq doom-modeline-irc-stylize 'identity)
 
