@@ -2264,7 +2264,7 @@ mouse-3: Switch to next unread buffer")))
 ;; battery status
 ;;
 
-(defvar-local doom-modeline--battery-status nil)
+(defvar doom-modeline--battery-status nil)
 (defun doom-modeline-update-battery-status ()
   "Update battery status."
   (setq doom-modeline--battery-status
