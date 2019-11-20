@@ -384,7 +384,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
    ```elisp
    ;; built-in `project' on 26+
    (setq doom-modeline-project-detection 'project)
-   ;; or `find-in-porject' if it's installed
+   ;; or `find-in-project' if it's installed
    (setq doom-modeline-project-detection 'ffip)
    ```
 
