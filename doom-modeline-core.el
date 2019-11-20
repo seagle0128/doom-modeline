@@ -638,14 +638,14 @@ It requires `circe' or `erc' package."
 
 (defun doom-modeline (key)
   "Return a mode-line configuration associated with KEY (a symbol).
-  Throws an error if it doesn't exist."
+Throws an error if it doesn't exist."
   (let ((fn (intern-soft (format "doom-modeline-format--%s" key))))
     (when (functionp fn)
       `(:eval (,fn)))))
 
 (defun doom-modeline-set-modeline (key &optional default)
   "Set the modeline format. Does nothing if the modeline KEY doesn't exist.
-  If DEFAULT is non-nil, set the default mode-line for all buffers."
+If DEFAULT is non-nil, set the default mode-line for all buffers."
   (when-let ((modeline (doom-modeline key)))
     (setf (if default
               (default-value 'mode-line-format)
@@ -765,11 +765,18 @@ It requires `circe' or `erc' package."
                          ((floatp height) (* height (frame-char-height)))
                          (t (frame-char-height)))))))
 
+(defun doom-modeline-add-variable-watcher (symbol watch-function)
+  "Cause WATCH-FUNCTION to be called when SYMBOL is set if possible.
+
+See docs of `add-variable-watcher'."
+  (when (fboundp 'add-variable-watcher)
+    (add-variable-watcher symbol watch-function)))
+
 (defun doom-modeline-icon (icon-set icon-name unicode text face &rest args)
   "Display icon of ICON-NAME with FACE and ARGS in mode-line.
 
-  ICON-SET includes `octicon', `faicon', `material', `alltheicons' and `fileicon'.
-  UNICODE is the unicode char fallback. TEXT is the ASCII char fallback."
+ICON-SET includes `octicon', `faicon', `material', `alltheicons' and `fileicon'.
+UNICODE is the unicode char fallback. TEXT is the ASCII char fallback."
   (let ((face (or face 'mode-line)))
     (or (when (and icon-name (not (string-empty-p icon-name)))
           (pcase icon-set
@@ -793,7 +800,7 @@ It requires `circe' or `erc' package."
 (defvar-local doom-modeline-project-root nil)
 (defun doom-modeline-project-root ()
   "Get the path to the root of your project.
-  Return `default-directory' if no project was found."
+Return `default-directory' if no project was found."
   (setq doom-modeline-project-root
         (or doom-modeline-project-root
             (pcase doom-modeline-project-detection
