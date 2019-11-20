@@ -210,7 +210,7 @@
 
 
 ;;
-;; buffer information
+;; Buffer information
 ;;
 
 (doom-modeline-def-segment buffer-default-directory
@@ -445,7 +445,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 
 ;;
-;; encoding
+;; Encoding
 ;;
 
 (doom-modeline-def-segment buffer-encoding
@@ -492,7 +492,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 
 ;;
-;; indentation
+;; Indentation
 ;;
 
 (doom-modeline-def-segment indent-info
@@ -503,7 +503,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                 'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive))))
 
 ;;
-;; remote host
+;; Remote host
 ;;
 
 (doom-modeline-def-segment remote-host
@@ -516,7 +516,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 
 ;;
-;; major-mode
+;; Major mode
 ;;
 
 (doom-modeline-def-segment major-mode
@@ -550,7 +550,7 @@ mouse-3: Toggle minor modes"
 
 
 ;;
-;; process
+;; Process
 ;;
 
 (doom-modeline-def-segment process
@@ -562,7 +562,7 @@ mouse-3: Toggle minor modes"
 
 
 ;;
-;; minor modes
+;; Minor modes
 ;;
 
 (doom-modeline-def-segment minor-modes
@@ -589,7 +589,7 @@ mouse-1: Display minor modes menu"
 
 
 ;;
-;; vcs
+;; VCS
 ;;
 
 (defun doom-modeline-vcs-icon (icon &optional unicode text face voffset)
@@ -689,7 +689,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
 
 
 ;;
-;; checker
+;; Checker
 ;;
 
 (defun doom-modeline-checker-icon (icon unicode text face)
@@ -703,7 +703,7 @@ Uses `all-the-icons-material' to fetch the icon."
   "Displays TEXT with FACE."
   (propertize text 'face (or face 'mode-line)))
 
-;; flycheck
+;; Flycheck
 
 (defvar-local doom-modeline--flycheck-icon nil)
 (defun doom-modeline-update-flycheck-icon (&optional status)
@@ -840,7 +840,7 @@ mouse-3: Next error"
 (add-hook 'flycheck-status-changed-functions #'doom-modeline-update-flycheck-text)
 (add-hook 'flycheck-mode-hook #'doom-modeline-update-flycheck-text)
 
-;; flymake
+;; Flymake
 
 (defvar-local doom-modeline--flymake-icon nil)
 (defun doom-modeline-update-flymake-icon (&rest _)
@@ -1032,7 +1032,7 @@ mouse-1: List all problems%s"
 
 
 ;;
-;; selection-info
+;; Selection
 ;;
 
 (defsubst doom-modeline-column (pos)
@@ -1072,7 +1072,7 @@ lines are selected, or the NxM dimensions of a block selection."
 
 
 ;;
-;; matches (macro, anzu, evil-substitute, iedit, symbol-overlay and multi-cursors)
+;; Matches (macro, anzu, evil-substitute, iedit, symbol-overlay and multi-cursors)
 ;;
 
 (defsubst doom-modeline--macro-recording ()
@@ -1092,7 +1092,7 @@ lines are selected, or the NxM dimensions of a block selection."
                                   :v-adjust -0.05)
               sep))))
 
-;; anzu and evil-anzu expose current/total state that can be displayed in the
+;; `anzu' and `evil-anzu' expose current/total state that can be displayed in the
 ;; mode-line.
 (defun doom-modeline-fix-anzu-count (positions here)
   "Calulate anzu counts via POSITIONS and HERE."
@@ -1250,7 +1250,7 @@ of active `multiple-cursors'."
   (doom-modeline--buffer-size))
 
 ;;
-;; media-info
+;; Media
 ;;
 
 (doom-modeline-def-segment media-info
@@ -1266,7 +1266,7 @@ of active `multiple-cursors'."
 
 
 ;;
-;; bar
+;; Bars
 ;;
 
 (defvar doom-modeline--bar-active nil)
@@ -1305,7 +1305,7 @@ of active `multiple-cursors'."
 
 
 ;;
-;; window number
+;; Window number
 ;;
 
 ;; HACK: `ace-window-display-mode' should respect the ignore buffers.
@@ -1357,7 +1357,7 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
 
 
 ;;
-;; workspace number
+;; Workspace number
 ;;
 
 (doom-modeline-def-segment workspace-name
@@ -1378,7 +1378,7 @@ Requires `eyebrowse-mode' to be enabled."
 
 
 ;;
-;; perspective name
+;; Perspective name
 ;;
 
 (defvar-local doom-modeline--persp-name nil)
@@ -1431,7 +1431,7 @@ mouse-2: Show help for minor mode"
 
 
 ;;
-;; misc info
+;; Misc info
 ;;
 
 (doom-modeline-def-segment misc-info
@@ -1442,7 +1442,7 @@ By default, this shows the information specified by `global-mode-string'."
 
 
 ;;
-;; position
+;; Position
 ;;
 
 ;; Be compatible with Emacs 25.
@@ -1516,7 +1516,7 @@ mouse-1: Display Line and Column Mode Menu"
        (doom-modeline-spc)))))
 
 ;;
-;; party parrot
+;; Party parrot
 ;;
 (doom-modeline-def-segment parrot
   "The party parrot animated icon. Requires `parrot-mode' to be enabled."
@@ -1528,7 +1528,7 @@ mouse-1: Display Line and Column Mode Menu"
             (doom-modeline-spc))))
 
 ;;
-;; modals (evil, overwrite, god, ryo and xah-fly-keys, etc.)
+;; Modals (evil, overwrite, god, ryo and xah-fly-keys, etc.)
 ;;
 
 (defsubst doom-modeline--evil ()
@@ -1629,7 +1629,7 @@ mouse-1: Display Line and Column Mode Menu"
 
 
 ;;
-;; objed-state
+;; Objed state
 ;;
 
 (defvar doom-modeline--objed-active nil)
@@ -1654,7 +1654,7 @@ mouse-1: Display Line and Column Mode Menu"
 
 
 ;;
-;; input method
+;; Input method
 ;;
 
 (doom-modeline-def-segment input-method
@@ -1850,7 +1850,7 @@ mouse-1: Start server"))
 
 
 ;;
-;; github
+;; Github
 ;;
 
 (defvar doom-modeline--github-notification-number 0)
@@ -1940,7 +1940,7 @@ mouse-3: Fetch notifications"
 
 
 ;;
-;; debug state
+;; Debug state
 ;;
 
 (defun doom-modeline-debug-icon (face &rest args)
@@ -2044,7 +2044,7 @@ mouse-1: Toggle Debug on Quit"
 
 
 ;;
-;; mu4e-alert notifications
+;; `mu4e-alert' notifications
 ;;
 
 (doom-modeline-def-segment mu4e
@@ -2091,7 +2091,7 @@ mouse-1: Toggle Debug on Quit"
 
 
 ;;
-;; irc notifications
+;; IRC notifications
 ;;
 
 (defun doom-modeline--shorten-irc (name)
@@ -2254,7 +2254,7 @@ mouse-3: Switch to next unread buffer")))
 
 
 ;;
-;; battery status
+;; Battery status
 ;;
 
 (defvar doom-modeline--battery-status nil)
@@ -2473,7 +2473,7 @@ The cdr can also be a function that returns a name to use.")
                              'mode-line-inactive))))
 
 ;;
-;; git timemachine
+;; Git timemachine
 ;;
 
 (doom-modeline-def-segment git-timemachine
@@ -2494,7 +2494,7 @@ The cdr can also be a function that returns a name to use.")
                                 'mode-line-inactive)))))
 
 ;;
-;; Markdown/org preview
+;; Markdown/Org preview
 ;;
 
 (doom-modeline-def-segment grip
