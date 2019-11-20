@@ -104,6 +104,10 @@
   '(bar window-number buffer-default-directory)
   '(misc-info battery irc mu4e github debug major-mode process))
 
+(doom-modeline-def-modeline 'vcs
+  '(bar window-number modals matches buffer-info buffer-position parrot selection-info)
+  '(misc-info battery irc mu4e github debug minor-modes buffer-encoding major-mode process))
+
 (doom-modeline-def-modeline 'package
   '(bar window-number package)
   '(misc-info major-mode process))
@@ -158,6 +162,11 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 (defun doom-modeline-set-project-modeline ()
   "Set project mode-line."
   (doom-modeline-set-modeline 'project))
+
+;;;###autoload
+(defun doom-modeline-set-vcs-modeline ()
+  "Set vcs mode-line."
+  (doom-modeline-set-modeline 'vcs))
 
 ;;;###autoload
 (defun doom-modeline-set-info-modeline ()
@@ -222,9 +231,9 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         ;; Add hooks
         (add-hook 'Info-mode-hook #'doom-modeline-set-info-modeline)
         (add-hook 'dired-mode-hook #'doom-modeline-set-project-modeline)
-        (add-hook 'magit-mode-hook #'doom-modeline-set-project-modeline)
         (add-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
         (add-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
+        (add-hook 'magit-mode-hook #'doom-modeline-set-vcs-modeline)
         (add-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
         (add-hook 'erc-mode-hook #'doom-modeline-set-special-modeline)
         (add-hook 'rcirc-mode-hook #'doom-modeline-set-special-modeline)
@@ -243,9 +252,9 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
       ;; Remove hooks
       (remove-hook 'Info-mode-hook #'doom-modeline-set-info-modeline)
       (remove-hook 'dired-mode-hook #'doom-modeline-set-project-modeline)
-      (remove-hook 'magit-mode-hook #'doom-modeline-set-project-modeline)
       (remove-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
       (remove-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
+      (remove-hook 'magit-mode-hook #'doom-modeline-set-vcs-modeline)
       (remove-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
       (remove-hook 'erc-mode-hook #'doom-modeline-set-special-modeline)
       (remove-hook 'rcirc-mode-hook #'doom-modeline-set-special-modeline)

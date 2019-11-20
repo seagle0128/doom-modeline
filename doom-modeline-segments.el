@@ -271,13 +271,11 @@ Uses `all-the-icons-material' to fetch the icon."
           (cond (buffer-read-only
                  (doom-modeline-buffer-file-state-icon
                   "lock" "🔒" "%1*" 'doom-modeline-warning))
-                ((and buffer-file-name
-                      (buffer-modified-p)
+                ((and buffer-file-name (buffer-modified-p)
                       doom-modeline-buffer-modification-icon)
                  (doom-modeline-buffer-file-state-icon
                   "save" "💾" "%1*" 'doom-modeline-buffer-modified))
-                ((and buffer-file-name
-                      (not (file-exists-p buffer-file-name)))
+                ((and buffer-file-name (not (file-exists-p buffer-file-name)))
                  (doom-modeline-buffer-file-state-icon
                   "do_not_disturb_alt" "🚫" "!" 'doom-modeline-urgent))
                 ((or (buffer-narrowed-p)
@@ -439,12 +437,11 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 (doom-modeline-def-segment buffer-info-simple
   "Display only the current buffer's name, but with fontification."
-  (propertize
-   " %b "
-   'face (cond ((and buffer-file-name (buffer-modified-p))
-                'doom-modeline-buffer-modified)
-               ((doom-modeline--active) 'doom-modeline-buffer-file)
-               (t 'mode-line-inactive))))
+  (propertize" %b "
+             'face (cond ((and buffer-file-name (buffer-modified-p))
+                          'doom-modeline-buffer-modified)
+                         ((doom-modeline--active) 'doom-modeline-buffer-file)
+                         (t 'mode-line-inactive))))
 
 
 ;;
