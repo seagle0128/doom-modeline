@@ -2480,16 +2480,14 @@ The cdr can also be a function that returns a name to use.")
   (let ((active (doom-modeline--active)))
     (concat
      (doom-modeline-spc)
-     (when doom-modeline-icon
-       (concat
-        (doom-modeline--buffer-mode-icon)
-        ;; Snapshot icon
-        (doom-modeline-icon 'material "camera_alt" "📷" "%1*"
-                            (if active
-                                '(:inherit doom-modeline-warning :weight normal)
-                              'mode-line-inactive)
-                            :height 1.1 :v-adjust -0.25)
-        (doom-modeline-vspc)))
+     (doom-modeline--buffer-mode-icon)
+     ;; Snapshot icon
+     (doom-modeline-icon 'material "camera_alt" "📷" "%1*"
+                         (if active
+                             '(:inherit doom-modeline-warning :weight normal)
+                           'mode-line-inactive)
+                         :height 1.1 :v-adjust -0.25)
+     (when doom-modeline-icon (doom-modeline-vspc))
      ;; buffer name
      (propertize "*%b*" 'face (if active
                                   'doom-modeline-buffer-timemachine
@@ -2500,35 +2498,34 @@ The cdr can also be a function that returns a name to use.")
 ;;
 
 (doom-modeline-def-segment grip
-  (when (bound-and-true-p grip-mode)
-    (concat
-     (doom-modeline-spc)
-     (let ((face (if (doom-modeline--active)
-                     (if grip-process
-                         (pcase (process-status grip-process)
-                           ('run 'doom-modeline-buffer-path)
-                           ('exit 'doom-modeline-warning)
-                           (_ 'doom-modeline-urgent))
-                       'doom-modeline-urgent)
-                   'mode-line-inactive)))
-       (propertize
-        (doom-modeline-icon 'material "pageview" "🗐" "@"
-                            (if doom-modeline-icon
-                                `(:inherit ,face :weight normal)
-                              face)
-                            :height 1.2 :v-adjust -0.2)
-        'help-echo (format "Preview on: http://localhost:%d
+(when (bound-and-true-p grip-mode)
+  (concat
+   (doom-modeline-spc)
+   (let ((face (if (doom-modeline--active)
+                   (if grip-process
+                       (pcase (process-status grip-process)
+                         ('run 'doom-modeline-buffer-path)
+                         ('exit 'doom-modeline-warning)
+                         (_ 'doom-modeline-urgent))
+                     'doom-modeline-urgent)
+                 'mode-line-inactive)))
+     (propertize (doom-modeline-icon 'material "pageview" "🗐" "@"
+                                     (if doom-modeline-icon
+                                         `(:inherit ,face :weight normal)
+                                       face)
+                                     :height 1.2 :v-adjust -0.2)
+                 'help-echo (format "Preview on: http://localhost:%d
 mouse-1: Open browser
 mouse-2: Stop preview"
-                           grip-port)
-        'mouse-face 'mode-line-highlight
-        'local-map (let ((map (make-sparse-keymap)))
-                     (define-key map [mode-line mouse-1]
-                       #'grip-browse-preview)
-                     (define-key map [mode-line mouse-2]
-                       #'grip-mode)
-                     map)))
-     (doom-modeline-spc))))
+                                    grip-port)
+                 'mouse-face 'mode-line-highlight
+                 'local-map (let ((map (make-sparse-keymap)))
+                              (define-key map [mode-line mouse-1]
+                                #'grip-browse-preview)
+                              (define-key map [mode-line mouse-2]
+                                #'grip-mode)
+                              map)))
+   (doom-modeline-spc))))
 
 (provide 'doom-modeline-segments)
 
