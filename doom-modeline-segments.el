@@ -231,19 +231,15 @@ buffer where knowing the current project directory is important."
   "Update file icon in mode-line."
   (setq doom-modeline--buffer-file-icon
         (when (and doom-modeline-icon doom-modeline-major-mode-icon)
-          (let* ((icon (if (and (buffer-file-name)
-                                (all-the-icons-auto-mode-match?))
-                           (all-the-icons-icon-for-file (file-name-nondirectory (buffer-file-name)))
-                         (all-the-icons-icon-for-mode major-mode))))
-            (if (symbolp icon)
-                (setq icon (doom-modeline-icon-faicon "file-o"
-                                                      :face 'all-the-icons-dsilver
-                                                      :height 0.8
-                                                      :v-adjust 0.0)))
-            (unless (symbolp icon)
-              (propertize icon
-                          'help-echo (format "Major-mode: %s" (format-mode-line mode-name))
-                          'display '(raise -0.125)))))))
+          (let* ((icon (all-the-icons-icon-for-buffer)))
+            (propertize (if (symbolp icon)
+                            (all-the-icons-faicon "file-o"
+                                                  :face 'all-the-icons-dsilver
+                                                  :height 0.8
+                                                  :v-adjust 0.0)
+                          icon)
+                        'help-echo (format "Major-mode: %s" (format-mode-line mode-name))
+                        'display '(raise -0.125))))))
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-icon)
 (add-hook 'after-change-major-mode-hook #'doom-modeline-update-buffer-file-icon)
 (add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-icon)
@@ -2368,14 +2364,15 @@ mouse-3: Switch to next unread buffer")))
          (propertize front 'face 'mode-line-inactive)))
 
      (when (and doom-modeline-icon doom-modeline-major-mode-icon)
-       (concat (doom-modeline-spc)
-               (doom-modeline-icon-for-mode 'paradox-menu-mode
-                                            :v-adjust -0.15
-                                            :face (if active
-                                                      (if doom-modeline-major-mode-color-icon
-                                                          'all-the-icons-silver
-                                                        'mode-line)
-                                                    'mode-line-inactive))))
+       (concat
+        (doom-modeline-spc)
+        (all-the-icons-icon-for-mode 'paradox-menu-mode
+                                     :v-adjust -0.15
+                                     :face (if active
+                                               (if doom-modeline-major-mode-color-icon
+                                                   'all-the-icons-silver
+                                                 'mode-line)
+                                             'mode-line-inactive))))
      (let ((info (format-mode-line 'mode-line-buffer-identification)))
        (if active
            info
@@ -2404,15 +2401,17 @@ The cdr can also be a function that returns a name to use.")
     (let ((active (doom-modeline--active)))
       (concat
        (doom-modeline-spc)
-       (doom-modeline-icon-fileicon "elisp"
-                                    :height 1.0
-                                    :v-adjust -0.15
-                                    :face (if active
-                                              (if doom-modeline-major-mode-color-icon
-                                                  'all-the-icons-purple
-                                                'mode-line)
-                                            'mode-line-inactive))
-       (when doom-modeline-icon (doom-modeline-spc))
+       (when doom-modeline-icon
+         (concat
+          (all-the-icons-fileicon "elisp"
+                                  :height 1.0
+                                  :v-adjust -0.15
+                                  :face (if active
+                                            (if doom-modeline-major-mode-color-icon
+                                                'all-the-icons-purple
+                                              'mode-line)
+                                          'mode-line-inactive))
+          (doom-modeline-spc)))
        (propertize
         (let ((custom (cdr (assoc (buffer-name) doom-modeline--helm-buffer-ids)))
               (case-fold-search t)

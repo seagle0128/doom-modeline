@@ -769,56 +769,21 @@ It requires `circe' or `erc' package."
     (or (when (and icon-name (not (string-empty-p icon-name)))
           (pcase icon-set
             ('octicon
-             (apply #'doom-modeline-icon-octicon icon-name :face face args))
+             (apply #'all-the-icons-octicon icon-name :face face args))
             ('faicon
-             (apply #'doom-modeline-icon-faicon icon-name :face face args))
+             (apply #'all-the-icons-faicon icon-name :face face args))
             ('material
-             (apply #'doom-modeline-icon-material icon-name :face face args))
+             (apply #'all-the-icons-material icon-name :face face args))
             ('alltheicon
-             (apply #'doom-modeline-icon-alltheicon icon-name :face face args))
+             (apply #'all-the-icons-alltheicon icon-name :face face args))
             ('fileicon
-             (apply #'doom-modeline-icon-fileicon icon-name :face face args))))
+             (apply #'all-the-icons-fileicon icon-name :face face args))))
         (when (and doom-modeline-unicode-fallback
                    unicode
                    (not (string-empty-p unicode))
                    (char-displayable-p (string-to-char unicode)))
           (propertize unicode 'face face))
         (when text (propertize text 'face face)))))
-
-(defun doom-modeline-icon-octicon (icon-name &rest args)
-  "Display octicon with ARGS."
-  (when doom-modeline-icon
-    (apply #'all-the-icons-octicon icon-name args)))
-
-(defun doom-modeline-icon-faicon (icon-name &rest args)
-  "Display font awesome icon with ARGS."
-  (when doom-modeline-icon
-    (apply #'all-the-icons-faicon icon-name args)))
-
-(defun doom-modeline-icon-material (icon-name &rest args)
-  "Display material icon with ARGS."
-  (when doom-modeline-icon
-    (apply #'all-the-icons-material icon-name args)))
-
-(defun doom-modeline-icon-alltheicon (icon-name &rest args)
-  "Display alltheicon with ARGS."
-  (when doom-modeline-icon
-    (apply #'all-the-icons-alltheicon icon-name args)))
-
-(defun doom-modeline-icon-fileicon (icon-name &rest args)
-  "Display fileicon with ARGS."
-  (when doom-modeline-icon
-    (apply #'all-the-icons-fileicon icon-name args)))
-
-(defun doom-modeline-icon-for-mode (&rest args)
-  "Display icon for major mode with ARGS."
-  (when doom-modeline-icon
-    (apply #'all-the-icons-icon-for-mode args)))
-
-(defun doom-modeline-icon-for-file (&rest args)
-  "Display icon for major mode with ARGS."
-  (when doom-modeline-icon
-    (apply #'all-the-icons-icon-for-file args)))
 
 (defvar-local doom-modeline-project-root nil)
 (defun doom-modeline-project-root ()
