@@ -1902,7 +1902,7 @@ Example:
      (doom-modeline-spc)
      (propertize
       (concat
-       (doom-modeline-icon 'faicon "github" "⌗" "#" 'doom-modeline-warning :v-adjust -0.0575)
+       (doom-modeline-icon 'faicon "github" "🔔" "#" 'doom-modeline-warning :v-adjust -0.0575)
        (doom-modeline-vspc)
        (propertize
         (if (> doom-modeline--github-notification-number  doom-modeline-number-limit)
