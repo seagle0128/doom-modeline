@@ -537,7 +537,7 @@ It requires `circe' or `erc' package."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-buffer-timemachine
-  '((t (:inherit (doom-modeline-buffer-path italic))))
+  '((t (:inherit (doom-modeline-buffer-file italic underline))))
   "Face for battery error statues."
   :group 'doom-modeline-faces)
 
