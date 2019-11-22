@@ -1530,7 +1530,7 @@ mouse-1: Display Line and Column Mode Menu"
                  (doom-modeline-spc)
                  (doom-modeline-icon
                   'material
-                  (when doom-modeline-evil-state-icon "fiber_manual_record")
+                  (when doom-modeline-modal-icon "fiber_manual_record")
                   "●"
                   (string-trim (evil-state-property evil-state :tag t))
                   (if (doom-modeline--active)
@@ -1553,11 +1553,14 @@ mouse-1: Display Line and Column Mode Menu"
              (not (bound-and-true-p evil-local-mode)))
     (propertize (concat
                  (doom-modeline-spc)
-                 (doom-modeline-icon 'material "fiber_manual_record" "●" "<O>"
-                                     (if (doom-modeline--active)
-                                         'doom-modeline-urgent
-                                       'mode-line-inactive)
-                                     :v-adjust -0.225)
+                 (doom-modeline-icon
+                  'material
+                  (when doom-modeline-modal-icon "fiber_manual_record")
+                  "●" "<O>"
+                  (if (doom-modeline--active)
+                      'doom-modeline-urgent
+                    'mode-line-inactive)
+                  :v-adjust -0.225)
                  (doom-modeline-spc))
                 'help-echo "Overwrite state")))
 
@@ -1566,11 +1569,14 @@ mouse-1: Display Line and Column Mode Menu"
   (when (bound-and-true-p god-local-mode)
     (propertize (concat
                  (doom-modeline-spc)
-                 (doom-modeline-icon 'material "fiber_manual_record" "●" "<G>"
-                                     (if (doom-modeline--active)
-                                         'doom-modeline-evil-normal-state
-                                       'mode-line-inactive)
-                                     :v-adjust -0.225)
+                 (doom-modeline-icon
+                  'material
+                  (when doom-modeline-modal-icon "fiber_manual_record")
+                  "●" "<G>"
+                  (if (doom-modeline--active)
+                      'doom-modeline-evil-normal-state
+                    'mode-line-inactive)
+                  :v-adjust -0.225)
                  (doom-modeline-spc))
                 'help-echo "God mode")))
 
@@ -1579,11 +1585,14 @@ mouse-1: Display Line and Column Mode Menu"
   (when (bound-and-true-p ryo-modal-mode)
     (propertize (concat
                  (doom-modeline-spc)
-                 (doom-modeline-icon 'material "fiber_manual_record" "●" "<R>"
-                                     (if (doom-modeline--active)
-                                         'doom-modeline-evil-normal-state
-                                       'mode-line-inactive)
-                                     :v-adjust -0.225)
+                 (doom-modeline-icon
+                  'material
+                  (when doom-modeline-modal-icon "fiber_manual_record")
+                  "●" "<R>"
+                  (if (doom-modeline--active)
+                      'doom-modeline-evil-normal-state
+                    'mode-line-inactive)
+                  :v-adjust -0.225)
                  (doom-modeline-spc))
                 'help-echo "Ryo modal")))
 
@@ -1594,25 +1603,32 @@ mouse-1: Display Line and Column Mode Menu"
       (if xah-fly-insert-state-q
           (propertize (concat
                        (doom-modeline-spc)
-                       (doom-modeline-icon 'material "fiber_manual_record" "●" "<I>"
-                                           (if active
-                                               'doom-modeline-evil-insert-state
-                                             'mode-line-inactive)
-                                           :v-adjust -0.225)
+                       (doom-modeline-icon
+                        'material
+                        (when doom-modeline-modal-icon "fiber_manual_record")
+                        "●" "<I>"
+                        (if active
+                            'doom-modeline-evil-insert-state
+                          'mode-line-inactive)
+                        :v-adjust -0.225)
                        (doom-modeline-spc))
                       'help-echo "Xah-fly insert state")
         (propertize (concat
                      (doom-modeline-spc)
-                     (doom-modeline-icon 'material "fiber_manual_record" "●" "<C>"
-                                         (if active
-                                             'doom-modeline-evil-normal-state
-                                           'mode-line-inactive)
-                                         :v-adjust -0.225)
+                     (doom-modeline-icon
+                      'material
+                      (when doom-modeline-modal-icon "fiber_manual_record")
+                      "●" "<X>"
+                      (if active
+                          'doom-modeline-evil-normal-state
+                        'mode-line-inactive)
+                      :v-adjust -0.225)
                      (doom-modeline-spc))
                     'help-echo "Xah-fly normal state")))))
 
 (doom-modeline-def-segment modals
-  "Displays modal editing states, including `evil', `overwrite', `god', `ryo' and `xha-fly-kyes', etc."
+  "Displays modal editing states, including `evil', `overwrite', `god', `ryo'
+and `xha-fly-kyes', etc."
   (concat (doom-modeline--evil)
           (doom-modeline--overwrite)
           (doom-modeline--god)

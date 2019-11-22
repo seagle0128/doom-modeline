@@ -309,8 +309,10 @@ It requires `ghub' and `async' packages."
   :type 'boolean
   :group 'doom-modeline)
 
-(defcustom doom-modeline-evil-state-icon t
-  "Whether display the `evil' state icon."
+(defcustom doom-modeline-modal-icon t
+  "Whether display the modal state icon.
+
+Including `evil', `overwrite', `god', `ryo' and `xah-fly-keys', etc."
   :type 'boolean
   :group 'doom-modeline)
 
