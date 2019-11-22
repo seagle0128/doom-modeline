@@ -778,7 +778,7 @@ See docs of `add-variable-watcher'."
 ICON-SET includes `octicon', `faicon', `material', `alltheicons' and `fileicon'.
 UNICODE is the unicode char fallback. TEXT is the ASCII char fallback."
   (let ((face (or face 'mode-line)))
-    (or (when (and icon-name (not (string-empty-p icon-name)))
+    (or (when (and doom-modeline-icon icon-name (not (string-empty-p icon-name)))
           (pcase icon-set
             ('octicon
              (apply #'all-the-icons-octicon icon-name :face face args))
