@@ -41,20 +41,21 @@ The `doom-modeline` was designed for minimalism, and offers:
 - A window number segment for `ace-window`, `winum` and `window-numbering`
 - An indicator for modal editing state, including `evil`, `overwrite`, `god`, `ryo` and
   `xah-fly-keys`, etc.
-- An indicator for battery status
+- An indicator for `battery` status
 - An indicator for current input method
 - An indicator for debug state
 - An indicator for remote host
 - An indicator for LSP state with `lsp-mode` or `eglot`
 - An indicator for GitHub notifications
 - An indicator for unread emails with `mu4e-alert`
-- An indicator for irc notifications with `circe`, `rcirc` or `erc`
+- An indicator for IRC notifications with `circe`, `rcirc` or `erc`
 - An indicator for buffer position which is compatible with `nyan-mode`
-- An indicator for party parrot
+- An indicator for party `parrot`
 - An indicator for PDF page number with `pdf-tools`
 - An indicator for markdown/org preview with `grip`
-- Truncated file name, file icon, buffer state and project name in buffer information segment, which
-  is compatible with `project`, `find-file-in-project` and `projectile`.
+- Truncated file name, file icon, buffer state and project name in buffer
+  information segment, which is compatible with `project`, `projectile` and
+  `find-file-in-project`.
 - New mode-line for `Info-mode` buffers
 - New package mode-line for `paradox`
 - New mode-line for `helm` buffers
@@ -117,7 +118,7 @@ The `doom-modeline` was designed for minimalism, and offers:
 "IRC Notifications")
 
 ![battery](https://user-images.githubusercontent.com/140797/53593622-ba35d200-3bcb-11e9-85b3-38d64d05c127.png
-"Fancy Battery")
+"Battery")
 
 ![package](https://user-images.githubusercontent.com/140797/57503916-e769d380-7324-11e9-906d-44c79f7408a3.png
 "Package")
@@ -389,11 +390,14 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
    (setq doom-modeline-project-detection 'ffip)
    ```
 
-   For more details, refer to [#209](https://github.com/seagle0128/doom-modeline/issues/209) and [#224](https://github.com/seagle0128/doom-modeline/issues/224).
+   For more details, refer to
+   [#209](https://github.com/seagle0128/doom-modeline/issues/209) and
+   [#224](https://github.com/seagle0128/doom-modeline/issues/224).
 
 ## Donate
 
-If you think it's helpful for you, please consider paying a cup of coffee for me. Thank you! :smile:
+If you think it's helpful for you, please consider paying a cup of coffee for
+me. Thank you! :smile:
 
 <img
 src="https://user-images.githubusercontent.com/140797/65818854-44204900-e248-11e9-9cc5-3e6339587cd8.png"
