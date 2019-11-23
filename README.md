@@ -393,7 +393,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
 ## Donate
 
-If you think it's helpful for you, please consider pay a cup of coffee for me. Thank you! :smile:
+If you think it's helpful for you, please consider paying a cup of coffee for me. Thank you! :smile:
 
 <img
 src="https://user-images.githubusercontent.com/140797/65818854-44204900-e248-11e9-9cc5-3e6339587cd8.png"
@@ -406,5 +406,5 @@ alt="Wechat Pay" width="120"/>
 <a href="https://paypal.me/seagle0128" target="_blank">
 <img
 src="https://www.paypalobjects.com/digitalassets/c/website/marketing/apac/C2/logos-buttons/optimize/Online_Primary_Acceptance_Mark_RGB_V2_medium.jpg"
-alt="Paypal"/>
+alt="PayPal"/>
 </a>
