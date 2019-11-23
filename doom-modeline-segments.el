@@ -1072,7 +1072,8 @@ lines are selected, or the NxM dimensions of a block selection."
 (defsubst doom-modeline--macro-recording ()
   "Display current Emacs or evil macro being recorded."
   (when (and (doom-modeline--active) (or defining-kbd-macro executing-kbd-macro))
-    (let ((sep (propertize " " 'face 'doom-modeline-panel)))
+    (let ((sep (propertize " " 'face 'doom-modeline-panel ))
+          (vsep (propertize " " 'face '(:inherit (doom-modeline-panel variable-pitch)))))
       (concat sep
               (doom-modeline-icon 'material "fiber_manual_record" "●"
                                   (if (bound-and-true-p evil-this-macro)
@@ -1080,7 +1081,7 @@ lines are selected, or the NxM dimensions of a block selection."
                                     "Macro")
                                   'doom-modeline-panel
                                   :v-adjust -0.225)
-              sep
+              vsep
               (doom-modeline-icon 'octicon "triangle-right" "▶" ">"
                                   'doom-modeline-panel
                                   :v-adjust -0.05)
