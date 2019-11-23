@@ -1071,21 +1071,24 @@ lines are selected, or the NxM dimensions of a block selection."
 
 (defsubst doom-modeline--macro-recording ()
   "Display current Emacs or evil macro being recorded."
-  (when (and (doom-modeline--active) (or defining-kbd-macro executing-kbd-macro))
+  (when (and (doom-modeline--active)
+             (or defining-kbd-macro executing-kbd-macro))
     (let ((sep (propertize " " 'face 'doom-modeline-panel ))
-          (vsep (propertize " " 'face '(:inherit (doom-modeline-panel variable-pitch)))))
-      (concat sep
-              (doom-modeline-icon 'material "fiber_manual_record" "●"
-                                  (if (bound-and-true-p evil-this-macro)
-                                      (char-to-string evil-this-macro)
-                                    "Macro")
-                                  'doom-modeline-panel
-                                  :v-adjust -0.225)
-              vsep
-              (doom-modeline-icon 'octicon "triangle-right" "▶" ">"
-                                  'doom-modeline-panel
-                                  :v-adjust -0.05)
-              sep))))
+          (vsep (propertize " " 'face
+                            '(:inherit (doom-modeline-panel variable-pitch)))))
+      (concat
+       sep
+       (doom-modeline-icon 'material "fiber_manual_record" "●"
+                           (if (bound-and-true-p evil-this-macro)
+                               (char-to-string evil-this-macro)
+                             "Macro")
+                           'doom-modeline-panel
+                           :v-adjust -0.225)
+       vsep
+       (doom-modeline-icon 'octicon "triangle-right" "▶" ">"
+                           'doom-modeline-panel
+                           :v-adjust -0.05)
+       sep))))
 
 ;; `anzu' and `evil-anzu' expose current/total state that can be displayed in the
 ;; mode-line.
