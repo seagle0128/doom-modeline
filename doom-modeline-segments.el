@@ -1034,10 +1034,10 @@ Displayed when in a major mode in `doom-modeline-continuous-word-count-modes',
 or any derived mode. Respects `doom-modeline-enable-word-count'."
   (when (and doom-modeline-enable-word-count
              (apply #'derived-mode-p doom-modeline-continuous-word-count-modes))
-    (let ((word-count (format " %dW" (count-words (point-min) (point-max)))))
-      (propertize word-count 'face (if (doom-modeline--active)
-                                       'mode-line
-                                     'mode-line-inactive)))))
+    (propertize (format " %dW " (count-words (point-min) (point-max)))
+                'face (if (doom-modeline--active)
+                          'mode-line
+                        'mode-line-inactive))))
 
 ;;
 ;; Selection

@@ -89,7 +89,7 @@
 ;;
 
 (doom-modeline-def-modeline 'main
-  '(bar workspace-name window-number modals matches buffer-info remote-host buffer-position parrot word-count selection-info)
+  '(bar workspace-name window-number modals matches buffer-info remote-host buffer-position word-count parrot selection-info)
   '(objed-state misc-info persp-name battery grip irc mu4e github debug lsp minor-modes input-method indent-info buffer-encoding major-mode process vcs checker))
 
 (doom-modeline-def-modeline 'minimal
@@ -97,7 +97,7 @@
   '(media-info major-mode))
 
 (doom-modeline-def-modeline 'special
-  '(bar window-number modals matches buffer-info buffer-position parrot selection-info)
+  '(bar window-number modals matches buffer-info buffer-position word-count parrot selection-info)
   '(objed-state misc-info battery irc-buffers debug minor-modes input-method indent-info buffer-encoding major-mode process))
 
 (doom-modeline-def-modeline 'project
@@ -129,7 +129,7 @@
   '(helm-help))
 
 (doom-modeline-def-modeline 'timemachine
-  '(bar window-number matches git-timemachine buffer-position parrot selection-info)
+  '(bar window-number matches git-timemachine buffer-position word-count parrot selection-info)
   '(misc-info battery irc mu4e github debug minor-modes indent-info buffer-encoding major-mode))
 
 ;;
