@@ -225,8 +225,8 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 (setq doom-modeline-enable-word-count nil)
 
 ;; Major modes in which to display word count continuously.
-;; Respects `doom-modeline-enable-word-count'.
-(setq doom-modeline-continuous-word-count-modes '(markdown-mode org-mode))
+;; Also applies to any derived modes. Respects `doom-modeline-enable-word-count'.
+(setq doom-modeline-continuous-word-count-modes '(text-mode))
 
 ;; Whether display the buffer encoding.
 (setq doom-modeline-buffer-encoding t)
