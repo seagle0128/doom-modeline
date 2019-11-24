@@ -1035,9 +1035,9 @@ or any derived mode. Respects `doom-modeline-enable-word-count'."
   (when (and doom-modeline-enable-word-count
              (apply #'derived-mode-p doom-modeline-continuous-word-count-modes))
     (let ((word-count (format " %dW" (count-words (point-min) (point-max)))))
-      (if (doom-modeline--active)
-          word-count
-        (propertize word-count 'face 'mode-line-inactive)))))
+      (propertize word-count 'face (if (doom-modeline--active)
+                                       'mode-line
+                                     'mode-line-inactive)))))
 
 ;;
 ;; Selection
