@@ -130,7 +130,7 @@
 
 (doom-modeline-def-modeline 'timemachine
   '(bar window-number matches git-timemachine buffer-position word-count parrot selection-info)
-  '(misc-info battery irc mu4e github debug minor-modes indent-info buffer-encoding major-mode))
+  '(misc-info minor-modes indent-info buffer-encoding major-mode))
 
 ;;
 ;; Interfaces
