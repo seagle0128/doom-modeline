@@ -197,22 +197,22 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Please refer to https://github.com/bbatsov/projectile/issues/657.
 (setq doom-modeline-buffer-file-name-style 'truncate-upto-project)
 
-;; Whether display icons in mode-line. It respects `all-the-icons-color-icons'.
+;; Whether display icons in mode-line. Respects `all-the-icons-color-icons'.
 ;; While using the server mode in GUI, should set the value explicitly.
 (setq doom-modeline-icon (display-graphic-p))
 
-;; Whether display the icon for `major-mode'. It respects `doom-modeline-icon'.
+;; Whether display the icon for `major-mode'. Respects `doom-modeline-icon'.
 (setq doom-modeline-major-mode-icon t)
 
 ;; Whether display the colorful icon for `major-mode'.
-;; It respects `doom-modeline-major-mode-icon'.
+;; Respects `doom-modeline-major-mode-icon'.
 (setq doom-modeline-major-mode-color-icon t)
 
 ;; Whether display the icon for the buffer state. It respects `doom-modeline-icon'.
 (setq doom-modeline-buffer-state-icon t)
 
 ;; Whether display the modification icon for the buffer.
-;; It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'.
+;; Respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'.
 (setq doom-modeline-buffer-modification-icon t)
 
 ;; Whether to use unicode as a fallback (instead of ASCII) when not using icons.
@@ -252,7 +252,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether display the `lsp' state. Non-nil to display in mode-line.
 (setq doom-modeline-lsp t)
 
-;; Whether display the GitHub notifications. It requires `ghub` package.
+;; Whether display the GitHub notifications. It requires `ghub' package.
 (setq doom-modeline-github nil)
 
 ;; The interval of checking GitHub.
@@ -265,7 +265,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether display the mu4e notifications. It requires `mu4e-alert' package.
 (setq doom-modeline-mu4e t)
 
-;; Whether display the irc notifications. It requires `circe' or `erc' package.
+;; Whether display the IRC notifications. It requires `circe' or `erc' package.
 (setq doom-modeline-irc t)
 
 ;; Function to stylize the irc buffer names.
