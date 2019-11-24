@@ -248,6 +248,13 @@ It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-continuous-word-count-modes
+  '(markdown-mode org-mode)
+  "Major modes in which to display word count continuously.
+Respects `doom-modeline-enable-word-count'."
+  :type 'list
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-buffer-encoding t
   "Whether display the buffer encoding."
   :type 'boolean
