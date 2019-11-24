@@ -224,6 +224,10 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; If non-nil, a word count will be added to the selection-info modeline segment.
 (setq doom-modeline-enable-word-count nil)
 
+;; Major modes in which to display word count continuously.
+;; Also applies to any derived modes. Respects `doom-modeline-enable-word-count'.
+(setq doom-modeline-continuous-word-count-modes '(text-mode))
+
 ;; Whether display the buffer encoding.
 (setq doom-modeline-buffer-encoding t)
 
