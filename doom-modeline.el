@@ -189,14 +189,14 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   (doom-modeline-set-modeline 'pdf))
 
 ;;;###autoload
-(defun doom-modeline-set-helm-modeline (&rest _)
-  "Set helm mode-line."
-  (doom-modeline-set-modeline 'helm))
-
-;;;###autoload
-(defun doom-modeline-set-timemachine-modeline (&rest _)
+(defun doom-modeline-set-timemachine-modeline ()
   "Set timemachine mode-line."
   (doom-modeline-set-modeline 'timemachine))
+
+;;;###autoload
+(defun doom-modeline-set-helm-modeline (&rest _) ; To advice helm
+  "Set helm mode-line."
+  (doom-modeline-set-modeline 'helm))
 
 
 ;;
