@@ -1033,9 +1033,11 @@ mouse-1: List all problems%s"
 Displayed when in a major mode in `doom-modeline-continuous-word-count-modes'.
 Respects `doom-modeline-enable-word-count'."
   (when (and doom-modeline-enable-word-count
-             (doom-modeline--active)
              (member major-mode doom-modeline-continuous-word-count-modes))
-    (format " %dW" (count-words (point-min) (point-max)))))
+    (let ((word-count (format " %dW" (count-words (point-min) (point-max)))))
+      (if (doom-modeline--active)
+          word-count
+        (propertize word-count 'face 'mode-line-inactive)))))
 
 ;;
 ;; Selection
