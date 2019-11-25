@@ -33,6 +33,30 @@
 
 (require 'doom-modeline-core)
 
+(ert-deftest doom-modeline-icon/octicon-icon ()
+  (let ((doom-modeline-icon t)
+        (doom-modeline-unicode-fallback t))
+    (should
+     (string= (strip-text-properties
+               (doom-modeline-icon 'octicon "octoface" "☻" ":)" 'error))
+              ""))))
+
+(ert-deftest doom-modeline-icon/octicon-unicode ()
+  (let ((doom-modeline-icon nil)
+        (doom-modeline-unicode-fallback t))
+    (should
+     (string= (strip-text-properties
+               (doom-modeline-icon 'octicon "octoface" "☻" ":)" 'error))
+              "☻"))))
+
+(ert-deftest doom-modeline-icon/octicon-text ()
+  (let ((doom-modeline-icon nil)
+        (doom-modeline-unicode-fallback nil))
+    (should
+     (string= (strip-text-properties
+               (doom-modeline-icon 'octicon "octoface" "☻" ":)" 'error))
+              ":)"))))
+
 (ert-deftest doom-modeline--buffer-file-name/truncate-upto-project ()
   (let ((default-directory "/home/user/project/")
         (file-path "/home/user/project/relative/test.txt")
