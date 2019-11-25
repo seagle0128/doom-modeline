@@ -57,6 +57,33 @@
                (doom-modeline-icon 'octicon "octoface" "☻" ":)" 'error))
               ":)"))))
 
+(ert-deftest doom-modeline-project-root/ffip ()
+  (let ((default-directory "/home/user/project/")
+        (doom-modeline-project-detection 'ffip)
+        (doom-modeline-project-root nil))
+    (cl-flet ((ffip-get-project-root-directory () "/home/user/project-ffip/"))
+      (should (string= (ffip-get-project-root-directory) "/home/user/project-ffip/")))))
+
+(ert-deftest doom-modeline-project-root/projectile ()
+  (let ((default-directory "/home/user/projectile/")
+        (doom-modeline-project-detection 'projectile)
+        (doom-modeline-project-root nil))
+    (cl-flet ((projectile-project-root () default-directory))
+      (should (string= (doom-modeline-project-root) "/home/user/projectile/")))))
+
+(ert-deftest doom-modeline-project-root/project ()
+  (let ((default-directory "/home/user/project-current/")
+        (doom-modeline-project-detection 'project)
+        (doom-modeline-project-root nil))
+    (cl-flet ((project-current (&optional _maybe-prompt _dir)
+                               `(vc . ,default-directory)))
+      (should (string= (doom-modeline-project-root) "/home/user/project-current/")))))
+
+(ert-deftest doom-modeline-project-root/default ()
+  (let ((default-directory "/home/user/project/")
+        (doom-modeline-project-detection nil))
+    (should (string= (doom-modeline-project-root) "/home/user/project/"))))
+
 (ert-deftest doom-modeline--buffer-file-name/truncate-upto-project ()
   (let ((default-directory "/home/user/project/")
         (file-path "/home/user/project/relative/test.txt")
