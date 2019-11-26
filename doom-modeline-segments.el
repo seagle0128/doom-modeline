@@ -1541,117 +1541,78 @@ mouse-1: Display Line and Column Mode Menu"
 ;; Modals (evil, overwrite, god, ryo and xah-fly-keys, etc.)
 ;;
 
+(defun doom-modeline--modal-icon (text face help-echo)
+  "Display the model icon."
+  (propertize (doom-modeline-icon
+               'material
+               (when doom-modeline-modal-icon "fiber_manual_record")
+               "●"
+               text
+               (if (doom-modeline--active) face 'mode-line-inactive)
+               :v-adjust -0.225)
+              'help-echo help-echo))
+
 (defsubst doom-modeline--evil ()
   "The current evil state. Requires `evil-mode' to be enabled."
   (when (bound-and-true-p evil-local-mode)
-    (propertize (concat
-                 (doom-modeline-spc)
-                 (doom-modeline-icon
-                  'material
-                  (when doom-modeline-modal-icon "fiber_manual_record")
-                  "●"
-                  (string-trim (evil-state-property evil-state :tag t))
-                  (if (doom-modeline--active)
-                      (cond ((evil-normal-state-p) 'doom-modeline-evil-normal-state)
-                            ((evil-emacs-state-p) 'doom-modeline-evil-emacs-state)
-                            ((evil-insert-state-p) 'doom-modeline-evil-insert-state)
-                            ((evil-motion-state-p) 'doom-modeline-evil-motion-state)
-                            ((evil-visual-state-p) 'doom-modeline-evil-visual-state)
-                            ((evil-operator-state-p) 'doom-modeline-evil-operator-state)
-                            ((evil-replace-state-p) 'doom-modeline-evil-replace-state)
-                            (t 'mode-line))
-                    'mode-line-inactive)
-                  :v-adjust -0.225)
-                 (doom-modeline-spc))
-                'help-echo (evil-state-property evil-state :name t))))
+    (doom-modeline--modal-icon
+     (string-trim (evil-state-property evil-state :tag t))
+     (cond
+      ((evil-normal-state-p) 'doom-modeline-evil-normal-state)
+      ((evil-emacs-state-p) 'doom-modeline-evil-emacs-state)
+      ((evil-insert-state-p) 'doom-modeline-evil-insert-state)
+      ((evil-motion-state-p) 'doom-modeline-evil-motion-state)
+      ((evil-visual-state-p) 'doom-modeline-evil-visual-state)
+      ((evil-operator-state-p) 'doom-modeline-evil-operator-state)
+      ((evil-replace-state-p) 'doom-modeline-evil-replace-state)
+      (t 'doom-modeline-evil-normal-state))
+     (evil-state-property evil-state :name t))))
 
 (defsubst doom-modeline--overwrite ()
   "The current overwrite state. Requires `overwrite-mode' to be enabled."
   (when (and (bound-and-true-p overwrite-mode)
              (not (bound-and-true-p evil-local-mode)))
-    (propertize (concat
-                 (doom-modeline-spc)
-                 (doom-modeline-icon
-                  'material
-                  (when doom-modeline-modal-icon "fiber_manual_record")
-                  "●" "<O>"
-                  (if (doom-modeline--active)
-                      'doom-modeline-urgent
-                    'mode-line-inactive)
-                  :v-adjust -0.225)
-                 (doom-modeline-spc))
-                'help-echo "Overwrite state")))
+    (doom-modeline--modal-icon "<O>" 'doom-modeline-urgent "Overwrite state")))
 
 (defsubst doom-modeline--god ()
   "The current god state. Requires `god-mode' to be enabled."
   (when (bound-and-true-p god-local-mode)
-    (propertize (concat
-                 (doom-modeline-spc)
-                 (doom-modeline-icon
-                  'material
-                  (when doom-modeline-modal-icon "fiber_manual_record")
-                  "●" "<G>"
-                  (if (doom-modeline--active)
-                      'doom-modeline-evil-normal-state
-                    'mode-line-inactive)
-                  :v-adjust -0.225)
-                 (doom-modeline-spc))
-                'help-echo "God mode")))
+    (doom-modeline--modal-icon "<G>" 'doom-modeline-evil-normal-state "God mode")))
 
 (defsubst doom-modeline--ryo ()
   "The current ryo-modal state. Requires `ryo-modal-mode' to be enabled."
   (when (bound-and-true-p ryo-modal-mode)
-    (propertize (concat
-                 (doom-modeline-spc)
-                 (doom-modeline-icon
-                  'material
-                  (when doom-modeline-modal-icon "fiber_manual_record")
-                  "●" "<R>"
-                  (if (doom-modeline--active)
-                      'doom-modeline-evil-normal-state
-                    'mode-line-inactive)
-                  :v-adjust -0.225)
-                 (doom-modeline-spc))
-                'help-echo "Ryo modal")))
+    (doom-modeline--modal-icon "<R>" 'doom-modeline-evil-normal-state "Ryo modal")))
 
 (defsubst doom-modeline--xah-fly-keys ()
   "The current `xah-fly-keys' state."
-  (when (boundp 'xah-fly-insert-state-q)
-    (let ((active (doom-modeline--active)))
-      (if xah-fly-insert-state-q
-          (propertize (concat
-                       (doom-modeline-spc)
-                       (doom-modeline-icon
-                        'material
-                        (when doom-modeline-modal-icon "fiber_manual_record")
-                        "●" "<I>"
-                        (if active
-                            'doom-modeline-evil-insert-state
-                          'mode-line-inactive)
-                        :v-adjust -0.225)
-                       (doom-modeline-spc))
-                      'help-echo "Xah-fly insert state")
-        (propertize (concat
-                     (doom-modeline-spc)
-                     (doom-modeline-icon
-                      'material
-                      (when doom-modeline-modal-icon "fiber_manual_record")
-                      "●" "<X>"
-                      (if active
-                          'doom-modeline-evil-normal-state
-                        'mode-line-inactive)
-                      :v-adjust -0.225)
-                     (doom-modeline-spc))
-                    'help-echo "Xah-fly normal state")))))
+  (when (bound-and-true-p xah-fly-keys)
+    (doom-modeline--modal-icon (if xah-fly-insert-state-q "<I>" "<C>")
+                               (if xah-fly-insert-state-q
+                                   'doom-modeline-evil-insert-state
+                                 'doom-modeline-evil-normal-state)
+                               (format "Xah-fly %s mode"
+                                       (if xah-fly-insert-state-q
+                                           "insert"
+                                         "command")))))
 
 (doom-modeline-def-segment modals
   "Displays modal editing states, including `evil', `overwrite', `god', `ryo'
 and `xha-fly-kyes', etc."
-  (concat (doom-modeline--evil)
-          (doom-modeline--overwrite)
-          (doom-modeline--god)
-          (doom-modeline--ryo)
-          (doom-modeline--xah-fly-keys)))
+  (let* ((evil (doom-modeline--evil))
+         (ow (doom-modeline--overwrite))
+         (god (doom-modeline--god))
+         (ryo (doom-modeline--ryo))
+         (xf (doom-modeline--xah-fly-keys))
+         (vsep (doom-modeline-vspc))
+         (sep (and (or evil ow god ryo xf) (doom-modeline-spc))))
+    (concat sep
+            (and evil (concat evil (and (or ow god ryo xf) vsep)))
+            (and ow (concat evil (and (or god ryo xf) vsep)))
+            (and god (concat evil (and (or ryo xf) vsep)))
+            (and ryo (concat evil (and (or xf) vsep)))
+            xf
+            sep)))
 
 
 ;;
@@ -2038,14 +1999,14 @@ mouse-1: Toggle Debug on Quit"
            (edebug (doom-modeline--debug-edebug))
            (on-error (doom-modeline--debug-on-error))
            (on-quit (doom-modeline--debug-on-quit))
-           (sep (doom-modeline-vspc))
-           (seg-sep (and (or dap edebug on-error on-quit) (doom-modeline-spc))))
-      (concat seg-sep
-              (and dap (concat dap (and (or edebug on-error on-quit) sep)))
-              (and edebug (concat edebug (and (or on-error on-quit) sep)))
-              (and on-error (concat on-error (and on-quit sep)))
+           (vsep (doom-modeline-vspc))
+           (sep (and (or dap edebug on-error on-quit) (doom-modeline-spc))))
+      (concat sep
+              (and dap (concat dap (and (or edebug on-error on-quit) vsep)))
+              (and edebug (concat edebug (and (or on-error on-quit) vsep)))
+              (and on-error (concat on-error (and on-quit vsep)))
               on-quit
-              seg-sep))))
+              sep))))
 
 
 ;;
