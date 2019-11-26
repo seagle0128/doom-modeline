@@ -239,7 +239,7 @@ buffer where knowing the current project directory is important."
                                                   :v-adjust 0.0)
                           icon)
                         'help-echo (format "Major-mode: %s" (format-mode-line mode-name))
-                        'display '(raise -0.175))))))
+                        'display '(raise -0.135))))))
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-icon)
 (add-hook 'after-change-major-mode-hook #'doom-modeline-update-buffer-file-icon)
 (add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-icon)
