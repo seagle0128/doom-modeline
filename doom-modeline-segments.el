@@ -324,6 +324,15 @@ Uses `all-the-icons-material' to fetch the icon."
        (with-current-buffer buf
          (doom-modeline-update-buffer-file-state-icon))))))
 
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-unicode-fallback
+ (lambda (_sym val op _where)
+   (when (eq op 'set)
+     (setq doom-modeline-unicode-fallback val)
+     (dolist (buf (buffer-list))
+       (with-current-buffer buf
+         (doom-modeline-update-buffer-file-state-icon))))))
+
 (defvar-local doom-modeline--buffer-file-name nil)
 (defun doom-modeline-update-buffer-file-name (&rest _)
   "Update buffer file name in mode-line."
