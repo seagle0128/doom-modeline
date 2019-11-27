@@ -249,9 +249,9 @@ It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'."
   :group 'doom-modeline)
 
 (defcustom doom-modeline-continuous-word-count-modes
-  '(text-mode)
+  '(markdown-mode gfm-mode org-mode)
   "Major modes in which to display word count continuously.
-Also applies to any derived modes. Respects `doom-modeline-enable-word-count'."
+Respects `doom-modeline-enable-word-count'."
   :type 'list
   :group 'doom-modeline)
 
