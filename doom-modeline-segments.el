@@ -580,25 +580,26 @@ mouse-3: Toggle minor modes"
 
 (doom-modeline-def-segment minor-modes
   (when doom-modeline-minor-modes
-    (let ((face (if (doom-modeline--active)
+    (let ((modes (string-trim (if (bound-and-true-p minions-mode)
+                                  minions-mode-line-lighter
+                                (format-mode-line minor-mode-alist))))
+          (face (if (doom-modeline--active)
                     'doom-modeline-buffer-minor-mode
                   'mode-line-inactive)))
-      (if (bound-and-true-p minions-mode)
-          (concat (doom-modeline-spc)
-                  (propertize minions-mode-line-lighter
-                              'face face
-                              'help-echo "Minions
+      (unless (string-empty-p modes)
+        (concat
+         (doom-modeline-spc)
+         (if (bound-and-true-p minions-mode)
+             (propertize modes
+                         'face face
+                         'help-echo "Minions
 mouse-1: Display minor modes menu"
-                              'mouse-face 'mode-line-highlight
-                              'local-map (make-mode-line-mouse-map
-                                          'mouse-1 #'minions-minor-modes-menu))
-                  (doom-modeline-spc))
-        (concat (propertize (replace-regexp-in-string
-                             "%" "%%%%"
-                             (format-mode-line minor-mode-alist)
-                             t t)
-                            'face face)
-                (doom-modeline-spc))))))
+                         'mouse-face 'mode-line-highlight
+                         'local-map (make-mode-line-mouse-map
+                                     'mouse-1 #'minions-minor-modes-menu))
+           (propertize (replace-regexp-in-string "%" "%%%%" modes t t)
+                       'face face))
+         (doom-modeline-spc))))))
 
 
 ;;
