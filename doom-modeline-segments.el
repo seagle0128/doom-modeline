@@ -269,15 +269,21 @@ Uses `all-the-icons-material' to fetch the icon."
           (ignore-errors
             (cond (buffer-read-only
                    (doom-modeline-buffer-file-state-icon
-                    "lock" "🔒" "%1*" 'doom-modeline-warning))
+                    "lock" "🔒" "%1*" `(:inherit doom-modeline-warning
+                                        :weight ,(if doom-modeline-icon
+                                                     'normal
+                                                   'bold))))
                   ((and buffer-file-name (buffer-modified-p)
                         doom-modeline-buffer-modification-icon)
                    (doom-modeline-buffer-file-state-icon
-                    "save" "💾" "%1*" 'doom-modeline-buffer-modified))
+                    "save" "💾" "%1*" `(:inherit doom-modeline-buffer-modified
+                                        :weight ,(if doom-modeline-icon
+                                                     'normal
+                                                   'bold))))
                   ((and buffer-file-name
                         (not (file-exists-p buffer-file-name)))
                    (doom-modeline-buffer-file-state-icon
-                    "do_not_disturb_alt" "🚫" "!" 'doom-modeline-urgent))
+                    "block" "🚫" "!" 'doom-modeline-urgent))
                   ((or (buffer-narrowed-p)
                        (and (bound-and-true-p fancy-narrow-mode)
                             (fancy-narrow-active-p)))
@@ -720,7 +726,7 @@ Uses `all-the-icons-material' to fetch the icon."
               (pcase status
                 ('finished  (if flycheck-current-errors
                                 (let-alist (flycheck-count-errors flycheck-current-errors)
-                                  (doom-modeline-checker-icon "do_not_disturb_alt" "🚫" "!"
+                                  (doom-modeline-checker-icon "block" "🚫" "!"
                                                               (cond (.error 'doom-modeline-urgent)
                                                                     (.warning 'doom-modeline-warning)
                                                                     (t 'doom-modeline-info))))
@@ -881,7 +887,7 @@ mouse-3: Next error"
                                      ((> severity note-level)    (cl-incf .warning))
                                      (t                          (cl-incf .note))))))
                         (if (> (+ .error .warning .note) 0)
-                            (doom-modeline-checker-icon "do_not_disturb_alt" "🚫" "!"
+                            (doom-modeline-checker-icon "block" "🚫" "!"
                                                         (cond ((> .error 0) 'doom-modeline-urgent)
                                                               ((> .warning 0) 'doom-modeline-warning)
                                                               (t 'doom-modeline-info)))
