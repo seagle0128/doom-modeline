@@ -257,32 +257,33 @@ buffer where knowing the current project directory is important."
   "Displays an ICON of buffer state with FACE.
 TEXT is the alternative if it is not applicable.
 Uses `all-the-icons-material' to fetch the icon."
-  (when doom-modeline-buffer-state-icon
-    (doom-modeline-icon 'material icon unicode text face
-                        :height  1.1
-                        :v-adjust -0.225)))
+  (doom-modeline-icon 'material icon unicode text face
+                      :height  1.1
+                      :v-adjust -0.225))
 
 (defvar-local doom-modeline--buffer-file-state-icon nil)
 (defun doom-modeline-update-buffer-file-state-icon (&rest _)
   "Update the buffer or file state in mode-line."
   (setq doom-modeline--buffer-file-state-icon
-        (ignore-errors
-          (cond (buffer-read-only
-                 (doom-modeline-buffer-file-state-icon
-                  "lock" "🔒" "%1*" 'doom-modeline-warning))
-                ((and buffer-file-name (buffer-modified-p)
-                      doom-modeline-buffer-modification-icon)
-                 (doom-modeline-buffer-file-state-icon
-                  "save" "💾" "%1*" 'doom-modeline-buffer-modified))
-                ((and buffer-file-name (not (file-exists-p buffer-file-name)))
-                 (doom-modeline-buffer-file-state-icon
-                  "do_not_disturb_alt" "🚫" "!" 'doom-modeline-urgent))
-                ((or (buffer-narrowed-p)
-                     (and (bound-and-true-p fancy-narrow-mode)
-                          (fancy-narrow-active-p)))
-                 (doom-modeline-buffer-file-state-icon
-                  "vertical_align_center" "↕" "><" 'doom-modeline-warning))
-                (t "")))))
+        (when doom-modeline-buffer-state-icon
+          (ignore-errors
+            (cond (buffer-read-only
+                   (doom-modeline-buffer-file-state-icon
+                    "lock" "🔒" "%1*" 'doom-modeline-warning))
+                  ((and buffer-file-name (buffer-modified-p)
+                        doom-modeline-buffer-modification-icon)
+                   (doom-modeline-buffer-file-state-icon
+                    "save" "💾" "%1*" 'doom-modeline-buffer-modified))
+                  ((and buffer-file-name
+                        (not (file-exists-p buffer-file-name)))
+                   (doom-modeline-buffer-file-state-icon
+                    "do_not_disturb_alt" "🚫" "!" 'doom-modeline-urgent))
+                  ((or (buffer-narrowed-p)
+                       (and (bound-and-true-p fancy-narrow-mode)
+                            (fancy-narrow-active-p)))
+                   (doom-modeline-buffer-file-state-icon
+                    "vertical_align_center" "↕" "><" 'doom-modeline-warning))
+                  (t ""))))))
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-state-icon)
 (add-hook 'after-save-hook #'doom-modeline-update-buffer-file-state-icon)
@@ -392,7 +393,8 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
              doom-modeline--buffer-file-name
              (buffer-modified-p))
     (setq doom-modeline--buffer-file-name
-          (propertize doom-modeline--buffer-file-name 'face 'doom-modeline-buffer-modified))))
+          (propertize doom-modeline--buffer-file-name
+                      'face 'doom-modeline-buffer-modified))))
 (add-hook 'after-change-functions #'doom-modeline-update-buffer-file-name-face)
 
 (defsubst doom-modeline--buffer-mode-icon ()
@@ -400,23 +402,22 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
   (when (and doom-modeline-icon doom-modeline-major-mode-icon)
     (when-let ((icon (or doom-modeline--buffer-file-icon
                          (doom-modeline-update-buffer-file-icon))))
-      (when icon
-        (concat
-         (if (doom-modeline--active)
-             (if doom-modeline-major-mode-color-icon
-                 icon
-               (propertize icon 'face `(:inherit ,(let ((props (get-text-property 0 'face icon)))
-                                                    props (remove :inherit props))
-                                        :inherit mode-line)))
-           (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
-                                    :inherit mode-line-inactive)))
-         (doom-modeline-vspc))))))
+      (concat
+       (if (doom-modeline--active)
+           (if doom-modeline-major-mode-color-icon
+               icon
+             (propertize icon 'face `(:inherit ,(let ((props (get-text-property 0 'face icon)))
+                                                  props (remove :inherit props))
+                                      :inherit mode-line)))
+         (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
+                                  :inherit mode-line-inactive)))
+       (doom-modeline-vspc)))))
 
 (defsubst doom-modeline--buffer-state-icon ()
   "The icon of the current buffer state."
-  (when-let ((icon (or doom-modeline--buffer-file-state-icon
-                       (doom-modeline-update-buffer-file-state-icon))))
-    (when icon
+  (when doom-modeline-buffer-state-icon
+    (when-let ((icon (or doom-modeline--buffer-file-state-icon
+                         (doom-modeline-update-buffer-file-state-icon))))
       (concat
        (if (doom-modeline--active)
            icon
