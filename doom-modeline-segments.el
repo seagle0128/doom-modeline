@@ -679,27 +679,27 @@ Uses `all-the-icons-octicon' to fetch the icon."
 (advice-add #'vc-refresh-state :after #'doom-modeline-update-vcs-text)
 
 (doom-modeline-def-segment vcs
-"Displays the current branch, colored based on its state."
-(let ((active (doom-modeline--active)))
-  (when-let ((icon doom-modeline--vcs-icon)
-             (text doom-modeline--vcs-text))
-    (concat
-     (doom-modeline-spc)
-     (propertize
+  "Displays the current branch, colored based on its state."
+  (let ((active (doom-modeline--active)))
+    (when-let ((icon doom-modeline--vcs-icon)
+               (text doom-modeline--vcs-text))
       (concat
+       (doom-modeline-spc)
+       (propertize
+        (concat
+         (if active
+             icon
+           (propertize icon
+                       'face `(:inherit ,(get-text-property 0 'face icon)
+                               :inherit mode-line-inactive)))
+         (doom-modeline-vspc))
+        'mouse-face 'mode-line-highlight
+        'help-echo (get-text-property 1 'help-echo vc-mode)
+        'local-map (get-text-property 1 'local-map vc-mode))
        (if active
-           icon
-         (propertize icon
-                     'face `(:inherit ,(get-text-property 0 'face icon)
-                             :inherit mode-line-inactive)))
-       (doom-modeline-vspc))
-      'mouse-face 'mode-line-highlight
-      'help-echo (get-text-property 1 'help-echo vc-mode)
-      'local-map (get-text-property 1 'local-map vc-mode))
-     (if active
-         text
-       (propertize text 'face 'mode-line-inactive))
-     (doom-modeline-spc)))))
+           text
+         (propertize text 'face 'mode-line-inactive))
+       (doom-modeline-spc)))))
 
 
 ;;
@@ -1855,7 +1855,7 @@ mouse-1: Start server"))
 
 
 ;;
-;; Github
+;; GitHub
 ;;
 
 (defvar doom-modeline--github-notification-number 0)
@@ -1944,7 +1944,7 @@ mouse-3: Fetch notifications"
 
 
 ;;
-;; Debug state
+;; Debug states
 ;;
 
 (defun doom-modeline-debug-icon (face &rest args)
@@ -2028,7 +2028,7 @@ mouse-1: Toggle Debug on Quit"
 
 
 ;;
-;; pdf pages
+;; PDF pages
 ;;
 
 (defvar-local doom-modeline--pdf-pages nil)
@@ -2344,7 +2344,7 @@ mouse-3: Switch to next unread buffer")))
 
 
 ;;
-;; package information
+;; Package information
 ;;
 
 (doom-modeline-def-segment package
@@ -2494,34 +2494,34 @@ The cdr can also be a function that returns a name to use.")
 ;;
 
 (doom-modeline-def-segment grip
-(when (bound-and-true-p grip-mode)
-  (concat
-   (doom-modeline-spc)
-   (let ((face (if (doom-modeline--active)
-                   (if grip-process
-                       (pcase (process-status grip-process)
-                         ('run 'doom-modeline-buffer-path)
-                         ('exit 'doom-modeline-warning)
-                         (_ 'doom-modeline-urgent))
-                     'doom-modeline-urgent)
-                 'mode-line-inactive)))
-     (propertize (doom-modeline-icon 'material "pageview" "🗐" "@"
-                                     (if doom-modeline-icon
-                                         `(:inherit ,face :weight normal)
-                                       face)
-                                     :height 1.2 :v-adjust -0.2)
-                 'help-echo (format "Preview on: http://localhost:%d
+  (when (bound-and-true-p grip-mode)
+    (concat
+     (doom-modeline-spc)
+     (let ((face (if (doom-modeline--active)
+                     (if grip-process
+                         (pcase (process-status grip-process)
+                           ('run 'doom-modeline-buffer-path)
+                           ('exit 'doom-modeline-warning)
+                           (_ 'doom-modeline-urgent))
+                       'doom-modeline-urgent)
+                   'mode-line-inactive)))
+       (propertize (doom-modeline-icon 'material "pageview" "🗐" "@"
+                                       (if doom-modeline-icon
+                                           `(:inherit ,face :weight normal)
+                                         face)
+                                       :height 1.2 :v-adjust -0.2)
+                   'help-echo (format "Preview on: http://localhost:%d
 mouse-1: Open browser
 mouse-2: Stop preview"
-                                    grip-port)
-                 'mouse-face 'mode-line-highlight
-                 'local-map (let ((map (make-sparse-keymap)))
-                              (define-key map [mode-line mouse-1]
-                                #'grip-browse-preview)
-                              (define-key map [mode-line mouse-2]
-                                #'grip-mode)
-                              map)))
-   (doom-modeline-spc))))
+                                      grip-port)
+                   'mouse-face 'mode-line-highlight
+                   'local-map (let ((map (make-sparse-keymap)))
+                                (define-key map [mode-line mouse-1]
+                                  #'grip-browse-preview)
+                                (define-key map [mode-line mouse-2]
+                                  #'grip-mode)
+                                map)))
+     (doom-modeline-spc))))
 
 (provide 'doom-modeline-segments)
 
