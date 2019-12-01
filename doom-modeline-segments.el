@@ -2239,7 +2239,10 @@ mouse-3: Switch to next unread buffer")))
 		      (delq 'rcirc-activity-string global-mode-string))
         (remove-hook 'window-configuration-change-hook
 		             #'rcirc-window-configuration-change))
-    (when rcirc-track-minor-mode (rcirc-track-minor-mode 1))))
+    (when (and rcirc-track-minor-mode
+               (not (memq 'rcirc-activity-string global-mode-string)))
+	  (setq global-mode-string
+		    (append global-mode-string '(rcirc-activity-string))))))
 (add-hook 'rcirc-track-minor-mode-hook #'doom-modeline-override-rcirc-modeline)
 (add-hook 'doom-modeline-mode-hook #'doom-modeline-override-rcirc-modeline)
 
@@ -2332,8 +2335,10 @@ mouse-3: Switch to next unread buffer")))
 		      (delq 'battery-mode-line-string global-mode-string)))
     (progn
       (advice-remove #'battery-update #'doom-modeline-update-battery-status)
-      (when (and battery-status-function battery-mode-line-format display-battery-mode)
-        (add-to-list 'global-mode-string 'battery-mode-line-string t)))))
+      (when (and display-battery-mode battery-status-function battery-mode-line-format
+                 (not (memq 'battery-mode-line-string global-mode-string)))
+        (setq global-mode-string
+		      (append global-mode-string '(battery-mode-line-string)))))))
 (add-hook 'display-battery-mode-hook #'doom-modeline-override-battery-modeline)
 (add-hook 'doom-modeline-mode-hook #'doom-modeline-override-battery-modeline)
 
