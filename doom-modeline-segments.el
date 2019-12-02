@@ -2332,7 +2332,8 @@ mouse-3: Switch to next unread buffer")))
       (progn
         (advice-add #'battery-update :override #'doom-modeline-update-battery-status)
         (setq global-mode-string
-		      (delq 'battery-mode-line-string global-mode-string)))
+		      (delq 'battery-mode-line-string global-mode-string))
+        (and (bound-and-true-p display-battery-mode) (battery-update)))
     (progn
       (advice-remove #'battery-update #'doom-modeline-update-battery-status)
       (when (and display-battery-mode battery-status-function battery-mode-line-format
