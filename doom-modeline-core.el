@@ -770,9 +770,9 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 (defun doom-modeline--font-height ()
   "Calculate the actual char height of the mode-line."
   (let ((height (face-attribute 'mode-line :height)))
-    (round (* 1.68 (cond ((integerp height) (/ height 10))
-                         ((floatp height) (* height (frame-char-height)))
-                         (t (frame-char-height)))))))
+    (cond ((integerp height) (/ height 10))
+          ((floatp height) (* height (frame-char-height)))
+          (t (frame-char-height)))))
 
 (defun doom-modeline-add-variable-watcher (symbol watch-function)
   "Cause WATCH-FUNCTION to be called when SYMBOL is set if possible.
