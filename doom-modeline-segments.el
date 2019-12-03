@@ -581,27 +581,28 @@ mouse-3: Toggle minor modes"
 
 (doom-modeline-def-segment minor-modes
   (when doom-modeline-minor-modes
-    (let ((modes (string-trim (if (bound-and-true-p minions-mode)
-                                  minions-mode-line-lighter
-                                (format-mode-line minor-mode-alist))))
-          (face (if (doom-modeline--active)
+    (let ((face (if (doom-modeline--active)
                     'doom-modeline-buffer-minor-mode
                   'mode-line-inactive)))
-      (unless (string-empty-p modes)
-        (concat
-         (doom-modeline-spc)
-         (if (bound-and-true-p minions-mode)
-             (propertize modes
-                         'face face
-                         'help-echo "Minions
+      (if (bound-and-true-p minions-mode)
+          (concat
+           (doom-modeline-spc)
+           (propertize (string-trim minions-mode-line-lighter)
+                       'face face
+                       'help-echo "Minions
 mouse-1: Display minor modes menu"
-                         'mouse-face 'mode-line-highlight
-                         'local-map (make-mode-line-mouse-map
-                                     'mouse-1 #'minions-minor-modes-menu))
-           (propertize (replace-regexp-in-string "%" "%%%%" modes t t)
-                       'face face))
-         (doom-modeline-spc))))))
-
+                       'mouse-face 'mode-line-highlight
+                       'local-map (make-mode-line-mouse-map
+                                   'mouse-1 #'minions-minor-modes-menu))
+           (doom-modeline-spc))
+        `(:propertize ("" minor-mode-alist " ")
+          face ,face
+          mouse-face mode-line-highlight
+          help-echo "Minor mode
+mouse-1: Display minor mode menu
+mouse-2: Show help for minor mode
+mouse-3: Toggle minor modes"
+          local-map ,mode-line-minor-mode-keymap)))))
 
 ;;
 ;; VCS
