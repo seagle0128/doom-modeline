@@ -770,9 +770,16 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 (defun doom-modeline--font-height ()
   "Calculate the actual char height of the mode-line."
   (let ((height (face-attribute 'mode-line :height)))
-    (cond ((integerp height) (/ height 10))
-          ((floatp height) (* height (frame-char-height)))
-          (t (frame-char-height)))))
+    ;; WORKAROUND: Fix tall issue of 27 on Linux
+    ;; @see https://github.com/seagle0128/doom-modeline/issues/271
+    (round
+     (* (if (and (>= emacs-major-version 27)
+                 (eq system-type 'gnu/linux))
+            1.0
+          1.68)
+        (cond ((integerp height) (/ height 10))
+              ((floatp height) (* height (frame-char-height)))
+              (t (frame-char-height)))))))
 
 (defun doom-modeline-add-variable-watcher (symbol watch-function)
   "Cause WATCH-FUNCTION to be called when SYMBOL is set if possible.
@@ -787,7 +794,9 @@ See docs of `add-variable-watcher'."
 ICON-SET includes `octicon', `faicon', `material', `alltheicons' and `fileicon'.
 UNICODE is the unicode char fallback. TEXT is the ASCII char fallback."
   (let ((face (or face 'mode-line)))
-    (or (when (and doom-modeline-icon icon-name (not (string-empty-p icon-name)))
+    (or (when (and doom-modeline-icon
+                   icon-name
+                   (not (string-empty-p icon-name)))
           (pcase icon-set
             ('octicon
              (apply #'all-the-icons-octicon icon-name :face face args))
