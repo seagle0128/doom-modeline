@@ -226,7 +226,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
 ;; Major modes in which to display word count continuously.
 ;; Also applies to any derived modes. Respects `doom-modeline-enable-word-count'.
-(setq doom-modeline-continuous-word-count-modes '(text-mode))
+;; If it brings the sluggish issue, disable `doom-modeline-enable-word-count' or
+;; remove the modes from `doom-modeline-continuous-word-count-modes'.
+(setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mode org-mode))
 
 ;; Whether display the buffer encoding.
 (setq doom-modeline-buffer-encoding t)
