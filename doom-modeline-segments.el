@@ -1627,9 +1627,9 @@ and `xha-fly-kyes', etc."
          (sep (and (or evil ow god ryo xf) (doom-modeline-spc))))
     (concat sep
             (and evil (concat evil (and (or ow god ryo xf) vsep)))
-            (and ow (concat evil (and (or god ryo xf) vsep)))
-            (and god (concat evil (and (or ryo xf) vsep)))
-            (and ryo (concat evil (and (or xf) vsep)))
+            (and ow (concat ow (and (or god ryo xf) vsep)))
+            (and god (concat god (and (or ryo xf) vsep)))
+            (and ryo (concat ryo (and xf vsep)))
             xf
             sep)))
 
