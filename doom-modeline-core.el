@@ -449,17 +449,17 @@ It requires `circe' or `erc' package."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-evil-emacs-state
-  '((t (:inherit (doom-modeline-highlight bold))))
+  '((t (:inherit (font-lock-builtin-face bold))))
   "Face for the Emacs state tag in evil state indicator."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-evil-insert-state
-  '((t (:inherit doom-modeline-urgent)))
+  '((t (:inherit (font-lock-keyword-face bold))))
   "Face for the insert state tag in evil state indicator."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-evil-motion-state
-  '((t :inherit doom-modeline-buffer-file))
+  '((t :inherit (font-lock-doc-face bold)))
   "Face for the motion state tag in evil state indicator."
   :group 'doom-modeline-faces)
 
@@ -479,7 +479,7 @@ It requires `circe' or `erc' package."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-evil-replace-state
-  '((t (:inherit doom-modeline-buffer-modified)))
+  '((t (:inherit doom-modeline-urgent)))
   "Face for the replace state tag in evil state indicator."
   :group 'doom-modeline-faces)
 
