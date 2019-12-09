@@ -631,7 +631,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
                   ((memq state '(removed conflict unregistered))
                    (doom-modeline-vcs-icon "alert" "⚠" "!" 'doom-modeline-urgent))
                   (t
-                   (doom-modeline-vcs-icon "git-branch" "⑆" "@" 'doom-modeline-info -0.05)))))))
+                   (doom-modeline-vcs-icon "git-branch" "" "@" 'doom-modeline-info -0.05)))))))
 (add-hook 'find-file-hook #'doom-modeline-update-vcs-icon t)
 (add-hook 'after-save-hook #'doom-modeline-update-vcs-icon)
 (advice-add #'vc-refresh-state :after #'doom-modeline-update-vcs-icon)
@@ -733,12 +733,12 @@ Uses `all-the-icons-material' to fetch the icon."
                                                               (cond (.error 'doom-modeline-urgent)
                                                                     (.warning 'doom-modeline-warning)
                                                                     (t 'doom-modeline-info))))
-                              (doom-modeline-checker-icon "check" "✔" "-" 'doom-modeline-info)))
-                ('running     (doom-modeline-checker-icon "access_time" "⏰" "*" 'doom-modeline-debug))
+                              (doom-modeline-checker-icon "check" "✓" "-" 'doom-modeline-info)))
+                ('running     (doom-modeline-checker-icon "access_time" "⏱" "*" 'doom-modeline-debug))
                 ('no-checker  (doom-modeline-checker-icon "sim_card_alert" "⚠" "-" 'doom-modeline-debug))
-                ('errored     (doom-modeline-checker-icon "sim_card_alert" "❗" "!" 'doom-modeline-urgent))
+                ('errored     (doom-modeline-checker-icon "sim_card_alert" "⚠" "-" 'doom-modeline-urgent))
                 ('interrupted (doom-modeline-checker-icon "pause" "⏸" "=" 'doom-modeline-debug))
-                ('suspicious  (doom-modeline-checker-icon "priority_high" "❓" "?" 'doom-modeline-urgent))
+                ('suspicious  (doom-modeline-checker-icon "priority_high" "❗" "!" 'doom-modeline-urgent))
                 (_ nil))))
           (propertize icon
                       'help-echo (concat "Flycheck\n"
