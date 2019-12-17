@@ -330,6 +330,20 @@ It requires `mu4e-alert' package."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-gnus nil
+  "Wheter to display notifications from gnus
+
+It requires `gnus' to be setup"
+  :type 'boolean
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-gnus-timer 2
+  "The wait time in minutes before gnus fetches mail
+
+if nil, don't set up a hook"
+  :type 'integer
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-irc t
   "Whether display the irc notifications.
 
