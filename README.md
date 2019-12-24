@@ -47,7 +47,7 @@ The `doom-modeline` was designed for minimalism, and offers:
 - An indicator for remote host
 - An indicator for LSP state with `lsp-mode` or `eglot`
 - An indicator for GitHub notifications
-- An indicator for unread emails with `mu4e-alert`
+- An indicator for unread emails with `mu4e-alert` and `gnus`
 - An indicator for IRC notifications with `circe`, `rcirc` or `erc`
 - An indicator for buffer position which is compatible with `nyan-mode`
 - An indicator for party `parrot`
@@ -266,6 +266,12 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
 ;; Whether display the mu4e notifications. It requires `mu4e-alert' package.
 (setq doom-modeline-mu4e t)
+
+;; Whether display the gnus notifications.
+(setq doom-modeline-gnus t)
+
+;; Wheter gnus should automatically be updated and how often (set to nil to disable)
+(setq doom-modeline-gnus-timer 2)
 
 ;; Whether display the IRC notifications. It requires `circe' or `erc' package.
 (setq doom-modeline-irc t)

@@ -54,6 +54,7 @@
 ;; - An indicator for LSP state with lsp-mode or eglot
 ;; - An indicator for github notifications
 ;; - An indicator for unread emails with mu4e-alert
+;; - An indicator for unread emails with gnus (basically builtin)
 ;; - An indicator for irc notifications with circe, rcirc or erc.
 ;; - An indicator for buffer position which is compatible with nyan-mode
 ;; - An indicator for party parrot
@@ -90,7 +91,7 @@
 
 (doom-modeline-def-modeline 'main
   '(bar workspace-name window-number modals matches buffer-info remote-host buffer-position word-count parrot selection-info)
-  '(objed-state misc-info persp-name battery grip irc mu4e github debug lsp minor-modes input-method indent-info buffer-encoding major-mode process vcs checker))
+  '(objed-state misc-info persp-name battery grip irc mu4e gnus github debug lsp minor-modes input-method indent-info buffer-encoding major-mode process vcs checker))
 
 (doom-modeline-def-modeline 'minimal
   '(bar matches buffer-info-simple)
@@ -102,11 +103,11 @@
 
 (doom-modeline-def-modeline 'project
   '(bar window-number buffer-default-directory)
-  '(misc-info battery irc mu4e github debug major-mode process))
+  '(misc-info battery irc mu4e gnus github debug major-mode process))
 
 (doom-modeline-def-modeline 'vcs
   '(bar window-number modals matches buffer-info buffer-position parrot selection-info)
-  '(misc-info battery irc mu4e github debug minor-modes buffer-encoding major-mode process))
+  '(misc-info battery irc mu4e gnus github debug minor-modes buffer-encoding major-mode process))
 
 (doom-modeline-def-modeline 'package
   '(bar window-number package)
