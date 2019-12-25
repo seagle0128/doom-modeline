@@ -294,55 +294,6 @@ Uses `all-the-icons-material' to fetch the icon."
                    (doom-modeline-buffer-file-state-icon
                     "vertical_align_center" "↕" "><" 'doom-modeline-warning))
                   (t ""))))))
-(add-hook 'find-file-hook #'doom-modeline-update-buffer-file-state-icon)
-(add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-state-icon)
-(add-hook 'after-save-hook #'doom-modeline-update-buffer-file-state-icon)
-(add-hook 'read-only-mode-hook #'doom-modeline-update-buffer-file-state-icon)
-(add-hook 'after-change-functions #'doom-modeline-update-buffer-file-state-icon)
-(add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-state-icon)
-(add-hook 'evil-insert-state-exit-hook #'doom-modeline-update-buffer-file-state-icon)
-(add-hook 'erc-insert-done-hook #'doom-modeline-update-buffer-file-state-icon)
-(add-hook 'rcirc-activity-functions #'doom-modeline-update-buffer-file-state-icon)
-(add-hook 'rcirc-print-functions #'doom-modeline-update-buffer-file-state-icon)
-(advice-add #'undo :after #'doom-modeline-update-buffer-file-state-icon)
-(advice-add #'undo-tree-undo-1 :after #'doom-modeline-update-buffer-file-state-icon)
-(advice-add #'undo-tree-redo-1 :after #'doom-modeline-update-buffer-file-state-icon)
-(advice-add #'fill-paragraph :after #'doom-modeline-update-buffer-file-state-icon)
-(advice-add #'not-modified :after #'doom-modeline-update-buffer-file-state-icon)
-(advice-add #'narrow-to-region :after #'doom-modeline-update-buffer-file-state-icon)
-(advice-add #'widen :after #'doom-modeline-update-buffer-file-state-icon)
-(advice-add #'fancy-narrow-to-region :after #'doom-modeline-update-buffer-file-state-icon)
-(advice-add #'fancy-widen :after #'doom-modeline-update-buffer-file-state-icon)
-(advice-add #'org-narrow-to-block :after #'doom-modeline-update-buffer-file-state-icon)
-(advice-add #'org-narrow-to-element :after #'doom-modeline-update-buffer-file-state-icon)
-(advice-add #'org-narrow-to-subtree :after #'doom-modeline-update-buffer-file-state-icon)
-(advice-add #'org-toggle-narrow-to-subtree :after #'doom-modeline-update-buffer-file-state-icon)
-(advice-add #'org-edit-src-save :after #'doom-modeline-update-buffer-file-state-icon)
-(advice-add #'symbol-overlay-rename :after #'doom-modeline-update-buffer-file-state-icon)
-
-(doom-modeline-add-variable-watcher
- 'buffer-read-only
- (lambda (_sym val _op _where)
-   (setq buffer-read-only val)
-   (doom-modeline-update-buffer-file-state-icon)))
-
-(doom-modeline-add-variable-watcher
- 'doom-modeline-icon
- (lambda (_sym val op _where)
-   (when (eq op 'set)
-     (setq doom-modeline-icon val)
-     (dolist (buf (buffer-list))
-       (with-current-buffer buf
-         (doom-modeline-update-buffer-file-state-icon))))))
-
-(doom-modeline-add-variable-watcher
- 'doom-modeline-unicode-fallback
- (lambda (_sym val op _where)
-   (when (eq op 'set)
-     (setq doom-modeline-unicode-fallback val)
-     (dolist (buf (buffer-list))
-       (with-current-buffer buf
-         (doom-modeline-update-buffer-file-state-icon))))))
 
 (defvar-local doom-modeline--buffer-file-name nil)
 (defun doom-modeline-update-buffer-file-name (&rest _)
@@ -426,8 +377,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 (defsubst doom-modeline--buffer-state-icon ()
   "The icon of the current buffer state."
   (when doom-modeline-buffer-state-icon
-    (when-let ((icon (or doom-modeline--buffer-file-state-icon
-                         (doom-modeline-update-buffer-file-state-icon))))
+    (when-let ((icon (doom-modeline-update-buffer-file-state-icon)))
       (concat
        (if (doom-modeline--active)
            icon
