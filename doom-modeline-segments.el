@@ -71,6 +71,7 @@
 (defvar flymake--backend-state)
 (defvar flymake--mode-line-format)
 (defvar flymake-menu)
+(defvar gnus-newsrc-alist)
 (defvar grip-port)
 (defvar grip-process)
 (defvar helm--mode-line-display-prefarg)
@@ -154,6 +155,8 @@
 (declare-function flymake-running-backends 'flymake)
 (declare-function flymake-show-diagnostics-buffer 'flymake)
 (declare-function flymake-start 'flymake)
+(declare-function gnus-demon-add-handler 'gnus-demon)
+(declare-function gnus-group-unread 'gnus)
 (declare-function grip-browse-preview 'grip-mode)
 (declare-function grip-mode 'grip-mode)
 (declare-function helm-candidate-number-at-point 'helm)
@@ -2104,11 +2107,9 @@ mouse-1: Toggle Debug on Quit"
 (defun doom-modeline-update-gnus-status (&rest _)
   "Get the total number of unread news of gnus group."
   (setq doom-modeline-gnus-unread-mail
-        (when (and (doom-modeline--active)
-                   (bound-and-true-p doom-modeline-gnus)
+        (when (and (bound-and-true-p doom-modeline-gnus)
                    (bound-and-true-p doom-modeline-gnus-started))
           (let ((total-unread-news-number 0))
-            ;; (setq total-unread-news-number 0)
             (mapc (lambda (g)
                     (let* ((group (car g))
                            (unread (gnus-group-unread group)))
@@ -2120,27 +2121,28 @@ mouse-1: Toggle Debug on Quit"
 
 (doom-modeline-def-segment gnus
   "Show notifications of any unread emails in `gnus'."
-  (when (and (bound-and-true-p doom-modeline-gnus)
-             (bound-and-true-p doom-modeline-gnus-started))
-    (let ((color (if (= doom-modeline-gnus-unread-mail 0) 'doom-modeline-inactive 'doom-modeline-warning)))
+  (when (and (doom-modeline--active)
+             (bound-and-true-p doom-modeline-gnus)
+             (bound-and-true-p doom-modeline-gnus-started)
+             ;; don't display if the unread mails count is zero
+             (> doom-modeline-gnus-unread-mail 0))
+    (concat
+     (doom-modeline-spc)
+     (propertize
       (concat
-       (doom-modeline-spc)
+       (doom-modeline-icon 'material "email" "📧" "#" 'doom-modeline-warning
+                           :height 1.1 :v-adjust -0.225)
+       (doom-modeline-vspc)
        (propertize
-        (concat
-         (doom-modeline-icon 'material "email" "📧" "#" color
-                             :height 1.1 :v-adjust -0.225)
-         (doom-modeline-vspc)
-         (propertize
-          (if (> doom-modeline-gnus-unread-mail doom-modeline-number-limit)
-              (format "%d+" doom-modeline-number-limit)
-            (number-to-string doom-modeline-gnus-unread-mail))
-          'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
-        'mouse-face 'mode-line-highlight
-        'help-echo (if (= doom-modeline-gnus-unread-mail 1)
-                       "You have an unread email"
-                     (format "You have %s unread emails" doom-modeline-gnus-unread-mail)))
-       (doom-modeline-spc)))))
-
+        (if (> doom-modeline-gnus-unread-mail doom-modeline-number-limit)
+            (format "%d+" doom-modeline-number-limit)
+          (number-to-string doom-modeline-gnus-unread-mail))
+        'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
+      'mouse-face 'mode-line-highlight
+      'help-echo (if (= doom-modeline-gnus-unread-mail 1)
+                     "You have an unread email"
+                   (format "You have %s unread emails" doom-modeline-gnus-unread-mail)))
+     (doom-modeline-spc))))
 
 ;; Only start to listen to gnus when gnus is actually running
 (defun doom-modeline-start-gnus-listener ()
@@ -2152,13 +2154,12 @@ mouse-1: Toggle Debug on Quit"
     (doom-modeline-update-gnus-status)
     (if (> doom-modeline-gnus-timer 0)
         (gnus-demon-add-handler 'gnus-demon-scan-news doom-modeline-gnus-timer nil))))
-(add-hook #'gnus-started-hook #'doom-modeline-start-gnus-listener)
+(add-hook 'gnus-started-hook #'doom-modeline-start-gnus-listener)
 
 ;; Stop the listener if gnus isn't running
 (defun doom-modeline-stop-gnus-listener ()
   (setq doom-modeline-gnus-started nil))
-(add-hook #'gnus-exit-gnus-hook #'doom-modeline-stop-gnus-listener)
-
+(add-hook 'gnus-exit-gnus-hook #'doom-modeline-stop-gnus-listener)
 
 ;; Update the modeline after changes have been made
 (add-hook 'gnus-group-update-hook #'doom-modeline-update-gnus-status)
@@ -2166,24 +2167,6 @@ mouse-1: Toggle Debug on Quit"
 (add-hook 'gnus-group-update-group-hook #'doom-modeline-update-gnus-status)
 (add-hook 'gnus-after-getting-new-news-hook #'doom-modeline-update-gnus-status)
 
-
-(doom-modeline-add-variable-watcher
- 'doom-modeline-icon
- (lambda (_sym val op _where)
-   (when (eq op 'set)
-     (setq doom-modeline-icon val)
-     (dolist (buf (buffer-list))
-       (with-current-buffer buf
-         doom-modeline-gnus-unread-mail)))))
-
-(doom-modeline-add-variable-watcher
- 'doom-modeline-unicode-fallback
- (lambda (_sym val op _where)
-   (when (eq op 'set)
-     (setq doom-modeline-unicode-fallback val)
-     (dolist (buf (buffer-list))
-       (with-current-buffer buf
-         doom-modeline-update-gnus-status)))))
 
 ;;
 ;; IRC notifications
