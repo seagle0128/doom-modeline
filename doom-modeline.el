@@ -121,6 +121,10 @@
   '(bar window-number buffer-size buffer-info)
   '(misc-info media-info major-mode process vcs))
 
+(doom-modeline-def-modeline 'message
+  '(bar window-number modals matches buffer-info-simple buffer-position word-count parrot selection-info)
+  '(objed-state misc-info battery debug minor-modes input-method indent-info buffer-encoding major-mode))
+
 (doom-modeline-def-modeline 'pdf
   '(bar window-number buffer-size buffer-info pdf-pages)
   '(misc-info major-mode process vcs))
@@ -185,6 +189,11 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   (doom-modeline-set-modeline 'media))
 
 ;;;###autoload
+(defun doom-modeline-set-message-modeline ()
+  "Set message mode-line."
+  (doom-modeline-set-modeline 'message))
+
+;;;###autoload
 (defun doom-modeline-set-pdf-modeline ()
   "Set pdf mode-line."
   (doom-modeline-set-modeline 'pdf))
@@ -234,6 +243,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (add-hook 'dired-mode-hook #'doom-modeline-set-project-modeline)
         (add-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
         (add-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
+        (add-hook 'message-mode-hook #'doom-modeline-set-message-modeline)
         (add-hook 'magit-mode-hook #'doom-modeline-set-vcs-modeline)
         (add-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
         (add-hook 'erc-mode-hook #'doom-modeline-set-special-modeline)
@@ -255,6 +265,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
       (remove-hook 'dired-mode-hook #'doom-modeline-set-project-modeline)
       (remove-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
       (remove-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
+      (remove-hook 'message-mode-hook #'doom-modeline-set-message-modeline)
       (remove-hook 'magit-mode-hook #'doom-modeline-set-vcs-modeline)
       (remove-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
       (remove-hook 'erc-mode-hook #'doom-modeline-set-special-modeline)

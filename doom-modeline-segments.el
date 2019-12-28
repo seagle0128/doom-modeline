@@ -404,11 +404,19 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 
 (doom-modeline-def-segment buffer-info-simple
   "Display only the current buffer's name, but with fontification."
-  (propertize" %b "
-             'face (cond ((and buffer-file-name (buffer-modified-p))
-                          'doom-modeline-buffer-modified)
-                         ((doom-modeline--active) 'doom-modeline-buffer-file)
-                         (t 'mode-line-inactive))))
+  (concat
+   (doom-modeline-spc)
+   (doom-modeline--buffer-mode-icon)
+   (doom-modeline--buffer-state-icon)
+   (propertize "%b"
+               'face (cond ((and buffer-file-name (buffer-modified-p))
+                            'doom-modeline-buffer-modified)
+                           ((doom-modeline--active) 'doom-modeline-buffer-file)
+                           (t 'mode-line-inactive))
+               'mouse-face 'mode-line-highlight
+               'help-echo "Buffer name
+mouse-1: Previous buffer\nmouse-3: Next buffer"
+               'local-map mode-line-buffer-identification-keymap)))
 
 
 ;;
