@@ -2067,7 +2067,7 @@ mouse-1: Toggle Debug on Quit"
 (add-hook 'doom-modeline-mode-hook #'doom-modeline-override-mu4e-alert-modeline)
 
 ;;
-;; `gnus notifications' notifications
+;; `gnus' notifications
 ;;
 
 (defvar doom-modeline-gnus-unread-mail 0)
@@ -2076,8 +2076,8 @@ mouse-1: Toggle Debug on Quit"
 (defun doom-modeline-update-gnus-status (&rest _)
   "Get the total number of unread news of gnus group."
   (setq doom-modeline-gnus-unread-mail
-        (when (and (bound-and-true-p doom-modeline-gnus)
-                   (bound-and-true-p doom-modeline-gnus-started))
+        (when (and doom-modeline-gnus
+                   doom-modeline-gnus-started)
           (let ((total-unread-news-number 0))
             (mapc (lambda (g)
                     (let* ((group (car g))
@@ -2091,8 +2091,8 @@ mouse-1: Toggle Debug on Quit"
 (doom-modeline-def-segment gnus
   "Show notifications of any unread emails in `gnus'."
   (when (and (doom-modeline--active)
-             (bound-and-true-p doom-modeline-gnus)
-             (bound-and-true-p doom-modeline-gnus-started)
+             doom-modeline-gnus
+             doom-modeline-gnus-started
              ;; don't display if the unread mails count is zero
              (> doom-modeline-gnus-unread-mail 0))
     (concat
@@ -2115,9 +2115,8 @@ mouse-1: Toggle Debug on Quit"
 
 ;; Only start to listen to gnus when gnus is actually running
 (defun doom-modeline-start-gnus-listener ()
-  (when (and (doom-modeline--active)
-	     (bound-and-true-p doom-modeline-gnus)
-             (not (bound-and-true-p doom-modeline-gnus-started)))
+  (when (and doom-modeline-gnus
+             (not doom-modeline-gnus-started))
     (setq doom-modeline-gnus-started t)
     ;; scan gnus in the background if the timer is higher than 0
     (doom-modeline-update-gnus-status)
