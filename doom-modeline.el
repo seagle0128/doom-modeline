@@ -235,7 +235,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (doom-modeline-set-main-modeline t) ; Set default mode-line
         ;; These buffers are already created and don't get modelines
         (dolist (bname '("*scratch*" "*Messages*"))
-          (if (buffer-live-p bname)
+          (if (buffer-live-p (get-buffer bname))
               (with-current-buffer bname
                 (doom-modeline-set-main-modeline))))
         ;; Add hooks
@@ -258,7 +258,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
       ;; Restore mode-line
       (setq-default mode-line-format doom-modeline--old-format)
       (dolist (bname '("*scratch*" "*Messages*"))
-        (if (buffer-live-p bname)
+        (if (buffer-live-p (get-buffer bname))
             (with-current-buffer bname
               (setq mode-line-format doom-modeline--old-format))))
       ;; Remove hooks
