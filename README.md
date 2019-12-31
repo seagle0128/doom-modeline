@@ -219,7 +219,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 (setq doom-modeline-unicode-fallback nil)
 
 ;; Whether display the minor modes in mode-line.
-(setq doom-modeline-minor-modes (featurep 'minions))
+(setq doom-modeline-minor-modes nil)
 
 ;; If non-nil, a word count will be added to the selection-info modeline segment.
 (setq doom-modeline-enable-word-count nil)
@@ -265,7 +265,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 (setq doom-modeline-modal-icon t)
 
 ;; Whether display the mu4e notifications. It requires `mu4e-alert' package.
-(setq doom-modeline-mu4e t)
+(setq doom-modeline-mu4e nil)
 
 ;; Whether display the gnus notifications.
 (setq doom-modeline-gnus t)

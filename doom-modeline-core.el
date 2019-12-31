@@ -238,7 +238,7 @@ It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'."
   :type 'boolean
   :group 'doom-modeline)
 
-(defcustom doom-modeline-minor-modes (featurep 'minions)
+(defcustom doom-modeline-minor-modes nil
   "Whether display the minor modes in mode-line."
   :type 'boolean
   :group 'doom-modeline)
@@ -323,7 +323,7 @@ Including `evil', `overwrite', `god', `ryo' and `xah-fly-keys', etc."
   :type 'boolean
   :group 'doom-modeline)
 
-(defcustom doom-modeline-mu4e t
+(defcustom doom-modeline-mu4e nil
   "Whether display the mu4e notifications.
 
 It requires `mu4e-alert' package."
