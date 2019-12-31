@@ -77,7 +77,8 @@
 (defvar helm--mode-line-display-prefarg)
 (defvar iedit-occurrences-overlays)
 (defvar mc/mode-line)
-(defvar minions-mode-line-lighter)
+(defvar minions-direct)
+(defvar minions-mode-line-minor-modes-map)
 (defvar mu4e-alert-mode-line)
 (defvar mu4e-alert-modeline-formatter)
 (defvar nyan-minimum-window-width)
@@ -174,7 +175,6 @@
 (declare-function lsp-workspaces 'lsp-mode)
 (declare-function magit-toplevel 'magit-git)
 (declare-function mc/num-cursors 'multiple-cursors-core)
-(declare-function minions-minor-modes-menu 'minions)
 (declare-function mu4e-alert-default-mode-line-formatter 'mu4e-alert)
 (declare-function mu4e-alert-enable-mode-line-display 'mu4e-alert)
 (declare-function nyan-create 'nyan-mode)
@@ -544,26 +544,34 @@ mouse-3: Toggle minor modes"
   (when doom-modeline-minor-modes
     (let ((face (if (doom-modeline--active)
                     'doom-modeline-buffer-minor-mode
-                  'mode-line-inactive)))
-      (if (bound-and-true-p minions-mode)
-          (concat
-           (doom-modeline-spc)
-           (propertize (string-trim minions-mode-line-lighter)
-                       'face face
-                       'help-echo "Minions
-mouse-1: Display minor modes menu"
-                       'mouse-face 'mode-line-highlight
-                       'local-map (make-mode-line-mouse-map
-                                   'mouse-1 #'minions-minor-modes-menu))
-           (doom-modeline-spc))
-        `(:propertize ("" minor-mode-alist " ")
-          face ,face
-          mouse-face mode-line-highlight
-          help-echo "Minor mode
+                  'mode-line-inactive))
+          (mouse-face 'mode-line-highlight)
+          (help-echo "Minor mode
 mouse-1: Display minor mode menu
 mouse-2: Show help for minor mode
-mouse-3: Toggle minor modes"
-          local-map ,mode-line-minor-mode-keymap)))))
+mouse-3: Toggle minor modes"))
+      (if (bound-and-true-p minions-mode)
+          `((:propertize ("" ,(--filter (memq (car it) minions-direct)
+                                        minor-mode-alist))
+             face ,face
+		     mouse-face ,mouse-face
+		     help-echo ,help-echo
+		     local-map ,mode-line-minor-mode-keymap)
+            ,(doom-modeline-spc)
+            (:propertize ("" ,(doom-modeline-icon 'octicon "gear" "⚙" ";-"
+                                                  face :v-adjust -0.05))
+             mouse-face ,mouse-face
+             help-echo "Minions
+mouse-1: Display minor modes menu"
+             local-map ,minions-mode-line-minor-modes-map)
+            ,(doom-modeline-spc))
+        `((:propertize ("" minor-mode-alist)
+           face ,face
+           mouse-face ,mouse-face
+           help-echo ,help-echo
+           local-map ,mode-line-minor-mode-keymap)
+          ,(doom-modeline-spc))))))
+
 
 ;;
 ;; VCS

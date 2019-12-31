@@ -393,7 +393,7 @@ It requires `circe' or `erc' package."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-buffer-minor-mode
-  '((t (:inherit (mode-line-buffer-id bold))))
+  '((t (:inherit font-lock-doc-face)))
   "Face used for the minor-modes segment in the mode-line."
   :group 'doom-modeline-faces)
 
