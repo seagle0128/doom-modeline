@@ -1043,9 +1043,9 @@ lines are selected, or the NxM dimensions of a block selection."
                                   (eq evil-state 'visual)))
              (doom-modeline--active))
     (cl-destructuring-bind (beg . end)
-        (if (and (bound-and-true-p evil-local-mode) (eq evil-state 'visual))
-            (cons evil-visual-beginning evil-visual-end)
-          (cons (region-beginning) (region-end)))
+      (if (and (bound-and-true-p evil-local-mode) (eq evil-state 'visual))
+          (cons evil-visual-beginning evil-visual-end)
+        (cons (region-beginning) (region-end)))
       (propertize
        (let ((lines (count-lines beg (min end (point-max)))))
          (concat (doom-modeline-spc)
@@ -1544,7 +1544,8 @@ mouse-1: Display Line and Column Mode Menu"
   "The current evil state. Requires `evil-mode' to be enabled."
   (when (bound-and-true-p evil-local-mode)
     (doom-modeline--modal-icon
-     (string-trim (evil-state-property evil-state :tag t))
+     (let ((tag (evil-state-property evil-state :tag t)))
+       (string-trim (if (stringp tag) tag (funcall tag))))
      (cond
       ((evil-normal-state-p) 'doom-modeline-evil-normal-state)
       ((evil-emacs-state-p) 'doom-modeline-evil-emacs-state)
