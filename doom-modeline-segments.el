@@ -1737,7 +1737,7 @@ mouse-1: Reload to start server")
                                    map)))))
 (add-hook 'lsp-before-initialize-hook #'doom-modeline-update-lsp)
 (add-hook 'lsp-after-initialize-hook #'doom-modeline-update-lsp)
-(add-hook 'lsp-after-uninitialized-hook #'doom-modeline-update-lsp)
+(add-hook 'lsp-after-uninitialized-functions #'doom-modeline-update-lsp)
 (add-hook 'lsp-before-open-hook #'doom-modeline-update-lsp)
 (add-hook 'lsp-after-open-hook #'doom-modeline-update-lsp)
 
