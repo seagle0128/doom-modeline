@@ -2285,11 +2285,8 @@ mouse-3: Switch to next unread buffer")))
 (defun doom-modeline-override-rcirc-modeline ()
   "Override default `rcirc' mode-line."
   (if (bound-and-true-p doom-modeline-mode)
-      (progn
-        (setq global-mode-string
-		      (delq 'rcirc-activity-string global-mode-string))
-        (remove-hook 'window-configuration-change-hook
-		             #'rcirc-window-configuration-change))
+      (setq global-mode-string
+		    (delq 'rcirc-activity-string global-mode-string))
     (when (and rcirc-track-minor-mode
                (not (memq 'rcirc-activity-string global-mode-string)))
 	  (setq global-mode-string
