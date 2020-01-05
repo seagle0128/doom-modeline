@@ -2090,12 +2090,35 @@ mouse-1: Toggle Debug on Quit"
           (let ((total-unread-news-number 0))
             (mapc (lambda (g)
                     (let* ((group (car g))
-                           (unread (gnus-group-unread group)))
+                           (unread (and (fboundp 'gnus-group-unread)
+                                        (gnus-group-unread group))))
                       (when (and (numberp unread)
                                  (> unread 0))
                         (setq total-unread-news-number (+ total-unread-news-number unread)))))
                   gnus-newsrc-alist)
             total-unread-news-number))))
+
+;; Update the modeline after changes have been made
+(add-hook 'gnus-group-update-hook #'doom-modeline-update-gnus-status)
+(add-hook 'gnus-summary-update-hook #'doom-modeline-update-gnus-status)
+(add-hook 'gnus-group-update-group-hook #'doom-modeline-update-gnus-status)
+(add-hook 'gnus-after-getting-new-news-hook #'doom-modeline-update-gnus-status)
+
+;; Only start to listen to gnus when gnus is actually running
+(defun doom-modeline-start-gnus-listener ()
+  (when (and doom-modeline-gnus
+             (not doom-modeline--gnus-started))
+    (setq doom-modeline--gnus-started t)
+    ;; scan gnus in the background if the timer is higher than 0
+    (doom-modeline-update-gnus-status)
+    (if (> doom-modeline-gnus-timer 0)
+        (gnus-demon-add-handler 'gnus-demon-scan-news doom-modeline-gnus-timer nil))))
+(add-hook 'gnus-started-hook #'doom-modeline-start-gnus-listener)
+
+;; Stop the listener if gnus isn't running
+(defun doom-modeline-stop-gnus-listener ()
+  (setq doom-modeline--gnus-started nil))
+(add-hook 'gnus-exit-gnus-hook #'doom-modeline-stop-gnus-listener)
 
 (doom-modeline-def-segment gnus
   "Show notifications of any unread emails in `gnus'."
@@ -2121,28 +2144,6 @@ mouse-1: Toggle Debug on Quit"
                      "You have an unread email"
                    (format "You have %s unread emails" doom-modeline--gnus-unread-mail)))
      (doom-modeline-spc))))
-
-;; Only start to listen to gnus when gnus is actually running
-(defun doom-modeline-start-gnus-listener ()
-  (when (and doom-modeline-gnus
-             (not doom-modeline--gnus-started))
-    (setq doom-modeline--gnus-started t)
-    ;; scan gnus in the background if the timer is higher than 0
-    (doom-modeline-update-gnus-status)
-    (if (> doom-modeline-gnus-timer 0)
-        (gnus-demon-add-handler 'gnus-demon-scan-news doom-modeline-gnus-timer nil))))
-(add-hook 'gnus-started-hook #'doom-modeline-start-gnus-listener)
-
-;; Stop the listener if gnus isn't running
-(defun doom-modeline-stop-gnus-listener ()
-  (setq doom-modeline--gnus-started nil))
-(add-hook 'gnus-exit-gnus-hook #'doom-modeline-stop-gnus-listener)
-
-;; Update the modeline after changes have been made
-(add-hook 'gnus-group-update-hook #'doom-modeline-update-gnus-status)
-(add-hook 'gnus-summary-update-hook #'doom-modeline-update-gnus-status)
-(add-hook 'gnus-group-update-group-hook #'doom-modeline-update-gnus-status)
-(add-hook 'gnus-after-getting-new-news-hook #'doom-modeline-update-gnus-status)
 
 
 ;;
