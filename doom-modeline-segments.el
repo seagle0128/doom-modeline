@@ -2046,7 +2046,7 @@ mouse-1: Toggle Debug on Quit"
      (propertize
       (concat
        (doom-modeline-icon 'material "email" "📧" "#" 'doom-modeline-warning
-                           :height 1.1 :v-adjust -0.225)
+                           :height 1.1 :v-adjust -0.2)
        (doom-modeline-vspc)
        (propertize
         (if (> mu4e-alert-mode-line doom-modeline-number-limit)
@@ -2132,7 +2132,7 @@ mouse-1: Toggle Debug on Quit"
      (propertize
       (concat
        (doom-modeline-icon 'material "email" "📧" "#" 'doom-modeline-warning
-                           :height 1.1 :v-adjust -0.225)
+                           :height 1.1 :v-adjust -0.2)
        (doom-modeline-vspc)
        (propertize
         (if (> doom-modeline--gnus-unread-mail doom-modeline-number-limit)
