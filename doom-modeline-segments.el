@@ -1820,19 +1820,20 @@ mouse-1: Start server"))
             (delq (assq 'eglot--managed-mode mode-line-misc-info) mode-line-misc-info))
     (add-to-list 'mode-line-misc-info
                  `(eglot--managed-mode (" [" eglot--mode-line-format "] ")))))
-(with-eval-after-load 'eglot
-  (doom-modeline-override-eglot-modeline))
+(add-hook 'eglot--managed-mode-hook #'doom-modeline-override-eglot-modeline)
 (add-hook 'doom-modeline-mode-hook #'doom-modeline-override-eglot-modeline)
 
 (defun doom-modeline-override-lsp-modeline ()
   "Override `lsp-mode' mode-line."
   (if (bound-and-true-p doom-modeline-mode)
-      (setq global-mode-string
-            (delete '(t (:eval (-keep #'lsp--workspace-status-string (lsp-workspaces)))) global-mode-string))
+      (progn
+        (setq global-mode-string
+              (delete '(t (:eval (-keep #'lsp--workspace-status-string (lsp-workspaces)))) global-mode-string))
+        (setq global-mode-string
+              (delete '(t (:eval (lsp--download-status))) global-mode-string)))
     (add-to-list 'global-mode-string
                  '(t (:eval (-keep #'lsp--workspace-status-string (lsp-workspaces)))))))
-(with-eval-after-load 'lsp-mode
-  (doom-modeline-override-lsp-modeline))
+(add-hook 'lsp-mode-hook #'doom-modeline-override-lsp-modeline)
 (add-hook 'doom-modeline-mode-hook #'doom-modeline-override-lsp-modeline)
 
 
