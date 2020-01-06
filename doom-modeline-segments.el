@@ -72,6 +72,7 @@
 (defvar flymake--mode-line-format)
 (defvar flymake-menu)
 (defvar gnus-newsrc-alist)
+(defvar gnus-newsrc-hashtb)
 (defvar grip-port)
 (defvar grip-process)
 (defvar helm--mode-line-display-prefarg)
@@ -157,7 +158,6 @@
 (declare-function flymake-show-diagnostics-buffer 'flymake)
 (declare-function flymake-start 'flymake)
 (declare-function gnus-demon-add-handler 'gnus-demon)
-(declare-function gnus-group-unread 'gnus)
 (declare-function grip-browse-preview 'grip-mode)
 (declare-function grip-mode 'grip-mode)
 (declare-function helm-candidate-number-at-point 'helm)
@@ -2076,6 +2076,7 @@ mouse-1: Toggle Debug on Quit"
             :after #'doom-modeline-override-mu4e-alert-modeline)
 (add-hook 'doom-modeline-mode-hook #'doom-modeline-override-mu4e-alert-modeline)
 
+
 ;;
 ;; `gnus' notifications
 ;;
@@ -2091,8 +2092,8 @@ mouse-1: Toggle Debug on Quit"
           (let ((total-unread-news-number 0))
             (mapc (lambda (g)
                     (let* ((group (car g))
-                           (unread (and (functionp #'gnus-group-unread) ; it's macro
-                                        (gnus-group-unread group))))
+                           ;; `gnus-group-unread' is a macro
+                           (unread (car (gethash group gnus-newsrc-hashtb))))
                       (when (and (numberp unread)
                                  (> unread 0))
                         (setq total-unread-news-number (+ total-unread-news-number unread)))))
