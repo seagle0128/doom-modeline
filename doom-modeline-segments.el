@@ -2091,9 +2091,8 @@ mouse-1: Toggle Debug on Quit"
           (let ((total-unread-news-number 0))
             (mapc (lambda (g)
                     (let* ((group (car g))
-                           ;; `gnus-group-unread' is a macro while not a function
-                           (unread (and (bound-and-true-p gnus-group-unread)
-                                        (funcall gnus-group-unread group))))
+                           (unread (and (functionp 'gnus-group-unread) ; it's macro
+                                        (gnus-group-unread "group"))))
                       (when (and (numberp unread)
                                  (> unread 0))
                         (setq total-unread-news-number (+ total-unread-news-number unread)))))
