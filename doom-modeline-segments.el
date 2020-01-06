@@ -2091,7 +2091,7 @@ mouse-1: Toggle Debug on Quit"
           (let ((total-unread-news-number 0))
             (mapc (lambda (g)
                     (let* ((group (car g))
-                           ;; `gnus-group-unread' is a macro
+                           ;; `gnus-group-unread' is a macro while not a function
                            (unread (and (bound-and-true-p gnus-group-unread)
                                         (funcall gnus-group-unread group))))
                       (when (and (numberp unread)
@@ -2111,7 +2111,7 @@ mouse-1: Toggle Debug on Quit"
   (when (and doom-modeline-gnus
              (not doom-modeline--gnus-started))
     (setq doom-modeline--gnus-started t)
-    ;; scan gnus in the background if the timer is higher than 0
+    ;; Scan gnus in the background if the timer is higher than 0
     (doom-modeline-update-gnus-status)
     (if (> doom-modeline-gnus-timer 0)
         (gnus-demon-add-handler 'gnus-demon-scan-news doom-modeline-gnus-timer nil))))
@@ -2127,7 +2127,7 @@ mouse-1: Toggle Debug on Quit"
   (when (and (doom-modeline--active)
              doom-modeline-gnus
              doom-modeline--gnus-started
-             ;; don't display if the unread mails count is zero
+             ;; Don't display if the unread mails count is zero
              (> doom-modeline--gnus-unread-mail 0))
     (concat
      (doom-modeline-spc)
