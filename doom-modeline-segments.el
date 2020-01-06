@@ -77,7 +77,6 @@
 (defvar grip-process)
 (defvar helm--mode-line-display-prefarg)
 (defvar iedit-occurrences-overlays)
-(defvar mc/mode-line)
 (defvar minions-direct)
 (defvar minions-mode-line-minor-modes-map)
 (defvar mu4e-alert-mode-line)
@@ -139,8 +138,6 @@
 (declare-function evil-visual-state-p 'evil-states)
 (declare-function eyebrowse--get 'eyebrowse)
 (declare-function fancy-narrow-active-p 'fancy-narrow)
-(declare-function fancy-narrow-to-region 'fancy-narrow)
-(declare-function fancy-widen 'fancy-narrow)
 (declare-function flycheck-buffer 'flycheck)
 (declare-function flycheck-count-errors 'flycheck)
 (declare-function flycheck-list-errors 'flycheck)
@@ -173,21 +170,15 @@
 (declare-function lsp-workspace-restart 'lsp-mode)
 (declare-function lsp-workspace-shutdown 'lsp-mode)
 (declare-function lsp-workspaces 'lsp-mode)
-(declare-function magit-toplevel 'magit-git)
 (declare-function mc/num-cursors 'multiple-cursors-core)
 (declare-function mu4e-alert-default-mode-line-formatter 'mu4e-alert)
 (declare-function mu4e-alert-enable-mode-line-display 'mu4e-alert)
 (declare-function nyan-create 'nyan-mode)
 (declare-function org-edit-src-save 'org-src)
-(declare-function org-narrow-to-block 'org)
-(declare-function org-narrow-to-element 'org)
-(declare-function org-narrow-to-subtree 'org)
-(declare-function org-toggle-narrow-to-subtree 'org)
 (declare-function parrot-create 'parrot)
 (declare-function pdf-cache-number-of-pages 'pdf-cache)
 (declare-function persp-add-buffer 'persp-mode)
 (declare-function persp-contain-buffer-p 'persp-mode)
-(declare-function persp-remove-buffer 'persp-mode)
 (declare-function persp-switch 'persp-mode)
 (declare-function popup-create 'popup)
 (declare-function popup-delete 'popup)
@@ -1576,14 +1567,13 @@ mouse-1: Display Line and Column Mode Menu"
 (defsubst doom-modeline--xah-fly-keys ()
   "The current `xah-fly-keys' state."
   (when (bound-and-true-p xah-fly-keys)
-    (doom-modeline--modal-icon (if xah-fly-insert-state-q "<I>" "<C>")
-                               (if xah-fly-insert-state-q
+    (if xah-fly-insert-state-q
+        (doom-modeline--modal-icon "<I>"
                                    'doom-modeline-evil-insert-state
-                                 'doom-modeline-evil-normal-state)
-                               (format "Xah-fly %s mode"
-                                       (if xah-fly-insert-state-q
-                                           "insert"
-                                         "command")))))
+                                   (format "Xah-fly insert mode"))
+      (doom-modeline--modal-icon "<C>"
+                                 'doom-modeline-evil-normal-state
+                                 (format "Xah-fly command mode")))))
 
 (doom-modeline-def-segment modals
   "Displays modal editing states, including `evil', `overwrite', `god', `ryo'
