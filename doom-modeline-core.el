@@ -87,13 +87,16 @@ It returns a file name which can be used directly as argument of
     ("alert" . "\xf02d")
     ("git-branch" . "\xf020")
 
-    ;; checker: flycheck/flymake
+    ;; checker
     ("do_not_disturb_alt" . "\xe611")
     ("check" . "\xe5ca")
     ("access_time" . "\xe192")
     ("sim_card_alert" . "\xe624")
     ("pause" . "\xe034")
     ("priority_high" . "\xe645")
+
+    ;; Minions
+    ("gear" . "\xf02f")
 
     ;; Persp
     ("aspect_ratio" . "\xe85b")
@@ -110,10 +113,10 @@ It returns a file name which can be used directly as argument of
     ;; debug
     ("bug" . "\xf188")
 
-    ;; mu4e
+    ;; Mail
     ("email" . "\xe0be")
 
-    ;; irc
+    ;; IRC
     ("message" . "\xe0c9")
 
     ;; Battery
