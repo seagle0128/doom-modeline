@@ -700,7 +700,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   (unless doom-modeline--size-hacked-p
     (setq doom-modeline--size-hacked-p t)
     (redisplay t)))
-(advice-add #'fit-window-to-buffer :before #'doom-modeline-redisplay)
+;; (advice-add #'fit-window-to-buffer :before #'doom-modeline-redisplay)
 (advice-add #'resize-temp-buffer-window :before #'doom-modeline-redisplay)
 
 ;; Keep `doom-modeline-current-window' up-to-date
