@@ -683,24 +683,31 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; Plugins
 ;;
 
+;; FIXME #183: Force to caculate mode-line height
+;; @see https://github.com/seagle0128/doom-modeline/issues/183
 (defvar-local doom-modeline--size-hacked-p nil)
 (defun doom-modeline-redisplay (&rest _)
   "Call `redisplay' to trigger mode-line height calculations.
-  Certain functions, including e.g. `fit-window-to-buffer', base
-  their size calculations on values which are incorrect if the
-  mode-line has a height different from that of the `default' face
-  and certain other calculations have not yet taken place for the
-  window in question.
-  These calculations can be triggered by calling `redisplay'
-  explicitly at the appropriate time and this functions purpose
-  is to make it easier to do so.
-  This function is like `redisplay' with non-nil FORCE argument.
-  It accepts an arbitrary number of arguments making it suitable
-  as a `:before' advice for any function."
-  (unless doom-modeline--size-hacked-p
+
+Certain functions, including e.g. `fit-window-to-buffer', base
+their size calculations on values which are incorrect if the
+mode-line has a height different from that of the `default' face
+and certain other calculations have not yet taken place for the
+window in question.
+
+These calculations can be triggered by calling `redisplay'
+explicitly at the appropriate time and this functions purpose
+is to make it easier to do so.
+
+This function is like `redisplay' with non-nil FORCE argument.
+It accepts an arbitrary number of arguments making it suitable
+as a `:before' advice for any function.  If the current buffer
+has no mode-line or this function has already been calle in it,
+then this function does nothing."
+  (when (and mode-line-format (not doom-modeline--size-hacked-p))
     (setq doom-modeline--size-hacked-p t)
     (redisplay t)))
-;; (advice-add #'fit-window-to-buffer :before #'doom-modeline-redisplay)
+(advice-add #'fit-window-to-buffer :before #'doom-modeline-redisplay)
 (advice-add #'resize-temp-buffer-window :before #'doom-modeline-redisplay)
 
 ;; Keep `doom-modeline-current-window' up-to-date
