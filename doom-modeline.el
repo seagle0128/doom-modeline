@@ -233,11 +233,13 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
       (progn
         (doom-modeline-refresh-bars)        ; Create bars
         (doom-modeline-set-main-modeline t) ; Set default mode-line
+
         ;; These buffers are already created and don't get modelines
         (dolist (bname '("*scratch*" "*Messages*"))
           (if (buffer-live-p (get-buffer bname))
               (with-current-buffer bname
                 (doom-modeline-set-main-modeline))))
+
         ;; Add hooks
         (add-hook 'Info-mode-hook #'doom-modeline-set-info-modeline)
         (add-hook 'dired-mode-hook #'doom-modeline-set-project-modeline)
@@ -252,6 +254,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (add-hook 'pdf-view-mode-hook #'doom-modeline-set-pdf-modeline)
         (add-hook 'git-timemachine-mode-hook #'doom-modeline-set-timemachine-modeline)
         (add-hook 'paradox-menu-mode-hook #'doom-modeline-set-package-modeline)
+        (add-hook 'xwidget-webkit-mode-hook #'doom-modeline-set-minimal-modeline)
+
         ;; Add advices
         (advice-add #'helm-display-mode-line :override #'doom-modeline-set-helm-modeline))
     (progn
@@ -261,6 +265,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (if (buffer-live-p (get-buffer bname))
             (with-current-buffer bname
               (setq mode-line-format doom-modeline--old-format))))
+
       ;; Remove hooks
       (remove-hook 'Info-mode-hook #'doom-modeline-set-info-modeline)
       (remove-hook 'dired-mode-hook #'doom-modeline-set-project-modeline)
@@ -275,6 +280,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
       (remove-hook 'pdf-view-mode-hook #'doom-modeline-set-pdf-modeline)
       (remove-hook 'git-timemachine-mode-hook #'doom-modeline-set-timemachine-modeline)
       (remove-hook 'paradox-menu-mode-hook #'doom-modeline-set-package-modeline)
+      (remove-hook 'xwidget-webkit-mode-hook #'doom-modeline-set-minimal-modeline)
+
       ;; Remove advices
       (advice-remove #'helm-display-mode-line #'doom-modeline-set-helm-modeline))))
 
