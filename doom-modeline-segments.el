@@ -157,6 +157,7 @@
 (declare-function grip--preview-url 'grip-mode)
 (declare-function grip-browse-preview 'grip-mode)
 (declare-function grip-stop-preview 'grip-mode)
+(declare-function grip-restart-preview 'grip-mode)
 (declare-function helm-candidate-number-at-point 'helm)
 (declare-function helm-get-candidate-number 'helm)
 (declare-function iedit-find-current-occurrence-overlay 'iedit-lib)
@@ -2540,8 +2541,9 @@ The cdr can also be a function that returns a name to use.")
                                          face)
                                        :height 1.2 :v-adjust -0.2)
                    'help-echo (format "Preview on %s
-mouse-1: Open browser
-mouse-2: Stop preview"
+mouse-1: Preview in browser
+mouse-2: Stop preview
+mouse-3: Restart preview"
                                       (grip--preview-url))
                    'mouse-face 'mode-line-highlight
                    'local-map (let ((map (make-sparse-keymap)))
@@ -2549,6 +2551,8 @@ mouse-2: Stop preview"
                                   #'grip-browse-preview)
                                 (define-key map [mode-line mouse-2]
                                   #'grip-stop-preview)
+                                (define-key map [mode-line mouse-3]
+                                  #'grip-restart-preview)
                                 map)))
      (doom-modeline-spc))))
 
