@@ -1,6 +1,6 @@
 ;;; doom-modeline.el --- A minimal and modern mode-line -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2018-2019 Vincent Zhang
+;; Copyright (C) 2018-2020 Vincent Zhang
 
 ;; Author: Vincent Zhang <seagle0128@gmail.com>
 ;; Homepage: https://github.com/seagle0128/doom-modeline

@@ -1,6 +1,6 @@
 ;;; doom-modeline-env.el --- A environment parser for doom-modeline -*- lexical-binding: t -*-
 
-;; Copyright (C) 2019 Justin Barclay, Vincent Zhang
+;; Copyright (C) 2019-2020 Justin Barclay, Vincent Zhang
 
 ;; This file is not part of GNU Emacs.
 
