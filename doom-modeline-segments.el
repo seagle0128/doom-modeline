@@ -263,29 +263,30 @@ Uses `all-the-icons-material' to fetch the icon."
   (setq doom-modeline--buffer-file-state-icon
         (when doom-modeline-buffer-state-icon
           (ignore-errors
-            (cond (buffer-read-only
-                   (doom-modeline-buffer-file-state-icon
-                    "lock" "🔒" "%1*" `(:inherit doom-modeline-warning
-                                        :weight ,(if doom-modeline-icon
-                                                     'normal
-                                                   'bold))))
-                  ((and buffer-file-name (buffer-modified-p)
-                        doom-modeline-buffer-modification-icon)
-                   (doom-modeline-buffer-file-state-icon
-                    "save" "💾" "%1*" `(:inherit doom-modeline-buffer-modified
-                                        :weight ,(if doom-modeline-icon
-                                                     'normal
-                                                   'bold))))
-                  ((and buffer-file-name
-                        (not (file-exists-p buffer-file-name)))
-                   (doom-modeline-buffer-file-state-icon
-                    "block" "🚫" "!" 'doom-modeline-urgent))
-                  ((or (buffer-narrowed-p)
+            (concat
+             (cond (buffer-read-only
+                    (doom-modeline-buffer-file-state-icon
+                     "lock" "🔒" "%1*" `(:inherit doom-modeline-warning
+                                         :weight ,(if doom-modeline-icon
+                                                      'normal
+                                                    'bold))))
+                   ((and buffer-file-name (buffer-modified-p)
+                         doom-modeline-buffer-modification-icon)
+                    (doom-modeline-buffer-file-state-icon
+                     "save" "💾" "%1*" `(:inherit doom-modeline-buffer-modified
+                                         :weight ,(if doom-modeline-icon
+                                                      'normal
+                                                    'bold))))
+                   ((and buffer-file-name
+                         (not (file-exists-p buffer-file-name)))
+                    (doom-modeline-buffer-file-state-icon
+                     "block" "🚫" "!" 'doom-modeline-urgent))
+                   (t ""))
+             (when (or (buffer-narrowed-p)
                        (and (bound-and-true-p fancy-narrow-mode)
                             (fancy-narrow-active-p)))
-                   (doom-modeline-buffer-file-state-icon
-                    "vertical_align_center" "↕" "><" 'doom-modeline-warning))
-                  (t ""))))))
+               (doom-modeline-buffer-file-state-icon
+                "vertical_align_center" "↕" "><" 'doom-modeline-warning)))))))
 
 (defvar-local doom-modeline--buffer-file-name nil)
 (defun doom-modeline-update-buffer-file-name (&rest _)
