@@ -432,27 +432,27 @@ It requires `circe' or `erc' package."
 
 (defface doom-modeline-debug
   '((t (:inherit (font-lock-doc-face bold))))
-  "Face for debug-level messages in the modeline. Used by `*checker'."
+  "Face for debug-level messages in the modeline. Used by vcs, checker, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-info
   '((t (:inherit (success bold))))
-  "Face for info-level messages in the modeline. Used by `*vc' and `*chcker'."
+  "Face for info-level messages in the modeline. Used by vcs, checker, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-warning
   '((t (:inherit (warning bold))))
-  "Face for warnings in the modeline. Used by `*checker'."
+  "Face for warnings in the modeline. Used by vcs, checker, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-urgent
   '((t (:inherit (error bold))))
-  "Face for errors in the modeline. Used by `*checker'."
+  "Face for errors in the modeline. Used by vcs, checker, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-unread-number
   '((t (:inherit italic)))
-  "Face for unread number in the modeline. Used by `github', `mu4e', etc."
+  "Face for unread number in the modeline. Used by GitHub, mu4e, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-bar
