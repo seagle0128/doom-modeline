@@ -1523,7 +1523,8 @@ mouse-1: Display Line and Column Mode Menu"
 ;;
 
 (defun doom-modeline--modal-icon (text face help-echo)
-  "Display the model icon with alternative TEXT, FACE and HELP-ECHO."
+  "Display the model icon with FACE and HELP-ECHO.
+TEXT is alternative if icon is not available."
   (propertize (doom-modeline-icon
                'material
                (when doom-modeline-modal-icon "fiber_manual_record")
@@ -1551,7 +1552,7 @@ mouse-1: Display Line and Column Mode Menu"
      (evil-state-property evil-state :name t))))
 
 (defsubst doom-modeline--overwrite ()
-  "The current overwrite state which is enabled by command `overwrite-mode'.".
+  "The current overwrite state which is enabled by command `overwrite-mode'."
   (when (and (bound-and-true-p overwrite-mode)
              (not (bound-and-true-p evil-local-mode)))
     (doom-modeline--modal-icon "<O>" 'doom-modeline-urgent "Overwrite mode")))
