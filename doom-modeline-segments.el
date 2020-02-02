@@ -251,7 +251,7 @@ buffer where knowing the current project directory is important."
 
 (defun doom-modeline-buffer-file-state-icon (icon unicode text face)
   "Displays an ICON of buffer state with FACE.
-TEXT is the alternative if it is not applicable.
+UNICODE and TEXT are the alternatives if it is not applicable.
 Uses `all-the-icons-material' to fetch the icon."
   (doom-modeline-icon 'material icon unicode text face
                       :height  1.1
@@ -1523,7 +1523,7 @@ mouse-1: Display Line and Column Mode Menu"
 ;;
 
 (defun doom-modeline--modal-icon (text face help-echo)
-  "Display the model icon."
+  "Display the model icon with alternative TEXT, FACE and HELP-ECHO."
   (propertize (doom-modeline-icon
                'material
                (when doom-modeline-modal-icon "fiber_manual_record")
@@ -1551,18 +1551,18 @@ mouse-1: Display Line and Column Mode Menu"
      (evil-state-property evil-state :name t))))
 
 (defsubst doom-modeline--overwrite ()
-  "The current overwrite state. Requires `overwrite-mode' to be enabled."
+  "The current overwrite state which is enabled by command `overwrite-mode'.".
   (when (and (bound-and-true-p overwrite-mode)
              (not (bound-and-true-p evil-local-mode)))
-    (doom-modeline--modal-icon "<O>" 'doom-modeline-urgent "Overwrite state")))
+    (doom-modeline--modal-icon "<O>" 'doom-modeline-urgent "Overwrite mode")))
 
 (defsubst doom-modeline--god ()
-  "The current god state. Requires `god-mode' to be enabled."
+  "The current god state which is enabled by the command `god-mode'."
   (when (bound-and-true-p god-local-mode)
     (doom-modeline--modal-icon "<G>" 'doom-modeline-evil-normal-state "God mode")))
 
 (defsubst doom-modeline--ryo ()
-  "The current ryo-modal state. Requires `ryo-modal-mode' to be enabled."
+  "The current ryo-modal state which is enabled by the command `ryo-modal-mode'."
   (when (bound-and-true-p ryo-modal-mode)
     (doom-modeline--modal-icon "<R>" 'doom-modeline-evil-normal-state "Ryo modal")))
 
@@ -1690,7 +1690,7 @@ mouse-3: Describe current input method")
 
 (defvar-local doom-modeline--lsp nil)
 (defun doom-modeline-update-lsp (&rest _)
-  "Update `lsp-mode' status."
+  "Update `lsp-mode' state."
   (setq doom-modeline--lsp
         (let* ((workspaces (lsp-workspaces))
                (face (if workspaces 'doom-modeline-lsp-success 'doom-modeline-lsp-warning))
@@ -1735,7 +1735,7 @@ mouse-1: Reload to start server")
 
 (defvar-local doom-modeline--eglot nil)
 (defun doom-modeline-update-eglot ()
-  "Update `eglot' status."
+  "Update `eglot' state."
   (setq doom-modeline--eglot
         (pcase-let* ((server (eglot-current-server))
                      (nick (and server (eglot--project-nickname server)))
@@ -2062,7 +2062,7 @@ mouse-1: Toggle Debug on Quit"
 
 (defvar doom-modeline--gnus-unread-mail 0)
 (defvar doom-modeline--gnus-started nil
-  "Used to determine if gnus has started")
+  "Used to determine if gnus has started.")
 (defun doom-modeline-update-gnus-status (&rest _)
   "Get the total number of unread news of gnus group."
   (setq doom-modeline--gnus-unread-mail
@@ -2087,6 +2087,7 @@ mouse-1: Toggle Debug on Quit"
 
 ;; Only start to listen to gnus when gnus is actually running
 (defun doom-modeline-start-gnus-listener ()
+  "Start GNUS listener."
   (when (and doom-modeline-gnus
              (not doom-modeline--gnus-started))
     (setq doom-modeline--gnus-started t)
@@ -2098,6 +2099,7 @@ mouse-1: Toggle Debug on Quit"
 
 ;; Stop the listener if gnus isn't running
 (defun doom-modeline-stop-gnus-listener ()
+  "Stop GNUS listener."
   (setq doom-modeline--gnus-started nil))
 (add-hook 'gnus-exit-gnus-hook #'doom-modeline-stop-gnus-listener)
 
@@ -2132,8 +2134,7 @@ mouse-1: Toggle Debug on Quit"
 ;;
 
 (defun doom-modeline--shorten-irc (name)
-  "Wrapper for `tracking-shorten' and `erc-track-shorten-function'that only
-takes one NAME.
+  "Wrapper for `tracking-shorten' and `erc-track-shorten-function' with NAME.
 
 One key difference is that when `tracking-shorten' and
 `erc-track-shorten-function' returns nil we will instead return the original
@@ -2167,15 +2168,15 @@ to be an icon and we don't want to remove that so we just return the original."
    (doom-modeline-vspc)))
 
 (defun doom-modeline--circe-p ()
-  "Checks if `circe' is in use."
+  "Check if `circe' is in use."
   (boundp 'tracking-mode-line-buffers))
 
 (defun doom-modeline--erc-p ()
-  "Checks if `erc' is in use."
+  "Check if `erc' is in use."
   (boundp 'erc-modified-channels-alist))
 
 (defun doom-modeline--rcirc-p ()
-  "Checks if `rcirc' is in use."
+  "Check if `rcirc' is in use."
   (bound-and-true-p rcirc-track-minor-mode))
 
 (defun doom-modeline--get-buffers ()
