@@ -1937,8 +1937,7 @@ mouse-3: Disconnect session"
 
 (defsubst doom-modeline--debug-edebug ()
   "The current `edebug' state."
-  (when (or (bound-and-true-p edebug-mode)
-            (bound-and-true-p edebug-x-mode))
+  (when (bound-and-true-p edebug-mode)
     (propertize (doom-modeline-debug-icon 'doom-modeline-warning)
                 'help-echo (format "EDebug (%s)
 mouse-1: Show help
