@@ -104,11 +104,12 @@
 (declare-function battery-format 'battery)
 (declare-function battery-update 'battery)
 (declare-function dap--cur-session 'dap-mode)
+(declare-function dap--debug-session-name 'dap-mode)
+(declare-function dap--debug-session-state 'dap-mode)
 (declare-function dap--session-running 'dap-mode)
 (declare-function dap-debug-recent 'dap-mode)
 (declare-function dap-disconnect 'dap-mode)
 (declare-function dap-hydra 'dap-hydra)
-(declare-function dap-mode-line 'dap-mode)
 (declare-function edebug-help 'edebug)
 (declare-function edebug-next-mode 'edebug)
 (declare-function edebug-stop 'edebug)
@@ -156,8 +157,8 @@
 (declare-function gnus-demon-add-handler 'gnus-demon)
 (declare-function grip--preview-url 'grip-mode)
 (declare-function grip-browse-preview 'grip-mode)
-(declare-function grip-stop-preview 'grip-mode)
 (declare-function grip-restart-preview 'grip-mode)
+(declare-function grip-stop-preview 'grip-mode)
 (declare-function helm-candidate-number-at-point 'helm)
 (declare-function helm-get-candidate-number 'helm)
 (declare-function iedit-find-current-occurrence-overlay 'iedit-lib)
@@ -1917,28 +1918,31 @@ mouse-3: Fetch notifications"
 (defsubst doom-modeline--debug-dap ()
   "The current `dap-mode' state."
   (when (and (bound-and-true-p dap-mode)
-             (bound-and-true-p lsp-mode)
-             (dap--session-running (dap--cur-session)))
-    (propertize (doom-modeline-debug-icon 'doom-modeline-warning)
-                'help-echo (format "DAP (%s)
+             (bound-and-true-p lsp-mode))
+    (when-let ((session (dap--cur-session)))
+      (propertize (doom-modeline-debug-icon (if (dap--session-running session)
+                                                'doom-modeline-info
+                                              'doom-modeline-debug))
+                  'help-echo (format "DAP (%s - %s)
 mouse-1: Display debug hydra
 mouse-2: Display recent configurations
 mouse-3: Disconnect session"
-                                   (dap-mode-line))
-                'mouse-face 'mode-line-highlight
-                'local-map (let ((map (make-sparse-keymap)))
-                             (define-key map [mode-line mouse-1]
-                               #'dap-hydra)
-                             (define-key map [mode-line mouse-2]
-                               #'dap-debug-recent)
-                             (define-key map [mode-line mouse-3]
-                               #'dap-disconnect)
-                             map))))
+                                     (dap--debug-session-name session)
+                                     (dap--debug-session-state session))
+                  'mouse-face 'mode-line-highlight
+                  'local-map (let ((map (make-sparse-keymap)))
+                               (define-key map [mode-line mouse-1]
+                                 #'dap-hydra)
+                               (define-key map [mode-line mouse-2]
+                                 #'dap-debug-recent)
+                               (define-key map [mode-line mouse-3]
+                                 #'dap-disconnect)
+                               map)))))
 
 (defsubst doom-modeline--debug-edebug ()
   "The current `edebug' state."
   (when (bound-and-true-p edebug-mode)
-    (propertize (doom-modeline-debug-icon 'doom-modeline-warning)
+    (propertize (doom-modeline-debug-icon 'doom-modeline-info)
                 'help-echo (format "EDebug (%s)
 mouse-1: Show help
 mouse-2: Next
@@ -1966,7 +1970,7 @@ mouse-1: Toggle Debug on Error"
 (defsubst doom-modeline--debug-on-quit ()
   "The current `debug-on-quit' state."
   (when debug-on-quit
-    (propertize (doom-modeline-debug-icon 'doom-modeline-info)
+    (propertize (doom-modeline-debug-icon 'doom-modeline-warning)
                 'help-echo "Debug on Quit
 mouse-1: Toggle Debug on Quit"
                 'mouse-face 'mode-line-highlight
