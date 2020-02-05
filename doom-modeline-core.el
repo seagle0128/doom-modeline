@@ -800,7 +800,7 @@ then this function does nothing."
      (* (if (and (>= emacs-major-version 27)
                  (not (eq system-type 'darwin)))
             1.0
-          1.68)
+          (if doom-modeline-icon 1.68 1.25))
         (cond ((integerp height) (/ height 10))
               ((floatp height) (* height (frame-char-height)))
               (t (frame-char-height)))))))
