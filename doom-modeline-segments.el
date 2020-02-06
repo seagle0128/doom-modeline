@@ -2200,7 +2200,8 @@ to be an icon and we don't want to remove that so we just return the original."
 ;; Create a modeline segment that contains all the irc tracked buffers
 (doom-modeline-def-segment irc-buffers
   "The list of shortened, unread irc buffers."
-  (when doom-modeline-irc
+  (when (and doom-modeline-irc
+             (doom-modeline--active))
     (let* ((buffers (doom-modeline--get-buffers))
            (number (length buffers)))
       (when (> number 0)
@@ -2211,7 +2212,8 @@ to be an icon and we don't want to remove that so we just return the original."
 
 (doom-modeline-def-segment irc
   "A notification icon for any unread irc buffer."
-  (when doom-modeline-irc
+  (when (and doom-modeline-irc
+             (doom-modeline--active))
     (let* ((buffers (doom-modeline--get-buffers))
            (number (length buffers)))
       (when (> number 0)
@@ -2262,7 +2264,7 @@ mouse-3: Switch to next unread buffer")))
                                       #'rcirc-next-active-buffer)))
                                   map))
 
-         ;; Disaplay the unread irc buffers
+         ;; Display the unread irc buffers as well
          (when doom-modeline-irc-buffers
            (concat (doom-modeline-spc)
                    (doom-modeline--tracking-buffers buffers)))
