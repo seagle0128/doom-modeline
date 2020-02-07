@@ -258,7 +258,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (add-hook 'xwidget-webkit-mode-hook #'doom-modeline-set-minimal-modeline)
 
         ;; Add advices
-        (advice-add #'helm-display-mode-line :override #'doom-modeline-set-helm-modeline))
+        (advice-add #'helm-display-mode-line :after #'doom-modeline-set-helm-modeline))
     (progn
       ;; Restore mode-line
       (setq-default mode-line-format doom-modeline--old-format)
