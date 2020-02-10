@@ -32,6 +32,10 @@
 
 (add-to-list 'load-path (expand-file-name "."))
 
+;; @see https://github.com/rejeep/ert-runner.el/issues/49
+(when (> emacs-major-version 26)
+  (defalias 'ert--print-backtrace 'backtrace-to-string))
+
 (defun strip-text-properties(txt)
   "Strip text properties of TXT."
   (set-text-properties 0 (length txt) nil txt)

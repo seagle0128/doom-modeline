@@ -31,6 +31,7 @@
 
 ;;; Code:
 
+(require 'cl-lib)
 (require 'doom-modeline-core)
 
 (ert-deftest doom-modeline-icon/octicon-icon ()
@@ -60,34 +61,171 @@
 (ert-deftest doom-modeline-project-root/ffip ()
   (let ((default-directory "/home/user/project/")
         (doom-modeline-project-detection 'ffip)
-        (doom-modeline-project-root nil))
+        (doom-modeline--project-detected-p t)
+        (doom-modeline--project-root nil))
     (cl-flet ((ffip-get-project-root-directory () "/home/user/project-ffip/"))
       (should (string= (ffip-get-project-root-directory) "/home/user/project-ffip/")))))
 
 (ert-deftest doom-modeline-project-root/projectile ()
   (let ((default-directory "/home/user/projectile/")
         (doom-modeline-project-detection 'projectile)
-        (doom-modeline-project-root nil))
+        (doom-modeline--project-detected-p t)
+        (doom-modeline--project-root nil))
     (cl-flet ((projectile-project-root () default-directory))
       (should (string= (doom-modeline-project-root) "/home/user/projectile/")))))
 
 (ert-deftest doom-modeline-project-root/project ()
   (let ((default-directory "/home/user/project-current/")
         (doom-modeline-project-detection 'project)
-        (doom-modeline-project-root nil))
+        (doom-modeline--project-detected-p t)
+        (doom-modeline--project-root nil))
     (cl-flet ((project-current (&optional _maybe-prompt _dir)
                                `(vc . ,default-directory)))
       (should (string= (doom-modeline-project-root) "/home/user/project-current/")))))
 
 (ert-deftest doom-modeline-project-root/default ()
   (let ((default-directory "/home/user/project/")
-        (doom-modeline-project-detection nil))
+        (doom-modeline-project-detection nil)
+        (doom-modeline--project-detected-p t))
     (should (string= (doom-modeline-project-root) "/home/user/project/"))))
+
+(ert-deftest doom-modeline-buffer-file-name/auto-in-project ()
+  (let* ((default-directory "/home/user/project/")
+         (buffer-file-name "/home/user/project/relative/test.txt")
+         (buffer-file-truename "/home/user/project/relative/test.txt")
+         (doom-modeline--project-detected-p t)
+         (doom-modeline--project-root default-directory)
+         (doom-modeline-buffer-file-name-style 'auto))
+    (cl-flet ((doom-modeline-project-p () t)
+              (doom-modeline-project-root () default-directory))
+      (should
+       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+                "project/relative/test.txt")))))
+
+(ert-deftest doom-modeline-buffer-file-name/auto-file-name ()
+  (let ((default-directory "/home/user/project/")
+        (buffer-file-name "/home/user/project/relative/test.txt")
+        (buffer-file-truename "/home/user/project/relative/test.txt")
+        (doom-modeline--project-detected-p t)
+        (doom-modeline-buffer-file-name-style 'auto))
+    (cl-flet ((doom-modeline-project-p () nil)
+              (doom-modeline-project-root () default-directory))
+      (should
+       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+                "test.txt")))))
+
+(ert-deftest doom-modeline-buffer-file-name/file-name ()
+  (let ((default-directory "/home/user/project/")
+        (buffer-file-name "/home/user/project/relative/test.txt")
+        (buffer-file-truename "/home/user/project/relative/test.txt")
+        (doom-modeline--project-detected-p t)
+        (doom-modeline-buffer-file-name-style 'file-name))
+    (should
+     (string= (strip-text-properties (doom-modeline-buffer-file-name))
+              "test.txt"))))
+
+(ert-deftest doom-modeline-buffer-file-name/buffer-name ()
+  (let ((default-directory "/home/user/project/")
+        (buffer-file-name "/home/user/project/relative/test.txt")
+        (buffer-file-truename "/home/user/project/relative/test.txt")
+        (doom-modeline--project-detected-p t)
+        (doom-modeline-buffer-file-name-style 'buffer-name))
+    (should
+     (string= (strip-text-properties (doom-modeline-buffer-file-name))
+              (buffer-name)))))
+
+(ert-deftest doom-modeline-buffer-file-name/truncate-upto-project ()
+  (let ((default-directory "/home/user/project/")
+        (buffer-file-name "/home/user/project/relative/test.txt")
+        (buffer-file-truename "/home/user/project/relative/test.txt")
+        (doom-modeline--project-detected-p t)
+        (doom-modeline-buffer-file-name-style 'truncate-upto-project))
+    (cl-flet ((doom-modeline-project-root () default-directory))
+      (should
+       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+                "/h/u/project/relative/test.txt")))))
+
+(ert-deftest doom-modeline-buffer-file-name/truncate-from-project ()
+  (let ((default-directory "/home/user/project/")
+        (buffer-file-name "/home/user/project/relative/test.txt")
+        (buffer-file-truename "/home/user/project/relative/test.txt")
+        (doom-modeline--project-detected-p t)
+        (doom-modeline-buffer-file-name-style 'truncate-from-project))
+    (cl-flet ((doom-modeline-project-root () default-directory))
+      (should
+       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+                "/home/user/project/r/test.txt")))))
+
+(ert-deftest doom-modeline-buffer-file-name/truncate-with-project ()
+  (let ((default-directory "/home/user/project/")
+        (buffer-file-name "/home/user/project/relative/test.txt")
+        (buffer-file-truename "/home/user/project/relative/test.txt")
+        (doom-modeline--project-detected-p t)
+        (doom-modeline-buffer-file-name-style 'truncate-with-project))
+    (cl-flet ((doom-modeline-project-root () default-directory))
+      (should
+       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+                "project/r/test.txt")))))
+
+(ert-deftest doom-modeline-buffer-file-name/truncate-except-project ()
+  (let ((default-directory "/home/user/project/")
+        (buffer-file-name "/home/user/project/relative/test.txt")
+        (buffer-file-truename "/home/user/project/relative/test.txt")
+        (doom-modeline--project-detected-p t)
+        (doom-modeline-buffer-file-name-style 'truncate-except-project))
+    (cl-flet ((doom-modeline-project-root () default-directory))
+      (should
+       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+                "/h/u/project/r/test.txt")))))
+
+(ert-deftest doom-modeline-buffer-file-name/truncate-upto-root ()
+  (let ((default-directory "/home/user/project/")
+        (buffer-file-name "/home/user/project/relative/test.txt")
+        (buffer-file-truename "/home/user/project/relative/test.txt")
+        (doom-modeline--project-detected-p t)
+        (doom-modeline-buffer-file-name-style 'truncate-upto-root))
+    (cl-flet ((doom-modeline-project-root () default-directory))
+      (should
+       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+                "/h/u/p/relative/test.txt")))))
+
+(ert-deftest doom-modeline-buffer-file-name/truncate-all ()
+  (let ((default-directory "/home/user/project/")
+        (buffer-file-name "/home/user/project/relative/test.txt")
+        (buffer-file-truename "/home/user/project/relative/test.txt")
+        (doom-modeline-buffer-file-name-style 'truncate-all))
+    (cl-flet ((doom-modeline-project-root () default-directory))
+      (should
+       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+                "/h/u/p/r/test.txt")))))
+
+(ert-deftest doom-modeline-buffer-file-name/relative-to-project ()
+  (let ((default-directory "/home/user/project/")
+        (buffer-file-name "/home/user/project/relative/test.txt")
+        (buffer-file-truename "/home/user/project/relative/test.txt")
+        (doom-modeline--project-detected-p t)
+        (doom-modeline-buffer-file-name-style 'relative-to-project))
+    (cl-flet ((doom-modeline-project-root () default-directory))
+      (should
+       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+                "relative/test.txt")))))
+
+(ert-deftest doom-modeline-buffer-file-name/relative-from-project ()
+  (let ((default-directory "/home/user/project/")
+        (buffer-file-name "/home/user/project/relative/test.txt")
+        (buffer-file-truename "/home/user/project/relative/test.txt")
+        (doom-modeline--project-detected-p t)
+        (doom-modeline-buffer-file-name-style 'relative-from-project))
+    (cl-flet ((doom-modeline-project-root () default-directory))
+      (should
+       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+                "project/relative/test.txt")))))
 
 (ert-deftest doom-modeline--buffer-file-name/truncate-upto-project ()
   (let ((default-directory "/home/user/project/")
         (file-path "/home/user/project/relative/test.txt")
-        (true-file-path nil))
+        (true-file-path nil)
+        (doom-modeline--project-detected-p t))
     (should
      (string= (strip-text-properties
                (doom-modeline--buffer-file-name file-path true-file-path 'shrink))
@@ -96,7 +234,8 @@
 (ert-deftest doom-modeline--buffer-file-name/truncate-from-project ()
   (let ((default-directory "/home/user/project/")
         (file-path "/home/user/project/relative/test.txt")
-        (true-file-path nil))
+        (true-file-path nil)
+        (doom-modeline--project-detected-p t))
     (should
      (string= (strip-text-properties
                (doom-modeline--buffer-file-name file-path true-file-path nil 'shrink))
@@ -105,7 +244,8 @@
 (ert-deftest doom-modeline--buffer-file-name/truncate-with-project ()
   (let ((default-directory "/home/user/project/")
         (file-path "/home/user/project/relative/test.txt")
-        (true-file-path nil))
+        (true-file-path nil)
+        (doom-modeline--project-detected-p t))
     (should
      (string= (strip-text-properties
                (doom-modeline--buffer-file-name file-path true-file-path 'shrink 'shrink 'hide))
@@ -114,7 +254,8 @@
 (ert-deftest doom-modeline--buffer-file-name/truncate-except-project ()
   (let ((default-directory "/home/user/project/")
         (file-path "/home/user/project/relative/test.txt")
-        (true-file-path nil))
+        (true-file-path nil)
+        (doom-modeline--project-detected-p t))
     (should
      (string= (strip-text-properties
                (doom-modeline--buffer-file-name file-path true-file-path 'shrink 'shrink))
@@ -123,26 +264,29 @@
 (ert-deftest doom-modeline--buffer-file-name-truncate/truncate-upto-root ()
   (let ((default-directory "/home/user/project/")
         (file-path "/home/user/project/relative/test.txt")
-        (true-file-path "~/project/relative/test.txt"))
+        (true-file-path "/home/user/project/relative/test.txt")
+        (doom-modeline--project-detected-p t))
     (should
      (string= (strip-text-properties
                (doom-modeline--buffer-file-name-truncate file-path true-file-path))
-              "~/p/relative/test.txt"))))
+              "/h/u/p/relative/test.txt"))))
 
 (ert-deftest doom-modeline--buffer-file-name-truncate/truncate-all ()
   (let ((default-directory "/home/user/project/")
         (file-path "/home/user/project/relative/test.txt")
-        (true-file-path "~/project/relative/test.txt"))
+        (true-file-path "/home/user/project/relative/test.txt")
+        (doom-modeline--project-detected-p t))
     (should
      (string= (strip-text-properties
                (doom-modeline--buffer-file-name-truncate file-path true-file-path t))
-              "~/p/r/test.txt"))))
+              "/h/u/p/r/test.txt"))))
 
 (ert-deftest doom-modeline--buffer-file-name-relative/relative-to-project ()
   (let ((default-directory "/home/user/project/")
         (file-path nil)
-        (true-file-path "/home/user/project/relative/test.txt"))
-    (cl-flet ((doom-modeline-project-root () "/home/user/project/"))
+        (true-file-path "/home/user/project/relative/test.txt")
+        (doom-modeline--project-detected-p t))
+    (cl-flet ((doom-modeline-project-root () default-directory))
       (should
        (string= (strip-text-properties
                  (doom-modeline--buffer-file-name-relative file-path true-file-path))
@@ -151,8 +295,9 @@
 (ert-deftest doom-modeline--buffer-file-name-relative/relative-from-project ()
   (let ((default-directory "/home/user/project/")
         (file-path nil)
-        (true-file-path "/home/user/project/relative/test.txt"))
-    (cl-flet ((doom-modeline-project-root () "/home/user/project/"))
+        (true-file-path "/home/user/project/relative/test.txt")
+        (doom-modeline--project-detected-p t))
+    (cl-flet ((doom-modeline-project-root () default-directory))
       (should
        (string= (strip-text-properties
                  (doom-modeline--buffer-file-name-relative file-path true-file-path 'include-project))

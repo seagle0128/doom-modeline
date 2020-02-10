@@ -173,10 +173,11 @@ Specify another one if you encounter the issue."
           (const :tag "Disable" nil))
   :group 'doom-modeline)
 
-(defcustom doom-modeline-buffer-file-name-style 'truncate-upto-project
+(defcustom doom-modeline-buffer-file-name-style 'auto
   "Determines the style used by `doom-modeline-buffer-file-name'.
 
   Given ~/Projects/FOSS/emacs/lisp/comint.el
+  auto => emacs/lisp/comint.el (in a project) or comint.el
   truncate-upto-project => ~/P/F/emacs/lisp/comint.el
   truncate-from-project => ~/Projects/FOSS/emacs/l/comint.el
   truncate-with-project => emacs/l/comint.el
@@ -187,7 +188,8 @@ Specify another one if you encounter the issue."
   relative-to-project => lisp/comint.el
   file-name => comint.el
   buffer-name => comint.el<2> (uniquify buffer name)"
-  :type '(choice (const truncate-upto-project)
+  :type '(choice (const auto)
+                 (const truncate-upto-project)
                  (const truncate-upto-project)
                  (const truncate-from-project)
                  (const truncate-with-project)
@@ -839,26 +841,6 @@ UNICODE is the unicode char fallback. TEXT is the ASCII char fallback."
           (propertize unicode 'face face))
         (when text (propertize text 'face face)))))
 
-(defvar-local doom-modeline-project-root nil)
-(defun doom-modeline-project-root ()
-  "Get the path to the root of your project.
-Return `default-directory' if no project was found."
-  (setq doom-modeline-project-root
-        (or doom-modeline-project-root
-            (pcase doom-modeline-project-detection
-              ('ffip
-               (when (fboundp 'ffip-get-project-root-directory)
-                 (let ((inhibit-message t))
-                   (ffip-get-project-root-directory))))
-              ('projectile
-               (when (fboundp 'projectile-project-root)
-                 (projectile-project-root)))
-              ('project
-               (when (fboundp 'project-current)
-                 (when-let ((project (project-current)))
-                   (car (project-roots project))))))
-            default-directory)))
-
 (defun doom-modeline--make-xpm (face width height)
   "Create an XPM bitmap via FACE, WIDTH and HEIGHT. Inspired by `powerline''s `pl/make-xpm'."
   (when (and (display-graphic-p)
@@ -885,9 +867,40 @@ Return `default-directory' if no project was found."
                                      if (= d 0) collect (string-to-char " ")
                                      else collect (string-to-char "."))
                             (if (eq idx len) "\"};" "\",\n")))))
-  'xpm t :ascent 'center))))))
+          'xpm t :ascent 'center))))))
 
-;; Fix: invalid-regexp "Trailing backslash" while handling $HOME on Windows
+(defvar-local doom-modeline--project-detected-p nil)
+(defvar-local doom-modeline--project-root nil)
+(defun doom-modeline--project-root ()
+  "Get the path to the root of your project.
+Return nil if no project was found."
+  (if doom-modeline--project-detected-p
+      doom-modeline--project-root
+    (setq doom-modeline--project-root
+          (pcase doom-modeline-project-detection
+            ('ffip
+             (when (fboundp 'ffip-get-project-root-directory)
+               (let ((inhibit-message t))
+                 (ffip-get-project-root-directory))))
+            ('projectile
+             (when (fboundp 'projectile-project-root)
+               (projectile-project-root)))
+            ('project
+             (when (fboundp 'project-current)
+               (when-let ((project (project-current)))
+                 (car (project-roots project))))))
+          doom-modeline--project-detected-p t)))
+
+(defun doom-modeline-project-p ()
+  "Check if the file is in a project."
+  (doom-modeline--project-root))
+
+(defun doom-modeline-project-root ()
+  "Get the path to the root of your project.
+Return `default-directory' if no project was found."
+  (or (doom-modeline--project-root) default-directory))
+
+;; HACK: fix invalid-regexp "Trailing backslash" while handling $HOME on Windows
 (defun doom-modeline-shrink-path--dirs-internal (full-path &optional truncate-all)
   "Return fish-style truncated string based on FULL-PATH.
 Optional parameter TRUNCATE-ALL will cause the function to truncate the last
@@ -912,36 +925,34 @@ directory too."
 (defun doom-modeline-buffer-file-name ()
   "Propertized variable `buffer-file-name' based on `doom-modeline-buffer-file-name-style'."
   (let* ((buffer-file-name (file-local-name (or (buffer-file-name (buffer-base-buffer)) "")))
-         (buffer-file-truename (file-local-name (or buffer-file-truename (file-truename buffer-file-name) ""))))
+         (buffer-file-truename (file-local-name (or buffer-file-truename (file-truename buffer-file-name) "")))
+         (face (if (buffer-modified-p) 'doom-modeline-buffer-modified 'doom-modeline-buffer-file)))
     (propertize
      (pcase doom-modeline-buffer-file-name-style
-       (`truncate-upto-project
+       ('auto
+        (if (doom-modeline-project-p)
+            (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename nil nil 'hide)
+          (propertize (file-name-nondirectory buffer-file-name) 'face face)))
+       ('truncate-upto-project
         (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink))
-       (`truncate-from-project
+       ('truncate-from-project
         (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename nil 'shrink))
-       (`truncate-with-project
+       ('truncate-with-project
         (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink 'shink 'hide))
-       (`truncate-except-project
+       ('truncate-except-project
         (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink 'shink))
-       (`truncate-upto-root
+       ('truncate-upto-root
         (doom-modeline--buffer-file-name-truncate buffer-file-name buffer-file-truename))
-       (`truncate-all
+       ('truncate-all
         (doom-modeline--buffer-file-name-truncate buffer-file-name buffer-file-truename t))
-       (`relative-to-project
+       ('relative-to-project
         (doom-modeline--buffer-file-name-relative buffer-file-name buffer-file-truename))
-       (`relative-from-project
+       ('relative-from-project
         (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename nil nil 'hide))
-       (style
-        (propertize
-         (pcase style
-           (`file-name (file-name-nondirectory buffer-file-name))
-           (`buffer-name (buffer-name)))
-         'face
-         (let ((face (or (and (buffer-modified-p)
-                              'doom-modeline-buffer-modified)
-                         (and (doom-modeline--active)
-                              'doom-modeline-buffer-file))))
-           (when face `(:inherit ,face))))))
+       ('file-name
+        (propertize (file-name-nondirectory buffer-file-name) 'face face))
+       ('buffer-name
+        (propertize (buffer-name) 'face face)))
      'mouse-face 'mode-line-highlight
      'help-echo (concat buffer-file-truename
                         (unless (string= (file-name-nondirectory buffer-file-truename)
@@ -953,39 +964,43 @@ directory too."
 (defun doom-modeline--buffer-file-name-truncate (file-path true-file-path &optional truncate-tail)
   "Propertized variable `buffer-file-name' that truncates every dir along path.
 If TRUNCATE-TAIL is t also truncate the parent directory of the file."
-  (let ((dirs (shrink-path-prompt (file-name-directory true-file-path)))
-        (active (doom-modeline--active)))
+  (let ((dirs (shrink-path-prompt (file-name-directory true-file-path))))
     (if (null dirs)
-        (propertize "%b" 'face (if active 'doom-modeline-buffer-file))
-      (let ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified)))
+        (propertize "%b" 'face 'doom-modeline-buffer-file)
+      (let ((modified-face (and (buffer-modified-p) 'doom-modeline-buffer-modified)))
         (let ((dirname (car dirs))
               (basename (cdr dirs))
-              (dir-faces (or modified-faces (if active 'doom-modeline-project-root-dir)))
-              (file-faces (or modified-faces (if active 'doom-modeline-buffer-file))))
+              (dir-face (or modified-face 'doom-modeline-project-root-dir))
+              (file-face (or modified-face 'doom-modeline-buffer-file)))
           (concat (propertize (concat dirname
                                       (if truncate-tail (substring basename 0 1) basename)
                                       "/")
-                              'face (if dir-faces `(:inherit ,dir-faces)))
+                              'face (and dir-face `(:inherit ,dir-face)))
                   (propertize (file-name-nondirectory file-path)
-                              'face (if file-faces `(:inherit ,file-faces)))))))))
+                              'face (and file-face `(:inherit ,file-face)))))))))
 
 (defun doom-modeline--buffer-file-name-relative (_file-path true-file-path &optional include-project)
   "Propertized variable `buffer-file-name' showing directories relative to project's root only."
   (let ((root (file-local-name (doom-modeline-project-root)))
         (active (doom-modeline--active)))
     (if (null root)
-        (propertize "%b" 'face (if active 'doom-modeline-buffer-file))
-      (let* ((modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified))
+        (propertize "%b" 'face 'doom-modeline-buffer-file)
+      (let* ((modified-face (and (buffer-modified-p) 'doom-modeline-buffer-modified))
              (relative-dirs (file-relative-name (file-name-directory true-file-path)
                                                 (if include-project (concat root "../") root)))
-             (relative-faces (or modified-faces (if active 'doom-modeline-buffer-path)))
-             (file-faces (or modified-faces (if active 'doom-modeline-buffer-file))))
+             (relative-face (or modified-face 'doom-modeline-buffer-path))
+             (file-face (or modified-face 'doom-modeline-buffer-file)))
         (if (equal "./" relative-dirs) (setq relative-dirs ""))
-        (concat (propertize relative-dirs 'face (if relative-faces `(:inherit ,relative-faces)))
+        (concat (propertize relative-dirs 'face (if relative-face `(:inherit ,relative-face)))
                 (propertize (file-name-nondirectory true-file-path)
-                            'face (if file-faces `(:inherit ,file-faces))))))))
+                            'face (if file-face `(:inherit ,file-face))))))))
 
-(defun doom-modeline--buffer-file-name (file-path _true-file-path &optional truncate-project-root-parent truncate-project-relative-path hide-project-root-parent)
+(defun doom-modeline--buffer-file-name (file-path
+                                        _true-file-path
+                                        &optional
+                                        truncate-project-root-parent
+                                        truncate-project-relative-path
+                                        hide-project-root-parent)
   "Propertized variable `buffer-file-name' given by FILE-PATH.
 If TRUNCATE-PROJECT-ROOT-PARENT is non-nil will be saved by truncating project
 root parent down fish-shell style.
@@ -1004,12 +1019,11 @@ If HIDE-PROJECT-ROOT-PARENT is non-nil will hide project root parent.
 Example:
   ~/Projects/FOSS/emacs/lisp/comint.el => emacs/lisp/comint.el"
   (let ((project-root (file-local-name (doom-modeline-project-root)))
-        (active (doom-modeline--active))
-        (modified-faces (if (buffer-modified-p) 'doom-modeline-buffer-modified)))
-    (let ((sp-faces       (or modified-faces (if active 'doom-modeline-project-parent-dir)))
-          (project-faces  (or modified-faces (if active 'doom-modeline-project-dir)))
-          (relative-faces (or modified-faces (if active 'doom-modeline-buffer-path)))
-          (file-faces     (or modified-faces (if active 'doom-modeline-buffer-file))))
+        (modified-face (and (buffer-modified-p) 'doom-modeline-buffer-modified)))
+    (let ((sp-face       (or modified-face 'doom-modeline-project-parent-dir))
+          (project-face  (or modified-face 'doom-modeline-project-dir))
+          (relative-face (or modified-face 'doom-modeline-buffer-path))
+          (file-face     (or modified-face 'doom-modeline-buffer-file)))
       (concat
        ;; project root parent
        (unless hide-project-root-parent
@@ -1021,11 +1035,11 @@ Example:
                      (not (string= root-path-parent "/")))
                 (shrink-path--dirs-internal root-path-parent t)
               (abbreviate-file-name root-path-parent))
-            'face sp-faces)))
+            'face sp-face)))
        ;; project
        (propertize
         (concat (file-name-nondirectory (directory-file-name project-root)) "/")
-        'face project-faces)
+        'face project-face)
        ;; relative path
        (propertize
         (when-let (relative-path (file-relative-name
@@ -1036,9 +1050,9 @@ Example:
             (if truncate-project-relative-path
                 (substring (shrink-path--dirs-internal relative-path t) 1)
               relative-path)))
-        'face relative-faces)
+        'face relative-face)
        ;; file name
-       (propertize (file-name-nondirectory file-path) 'face file-faces)))))
+       (propertize (file-name-nondirectory file-path) 'face file-face)))))
 
 (provide 'doom-modeline-core)
 

@@ -181,6 +181,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Determines the style used by `doom-modeline-buffer-file-name'.
 ;;
 ;; Given ~/Projects/FOSS/emacs/lisp/comint.el
+;;   auto => emacs/lisp/comint.el (in a project) or comint.el
 ;;   truncate-upto-project => ~/P/F/emacs/lisp/comint.el
 ;;   truncate-from-project => ~/Projects/FOSS/emacs/l/comint.el
 ;;   truncate-with-project => emacs/l/comint.el
@@ -195,7 +196,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; If you are experiencing the laggy issue, especially while editing remote files
 ;; with tramp, please try `file-name' style.
 ;; Please refer to https://github.com/bbatsov/projectile/issues/657.
-(setq doom-modeline-buffer-file-name-style 'truncate-upto-project)
+(setq doom-modeline-buffer-file-name-style 'auto)
 
 ;; Whether display icons in mode-line. Respects `all-the-icons-color-icons'.
 ;; While using the server mode in GUI, should set the value explicitly.
