@@ -89,6 +89,20 @@
         (doom-modeline--project-detected-p t))
     (should (string= (doom-modeline-project-root) "/home/user/project/"))))
 
+(ert-deftest doom-modeline-buffer-file-name/invalid ()
+  :expected-result :failed
+  (let* ((default-directory "/home/user/project/")
+         (buffer-file-name "/home/user/project/relative/test.txt")
+         (buffer-file-truename "/home/user/project/relative/test.txt")
+         (doom-modeline--project-detected-p t)
+         (doom-modeline--project-root default-directory)
+         (doom-modeline-buffer-file-name-style 'invalid))
+    (cl-flet ((doom-modeline-project-p () t)
+              (doom-modeline-project-root () default-directory))
+      (should
+       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+                "test.txt")))))
+
 (ert-deftest doom-modeline-buffer-file-name/auto-in-project ()
   (let* ((default-directory "/home/user/project/")
          (buffer-file-name "/home/user/project/relative/test.txt")

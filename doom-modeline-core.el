@@ -952,7 +952,8 @@ directory too."
        ('file-name
         (propertize (file-name-nondirectory buffer-file-name) 'face face))
        ('buffer-name
-        (propertize (buffer-name) 'face face)))
+        (propertize (buffer-name) 'face face))
+       (_ (user-error "invalid style")))
      'mouse-face 'mode-line-highlight
      'help-echo (concat buffer-file-truename
                         (unless (string= (file-name-nondirectory buffer-file-truename)
