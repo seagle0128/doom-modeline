@@ -29,9 +29,10 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'subr-x)
+(require 'dash)
 (require 'all-the-icons)
 (require 'shrink-path)
-(require 'subr-x)
 
 
 ;;
@@ -127,6 +128,7 @@ It returns a file name which can be used directly as argument of
     ("battery-quarter" . "\xf243")
     ("battery-three-quarters" . "\xf241")))
 (doom-moddeline--set-font-widths doom-modeline-rhs-icons-alist)
+
 
 ;;
 ;; Customizations
@@ -874,8 +876,7 @@ UNICODE is the unicode char fallback. TEXT is the ASCII char fallback."
 (defun doom-modeline--project-root ()
   "Get the path to the root of your project.
 Return nil if no project was found."
-  (if doom-modeline--project-detected-p
-      doom-modeline--project-root
+  (unless doom-modeline--project-detected-p
     (setq doom-modeline--project-root
           (pcase doom-modeline-project-detection
             ('ffip
@@ -889,7 +890,8 @@ Return nil if no project was found."
              (when (fboundp 'project-current)
                (when-let ((project (project-current)))
                  (car (project-roots project))))))
-          doom-modeline--project-detected-p t)))
+          doom-modeline--project-detected-p t))
+  doom-modeline--project-root)
 
 (defun doom-modeline-project-p ()
   "Check if the file is in a project."
