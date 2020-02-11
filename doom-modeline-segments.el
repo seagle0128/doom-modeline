@@ -364,7 +364,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
                                                   props (remove :inherit props))
                                       :inherit mode-line)))
          (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
-                                  :inherit mode-line-inactive)))
+                                  :foreground ,(face-foreground 'mode-line-inactive))))
        (doom-modeline-vspc)))))
 
 (defsubst doom-modeline--buffer-state-icon ()
@@ -375,7 +375,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
        (if (doom-modeline--active)
            icon
          (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
-                                  :inherit mode-line-inactive)))
+                                  :foreground ,(face-foreground 'mode-line-inactive))))
        (doom-modeline-vspc)))))
 
 (defsubst doom-modeline--buffer-name ()
@@ -534,10 +534,9 @@ mouse-3: Toggle minor modes"
 ;;
 
 (doom-modeline-def-segment minor-modes
-  (when doom-modeline-minor-modes
-    (let ((face (if (doom-modeline--active)
-                    'doom-modeline-buffer-minor-mode
-                  'mode-line-inactive))
+  (when (and doom-modeline-minor-modes
+             (doom-modeline--active))
+    (let ((face 'doom-modeline-buffer-minor-mode)
           (mouse-face 'mode-line-highlight)
           (help-echo "Minor mode
 mouse-1: Display minor mode menu
@@ -654,7 +653,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
              icon
            (propertize icon
                        'face `(:inherit ,(get-text-property 0 'face icon)
-                               :inherit mode-line-inactive)))
+                               :foreground ,(face-foreground 'mode-line-inactive))))
          (doom-modeline-vspc))
         'mouse-face 'mode-line-highlight
         'help-echo (get-text-property 1 'help-echo vc-mode)
@@ -993,7 +992,7 @@ mouse-1: List all problems%s"
              (if active
                  icon
                (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
-                                        :inherit mode-line-inactive))))
+                                        :foreground ,(face-foreground 'mode-line-inactive)))))
            (when text
              (concat
               (doom-modeline-vspc)
@@ -1803,7 +1802,7 @@ mouse-1: Start server"))
          (if active
              icon
            (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
-                                    :inherit mode-line-inactive)))
+                                    :foreground ,(face-foreground 'mode-line-inactive))))
          (doom-modeline-spc))))))
 
 (defun doom-modeline-override-eglot-modeline ()

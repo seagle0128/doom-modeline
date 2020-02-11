@@ -46,8 +46,8 @@
     (unless (fboundp 'when-let*) (defalias 'when-let* #'when-let))))
 
 ;; Don’t compact font caches during GC.
-(if (eq system-type 'windows-nt)
-    (setq inhibit-compacting-font-caches t))
+(when (eq system-type 'windows-nt)
+  (setq inhibit-compacting-font-caches t))
 
 ;;`file-local-name' is introduced in 25.2.2.
 (unless (fboundp 'file-local-name)
@@ -625,11 +625,19 @@ It requires `circe' or `erc' package."
 (defvar doom-modeline--width-cache nil)
 (defun doom-modeline--window-font-width ()
   "Cache the font width."
-  (let ((attributes (face-all-attributes 'default)))
+  (let ((attributes (face-all-attributes 'mode-line)))
     (or (cdr (assoc attributes doom-modeline--width-cache))
         (let ((width (window-font-width nil 'mode-line)))
           (push (cons attributes width) doom-modeline--width-cache)
           width))))
+
+;; Refresh the font width after setting frame parameters
+;; to ensure the font width is correct.
+(defun doom-modeline--refresh-width-cache ()
+  "Refresh the font width cache."
+  (setq doom-modeline--width-cache nil)
+  (doom-modeline--window-font-width))
+(add-hook 'window-setup-hook #'doom-modeline--refresh-width-cache)
 
 (defun doom-modeline-def-modeline (name lhs &optional rhs)
   "Defines a modeline format and byte-compiles it.
@@ -649,13 +657,10 @@ It requires `circe' or `erc' package."
       (lambda ()
         (list lhs-forms
               (propertize
-               " "
-               'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
+               (doom-modeline-spc)
                'display `((space :align-to (- (+ right right-fringe right-margin)
-                                              ,(* (if (number-or-marker-p (face-attribute 'mode-line :height))
-                                                      (/ (doom-modeline--window-font-width)
-                                                         (frame-char-width) 1.0)
-                                                    1)
+                                              ,(* (/ (doom-modeline--window-font-width)
+                                                     (frame-char-width) 1.0)
                                                   (string-width
                                                    (format-mode-line
                                                     (cons "" rhs-forms))))))))
@@ -984,8 +989,7 @@ If TRUNCATE-TAIL is t also truncate the parent directory of the file."
 
 (defun doom-modeline--buffer-file-name-relative (_file-path true-file-path &optional include-project)
   "Propertized variable `buffer-file-name' showing directories relative to project's root only."
-  (let ((root (file-local-name (doom-modeline-project-root)))
-        (active (doom-modeline--active)))
+  (let ((root (file-local-name (doom-modeline-project-root))))
     (if (null root)
         (propertize "%b" 'face 'doom-modeline-buffer-file)
       (let* ((modified-face (and (buffer-modified-p) 'doom-modeline-buffer-modified))
