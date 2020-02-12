@@ -627,22 +627,22 @@ It requires `circe' or `erc' package."
             ((error "%s is not a valid segment" seg))))
     (nreverse forms)))
 
-(defvar doom-modeline--width-cache nil)
-(defun doom-modeline--window-font-width ()
+(defvar doom-modeline--font-width nil)
+(defun doom-modeline--font-width ()
   "Cache the font width."
   (let ((attributes (face-all-attributes 'mode-line)))
-    (or (cdr (assoc attributes doom-modeline--width-cache))
+    (or (cdr (assoc attributes doom-modeline--font-width))
         (let ((width (window-font-width nil 'mode-line)))
-          (push (cons attributes width) doom-modeline--width-cache)
+          (push (cons attributes width) doom-modeline--font-width)
           width))))
 
 ;; Refresh the font width after setting frame parameters
 ;; to ensure the font width is correct.
-(defun doom-modeline--refresh-width-cache ()
+(defun doom-modeline--refresh-font-width ()
   "Refresh the font width cache."
-  (setq doom-modeline--width-cache nil)
-  (doom-modeline--window-font-width))
-(add-hook 'window-setup-hook #'doom-modeline--refresh-width-cache)
+  (setq doom-modeline--font-width nil)
+  (doom-modeline--font-width))
+(add-hook 'window-setup-hook #'doom-modeline--refresh-font-width)
 
 (defun doom-modeline-def-modeline (name lhs &optional rhs)
   "Defines a modeline format and byte-compiles it.
@@ -664,7 +664,7 @@ It requires `circe' or `erc' package."
               (propertize
                (doom-modeline-spc)
                'display `((space :align-to (- (+ right right-fringe right-margin)
-                                              ,(* (/ (doom-modeline--window-font-width)
+                                              ,(* (/ (doom-modeline--font-width)
                                                      (frame-char-width) 1.0)
                                                   (string-width
                                                    (format-mode-line
