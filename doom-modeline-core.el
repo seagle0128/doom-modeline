@@ -205,7 +205,7 @@ Specify another one if you encounter the issue."
   :group'doom-modeline)
 
 (defcustom doom-modeline-icon (display-graphic-p)
-  "Whether display the icons in mode-line.
+  "Whether display the icons in the mode-line.
 
 It respects `all-the-icons-color-icons'.
 While using the server mode in GUI, should set the value explicitly."
@@ -246,7 +246,7 @@ It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'."
   :group 'doom-modeline)
 
 (defcustom doom-modeline-minor-modes nil
-  "Whether display the minor modes in mode-line."
+  "Whether display the minor modes in the mode-line."
   :type 'boolean
   :group 'doom-modeline)
 
@@ -290,7 +290,7 @@ Respects `doom-modeline-enable-word-count'."
 (defcustom doom-modeline-persp-name t
   "Whether display the perspective name.
 
-Non-nil to display in mode-line."
+Non-nil to display in the mode-line."
   :type 'boolean
   :group 'doom-modeline)
 
@@ -302,7 +302,7 @@ Non-nil to display in mode-line."
 (defcustom doom-modeline-lsp t
   "Whether display the `lsp' state.
 
-Non-nil to display in mode-line."
+Non-nil to display in the mode-line."
   :type 'boolean
   :group 'doom-modeline)
 
@@ -431,42 +431,47 @@ It requires `circe' or `erc' package."
 
 (defface doom-modeline-host
   '((t (:inherit italic)))
-  "Face for remote hosts in the modeline."
+  "Face for remote hosts in the mode-line."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-debug
   '((t (:inherit (font-lock-doc-face bold))))
-  "Face for debug-level messages in the modeline. Used by vcs, checker, etc."
+  "Face for debug-level messages in the mode-line. Used by vcs, checker, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-info
   '((t (:inherit (success bold))))
-  "Face for info-level messages in the modeline. Used by vcs, checker, etc."
+  "Face for info-level messages in the mode-line. Used by vcs, checker, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-warning
   '((t (:inherit (warning bold))))
-  "Face for warnings in the modeline. Used by vcs, checker, etc."
+  "Face for warnings in the mode-line. Used by vcs, checker, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-urgent
   '((t (:inherit (error bold))))
-  "Face for errors in the modeline. Used by vcs, checker, etc."
+  "Face for errors in the mode-line. Used by vcs, checker, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-unread-number
   '((t (:inherit italic)))
-  "Face for unread number in the modeline. Used by GitHub, mu4e, etc."
+  "Face for unread number in the mode-line. Used by GitHub, mu4e, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-bar
   '((t (:inherit highlight)))
-  "The face used for the left-most bar on the mode-line of an active window."
+  "The face used for the left-most bar in the mode-line of an active window."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-bar-inactive
   `((t (:background ,(face-foreground 'mode-line-inactive))))
-  "The face used for the left-most bar on the mode-line of an inactive window."
+  "The face used for the left-most bar in the mode-line of an inactive window."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-icon-inactive
+  `((t (:foreground ,(face-foreground 'mode-line-inactive))))
+  "The face used for the icon in the mode-line of an inactive window."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-evil-emacs-state
@@ -823,32 +828,43 @@ See docs of `add-variable-watcher'."
   (when (fboundp 'add-variable-watcher)
     (add-variable-watcher symbol watch-function)))
 
-(defun doom-modeline-icon (icon-set icon-name unicode text face &rest args)
-  "Display icon of ICON-NAME with FACE and ARGS in mode-line.
+(defun doom-modeline-icon (icon-set icon-name unicode text &rest args)
+  "Display icon of ICON-NAME with ARGS in mode-line.
 
 ICON-SET includes `octicon', `faicon', `material', `alltheicons' and `fileicon'.
-UNICODE is the unicode char fallback. TEXT is the ASCII char fallback."
-  (let ((face (or face 'mode-line)))
-    (or (when (and doom-modeline-icon
-                   icon-name
-                   (not (string-empty-p icon-name)))
-          (pcase icon-set
-            ('octicon
-             (apply #'all-the-icons-octicon icon-name :face face args))
-            ('faicon
-             (apply #'all-the-icons-faicon icon-name :face face args))
-            ('material
-             (apply #'all-the-icons-material icon-name :face face args))
-            ('alltheicon
-             (apply #'all-the-icons-alltheicon icon-name :face face args))
-            ('fileicon
-             (apply #'all-the-icons-fileicon icon-name :face face args))))
-        (when (and doom-modeline-unicode-fallback
-                   unicode
-                   (not (string-empty-p unicode))
-                   (char-displayable-p (string-to-char unicode)))
+UNICODE is the unicode char fallback. TEXT is the ASCII char fallback.
+ARGS is same as `all-the-icons-octicon' and others."
+  (let ((face (or (plist-get args :face) 'mode-line)))
+    (or
+     ;; Icons
+     (when (and doom-modeline-icon
+                icon-name
+                (not (string-empty-p icon-name)))
+       ;; Don't use `mode-line-inactive' face for the icons since it will
+       ;; break them if the font family is set.
+       ;; @see https://github.com/seagle0128/doom-modeline/issues/301
+       (when (eq face 'mode-line-inactive)
+         (plist-put :face 'doom-modeline-icon-inactive))
+
+       (pcase icon-set
+         ('octicon
+          (apply #'all-the-icons-octicon icon-name args))
+         ('faicon
+          (apply #'all-the-icons-faicon icon-name args))
+         ('material
+          (apply #'all-the-icons-material icon-name args))
+         ('alltheicon
+          (apply #'all-the-icons-alltheicon icon-name args))
+         ('fileicon
+          (apply #'all-the-icons-fileicon icon-name args))))
+     ;; Unicode fallback
+     (and doom-modeline-unicode-fallback
+          unicode
+          (not (string-empty-p unicode))
+          (char-displayable-p (string-to-char unicode))
           (propertize unicode 'face face))
-        (when text (propertize text 'face face)))))
+     ;; ASCII text
+     (and text (propertize text 'face face)))))
 
 (defun doom-modeline--make-xpm (face width height)
   "Create an XPM bitmap via FACE, WIDTH and HEIGHT. Inspired by `powerline''s `pl/make-xpm'."
