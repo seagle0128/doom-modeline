@@ -844,7 +844,7 @@ ARGS is same as `all-the-icons-octicon' and others."
        ;; break them if the font family is set.
        ;; @see https://github.com/seagle0128/doom-modeline/issues/301
        (when (eq face 'mode-line-inactive)
-         (plist-put :face 'doom-modeline-icon-inactive))
+         (plist-put args :face 'doom-modeline-icon-inactive))
 
        (pcase icon-set
          ('octicon
