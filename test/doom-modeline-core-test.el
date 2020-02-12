@@ -38,7 +38,7 @@
   (let ((doom-modeline-icon t)
         (doom-modeline-unicode-fallback t))
     (should
-     (string= (strip-text-properties
+     (string= (substring-no-properties
                (doom-modeline-icon 'octicon "octoface" "☻" ":)" 'error))
               ""))))
 
@@ -46,7 +46,7 @@
   (let ((doom-modeline-icon nil)
         (doom-modeline-unicode-fallback t))
     (should
-     (string= (strip-text-properties
+     (string= (substring-no-properties
                (doom-modeline-icon 'octicon "octoface" "☻" ":)" 'error))
               "☻"))))
 
@@ -54,7 +54,7 @@
   (let ((doom-modeline-icon nil)
         (doom-modeline-unicode-fallback nil))
     (should
-     (string= (strip-text-properties
+     (string= (substring-no-properties
                (doom-modeline-icon 'octicon "octoface" "☻" ":)" 'error))
               ":)"))))
 
@@ -100,7 +100,7 @@
     (cl-flet ((doom-modeline-project-p () t)
               (doom-modeline-project-root () default-directory))
       (should
-       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+       (string= (substring-no-properties (doom-modeline-buffer-file-name))
                 "test.txt")))))
 
 (ert-deftest doom-modeline-buffer-file-name/auto-in-project ()
@@ -113,7 +113,7 @@
     (cl-flet ((doom-modeline-project-p () t)
               (doom-modeline-project-root () default-directory))
       (should
-       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+       (string= (substring-no-properties (doom-modeline-buffer-file-name))
                 "project/relative/test.txt")))))
 
 (ert-deftest doom-modeline-buffer-file-name/auto-file-name ()
@@ -125,7 +125,7 @@
     (cl-flet ((doom-modeline-project-p () nil)
               (doom-modeline-project-root () default-directory))
       (should
-       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+       (string= (substring-no-properties (doom-modeline-buffer-file-name))
                 "test.txt")))))
 
 (ert-deftest doom-modeline-buffer-file-name/file-name ()
@@ -135,7 +135,7 @@
         (doom-modeline--project-detected-p t)
         (doom-modeline-buffer-file-name-style 'file-name))
     (should
-     (string= (strip-text-properties (doom-modeline-buffer-file-name))
+     (string= (substring-no-properties (doom-modeline-buffer-file-name))
               "test.txt"))))
 
 (ert-deftest doom-modeline-buffer-file-name/buffer-name ()
@@ -145,7 +145,7 @@
         (doom-modeline--project-detected-p t)
         (doom-modeline-buffer-file-name-style 'buffer-name))
     (should
-     (string= (strip-text-properties (doom-modeline-buffer-file-name))
+     (string= (substring-no-properties (doom-modeline-buffer-file-name))
               (buffer-name)))))
 
 (ert-deftest doom-modeline-buffer-file-name/truncate-upto-project ()
@@ -156,7 +156,7 @@
         (doom-modeline-buffer-file-name-style 'truncate-upto-project))
     (cl-flet ((doom-modeline-project-root () default-directory))
       (should
-       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+       (string= (substring-no-properties (doom-modeline-buffer-file-name))
                 "/h/u/project/relative/test.txt")))))
 
 (ert-deftest doom-modeline-buffer-file-name/truncate-from-project ()
@@ -167,7 +167,7 @@
         (doom-modeline-buffer-file-name-style 'truncate-from-project))
     (cl-flet ((doom-modeline-project-root () default-directory))
       (should
-       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+       (string= (substring-no-properties (doom-modeline-buffer-file-name))
                 "/home/user/project/r/test.txt")))))
 
 (ert-deftest doom-modeline-buffer-file-name/truncate-with-project ()
@@ -178,7 +178,7 @@
         (doom-modeline-buffer-file-name-style 'truncate-with-project))
     (cl-flet ((doom-modeline-project-root () default-directory))
       (should
-       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+       (string= (substring-no-properties (doom-modeline-buffer-file-name))
                 "project/r/test.txt")))))
 
 (ert-deftest doom-modeline-buffer-file-name/truncate-except-project ()
@@ -189,7 +189,7 @@
         (doom-modeline-buffer-file-name-style 'truncate-except-project))
     (cl-flet ((doom-modeline-project-root () default-directory))
       (should
-       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+       (string= (substring-no-properties (doom-modeline-buffer-file-name))
                 "/h/u/project/r/test.txt")))))
 
 (ert-deftest doom-modeline-buffer-file-name/truncate-upto-root ()
@@ -200,7 +200,7 @@
         (doom-modeline-buffer-file-name-style 'truncate-upto-root))
     (cl-flet ((doom-modeline-project-root () default-directory))
       (should
-       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+       (string= (substring-no-properties (doom-modeline-buffer-file-name))
                 "/h/u/p/relative/test.txt")))))
 
 (ert-deftest doom-modeline-buffer-file-name/truncate-all ()
@@ -210,7 +210,7 @@
         (doom-modeline-buffer-file-name-style 'truncate-all))
     (cl-flet ((doom-modeline-project-root () default-directory))
       (should
-       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+       (string= (substring-no-properties (doom-modeline-buffer-file-name))
                 "/h/u/p/r/test.txt")))))
 
 (ert-deftest doom-modeline-buffer-file-name/relative-to-project ()
@@ -221,7 +221,7 @@
         (doom-modeline-buffer-file-name-style 'relative-to-project))
     (cl-flet ((doom-modeline-project-root () default-directory))
       (should
-       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+       (string= (substring-no-properties (doom-modeline-buffer-file-name))
                 "relative/test.txt")))))
 
 (ert-deftest doom-modeline-buffer-file-name/relative-from-project ()
@@ -232,7 +232,7 @@
         (doom-modeline-buffer-file-name-style 'relative-from-project))
     (cl-flet ((doom-modeline-project-root () default-directory))
       (should
-       (string= (strip-text-properties (doom-modeline-buffer-file-name))
+       (string= (substring-no-properties (doom-modeline-buffer-file-name))
                 "project/relative/test.txt")))))
 
 (ert-deftest doom-modeline--buffer-file-name/truncate-upto-project ()
@@ -241,7 +241,7 @@
         (true-file-path nil)
         (doom-modeline--project-detected-p t))
     (should
-     (string= (strip-text-properties
+     (string= (substring-no-properties
                (doom-modeline--buffer-file-name file-path true-file-path 'shrink))
               "/h/u/project/relative/test.txt"))))
 
@@ -251,7 +251,7 @@
         (true-file-path nil)
         (doom-modeline--project-detected-p t))
     (should
-     (string= (strip-text-properties
+     (string= (substring-no-properties
                (doom-modeline--buffer-file-name file-path true-file-path nil 'shrink))
               "/home/user/project/r/test.txt"))))
 
@@ -261,7 +261,7 @@
         (true-file-path nil)
         (doom-modeline--project-detected-p t))
     (should
-     (string= (strip-text-properties
+     (string= (substring-no-properties
                (doom-modeline--buffer-file-name file-path true-file-path 'shrink 'shrink 'hide))
               "project/r/test.txt"))))
 
@@ -271,7 +271,7 @@
         (true-file-path nil)
         (doom-modeline--project-detected-p t))
     (should
-     (string= (strip-text-properties
+     (string= (substring-no-properties
                (doom-modeline--buffer-file-name file-path true-file-path 'shrink 'shrink))
               "/h/u/project/r/test.txt"))))
 
@@ -281,7 +281,7 @@
         (true-file-path "/home/user/project/relative/test.txt")
         (doom-modeline--project-detected-p t))
     (should
-     (string= (strip-text-properties
+     (string= (substring-no-properties
                (doom-modeline--buffer-file-name-truncate file-path true-file-path))
               "/h/u/p/relative/test.txt"))))
 
@@ -291,7 +291,7 @@
         (true-file-path "/home/user/project/relative/test.txt")
         (doom-modeline--project-detected-p t))
     (should
-     (string= (strip-text-properties
+     (string= (substring-no-properties
                (doom-modeline--buffer-file-name-truncate file-path true-file-path t))
               "/h/u/p/r/test.txt"))))
 
@@ -302,7 +302,7 @@
         (doom-modeline--project-detected-p t))
     (cl-flet ((doom-modeline-project-root () default-directory))
       (should
-       (string= (strip-text-properties
+       (string= (substring-no-properties
                  (doom-modeline--buffer-file-name-relative file-path true-file-path))
                 "relative/test.txt")))))
 
@@ -313,7 +313,7 @@
         (doom-modeline--project-detected-p t))
     (cl-flet ((doom-modeline-project-root () default-directory))
       (should
-       (string= (strip-text-properties
+       (string= (substring-no-properties
                  (doom-modeline--buffer-file-name-relative file-path true-file-path 'include-project))
                 "project/relative/test.txt")))))
 

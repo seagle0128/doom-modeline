@@ -36,9 +36,4 @@
 (when (> emacs-major-version 26)
   (defalias 'ert--print-backtrace 'backtrace-to-string))
 
-(defun strip-text-properties(txt)
-  "Strip text properties of TXT."
-  (set-text-properties 0 (length txt) nil txt)
-  txt)
-
 ;;; test-helper.el ends here
