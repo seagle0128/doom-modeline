@@ -713,7 +713,9 @@ It accepts an arbitrary number of arguments making it suitable
 as a `:before' advice for any function.  If the current buffer
 has no mode-line or this function has already been calle in it,
 then this function does nothing."
-  (when (and mode-line-format (not doom-modeline--size-hacked-p))
+  (when (and doom-modeline-mode
+             mode-line-format
+             (not doom-modeline--size-hacked-p))
     (setq doom-modeline--size-hacked-p t)
     (redisplay t)))
 (advice-add #'fit-window-to-buffer :before #'doom-modeline-redisplay)
