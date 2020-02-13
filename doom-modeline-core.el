@@ -449,7 +449,7 @@ It returns a file name which can be used directly as argument of
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-unread-number
-  '((t (:inherit italic)))
+  '((t (:inherit italic :weight normal)))
   "Face for unread number in the mode-line. Used by GitHub, mu4e, etc."
   :group 'doom-modeline-faces)
 

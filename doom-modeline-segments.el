@@ -1892,7 +1892,7 @@ Example:
         (if (> doom-modeline--github-notification-number  doom-modeline-number-limit)
             (format "%d+" doom-modeline-number-limit)
           (number-to-string doom-modeline--github-notification-number))
-        'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
+        'face '(:inherit (doom-modeline-unread-number doom-modeline-warning))))
       'help-echo "Github Notifications
 mouse-1: Show notifications
 mouse-3: Fetch notifications"
@@ -2044,7 +2044,7 @@ mouse-1: Toggle Debug on Quit"
         (if (> mu4e-alert-mode-line doom-modeline-number-limit)
             (format "%d+" doom-modeline-number-limit)
           (number-to-string mu4e-alert-mode-line))
-        'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
+        'face '(:inherit (doom-modeline-unread-number doom-modeline-warning))))
       'mouse-face 'mode-line-highlight
       'help-echo (if (= mu4e-alert-mode-line 1)
                      "You have an unread email"
@@ -2134,7 +2134,7 @@ mouse-1: Toggle Debug on Quit"
         (if (> doom-modeline--gnus-unread-mail doom-modeline-number-limit)
             (format "%d+" doom-modeline-number-limit)
           (number-to-string doom-modeline--gnus-unread-mail))
-        'face '(:inherit (doom-modeline-warning doom-modeline-unread-number))))
+        'face '(:inherit (doom-modeline-unread-number doom-modeline-warning))))
       'mouse-face 'mode-line-highlight
       'help-echo (if (= doom-modeline--gnus-unread-mail 1)
                      "You have an unread email"
@@ -2168,8 +2168,7 @@ to be an icon and we don't want to remove that so we just return the original."
    (lambda (b)
      (propertize
       (doom-modeline--shorten-irc (funcall doom-modeline-irc-stylize b))
-      'face '(:inherit (doom-modeline-warning doom-modeline-unread-number)
-              :weight normal)
+      'face '(:inherit (doom-modeline-unread-number doom-modeline-warning))
       'help-echo (format "IRC Notification: %s\nmouse-1: Switch to buffer" b)
       'mouse-face 'mode-line-highlight
       'local-map (make-mode-line-mouse-map 'mouse-1
@@ -2236,8 +2235,8 @@ to be an icon and we don't want to remove that so we just return the original."
                       (doom-modeline-vspc)
                       ;; Display the number of unread buffers
                       (propertize (number-to-string number)
-                                  'face '(:inherit (doom-modeline-warning
-                                                    doom-modeline-unread-number))))
+                                  'face '(:inherit (doom-modeline-unread-number
+                                                    doom-modeline-warning))))
                      'help-echo (format "IRC Notifications: %s\n%s"
                                         (mapconcat
                                          (lambda (b) (funcall doom-modeline-irc-stylize b))
