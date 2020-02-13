@@ -216,9 +216,11 @@ buffer where knowing the current project directory is important."
   (let* ((active (doom-modeline--active))
          (face (if active 'doom-modeline-buffer-path 'mode-line-inactive)))
     (concat (doom-modeline-spc)
-            (doom-modeline-icon 'octicon "file-directory" "🖿" ""
-                                :face face :v-adjust -0.05 :height 1.25)
-            (doom-modeline-spc)
+            (cond (doom-modeline-major-mode-icon
+                   (concat (doom-modeline-icon
+                            'octicon "file-directory" "🖿" ""
+                            :face face :v-adjust -0.05 :height 1.25)
+                           (doom-modeline-spc))))
             (propertize (abbreviate-file-name default-directory)
                         'face face))))
 
