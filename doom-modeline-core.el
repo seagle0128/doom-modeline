@@ -627,22 +627,23 @@ It requires `circe' or `erc' package."
             ((error "%s is not a valid segment" seg))))
     (nreverse forms)))
 
-(defvar doom-modeline--font-width nil)
+(defvar doom-modeline--font-width-cache nil)
 (defun doom-modeline--font-width ()
   "Cache the font width."
   (let ((attributes (face-all-attributes 'mode-line)))
-    (or (cdr (assoc attributes doom-modeline--font-width))
+    (or (cdr (assoc attributes doom-modeline--font-width-cache))
         (let ((width (window-font-width nil 'mode-line)))
-          (push (cons attributes width) doom-modeline--font-width)
+          (push (cons attributes width) doom-modeline--font-width-cache)
           width))))
 
 ;; Refresh the font width after setting frame parameters
 ;; to ensure the font width is correct.
-(defun doom-modeline--refresh-font-width ()
+(defun doom-modeline-refresh-font-width-cache (&rest _)
   "Refresh the font width cache."
-  (setq doom-modeline--font-width nil)
+  (setq doom-modeline--font-width-cache nil)
   (doom-modeline--font-width))
-(add-hook 'window-setup-hook #'doom-modeline--refresh-font-width)
+(add-hook 'window-setup-hook #'doom-modeline-refresh-font-width-cache)
+(add-hook 'after-make-frame-functions #'doom-modeline-refresh-font-width-cache)
 
 (defun doom-modeline-def-modeline (name lhs &optional rhs)
   "Defines a modeline format and byte-compiles it.
@@ -663,12 +664,14 @@ It requires `circe' or `erc' package."
         (list lhs-forms
               (propertize
                (doom-modeline-spc)
-               'display `((space :align-to (- (+ right right-fringe right-margin)
-                                              ,(* (/ (doom-modeline--font-width)
-                                                     (frame-char-width) 1.0)
-                                                  (string-width
-                                                   (format-mode-line
-                                                    (cons "" rhs-forms))))))))
+               'display `((space
+                           :align-to
+                           (- (+ right right-fringe right-margin)
+                              ,(* (let ((width (doom-modeline--font-width)))
+                                    (or (and (= width 1) 1)
+                                        (/ width (frame-char-width) 1.0)))
+                                  (string-width
+                                   (format-mode-line (cons "" rhs-forms))))))))
               rhs-forms))
       (concat "Modeline:\n"
               (format "  %s\n  %s"
