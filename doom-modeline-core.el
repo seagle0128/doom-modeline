@@ -73,61 +73,55 @@ It returns a file name which can be used directly as argument of
       (set-char-table-parent table char-width-table)
       (setq char-width-table table))))
 
-(defun doom-moddeline--set-font-widths (alist)
-  (let (fonts)
-    (dolist (pair alist)
-      (push (string-to-char (cdr pair)) fonts))
-    (doom-modeline--set-char-widths
-     `((2 . ,fonts)))))
-
 (defconst doom-modeline-rhs-icons-alist
-  '(;; vcs
-    ("git-compare" . "\xf0ac")
-    ("git-merge" . "\xf023")
-    ("arrow-down" . "\xf03f")
-    ("alert" . "\xf02d")
-    ("git-branch" . "\xf020")
+  '((2 . (;; VCS
+          ?\xf0ac                      ; git-compare
+          ?\xf023                      ; git-merge
+          ?\xf03f                      ; arrow-down
+          ?\xf02d                      ; alert
+          ?\xf020                      ; git-branch
 
-    ;; checker
-    ("do_not_disturb_alt" . "\xe611")
-    ("check" . "\xe5ca")
-    ("access_time" . "\xe192")
-    ("sim_card_alert" . "\xe624")
-    ("pause" . "\xe034")
-    ("priority_high" . "\xe645")
+          ;; Checker
+          ?\xe611                      ; do_not_disturb_alt
+          ?\xe5ca                      ; check
+          ?\xe192                      ; access_time
+          ?\xe624                      ; sim_card_alert
+          ?\xe034                      ; pause
+          ?\xe645                      ; priority_high
 
-    ;; Minions
-    ("gear" . "\xf02f")
+          ;; Minor modes
+          ?\xf02f                      ; gear
 
-    ;; Persp
-    ("aspect_ratio" . "\xe85b")
+          ;; Persp
+          ?\xe2c7                      ; folder
 
-    ;; Preview
-    ("pageview" . "\xe8a0")
+          ;; Preview
+          ?\xe8a0                      ; pageview
 
-    ;; LSP
-    ("rocket" . "\xf135")
+          ;; LSP
+          ?\xf135                      ; rocket
 
-    ;; GitHub
-    ("github" . "\xf09b")
+          ;; GitHub
+          ?\xf09b                      ; github
 
-    ;; debug
-    ("bug" . "\xf188")
+          ;; Debug
+          ?\xf188                      ; bug
 
-    ;; Mail
-    ("email" . "\xe0be")
+          ;; Mail
+          ?\xe0be                      ; email
 
-    ;; IRC
-    ("message" . "\xe0c9")
+          ;; IRC
+          ?\xe0c9                      ; message
 
-    ;; Battery
-    ("battery-charging" . "\xe939")
-    ("battery-empty" . "\xf244")
-    ("battery-full" . "\xf240")
-    ("battery-half" . "\xf242")
-    ("battery-quarter" . "\xf243")
-    ("battery-three-quarters" . "\xf241")))
-(doom-moddeline--set-font-widths doom-modeline-rhs-icons-alist)
+          ;; Battery
+          ?\xe939                      ; battery-charging
+          ?\xf244                      ; battery-empty
+          ?\xf240                      ; battery-full
+          ?\xf242                      ; battery-half
+          ?\xf243                      ; battery-quarter
+          ?\xf241                      ; battery-three-quarters
+          ))))
+(doom-modeline--set-char-widths doom-modeline-rhs-icons-alist)
 
 
 ;;
@@ -141,7 +135,7 @@ It returns a file name which can be used directly as argument of
 
 (defcustom doom-modeline-height 25
   "How tall the mode-line should be. It's only respected in GUI.
-If the actual char height is larger, it respects the actual char height."
+          If the actual char height is larger, it respects the actual char height."
   :type 'integer
   :set (lambda (sym val)
          (set sym (if (> val 0) val 1)))
@@ -161,13 +155,13 @@ If the actual char height is larger, it respects the actual char height."
         (t nil))
   "How to detect the project root.
 
-The default priority is `ffip' > `projectile' > `project'.
-nil means to use `default-directory'.
+          The default priority is `ffip' > `projectile' > `project'.
+          nil means to use `default-directory'.
 
-The project management packages have some issues on detecting project root.
-e.g. `projectile' doesn't handle symlink folders well, while `project' is
-unable to hanle sub-projects.
-Specify another one if you encounter the issue."
+          The project management packages have some issues on detecting project root.
+          e.g. `projectile' doesn't handle symlink folders well, while `project' is
+          unable to hanle sub-projects.
+          Specify another one if you encounter the issue."
   :type '(choice
           (const :tag "Find File in Project" ffip)
           (const :tag "Projectile" projectile)
@@ -178,18 +172,18 @@ Specify another one if you encounter the issue."
 (defcustom doom-modeline-buffer-file-name-style 'auto
   "Determines the style used by `doom-modeline-buffer-file-name'.
 
-  Given ~/Projects/FOSS/emacs/lisp/comint.el
-  auto => emacs/lisp/comint.el (in a project) or comint.el
-  truncate-upto-project => ~/P/F/emacs/lisp/comint.el
-  truncate-from-project => ~/Projects/FOSS/emacs/l/comint.el
-  truncate-with-project => emacs/l/comint.el
-  truncate-except-project => ~/P/F/emacs/l/comint.el
-  truncate-upto-root => ~/P/F/e/lisp/comint.el
-  truncate-all => ~/P/F/e/l/comint.el
-  relative-from-project => emacs/lisp/comint.el
-  relative-to-project => lisp/comint.el
-  file-name => comint.el
-  buffer-name => comint.el<2> (uniquify buffer name)"
+          Given ~/Projects/FOSS/emacs/lisp/comint.el
+          auto => emacs/lisp/comint.el (in a project) or comint.el
+          truncate-upto-project => ~/P/F/emacs/lisp/comint.el
+          truncate-from-project => ~/Projects/FOSS/emacs/l/comint.el
+          truncate-with-project => emacs/l/comint.el
+          truncate-except-project => ~/P/F/emacs/l/comint.el
+          truncate-upto-root => ~/P/F/e/lisp/comint.el
+          truncate-all => ~/P/F/e/l/comint.el
+          relative-from-project => emacs/lisp/comint.el
+          relative-to-project => lisp/comint.el
+          file-name => comint.el
+          buffer-name => comint.el<2> (uniquify buffer name)"
   :type '(choice (const auto)
                  (const truncate-upto-project)
                  (const truncate-upto-project)
@@ -207,36 +201,36 @@ Specify another one if you encounter the issue."
 (defcustom doom-modeline-icon (display-graphic-p)
   "Whether display the icons in the mode-line.
 
-It respects `all-the-icons-color-icons'.
-While using the server mode in GUI, should set the value explicitly."
+          It respects `all-the-icons-color-icons'.
+          While using the server mode in GUI, should set the value explicitly."
   :type 'boolean
   :group 'doom-modeline)
 
 (defcustom doom-modeline-major-mode-icon t
   "Whether display the icon for `major-mode'.
 
-It respects `doom-modeline-icon'."
+          It respects `doom-modeline-icon'."
   :type 'boolean
   :group'doom-modeline)
 
 (defcustom doom-modeline-major-mode-color-icon t
   "Whether display the colorful icon for `major-mode'.
 
-It respects `doom-modeline-major-mode-icon'."
+          It respects `doom-modeline-major-mode-icon'."
   :type 'boolean
   :group'doom-modeline)
 
 (defcustom doom-modeline-buffer-state-icon t
   "Whether display the icon for the buffer state.
 
-It respects `doom-modeline-icon'."
+          It respects `doom-modeline-icon'."
   :type 'boolean
   :group 'doom-modeline)
 
 (defcustom doom-modeline-buffer-modification-icon t
   "Whether display the modification icon for the buffer.
 
-It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'."
+          It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'."
   :type 'boolean
   :group 'doom-modeline)
 
@@ -258,7 +252,7 @@ It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'."
 (defcustom doom-modeline-continuous-word-count-modes
   '(markdown-mode gfm-mode org-mode)
   "Major modes in which to display word count continuously.
-Respects `doom-modeline-enable-word-count'."
+          Respects `doom-modeline-enable-word-count'."
   :type 'list
   :group 'doom-modeline)
 
@@ -290,7 +284,7 @@ Respects `doom-modeline-enable-word-count'."
 (defcustom doom-modeline-persp-name t
   "Whether display the perspective name.
 
-Non-nil to display in the mode-line."
+          Non-nil to display in the mode-line."
   :type 'boolean
   :group 'doom-modeline)
 
@@ -302,14 +296,14 @@ Non-nil to display in the mode-line."
 (defcustom doom-modeline-lsp t
   "Whether display the `lsp' state.
 
-Non-nil to display in the mode-line."
+          Non-nil to display in the mode-line."
   :type 'boolean
   :group 'doom-modeline)
 
 (defcustom doom-modeline-github nil
   "Whether display the GitHub notifications.
 
-It requires `ghub' and `async' packages."
+          It requires `ghub' and `async' packages."
   :type 'boolean
   :group 'doom-modeline)
 
@@ -326,35 +320,35 @@ It requires `ghub' and `async' packages."
 (defcustom doom-modeline-modal-icon t
   "Whether display the modal state icon.
 
-Including `evil', `overwrite', `god', `ryo' and `xah-fly-keys', etc."
+          Including `evil', `overwrite', `god', `ryo' and `xah-fly-keys', etc."
   :type 'boolean
   :group 'doom-modeline)
 
 (defcustom doom-modeline-mu4e nil
   "Whether display the mu4e notifications.
 
-It requires `mu4e-alert' package."
+          It requires `mu4e-alert' package."
   :type 'boolean
   :group 'doom-modeline)
 
 (defcustom doom-modeline-gnus nil
   "Wheter to display notifications from gnus
 
-It requires `gnus' to be setup"
+          It requires `gnus' to be setup"
   :type 'boolean
   :group 'doom-modeline)
 
 (defcustom doom-modeline-gnus-timer 2
   "The wait time in minutes before gnus fetches mail
 
-if nil, don't set up a hook"
+          if nil, don't set up a hook"
   :type 'integer
   :group 'doom-modeline)
 
 (defcustom doom-modeline-irc t
   "Whether display the irc notifications.
 
-It requires `circe' or `erc' package."
+          It requires `circe' or `erc' package."
   :type 'boolean
   :group 'doom-modeline)
 
@@ -647,15 +641,15 @@ It requires `circe' or `erc' package."
 
 (defun doom-modeline-def-modeline (name lhs &optional rhs)
   "Defines a modeline format and byte-compiles it.
-  NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
-  LHS and RHS are lists of symbols of modeline segments defined with
-  `doom-modeline-def-segment'.
+          NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
+          LHS and RHS are lists of symbols of modeline segments defined with
+          `doom-modeline-def-segment'.
 
-  Example:
-  (doom-modeline-def-modeline 'minimal
-    '(bar matches \" \" buffer-info)
-    '(media-info major-mode))
-  (doom-modeline-set-modeline 'minimal t)"
+          Example:
+          (doom-modeline-def-modeline 'minimal
+            '(bar matches \" \" buffer-info)
+            '(media-info major-mode))
+          (doom-modeline-set-modeline 'minimal t)"
   (let ((sym (intern (format "doom-modeline-format--%s" name)))
         (lhs-forms (doom-modeline--prepare-segments lhs))
         (rhs-forms (doom-modeline--prepare-segments rhs)))
@@ -681,14 +675,14 @@ It requires `circe' or `erc' package."
 
 (defun doom-modeline (key)
   "Return a mode-line configuration associated with KEY (a symbol).
-Throws an error if it doesn't exist."
+          Throws an error if it doesn't exist."
   (let ((fn (intern-soft (format "doom-modeline-format--%s" key))))
     (when (functionp fn)
       `(:eval (,fn)))))
 
 (defun doom-modeline-set-modeline (key &optional default)
   "Set the modeline format. Does nothing if the modeline KEY doesn't exist.
-If DEFAULT is non-nil, set the default mode-line for all buffers."
+          If DEFAULT is non-nil, set the default mode-line for all buffers."
   (when-let ((modeline (doom-modeline key)))
     (setf (if default
               (default-value 'mode-line-format)
@@ -706,21 +700,21 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 (defun doom-modeline-redisplay (&rest _)
   "Call `redisplay' to trigger mode-line height calculations.
 
-Certain functions, including e.g. `fit-window-to-buffer', base
-their size calculations on values which are incorrect if the
-mode-line has a height different from that of the `default' face
-and certain other calculations have not yet taken place for the
-window in question.
+          Certain functions, including e.g. `fit-window-to-buffer', base
+          their size calculations on values which are incorrect if the
+          mode-line has a height different from that of the `default' face
+          and certain other calculations have not yet taken place for the
+          window in question.
 
-These calculations can be triggered by calling `redisplay'
-explicitly at the appropriate time and this functions purpose
-is to make it easier to do so.
+          These calculations can be triggered by calling `redisplay'
+          explicitly at the appropriate time and this functions purpose
+          is to make it easier to do so.
 
-This function is like `redisplay' with non-nil FORCE argument.
-It accepts an arbitrary number of arguments making it suitable
-as a `:before' advice for any function.  If the current buffer
-has no mode-line or this function has already been calle in it,
-then this function does nothing."
+          This function is like `redisplay' with non-nil FORCE argument.
+          It accepts an arbitrary number of arguments making it suitable
+          as a `:before' advice for any function.  If the current buffer
+          has no mode-line or this function has already been calle in it,
+          then this function does nothing."
   (when (and doom-modeline-mode
              mode-line-format
              (not doom-modeline--size-hacked-p))
@@ -827,16 +821,16 @@ then this function does nothing."
 (defun doom-modeline-add-variable-watcher (symbol watch-function)
   "Cause WATCH-FUNCTION to be called when SYMBOL is set if possible.
 
-See docs of `add-variable-watcher'."
+          See docs of `add-variable-watcher'."
   (when (fboundp 'add-variable-watcher)
     (add-variable-watcher symbol watch-function)))
 
 (defun doom-modeline-icon (icon-set icon-name unicode text &rest args)
   "Display icon of ICON-NAME with ARGS in mode-line.
 
-ICON-SET includes `octicon', `faicon', `material', `alltheicons' and `fileicon'.
-UNICODE is the unicode char fallback. TEXT is the ASCII char fallback.
-ARGS is same as `all-the-icons-octicon' and others."
+          ICON-SET includes `octicon', `faicon', `material', `alltheicons' and `fileicon'.
+          UNICODE is the unicode char fallback. TEXT is the ASCII char fallback.
+          ARGS is same as `all-the-icons-octicon' and others."
   (let ((face (or (plist-get args :face) 'mode-line)))
     (or
      ;; Icons
