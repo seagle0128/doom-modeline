@@ -282,7 +282,7 @@ Uses `all-the-icons-material' to fetch the icon."
                    ((and buffer-file-name
                          (not (file-exists-p buffer-file-name)))
                     (doom-modeline-buffer-file-state-icon
-                     "block" "🚫" "!" 'doom-modeline-urgent))
+                     "do_not_disturb_alt" "🚫" "!" 'doom-modeline-urgent))
                    (t ""))
              (when (or (buffer-narrowed-p)
                        (and (bound-and-true-p fancy-narrow-mode)
@@ -855,7 +855,7 @@ mouse-3: Next error"
                                      ((> severity note-level)    (cl-incf .warning))
                                      (t                          (cl-incf .note))))))
                         (if (> (+ .error .warning .note) 0)
-                            (doom-modeline-checker-icon "block" "🚫" "!"
+                            (doom-modeline-checker-icon "do_not_disturb_alt" "🚫" "!"
                                                         (cond ((> .error 0) 'doom-modeline-urgent)
                                                               ((> .warning 0) 'doom-modeline-warning)
                                                               (t 'doom-modeline-info)))
