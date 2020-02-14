@@ -1939,29 +1939,36 @@ mouse-3: Fetch notifications"
   "Display debug icon with FACE and ARGS."
   (doom-modeline-icon 'faicon "bug" "🐛" "!" :face face :v-adjust -0.0575 args))
 
-(defsubst doom-modeline--debug-dap ()
+(defun doom-modeline--debug-dap ()
   "The current `dap-mode' state."
   (when (and (bound-and-true-p dap-mode)
              (bound-and-true-p lsp-mode))
     (when-let ((session (dap--cur-session)))
-      (propertize (doom-modeline-debug-icon (if (dap--session-running session)
-                                                'doom-modeline-info
-                                              'doom-modeline-debug))
-                  'help-echo (format "DAP (%s - %s)
+      (when (dap--session-running session)
+        (propertize (doom-modeline-debug-icon 'doom-modeline-info)
+                    'help-echo (format "DAP (%s - %s)
 mouse-1: Display debug hydra
 mouse-2: Display recent configurations
 mouse-3: Disconnect session"
-                                     (dap--debug-session-name session)
-                                     (dap--debug-session-state session))
-                  'mouse-face 'mode-line-highlight
-                  'local-map (let ((map (make-sparse-keymap)))
-                               (define-key map [mode-line mouse-1]
-                                 #'dap-hydra)
-                               (define-key map [mode-line mouse-2]
-                                 #'dap-debug-recent)
-                               (define-key map [mode-line mouse-3]
-                                 #'dap-disconnect)
-                               map)))))
+                                       (dap--debug-session-name session)
+                                       (dap--debug-session-state session))
+                    'mouse-face 'mode-line-highlight
+                    'local-map (let ((map (make-sparse-keymap)))
+                                 (define-key map [mode-line mouse-1]
+                                   #'dap-hydra)
+                                 (define-key map [mode-line mouse-2]
+                                   #'dap-debug-recent)
+                                 (define-key map [mode-line mouse-3]
+                                   #'dap-disconnect)
+                                 map))))))
+
+(defvar-local doom-modeline--debug-dap nil)
+(defun doom-modeline-update-debug-dap (&rest _)
+  "Update dap debug state."
+  (setq doom-modeline--debug-dap (doom-modeline--debug-dap)))
+
+(add-hook 'dap-session-created-hook #'doom-modeline-update-debug-dap)
+(add-hook 'dap-terminated-hook #'doom-modeline-update-debug-dap)
 
 (defsubst doom-modeline--debug-edebug ()
   "The current `edebug' state."
@@ -2003,7 +2010,7 @@ mouse-1: Toggle Debug on Quit"
 (doom-modeline-def-segment debug
   "The current debug state."
   (when (doom-modeline--active)
-    (let* ((dap (doom-modeline--debug-dap))
+    (let* ((dap doom-modeline--debug-dap)
            (edebug (doom-modeline--debug-edebug))
            (on-error (doom-modeline--debug-on-error))
            (on-quit (doom-modeline--debug-on-quit))
