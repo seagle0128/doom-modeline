@@ -1968,6 +1968,7 @@ mouse-3: Disconnect session"
   (setq doom-modeline--debug-dap (doom-modeline--debug-dap)))
 
 (add-hook 'dap-session-created-hook #'doom-modeline-update-debug-dap)
+(add-hook 'dap-session-changed-hook #'doom-modeline-update-debug-dap)
 (add-hook 'dap-terminated-hook #'doom-modeline-update-debug-dap)
 
 (defsubst doom-modeline--debug-edebug ()
