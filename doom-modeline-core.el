@@ -468,6 +468,11 @@ It returns a file name which can be used directly as argument of
   "The face used for the icon in the mode-line of an inactive window."
   :group 'doom-modeline-faces)
 
+(defface doom-modeline-debug-visual
+  `((t (:background ,(face-foreground 'all-the-icons-orange))))
+  "Face to use for the mode-line while debugging."
+  :group 'doom-modeline)
+
 (defface doom-modeline-evil-emacs-state
   '((t (:inherit (font-lock-builtin-face bold))))
   "Face for the Emacs state tag in evil state indicator."
