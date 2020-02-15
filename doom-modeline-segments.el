@@ -362,9 +362,8 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
        (if (doom-modeline--active)
            (if doom-modeline-major-mode-color-icon
                icon
-             (propertize icon 'face `(:inherit ,(let ((props (get-text-property 0 'face icon)))
-                                                  props (remove :inherit props))
-                                      :inherit mode-line)))
+             (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
+                                      :foreground ,(face-foreground 'mode-line))))
          (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
                                   :inherit doom-modeline-icon-inactive)))
        (doom-modeline-vspc)))))
