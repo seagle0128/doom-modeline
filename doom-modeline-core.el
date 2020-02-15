@@ -464,8 +464,7 @@ It returns a file name which can be used directly as argument of
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-icon-inactive
-  `((t (:foreground ,(face-foreground 'mode-line-inactive)
-        :background ,(face-background 'mode-line-inactive))))
+  `((t (:foreground ,(face-foreground 'mode-line-inactive))))
   "The face used for the icon in the mode-line of an inactive window."
   :group 'doom-modeline-faces)
 

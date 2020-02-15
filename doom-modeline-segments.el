@@ -1424,8 +1424,8 @@ mouse-2: Show help for minor mode"
 
 (doom-modeline-def-segment persp-name
   "The current perspective name."
-  (and (doom-modeline--active)
-       doom-modeline--persp-name))
+  (if (doom-modeline--active)
+      doom-modeline--persp-name))
 
 
 ;;
