@@ -986,27 +986,24 @@ mouse-1: List all problems%s"
                     `(,doom-modeline--flymake-icon . ,doom-modeline--flymake-text))
                    ((bound-and-true-p flycheck-mode)
                     `(,doom-modeline--flycheck-icon . ,doom-modeline--flycheck-text)))))
-    (if seg
-        (let ((icon (car seg))
-              (text (cdr seg)))
-          (concat
-           (doom-modeline-spc)
-           (when icon
-             (if active
-                 icon
-               (propertize icon 'face (plist-put
-                                       (copy-list (get-text-property 0 'face icon))
-                                       :inherit nil))))
-           (when text
-             (concat
-              (doom-modeline-vspc)
-              (if active
-                  text
-                (propertize text 'face 'mode-line-inactive))))
+    (let ((icon (car seg))
+          (text (cdr seg)))
+      (concat
+       (when icon
+         (concat
+          (doom-modeline-spc)
+          (if active
+              icon
+            (propertize icon 'face (plist-put
+                                    (copy-list (get-text-property 0 'face icon))
+                                    :inherit nil)))))
+       (when text
+         (concat
+          (if icon (doom-modeline-vspc) (doom-modeline-spc))
+          (if active
+              text
+            (propertize text 'face 'mode-line-inactive))))))))
 
-           ;; FIXME: Add one exra space to avoid the segment-cut issue
-           (doom-modeline-spc)))
-      "")))
 
 ;;
 ;; Word Count
@@ -1022,6 +1019,7 @@ Respects `doom-modeline-enable-word-count'."
                 'face (if (doom-modeline--active)
                           'mode-line
                         'mode-line-inactive))))
+
 
 ;;
 ;; Selection
