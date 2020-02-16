@@ -463,11 +463,6 @@ It returns a file name which can be used directly as argument of
   "The face used for the left-most bar in the mode-line of an inactive window."
   :group 'doom-modeline-faces)
 
-(defface doom-modeline-icon-inactive
-  `((t (:foreground ,(face-foreground 'mode-line-inactive))))
-  "The face used for the icon in the mode-line of an inactive window."
-  :group 'doom-modeline-faces)
-
 (defface doom-modeline-debug-visual
   `((t (:background ,(face-foreground 'all-the-icons-orange))))
   "Face to use for the mode-line while debugging."
@@ -846,7 +841,7 @@ It returns a file name which can be used directly as argument of
        ;; break them if the font family is set.
        ;; @see https://github.com/seagle0128/doom-modeline/issues/301
        (when (eq face 'mode-line-inactive)
-         (plist-put args :face 'doom-modeline-icon-inactive))
+         (plist-put args :face nil))
 
        (pcase icon-set
          ('octicon
