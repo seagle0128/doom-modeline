@@ -30,7 +30,7 @@
 ;;; Code:
 
 (require 'all-the-icons)
-(require 'cl-extra)
+(require 'cl-lib)
 (require 'subr-x)
 (require 'doom-modeline-core)
 (require 'doom-modeline-env)
@@ -362,7 +362,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
        (if (and (doom-modeline--active) doom-modeline-major-mode-color-icon)
            icon
          (propertize icon 'face (plist-put
-                                 (copy-list (get-text-property 0 'face icon))
+                                 (cl-copy-list (get-text-property 0 'face icon))
                                  :inherit nil)))
        (doom-modeline-vspc)))))
 
@@ -374,7 +374,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
        (if (doom-modeline--active)
            icon
          (propertize icon 'face (plist-put
-                                 (copy-list (get-text-property 0 'face icon))
+                                 (cl-copy-list (get-text-property 0 'face icon))
                                  :inherit nil)))
        (doom-modeline-vspc)))))
 
@@ -654,7 +654,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
          (if active
              icon
            (propertize icon 'face (plist-put
-                                   (copy-list (get-text-property 0 'face icon))
+                                   (cl-copy-list (get-text-property 0 'face icon))
                                    :inherit nil)))
          (doom-modeline-vspc))
         'mouse-face 'mode-line-highlight
@@ -995,7 +995,7 @@ mouse-1: List all problems%s"
           (if active
               icon
             (propertize icon 'face (plist-put
-                                    (copy-list (get-text-property 0 'face icon))
+                                    (cl-copy-list (get-text-property 0 'face icon))
                                     :inherit nil)))))
        (when text
          (concat
@@ -1807,7 +1807,7 @@ mouse-1: Start server"))
          (if active
              icon
            (propertize icon 'face (plist-put
-                                   (copy-list (get-text-property 0 'face icon))
+                                   (cl-copy-list (get-text-property 0 'face icon))
                                    :inherit nil)))
          (doom-modeline-spc))))))
 
