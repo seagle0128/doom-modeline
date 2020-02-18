@@ -1827,10 +1827,14 @@ Example:
 (defun doom-modeline--github-fetch-notifications ()
   "Fetch GitHub notifications."
   (when (and doom-modeline-github
+             ;; Only starting the process When the window is active, or the
+             ;; mode-line will be activated while the frame is unfocused.
+             (doom-modeline--active)
              (require 'async nil t))
     (async-start
      `(lambda ()
-        ,(async-inject-variables "\\`\\(load-path\\|auth-sources\\|doom-modeline-before-github-fetch-notification-hook\\)\\'")
+        ,(async-inject-variables
+          "\\`\\(load-path\\|auth-sources\\|doom-modeline-before-github-fetch-notification-hook\\)\\'")
         (run-hooks 'doom-modeline-before-github-fetch-notification-hook)
         (when (require 'ghub nil t)
           (with-timeout (10)
