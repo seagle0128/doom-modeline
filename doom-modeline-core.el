@@ -725,11 +725,11 @@ then this function does nothing."
 (advice-add #'resize-temp-buffer-window :before #'doom-modeline-redisplay)
 
 ;; Keep `doom-modeline-current-window' up-to-date
-(defun doom-modeline--get-current-window ()
+(defun doom-modeline--get-current-window (&optional frame)
   "Get the current window but should exclude the child windows."
-  (if (and (fboundp 'frame-parent) (frame-parent))
-      (frame-selected-window (frame-parent))
-    (frame-selected-window)))
+  (if (and (fboundp 'frame-parent) (frame-parent frame))
+      (frame-selected-window (frame-parent frame))
+    (frame-selected-window frame)))
 
 (defvar doom-modeline-current-window (doom-modeline--get-current-window))
 (defun doom-modeline-set-selected-window (&rest _)
@@ -757,7 +757,8 @@ then this function does nothing."
            (setq doom-modeline-current-window nil)
            (cl-loop for frame in (frame-list)
                     if (eq (frame-focus-state frame) t)
-                    return (setq doom-modeline-current-window (frame-selected-window frame)))
+                    return (setq doom-modeline-current-window
+                                 (doom-modeline--get-current-window frame)))
            (force-mode-line-update))
          (add-function :after after-focus-change-function #'doom-modeline-refresh-frame))))
 
@@ -791,7 +792,8 @@ then this function does nothing."
 
 (defun doom-modeline--active ()
   "Whether is an active window."
-  (eq (selected-window) doom-modeline-current-window))
+  (and doom-modeline-current-window
+       (eq (selected-window) doom-modeline-current-window)))
 
 (defsubst doom-modeline-vspc ()
   "Text style with icons in mode-line."
