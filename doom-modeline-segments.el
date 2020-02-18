@@ -359,13 +359,12 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
     (when-let ((icon (or doom-modeline--buffer-file-icon
                          (doom-modeline-update-buffer-file-icon))))
       (concat
-       (if (doom-modeline--active)
-           (if doom-modeline-major-mode-color-icon
-               icon
-             (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
-                                      :foreground ,(face-foreground 'mode-line))))
-         (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
-                                  :inherit doom-modeline-icon-inactive)))
+       (let ((active (doom-modeline--active)))
+         (if (and active doom-modeline-major-mode-color-icon)
+             icon
+           (doom-modeline--propertize-icon icon (if active
+                                                    'mode-line
+                                                  'mode-line-inactive))))
        (doom-modeline-vspc)))))
 
 (defsubst doom-modeline--buffer-state-icon ()
@@ -375,8 +374,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
       (concat
        (if (doom-modeline--active)
            icon
-         (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
-                                  :inherit doom-modeline-icon-inactive)))
+         (doom-modeline--propertize-icon icon 'mode-line-inactive))
        (doom-modeline-vspc)))))
 
 (defsubst doom-modeline--buffer-name ()
@@ -654,8 +652,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
         (concat
          (if active
              icon
-           (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
-                                    :inherit doom-modeline-icon-inactive)))
+           (doom-modeline--propertize-icon icon 'mode-line-inactive))
          (doom-modeline-vspc))
         'mouse-face 'mode-line-highlight
         'help-echo (get-text-property 1 'help-echo vc-mode)
@@ -994,9 +991,7 @@ mouse-1: List all problems%s"
           (doom-modeline-spc)
           (if active
               icon
-            (propertize icon 'face (plist-put
-                                    (cl-copy-list (get-text-property 0 'face icon))
-                                    :inherit nil)))))
+            (doom-modeline--propertize-icon icon 'mode-line-inactive))))
        (when text
          (concat
           (if icon (doom-modeline-vspc) (doom-modeline-spc))
@@ -1806,8 +1801,7 @@ mouse-1: Start server"))
          (doom-modeline-spc)
          (if active
              icon
-           (propertize icon 'face `(:inherit ,(get-text-property 0 'face icon)
-                                    :foreground ,(face-foreground 'mode-line-inactive))))
+           (doom-modeline--propertize-icon icon 'mode-line-inactive))
          (doom-modeline-spc))))))
 
 (defun doom-modeline-override-eglot-modeline ()
