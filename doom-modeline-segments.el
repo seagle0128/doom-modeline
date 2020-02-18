@@ -362,9 +362,9 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
        (let ((active (doom-modeline--active)))
          (if (and active doom-modeline-major-mode-color-icon)
              icon
-           (doom-modeline--propertize-icon icon (if active
-                                                    'mode-line
-                                                  'mode-line-inactive))))
+           (doom-modeline-propertize-icon icon (if active
+                                                   'mode-line
+                                                 'mode-line-inactive))))
        (doom-modeline-vspc)))))
 
 (defsubst doom-modeline--buffer-state-icon ()
@@ -374,7 +374,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
       (concat
        (if (doom-modeline--active)
            icon
-         (doom-modeline--propertize-icon icon 'mode-line-inactive))
+         (doom-modeline-propertize-icon icon 'mode-line-inactive))
        (doom-modeline-vspc)))))
 
 (defsubst doom-modeline--buffer-name ()
@@ -652,7 +652,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
         (concat
          (if active
              icon
-           (doom-modeline--propertize-icon icon 'mode-line-inactive))
+           (doom-modeline-propertize-icon icon 'mode-line-inactive))
          (doom-modeline-vspc))
         'mouse-face 'mode-line-highlight
         'help-echo (get-text-property 1 'help-echo vc-mode)
@@ -991,7 +991,7 @@ mouse-1: List all problems%s"
           (doom-modeline-spc)
           (if active
               icon
-            (doom-modeline--propertize-icon icon 'mode-line-inactive))))
+            (doom-modeline-propertize-icon icon 'mode-line-inactive))))
        (when text
          (concat
           (if icon (doom-modeline-vspc) (doom-modeline-spc))
@@ -1801,7 +1801,7 @@ mouse-1: Start server"))
          (doom-modeline-spc)
          (if active
              icon
-           (doom-modeline--propertize-icon icon 'mode-line-inactive))
+           (doom-modeline-propertize-icon icon 'mode-line-inactive))
          (doom-modeline-spc))))))
 
 (defun doom-modeline-override-eglot-modeline ()

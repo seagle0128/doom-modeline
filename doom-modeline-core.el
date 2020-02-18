@@ -826,8 +826,8 @@ See docs of `add-variable-watcher'."
   (when (fboundp 'add-variable-watcher)
     (add-variable-watcher symbol watch-function)))
 
-(defun doom-modeline--propertize-icon (icon face)
-  "Propertize the ICON with FACE.
+(defun doom-modeline-propertize-icon (icon &optional face)
+  "Propertize the ICON with the specified FACE.
 
 The face should be the first attribute, or the font family may be overridden.
 So convert the face \":family XXX :height XXX :inherit XXX\" to
@@ -837,10 +837,10 @@ See https://github.com/seagle0128/doom-modeline/issues/301."
               (family (plist-get props :family))
               (height (plist-get props :height))
               (face (or face (plist-get props :inherit)))
-              (face (append `(:inherit ,face)
-                            `(:family ,family)
-                            `(:height ,height))))
-    (propertize icon 'face face)))
+              (new-face (append `(:inherit ,face)
+                                `(:family ,family)
+                                `(:height ,height))))
+    (propertize icon 'face new-face)))
 
 (defun doom-modeline-icon (icon-set icon-name unicode text &rest args)
   "Display icon of ICON-NAME with ARGS in mode-line.
@@ -865,7 +865,7 @@ ARGS is same as `all-the-icons-octicon' and others."
                       (apply #'all-the-icons-alltheicon icon-name args))
                      ('fileicon
                       (apply #'all-the-icons-fileicon icon-name args)))))
-         (doom-modeline--propertize-icon icon face)))
+         (doom-modeline-propertize-icon icon face)))
      ;; Unicode fallback
      (and doom-modeline-unicode-fallback
           unicode
