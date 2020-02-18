@@ -750,17 +750,19 @@ then this function does nothing."
 (add-hook 'delete-frame-functions #'doom-modeline-set-selected-window)
 (advice-add #'handle-switch-frame :after #'doom-modeline-set-selected-window)
 (with-no-warnings
-  (cond ((not (boundp 'after-focus-change-function))
-         (add-hook 'focus-in-hook #'doom-modeline-set-selected-window)
-         (add-hook 'focus-out-hook #'doom-modeline-unset-selected-window))
-        ((defun doom-modeline-refresh-frame ()
-           (setq doom-modeline-current-window nil)
-           (cl-loop for frame in (frame-list)
-                    if (eq (frame-focus-state frame) t)
-                    return (setq doom-modeline-current-window
-                                 (doom-modeline--get-current-window frame)))
-           (force-mode-line-update))
-         (add-function :after after-focus-change-function #'doom-modeline-refresh-frame))))
+  (if (boundp 'after-focus-change-function)
+      (progn
+        (defun doom-modeline-refresh-frame ()
+          (setq doom-modeline-current-window nil)
+          (cl-loop for frame in (frame-list)
+                   if (eq (frame-focus-state frame) t)
+                   return (setq doom-modeline-current-window
+                                (doom-modeline--get-current-window frame)))
+          (force-mode-line-update))
+        (add-function :after after-focus-change-function #'doom-modeline-refresh-frame))
+    (progn
+      (add-hook 'focus-in-hook #'doom-modeline-set-selected-window)
+      (add-hook 'focus-out-hook #'doom-modeline-unset-selected-window))))
 
 ;; Ensure modeline is inactive when Emacs is unfocused (and active otherwise)
 (defvar doom-modeline-remap-face-cookie nil)
@@ -771,16 +773,18 @@ then this function does nothing."
     (face-remap-remove-relative doom-modeline-remap-face-cookie)))
 (defun doom-modeline-unfocus ()
   "Unfocus mode-line."
-  (setq doom-modeline-remap-face-cookie (face-remap-add-relative 'mode-line 'mode-line-inactive)))
+  (setq doom-modeline-remap-face-cookie
+        (face-remap-add-relative 'mode-line 'mode-line-inactive)))
+
+(defun doom-modeline-focus-change (&rest _)
+  (if (frame-focus-state)
+      (doom-modeline-focus)
+    (doom-modeline-unfocus)))
+(advice-add #'handle-switch-frame :after #'doom-modeline-focus-change)
 
 (with-no-warnings
   (if (boundp 'after-focus-change-function)
-      (progn
-        (defun doom-modeline-focus-change ()
-          (if (frame-focus-state)
-              (doom-modeline-focus)
-            (doom-modeline-unfocus)))
-        (add-function :after after-focus-change-function #'doom-modeline-focus-change))
+      (add-function :after after-focus-change-function #'doom-modeline-focus-change)
     (progn
       (add-hook 'focus-in-hook #'doom-modeline-focus)
       (add-hook 'focus-out-hook #'doom-modeline-unfocus))))
