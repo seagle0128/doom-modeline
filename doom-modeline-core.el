@@ -777,15 +777,15 @@ then this function does nothing."
   (setq doom-modeline-remap-face-cookie
         (face-remap-add-relative 'mode-line 'mode-line-inactive)))
 
-(defun doom-modeline-focus-change (&rest _)
-  (if (frame-focus-state)
-      (doom-modeline-focus)
-    (doom-modeline-unfocus)))
-(advice-add #'handle-switch-frame :after #'doom-modeline-focus-change)
-
 (with-no-warnings
   (if (boundp 'after-focus-change-function)
-      (add-function :after after-focus-change-function #'doom-modeline-focus-change)
+      (progn
+        (defun doom-modeline-focus-change (&rest _)
+          (if (frame-focus-state)
+              (doom-modeline-focus)
+            (doom-modeline-unfocus)))
+        (advice-add #'handle-switch-frame :after #'doom-modeline-focus-change)
+        (add-function :after after-focus-change-function #'doom-modeline-focus-change))
     (progn
       (add-hook 'focus-in-hook #'doom-modeline-focus)
       (add-hook 'focus-out-hook #'doom-modeline-unfocus))))
