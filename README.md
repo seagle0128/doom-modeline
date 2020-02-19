@@ -329,10 +329,6 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
     If the file is controlled by vc, refer to the documentation of
     `vc-follow-symlinks`.
 
-1. Can I add my mode-line segments myself? How to do that?
-
-   Of course. Just add the segments into `global-mode-string`.
-
 1. Why doesn't change of branch reflect in modeline?
 
    Actually it's related to `magit` and `vc-mode`.
@@ -345,28 +341,27 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
      - [Maybe provide an alternative to VC's mode-line
        information](https://github.com/magit/magit/issues/2687)
 
-1. How can I define my own mode-line?
+1. Can I add my mode-line segments myself? How to do that?
+   How can I define my own mode-line?
 
-   Use `doom-modeline-def-modeline` to define your own mode-line and set it as
-   default.
+   There are two methods.
+   - If the information is simple, just add to `mode-line-misc-info` or `global-mode-string`.
 
-   For example:
-   - Define your custom doom-modeline
+   - Use `doom-modeline-def-modeline` to define your own mode-line and set it as
+     default.
 
-   ```emacs-lisp
-   (doom-modeline-def-modeline 'my-simple-line
-     '(bar matches buffer-info remote-host buffer-position parrot selection-info)
-     '(misc-info minor-modes input-method buffer-encoding major-mode process vcs checker))
-   ```
+     For example:
+       ```emacs-lisp
+       ;; Define your custom doom-modeline
+       (doom-modeline-def-modeline 'my-simple-line
+         '(bar matches buffer-info remote-host buffer-position parrot selection-info)
+         '(misc-info minor-modes input-method buffer-encoding major-mode process vcs checker))
 
-   - Set it to default using the `doom-modeline-mode-hook`:
-
-   ```emacs-lisp
-   (defun setup-custom-doom-modeline ()
-     (doom-modeline-set-modeline 'my-simple-line 'default))
-
-   (add-hook 'doom-modeline-mode-hook 'setup-custom-doom-modeline)
-   ```
+       ;; Add to `doom-modeline-mode-hook` or other hooks
+       (defun setup-custom-doom-modeline ()
+          (doom-modeline-set-modeline 'my-simple-line 'default))
+       (add-hook 'doom-modeline-mode-hook 'setup-custom-doom-modeline)
+       ```
 
 1. How to specify font family in modeline?
 
