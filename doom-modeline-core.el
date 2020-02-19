@@ -662,7 +662,7 @@ Example:
                (doom-modeline-spc)
                'display `((space
                            :align-to
-                           (- (+ right right-fringe right-margin) 1
+                           (- (+ right right-fringe right-margin)
                               ,(* (let ((width (doom-modeline--font-width)))
                                     (or (and (= width 1) 1)
                                         (/ width (frame-char-width) 1.0)))

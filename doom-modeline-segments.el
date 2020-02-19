@@ -997,7 +997,8 @@ mouse-1: List all problems%s"
           (if icon (doom-modeline-vspc) (doom-modeline-spc))
           (if active
               text
-            (propertize text 'face 'mode-line-inactive))))))))
+            (propertize text 'face 'mode-line-inactive))
+          (doom-modeline-spc)))))))
 
 
 ;;
