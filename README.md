@@ -351,6 +351,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
      default.
 
      For example:
+
        ```emacs-lisp
        ;; Define your custom doom-modeline
        (doom-modeline-def-modeline 'my-simple-line

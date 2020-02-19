@@ -1924,8 +1924,10 @@ mouse-3: Fetch notifications"
 
 (defun doom-modeline--normal-visual (&rest _)
   "Restore the face of mode-line."
-  (face-remap-remove-relative doom-modeline--debug-cookie)
-  (force-mode-line-update))
+  (when doom-modeline--debug-cookie
+    (require 'face-remap)
+    (face-remap-remove-relative doom-modeline--debug-cookie)
+    (force-mode-line-update)))
 
 (add-hook 'dap-session-created-hook #'doom-modeline--debug-visual)
 (add-hook 'dap-terminated-hook #'doom-modeline--normal-visual)

@@ -640,6 +640,7 @@ It requires `circe' or `erc' package."
 (add-hook 'window-setup-hook #'doom-modeline-refresh-font-width-cache)
 (add-hook 'after-make-frame-functions #'doom-modeline-refresh-font-width-cache)
 
+(declare-function doom-modeline-spc 'doom-modeline-core) ; suppress warnings
 (defun doom-modeline-def-modeline (name lhs &optional rhs)
   "Defines a modeline format and byte-compiles it.
 NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
