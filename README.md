@@ -146,8 +146,8 @@ In `init.el`,
 
 ``` emacs-lisp
 (use-package doom-modeline
-      :ensure t
-      :hook (after-init . doom-modeline-mode))
+  :ensure t
+  :init (doom-modeline-mode 1)
 ```
 
 This package requires the fonts included with `all-the-icons` to be installed.
