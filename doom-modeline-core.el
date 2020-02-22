@@ -580,118 +580,6 @@ It requires `circe' or `erc' package."
 
 
 ;;
-;; Modeline library
-;;
-
-(defvar doom-modeline-fn-alist ())
-(defvar doom-modeline-var-alist ())
-
-(defmacro doom-modeline-def-segment (name &rest body)
-  "Defines a modeline segment NAME with BODY and byte compiles it."
-  (declare (indent defun) (doc-string 2))
-  (let ((sym (intern (format "doom-modeline-segment--%s" name)))
-        (docstring (if (stringp (car body))
-                       (pop body)
-                     (format "%s modeline segment" name))))
-    (cond ((and (symbolp (car body))
-                (not (cdr body)))
-           (add-to-list 'doom-modeline-var-alist (cons name (car body)))
-           `(add-to-list 'doom-modeline-var-alist (cons ',name ',(car body))))
-          (t
-           (add-to-list 'doom-modeline-fn-alist (cons name sym))
-           `(progn
-              (fset ',sym (lambda () ,docstring ,@body))
-              (add-to-list 'doom-modeline-fn-alist (cons ',name ',sym))
-              ,(unless (bound-and-true-p byte-compile-current-file)
-                 `(let (byte-compile-warnings)
-                    (byte-compile #',sym))))))))
-
-(defun doom-modeline--prepare-segments (segments)
-  "Prepare mode-line `SEGMENTS'."
-  (let (forms it)
-    (dolist (seg segments)
-      (cond ((stringp seg)
-             (push seg forms))
-            ((symbolp seg)
-             (cond ((setq it (cdr (assq seg doom-modeline-fn-alist)))
-                    (push (list :eval (list it)) forms))
-                   ((setq it (cdr (assq seg doom-modeline-var-alist)))
-                    (push it forms))
-                   ((error "%s is not a defined segment" seg))))
-            ((error "%s is not a valid segment" seg))))
-    (nreverse forms)))
-
-(defvar doom-modeline--font-width-cache nil)
-(defun doom-modeline--font-width ()
-  "Cache the font width."
-  (let ((attributes (face-all-attributes 'mode-line)))
-    (or (cdr (assoc attributes doom-modeline--font-width-cache))
-        (let ((width (window-font-width nil 'mode-line)))
-          (push (cons attributes width) doom-modeline--font-width-cache)
-          width))))
-
-;; Refresh the font width after setting frame parameters
-;; to ensure the font width is correct.
-(defun doom-modeline-refresh-font-width-cache (&rest _)
-  "Refresh the font width cache."
-  (setq doom-modeline--font-width-cache nil)
-  (doom-modeline--font-width))
-(add-hook 'window-setup-hook #'doom-modeline-refresh-font-width-cache)
-(add-hook 'after-make-frame-functions #'doom-modeline-refresh-font-width-cache)
-
-(declare-function doom-modeline-spc 'doom-modeline-core) ; suppress warnings
-(defun doom-modeline-def-modeline (name lhs &optional rhs)
-  "Defines a modeline format and byte-compiles it.
-NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
-LHS and RHS are lists of symbols of modeline segments defined with
-`doom-modeline-def-segment'.
-
-Example:
-  (doom-modeline-def-modeline 'minimal
-    '(bar matches \" \" buffer-info)
-    '(media-info major-mode))
-  (doom-modeline-set-modeline 'minimal t)"
-  (let ((sym (intern (format "doom-modeline-format--%s" name)))
-        (lhs-forms (doom-modeline--prepare-segments lhs))
-        (rhs-forms (doom-modeline--prepare-segments rhs)))
-    (defalias sym
-      (lambda ()
-        (list lhs-forms
-              (propertize
-               (doom-modeline-spc)
-               'display `((space
-                           :align-to
-                           (- (+ right right-fringe right-margin)
-                              ,(* (let ((width (doom-modeline--font-width)))
-                                    (or (and (= width 1) 1)
-                                        (/ width (frame-char-width) 1.0)))
-                                  (string-width
-                                   (format-mode-line (cons "" rhs-forms))))))))
-              rhs-forms))
-      (concat "Modeline:\n"
-              (format "  %s\n  %s"
-                      (prin1-to-string lhs)
-                      (prin1-to-string rhs))))))
-(put 'doom-modeline-def-modeline 'lisp-indent-function 'defun)
-
-(defun doom-modeline (key)
-  "Return a mode-line configuration associated with KEY (a symbol).
-Throws an error if it doesn't exist."
-  (let ((fn (intern-soft (format "doom-modeline-format--%s" key))))
-    (when (functionp fn)
-      `(:eval (,fn)))))
-
-(defun doom-modeline-set-modeline (key &optional default)
-  "Set the modeline format. Does nothing if the modeline KEY doesn't exist.
-If DEFAULT is non-nil, set the default mode-line for all buffers."
-  (when-let ((modeline (doom-modeline key)))
-    (setf (if default
-              (default-value 'mode-line-format)
-            (buffer-local-value 'mode-line-format (current-buffer)))
-          (list "%e" modeline))))
-
-
-;;
 ;; Plugins
 ;;
 
@@ -791,7 +679,7 @@ then this function does nothing."
 
 
 ;;
-;; Modeline helpers
+;; Modeline library
 ;;
 
 (defun doom-modeline--active ()
@@ -799,17 +687,129 @@ then this function does nothing."
   (and doom-modeline-current-window
        (eq (selected-window) doom-modeline-current-window)))
 
-(defsubst doom-modeline-vspc ()
-  "Text style with icons in mode-line."
-  (propertize " " 'face (if (doom-modeline--active)
-                            'variable-pitch
-                          '(:inherit (variable-pitch mode-line-inactive)))))
+(defvar doom-modeline-fn-alist ())
+(defvar doom-modeline-var-alist ())
+
+(defmacro doom-modeline-def-segment (name &rest body)
+  "Defines a modeline segment NAME with BODY and byte compiles it."
+  (declare (indent defun) (doc-string 2))
+  (let ((sym (intern (format "doom-modeline-segment--%s" name)))
+        (docstring (if (stringp (car body))
+                       (pop body)
+                     (format "%s modeline segment" name))))
+    (cond ((and (symbolp (car body))
+                (not (cdr body)))
+           (add-to-list 'doom-modeline-var-alist (cons name (car body)))
+           `(add-to-list 'doom-modeline-var-alist (cons ',name ',(car body))))
+          (t
+           (add-to-list 'doom-modeline-fn-alist (cons name sym))
+           `(progn
+              (fset ',sym (lambda () ,docstring ,@body))
+              (add-to-list 'doom-modeline-fn-alist (cons ',name ',sym))
+              ,(unless (bound-and-true-p byte-compile-current-file)
+                 `(let (byte-compile-warnings)
+                    (byte-compile #',sym))))))))
+
+(defun doom-modeline--prepare-segments (segments)
+  "Prepare mode-line `SEGMENTS'."
+  (let (forms it)
+    (dolist (seg segments)
+      (cond ((stringp seg)
+             (push seg forms))
+            ((symbolp seg)
+             (cond ((setq it (cdr (assq seg doom-modeline-fn-alist)))
+                    (push (list :eval (list it)) forms))
+                   ((setq it (cdr (assq seg doom-modeline-var-alist)))
+                    (push it forms))
+                   ((error "%s is not a defined segment" seg))))
+            ((error "%s is not a valid segment" seg))))
+    (nreverse forms)))
+
+(defvar doom-modeline--font-width-cache nil)
+(defun doom-modeline--font-width ()
+  "Cache the font width."
+  (let ((attributes (face-all-attributes 'mode-line)))
+    (or (cdr (assoc attributes doom-modeline--font-width-cache))
+        (let ((width (window-font-width nil 'mode-line)))
+          (push (cons attributes width) doom-modeline--font-width-cache)
+          width))))
+
+;; Refresh the font width after setting frame parameters
+;; to ensure the font width is correct.
+(defun doom-modeline-refresh-font-width-cache (&rest _)
+  "Refresh the font width cache."
+  (setq doom-modeline--font-width-cache nil)
+  (doom-modeline--font-width))
+(add-hook 'window-setup-hook #'doom-modeline-refresh-font-width-cache)
+(add-hook 'after-make-frame-functions #'doom-modeline-refresh-font-width-cache)
+
+(defun doom-modeline-def-modeline (name lhs &optional rhs)
+  "Defines a modeline format and byte-compiles it.
+NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
+LHS and RHS are lists of symbols of modeline segments defined with
+`doom-modeline-def-segment'.
+
+Example:
+  (doom-modeline-def-modeline 'minimal
+    '(bar matches \" \" buffer-info)
+    '(media-info major-mode))
+  (doom-modeline-set-modeline 'minimal t)"
+  (let ((sym (intern (format "doom-modeline-format--%s" name)))
+        (lhs-forms (doom-modeline--prepare-segments lhs))
+        (rhs-forms (doom-modeline--prepare-segments rhs)))
+    (defalias sym
+      (lambda ()
+        (list lhs-forms
+              (propertize
+               " "
+               'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
+               'display `((space
+                           :align-to
+                           (- (+ right right-fringe right-margin)
+                              ,(* (let ((width (doom-modeline--font-width)))
+                                    (or (and (= width 1) 1)
+                                        (/ width (frame-char-width) 1.0)))
+                                  (string-width
+                                   (format-mode-line (cons "" rhs-forms))))))))
+              rhs-forms))
+      (concat "Modeline:\n"
+              (format "  %s\n  %s"
+                      (prin1-to-string lhs)
+                      (prin1-to-string rhs))))))
+(put 'doom-modeline-def-modeline 'lisp-indent-function 'defun)
+
+(defun doom-modeline (key)
+  "Return a mode-line configuration associated with KEY (a symbol).
+Throws an error if it doesn't exist."
+  (let ((fn (intern-soft (format "doom-modeline-format--%s" key))))
+    (when (functionp fn)
+      `(:eval (,fn)))))
+
+(defun doom-modeline-set-modeline (key &optional default)
+  "Set the modeline format. Does nothing if the modeline KEY doesn't exist.
+If DEFAULT is non-nil, set the default mode-line for all buffers."
+  (when-let ((modeline (doom-modeline key)))
+    (setf (if default
+              (default-value 'mode-line-format)
+            (buffer-local-value 'mode-line-format (current-buffer)))
+          (list "%e" modeline))))
+
+
+;;
+;; Modeline helpers
+;;
 
 (defsubst doom-modeline-spc ()
   "Text style with whitespace."
   (propertize " " 'face (if (doom-modeline--active)
                             'mode-line
                           'mode-line-inactive)))
+
+(defsubst doom-modeline-vspc ()
+  "Text style with icons in mode-line."
+  (propertize " " 'face (if (doom-modeline--active)
+                            'variable-pitch
+                          '(:inherit (variable-pitch mode-line-inactive)))))
 
 (defun doom-modeline--font-height ()
   "Calculate the actual char height of the mode-line."

@@ -137,6 +137,7 @@
 (declare-function evil-state-property 'evil-common)
 (declare-function evil-visual-state-p 'evil-states)
 (declare-function eyebrowse--get 'eyebrowse)
+(declare-function face-remap-remove-relative 'face-remap)
 (declare-function fancy-narrow-active-p 'fancy-narrow)
 (declare-function flycheck-buffer 'flycheck)
 (declare-function flycheck-count-errors 'flycheck)
@@ -1917,7 +1918,6 @@ mouse-3: Fetch notifications"
 (defun doom-modeline--normal-visual (&rest _)
   "Restore the face of mode-line."
   (when doom-modeline--debug-cookie
-    (require 'face-remap)
     (face-remap-remove-relative doom-modeline--debug-cookie)
     (force-mode-line-update)))
 
