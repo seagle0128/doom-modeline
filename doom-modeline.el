@@ -214,9 +214,10 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; Minor mode
 ;;
 
-(defvar doom-modeline--old-format mode-line-format
-  "Storage for the old `mode-line-format', so it can be restored when
-`doom-modeline-mode' is disabled.")
+(defvar doom-modeline--default-format mode-line-format
+  "Storage for the default `mode-line-format'.
+
+So it can be restored when `doom-modeline-mode' is disabled.")
 
 (defvar doom-modeline-mode-map (make-sparse-keymap))
 
@@ -261,11 +262,11 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (advice-add #'helm-display-mode-line :after #'doom-modeline-set-helm-modeline))
     (progn
       ;; Restore mode-line
-      (setq-default mode-line-format doom-modeline--old-format)
+      (setq-default mode-line-format doom-modeline--default-format)
       (dolist (bname '("*scratch*" "*Messages*"))
         (if (buffer-live-p (get-buffer bname))
             (with-current-buffer bname
-              (setq mode-line-format doom-modeline--old-format))))
+              (setq mode-line-format doom-modeline--default-format))))
 
       ;; Remove hooks
       (remove-hook 'Info-mode-hook #'doom-modeline-set-info-modeline)
