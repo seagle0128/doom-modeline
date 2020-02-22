@@ -620,17 +620,21 @@ then this function does nothing."
     (frame-selected-window frame)))
 
 (defvar doom-modeline-current-window (doom-modeline--get-current-window))
+
+(defun doom-modeline--active ()
+  "Whether is an active window."
+  (and doom-modeline-current-window
+       (eq (doom-modeline--get-current-window) doom-modeline-current-window)))
+
 (defun doom-modeline-set-selected-window (&rest _)
   "Set `doom-modeline-current-window' appropriately."
   (when-let ((win (doom-modeline--get-current-window)))
     (unless (minibuffer-window-active-p win)
-      (setq doom-modeline-current-window win)
-      (force-mode-line-update))))
+      (setq doom-modeline-current-window win))))
 
 (defun doom-modeline-unset-selected-window ()
   "Unset `doom-modeline-current-window' appropriately."
-  (setq doom-modeline-current-window nil)
-  (force-mode-line-update))
+  (setq doom-modeline-current-window nil))
 
 (add-hook 'window-configuration-change-hook #'doom-modeline-set-selected-window)
 (add-hook 'buffer-list-update-hook #'doom-modeline-set-selected-window)
@@ -681,11 +685,6 @@ then this function does nothing."
 ;;
 ;; Modeline library
 ;;
-
-(defun doom-modeline--active ()
-  "Whether is an active window."
-  (and doom-modeline-current-window
-       (eq (selected-window) doom-modeline-current-window)))
 
 (defvar doom-modeline-fn-alist ())
 (defvar doom-modeline-var-alist ())
