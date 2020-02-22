@@ -147,6 +147,14 @@ If the actual char height is larger, it respects the actual char height."
          (set sym (if (> val 0) val 1)))
   :group 'doom-modeline)
 
+(defcustom doom-modeline-window-width-limit (+ fill-column 20)
+  "The limit of the window width.
+
+If `window-width' is smaller than the limit, some information won't be displayed."
+  :type '(choice integer
+                 (const :tag "Disable" nil))
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-project-detection
   (cond ((fboundp 'ffip-get-project-root-directory) 'ffip)
         ((fboundp 'projectile-project-root) 'projectile)
@@ -161,11 +169,10 @@ The project management packages have some issues on detecting project root.
 e.g. `projectile' doesn't handle symlink folders well, while `project' is
 unable to hanle sub-projects.
 Specify another one if you encounter the issue."
-  :type '(choice
-          (const :tag "Find File in Project" ffip)
-          (const :tag "Projectile" projectile)
-          (const :tag "Built-in Project" project)
-          (const :tag "Disable" nil))
+  :type '(choice (const :tag "Find File in Project" ffip)
+                 (const :tag "Projectile" projectile)
+                 (const :tag "Built-in Project" project)
+                 (const :tag "Disable" nil))
   :group 'doom-modeline)
 
 (defcustom doom-modeline-buffer-file-name-style 'auto
@@ -580,7 +587,7 @@ It requires `circe' or `erc' package."
 
 
 ;;
-;; Plugins
+;; Core helpers
 ;;
 
 ;; FIXME #183: Force to caculate mode-line height
@@ -683,7 +690,7 @@ then this function does nothing."
 
 
 ;;
-;; Modeline library
+;; Core
 ;;
 
 (defvar doom-modeline-fn-alist ())
@@ -795,7 +802,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
 
 ;;
-;; Modeline helpers
+;; Helpers
 ;;
 
 (defsubst doom-modeline-spc ()
@@ -907,6 +914,23 @@ ARGS is same as `all-the-icons-octicon' and others."
                                      else collect (string-to-char "."))
                             (if (eq idx len) "\"};" "\",\n")))))
           'xpm t :ascent 'center))))))
+
+;; Check whether `window-width' is smaller than the limit
+(defvar-local doom-modeline--limited-width-p nil)
+(defun doom-modeline-window-size-change-function (&rest _)
+  "Function for `window-size-change-functions'."
+  (setq doom-modeline--limited-width-p
+        (and doom-modeline-window-width-limit
+             (<= (+ (window-width)
+                    (or scroll-bar-width 0)
+                    (or left-fringe-width 0)
+                    (or right-fringe-width 0)
+                    (or left-margin-width 0)
+                    (or right-margin-width 0))
+                 doom-modeline-window-width-limit))))
+
+(add-hook 'window-size-change-functions #'doom-modeline-window-size-change-function)
+(add-hook 'buffer-list-update-hook #'doom-modeline-window-size-change-function)
 
 (defvar-local doom-modeline--project-detected-p nil)
 (defvar-local doom-modeline--project-root nil)

@@ -169,6 +169,10 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; How wide the mode-line bar should be. It's only respected in GUI.
 (setq doom-modeline-bar-width 3)
 
+;; The limit of the window width.
+;; If `window-width' is smaller than the limit, some information won't be displayed.
+(setq doom-modeline-window-width-limit (+ fill-column 20))
+
 ;; How to detect the project root.
 ;; The default priority of detection is `ffip' > `projectile' > `project'.
 ;; nil means to use `default-directory'.

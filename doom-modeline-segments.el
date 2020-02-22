@@ -371,11 +371,21 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 
 (defsubst doom-modeline--buffer-name ()
   "The current buffer name."
-  (when-let ((name (or doom-modeline--buffer-file-name
-                       (doom-modeline-update-buffer-file-name))))
-    (if (doom-modeline--active)
-        name
-      (propertize name 'face 'mode-line-inactive))))
+  (if doom-modeline--limited-width-p
+      (propertize "%b"
+                  'face (cond ((and buffer-file-name (buffer-modified-p))
+                               'doom-modeline-buffer-modified)
+                              ((doom-modeline--active) 'doom-modeline-buffer-file)
+                              (t 'mode-line-inactive))
+                  'mouse-face 'mode-line-highlight
+                  'help-echo "Buffer name
+mouse-1: Previous buffer\nmouse-3: Next buffer"
+                  'local-map mode-line-buffer-identification-keymap)
+    (when-let ((name (or doom-modeline--buffer-file-name
+                         (doom-modeline-update-buffer-file-name))))
+      (if (doom-modeline--active)
+          name
+        (propertize name 'face 'mode-line-inactive)))))
 
 (doom-modeline-def-segment buffer-info
   "Combined information about the current buffer, including the current working
@@ -1370,6 +1380,7 @@ Requires `eyebrowse-mode' to be enabled."
   (setq doom-modeline--persp-name
         ;; Support `persp-mode', while not support `perspective'
         (when (and doom-modeline-persp-name
+                   (not doom-modeline--limited-width-p)
                    (bound-and-true-p persp-mode)
                    (fboundp 'safe-persp-name)
                    (fboundp 'get-current-persp))
