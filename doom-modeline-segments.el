@@ -371,7 +371,10 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 
 (defsubst doom-modeline--buffer-name ()
   "The current buffer name."
-  (if doom-modeline--limited-width-p
+  ;; Only display the buffer name if the window is small, but doesn't need to
+  ;; respect file-name style.
+  (if (and (not (eq doom-modeline-buffer-file-name-style 'file-name))
+           doom-modeline--limited-width-p)
       (propertize "%b"
                   'face (cond ((and buffer-file-name (buffer-modified-p))
                                'doom-modeline-buffer-modified)
