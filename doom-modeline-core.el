@@ -147,7 +147,7 @@ If the actual char height is larger, it respects the actual char height."
          (set sym (if (> val 0) val 1)))
   :group 'doom-modeline)
 
-(defcustom doom-modeline-window-width-limit (+ fill-column 20)
+(defcustom doom-modeline-window-width-limit fill-column
   "The limit of the window width.
 
 If `window-width' is smaller than the limit, some information won't be displayed."
