@@ -230,7 +230,7 @@ buffer where knowing the current project directory is important."
   "Update file icon in mode-line."
   (setq doom-modeline--buffer-file-icon
         (when (and doom-modeline-icon doom-modeline-major-mode-icon)
-          (let* ((icon (all-the-icons-icon-for-buffer)))
+          (let ((icon (all-the-icons-icon-for-buffer)))
             (propertize (if (symbolp icon)
                             (doom-modeline-icon 'faicon "file-o"
                                                 :face 'all-the-icons-dsilver
@@ -333,18 +333,6 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
          (when buffer-file-name
            (doom-modeline-update-buffer-file-name)))))))
 
-;; Optimize: just update the face of the buffer name in `after-change-functions', since
-;; `doom-modeline--buffer-file-name' may consume lots of CPU if it's called too frequently.
-(defun doom-modeline-update-buffer-file-name-face (&rest _)
-  "Update the face of buffer file name in mode-line."
-  (when (and buffer-file-name
-             doom-modeline--buffer-file-name
-             (buffer-modified-p))
-    (setq doom-modeline--buffer-file-name
-          (propertize doom-modeline--buffer-file-name
-                      'face 'doom-modeline-buffer-modified))))
-(add-hook 'after-change-functions #'doom-modeline-update-buffer-file-name-face)
-
 (defsubst doom-modeline--buffer-mode-icon ()
   "The icon of the current major mode."
   (when (and doom-modeline-icon doom-modeline-major-mode-icon)
@@ -387,7 +375,10 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
     (when-let ((name (or doom-modeline--buffer-file-name
                          (doom-modeline-update-buffer-file-name))))
       (if (doom-modeline--active)
-          name
+          ;; Check if the buffer is modified
+          (if (and buffer-file-name (buffer-modified-p))
+              (propertize name 'face 'doom-modeline-buffer-modified)
+            name)
         (propertize name 'face 'mode-line-inactive)))))
 
 (doom-modeline-def-segment buffer-info
