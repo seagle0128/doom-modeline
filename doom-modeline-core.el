@@ -920,7 +920,7 @@ ARGS is same as `all-the-icons-octicon' and others."
 (defun doom-modeline-window-size-change-function (&rest _)
   "Function for `window-size-change-functions'."
   (setq doom-modeline--limited-width-p
-        (and doom-modeline-window-width-limit
+        (and (numberp doom-modeline-window-width-limit)
              (<= (+ (window-width)
                     (or scroll-bar-width 0)
                     (or left-fringe-width 0)

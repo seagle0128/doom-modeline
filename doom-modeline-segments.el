@@ -1270,10 +1270,11 @@ of active `multiple-cursors'."
   (let ((width (or width doom-modeline-bar-width))
         (height (max (or height doom-modeline-height)
                      (doom-modeline--font-height))))
-    (setq doom-modeline--bar-active
-          (doom-modeline--make-xpm 'doom-modeline-bar width height)
-          doom-modeline--bar-inactive
-          (doom-modeline--make-xpm 'doom-modeline-bar-inactive width height))))
+    (when (and (numberp width) (numberp height))
+      (setq doom-modeline--bar-active
+            (doom-modeline--make-xpm 'doom-modeline-bar width height)
+            doom-modeline--bar-inactive
+            (doom-modeline--make-xpm 'doom-modeline-bar-inactive width height)))))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-height
@@ -1873,6 +1874,7 @@ Example:
   "The GitHub notifications."
   (when (and doom-modeline-github
              (doom-modeline--active)
+             (numberp doom-modeline--github-notification-number)
              (> doom-modeline--github-notification-number 0))
     (concat
      (doom-modeline-spc)
@@ -1883,7 +1885,7 @@ Example:
                            :v-adjust -0.0575)
        (doom-modeline-vspc)
        (propertize
-        (if (> doom-modeline--github-notification-number  doom-modeline-number-limit)
+        (if (> doom-modeline--github-notification-number doom-modeline-number-limit)
             (format "%d+" doom-modeline-number-limit)
           (number-to-string doom-modeline--github-notification-number))
         'face '(:inherit (doom-modeline-unread-number doom-modeline-warning))))
@@ -2140,6 +2142,7 @@ mouse-1: Toggle Debug on Quit"
              doom-modeline-gnus
              doom-modeline--gnus-started
              ;; Don't display if the unread mails count is zero
+             (numberp doom-modeline--gnus-unread-mail)
              (> doom-modeline--gnus-unread-mail 0))
     (concat
      (doom-modeline-spc)
