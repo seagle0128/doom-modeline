@@ -401,7 +401,7 @@ It requires `circe' or `erc' package."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-buffer-minor-mode
-  '((t (:inherit font-lock-doc-face)))
+  '((t (:inherit font-lock-doc-face :slant normal)))
   "Face used for the minor-modes segment in the mode-line."
   :group 'doom-modeline-faces)
 
@@ -436,7 +436,7 @@ It requires `circe' or `erc' package."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-debug
-  '((t (:inherit (font-lock-doc-face bold))))
+  '((t (:inherit (font-lock-doc-face bold) :slant normal)))
   "Face for debug-level messages in the mode-line. Used by vcs, checker, etc."
   :group 'doom-modeline-faces)
 
@@ -456,7 +456,7 @@ It requires `circe' or `erc' package."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-unread-number
-  '((t (:inherit italic :weight normal)))
+  '((t (:slant italic :weight normal)))
   "Face for unread number in the mode-line. Used by GitHub, mu4e, etc."
   :group 'doom-modeline-faces)
 
@@ -486,7 +486,7 @@ It requires `circe' or `erc' package."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-evil-motion-state
-  '((t :inherit (font-lock-doc-face bold)))
+  '((t :inherit (font-lock-doc-face bold) :slant normal))
   "Face for the motion state tag in evil state indicator."
   :group 'doom-modeline-faces)
 
@@ -536,7 +536,7 @@ It requires `circe' or `erc' package."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-lsp-running
-  '((t (:inherit compilation-mode-line-run :weight normal)))
+  '((t (:inherit compilation-mode-line-run :weight normal :slant normal)))
   "Face for LSP running state."
   :group 'doom-modeline-faces)
 
