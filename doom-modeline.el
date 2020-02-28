@@ -131,7 +131,7 @@
 
 (doom-modeline-def-modeline 'org-src
   '(bar window-number modals matches buffer-info-simple buffer-position word-count parrot selection-info)
-  '(objed-state misc-info lsp minor-modes input-method indent-info buffer-encoding major-mode process checker))
+  '(objed-state misc-info debug lsp minor-modes input-method indent-info buffer-encoding major-mode process checker))
 
 (doom-modeline-def-modeline 'helm
   '(bar helm-buffer-id helm-number helm-follow helm-prefix-argument)
