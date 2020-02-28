@@ -232,7 +232,7 @@ buffer where knowing the current project directory is important."
         (when (and doom-modeline-icon doom-modeline-major-mode-icon)
           (let ((icon (all-the-icons-icon-for-buffer)))
             (propertize (if (symbolp icon)
-                            (doom-modeline-icon 'faicon "file-o"
+                            (doom-modeline-icon 'faicon "file-o" nil nil
                                                 :face 'all-the-icons-dsilver
                                                 :height 0.8
                                                 :v-adjust 0.0)
@@ -2427,7 +2427,7 @@ mouse-3: Switch to next unread buffer")))
      (when (and doom-modeline-icon doom-modeline-major-mode-icon)
        (concat
         (doom-modeline-spc)
-        (doom-modeline-icon 'faicon "archive"
+        (doom-modeline-icon 'faicon "archive" nil nil
                             :face (if active
                                       (if doom-modeline-major-mode-color-icon
                                           'all-the-icons-silver
@@ -2465,10 +2465,10 @@ The cdr can also be a function that returns a name to use.")
        (doom-modeline-spc)
        (when doom-modeline-icon
          (concat
-          (doom-modeline-icon 'fileicon "elisp"
+          (doom-modeline-icon 'fileicon "elisp" nil nil
                               :face (if active
                                         (if doom-modeline-major-mode-color-icon
-                                            'all-the-icons-purple
+                                            'all-the-icons-blue
                                           'mode-line)
                                       'mode-line-inactive)
                               :height 1.0
