@@ -129,6 +129,10 @@
   '(bar window-number matches buffer-info pdf-pages)
   '(misc-info major-mode process vcs))
 
+(doom-modeline-def-modeline 'org-src
+  '(bar window-number modals matches buffer-info-simple buffer-position word-count parrot selection-info)
+  '(objed-state misc-info lsp minor-modes input-method indent-info buffer-encoding major-mode process checker))
+
 (doom-modeline-def-modeline 'helm
   '(bar helm-buffer-id helm-number helm-follow helm-prefix-argument)
   '(helm-help))
@@ -200,14 +204,19 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   (doom-modeline-set-modeline 'pdf))
 
 ;;;###autoload
-(defun doom-modeline-set-timemachine-modeline ()
-  "Set timemachine mode-line."
-  (doom-modeline-set-modeline 'timemachine))
+(defun doom-modeline-set-org-src-modeline ()
+  "Set org-src mode-line."
+  (doom-modeline-set-modeline 'org-src))
 
 ;;;###autoload
 (defun doom-modeline-set-helm-modeline (&rest _) ; To advice helm
   "Set helm mode-line."
   (doom-modeline-set-modeline 'helm))
+
+;;;###autoload
+(defun doom-modeline-set-timemachine-modeline ()
+  "Set timemachine mode-line."
+  (doom-modeline-set-modeline 'timemachine))
 
 
 ;;
@@ -254,6 +263,7 @@ So it can be restored when `doom-modeline-mode' is disabled.")
         (add-hook 'erc-mode-hook #'doom-modeline-set-special-modeline)
         (add-hook 'rcirc-mode-hook #'doom-modeline-set-special-modeline)
         (add-hook 'pdf-view-mode-hook #'doom-modeline-set-pdf-modeline)
+        (add-hook 'org-src-mode-hook #'doom-modeline-set-org-src-modeline)
         (add-hook 'git-timemachine-mode-hook #'doom-modeline-set-timemachine-modeline)
         (add-hook 'paradox-menu-mode-hook #'doom-modeline-set-package-modeline)
         (add-hook 'xwidget-webkit-mode-hook #'doom-modeline-set-minimal-modeline)
@@ -280,6 +290,7 @@ So it can be restored when `doom-modeline-mode' is disabled.")
       (remove-hook 'erc-mode-hook #'doom-modeline-set-special-modeline)
       (remove-hook 'rcirc-mode-hook #'doom-modeline-set-special-modeline)
       (remove-hook 'pdf-view-mode-hook #'doom-modeline-set-pdf-modeline)
+      (remove-hook 'org-src-mode-hook #'doom-modeline-set-org-src-modeline)
       (remove-hook 'git-timemachine-mode-hook #'doom-modeline-set-timemachine-modeline)
       (remove-hook 'paradox-menu-mode-hook #'doom-modeline-set-package-modeline)
       (remove-hook 'xwidget-webkit-mode-hook #'doom-modeline-set-minimal-modeline)
