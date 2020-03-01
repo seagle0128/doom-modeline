@@ -234,7 +234,6 @@ buffer where knowing the current project directory is important."
             (propertize (if (symbolp icon)
                             (doom-modeline-icon 'faicon "file-o" nil nil
                                                 :face 'all-the-icons-dsilver
-                                                :height 0.8
                                                 :v-adjust 0.0)
                           icon)
                         'help-echo (format "Major-mode: %s" (format-mode-line mode-name))
