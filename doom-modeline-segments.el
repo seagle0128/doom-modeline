@@ -1825,9 +1825,6 @@ Example:
 (defun doom-modeline--github-fetch-notifications ()
   "Fetch GitHub notifications."
   (when (and doom-modeline-github
-             ;; Only starting the process When the window is active, or the
-             ;; mode-line will be activated while the frame is unfocused.
-             (doom-modeline--active)
              (require 'async nil t))
     (async-start
      `(lambda ()
