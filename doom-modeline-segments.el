@@ -1346,7 +1346,7 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
 
 
 ;;
-;; Workspace number
+;; Workspace
 ;;
 
 (doom-modeline-def-segment workspace-name
@@ -1374,7 +1374,7 @@ Requires `eyebrowse-mode' or `tab-bar-mode' to be enabled."
 
 
 ;;
-;; Perspective name
+;; Perspective
 ;;
 
 (defvar-local doom-modeline--persp-name nil)
