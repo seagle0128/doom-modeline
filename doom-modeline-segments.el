@@ -233,9 +233,10 @@ buffer where knowing the current project directory is important."
   (setq doom-modeline--buffer-file-icon
         (when (and doom-modeline-icon doom-modeline-major-mode-icon)
           (let ((icon (all-the-icons-icon-for-buffer)))
-            (propertize (if (symbolp icon)
+            (propertize (if (or (null icon) (symbolp icon))
                             (doom-modeline-icon 'faicon "file-o" nil nil
                                                 :face 'all-the-icons-dsilver
+                                                :height 0.9
                                                 :v-adjust 0.0)
                           icon)
                         'help-echo (format "Major-mode: %s" (format-mode-line mode-name))
