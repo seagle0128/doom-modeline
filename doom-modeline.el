@@ -103,7 +103,7 @@
 
 (doom-modeline-def-modeline 'project
   '(bar window-number buffer-default-directory)
-  '(misc-info battery irc mu4e gnus github debug major-mode process))
+  '(misc-info battery irc mu4e gnus github debug minor-modes input-method major-mode process))
 
 (doom-modeline-def-modeline 'vcs
   '(bar window-number modals matches buffer-info buffer-position parrot selection-info)
