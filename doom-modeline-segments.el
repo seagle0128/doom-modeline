@@ -85,6 +85,9 @@
 (defvar objed--object)
 (defvar objed-modeline-setup-func)
 (defvar persp-nil-name)
+(defvar phi-replace--mode-line-format)
+(defvar phi-search--selection)
+(defvar phi-search-mode-line-format)
 (defvar rcirc-activity)
 (defvar symbol-overlay-keywords-alist)
 (defvar symbol-overlay-temp-symbol)
@@ -183,6 +186,7 @@
 (declare-function persp-add-buffer 'persp-mode)
 (declare-function persp-contain-buffer-p 'persp-mode)
 (declare-function persp-switch 'persp-mode)
+(declare-function phi-search--initialize 'phi-search)
 (declare-function popup-create 'popup)
 (declare-function popup-delete 'popup)
 (declare-function rcirc-next-active-buffer 'rcirc)
@@ -1168,21 +1172,21 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 
 (defsubst doom-modeline--symbol-overlay ()
   "Show the number of matches for symbol overlay."
-  (when (and (doom-modeline--active)
-             (bound-and-true-p symbol-overlay-keywords-alist)
-             (not (bound-and-true-p symbol-overlay-temp-symbol))
-             (not (bound-and-true-p iedit-mode)))
-    (let* ((keyword (symbol-overlay-assoc (symbol-overlay-get-symbol t)))
-           (symbol (car keyword))
-           (before (symbol-overlay-get-list -1 symbol))
-           (after (symbol-overlay-get-list 1 symbol))
-           (count (length before)))
-      (if (symbol-overlay-assoc symbol)
-          (propertize
-           (format (concat  " %d/%d " (and (cadr keyword) "in scope "))
-                   (+ count 1)
-                   (+ count (length after)))
-           'face (if (doom-modeline--active) 'doom-modeline-panel 'mode-line-inactive))))))
+  (when-let ((active (doom-modeline--active)))
+    (when (and (bound-and-true-p symbol-overlay-keywords-alist)
+               (not (bound-and-true-p symbol-overlay-temp-symbol))
+               (not (bound-and-true-p iedit-mode)))
+      (let* ((keyword (symbol-overlay-assoc (symbol-overlay-get-symbol t)))
+             (symbol (car keyword))
+             (before (symbol-overlay-get-list -1 symbol))
+             (after (symbol-overlay-get-list 1 symbol))
+             (count (length before)))
+        (if (symbol-overlay-assoc symbol)
+            (propertize
+             (format (concat  " %d/%d " (and (cadr keyword) "in scope "))
+                     (+ count 1)
+                     (+ count (length after)))
+             'face (if active 'doom-modeline-panel 'mode-line-inactive)))))))
 
 (defsubst doom-modeline--multiple-cursors ()
   "Show the number of multiple cursors."
@@ -1210,6 +1214,24 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
               (propertize (format "%d " count)
                           'face face)))))
 
+(defsubst doom-modeline--phi-search ()
+  "Show the number of matches for `phi-search' and `phi-replace'."
+  (when-let ((active (doom-modeline--active)))
+    (when (bound-and-true-p phi-search--overlays)
+      (let ((total (length phi-search--overlays))
+            (selection phi-search--selection))
+        (when selection
+          (propertize
+           (format " %d/%d " (1+ selection) total)
+           'face (if active 'doom-modeline-panel 'mode-line-inactive)))))))
+
+(defun doom-modeline--override-phi-search-mode-line (orig-fun &rest args)
+  "Override the mode-line of `phi-search' and `phi-replace'."
+  (if (bound-and-true-p doom-modeline-mode)
+      (apply orig-fun mode-line-format (cdr args))
+    (apply orig-fun args)))
+(advice-add #'phi-search--initialize :around #'doom-modeline--override-phi-search-mode-line)
+
 (defsubst doom-modeline--buffer-size ()
   "Show buffer size."
   (when size-indication-mode
@@ -1230,12 +1252,14 @@ with `evil-ex-substitute', and/or 4. The number of active `iedit' regions,
 of active `multiple-cursors'."
   (let ((meta (concat (doom-modeline--macro-recording)
                       (doom-modeline--anzu)
+                      (doom-modeline--phi-search)
                       (doom-modeline--evil-substitute)
                       (doom-modeline--iedit)
                       (doom-modeline--symbol-overlay)
                       (doom-modeline--multiple-cursors))))
     (or (and (not (equal meta "")) meta)
-        (doom-modeline--buffer-size))))
+        (doom-modeline--buffer-size)))
+  )
 
 (doom-modeline-def-segment buffer-size
   "Display buffer size"
