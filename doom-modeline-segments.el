@@ -189,6 +189,8 @@
 (declare-function rcirc-short-buffer-name 'rcirc)
 (declare-function rcirc-switch-to-server-buffer 'rcirc)
 (declare-function rcirc-window-configuration-change 'rcirc)
+(declare-function rime--should-enable-p 'rime)
+(declare-function rime--should-enable-p 'rime)
 (declare-function symbol-overlay-assoc 'symbol-overlay)
 (declare-function symbol-overlay-get-list 'symbol-overlay)
 (declare-function symbol-overlay-get-symbol 'symbol-overlay)
@@ -1646,7 +1648,13 @@ and `xha-fly-kyes', etc."
                       (doom-modeline-spc)))
                     (t ""))
               'face (if (doom-modeline--active)
-                        'doom-modeline-buffer-major-mode
+                        (if (and (bound-and-true-p rime-mode)
+                                 (equal current-input-method "rime"))
+                            (if (and (rime--should-enable-p)
+                                     (not (rime--should-inline-ascii-p)))
+                                'doom-modeline-buffer-major-mode
+                              'doom-modeline-buffer-minor-mode)
+                          'doom-modeline-buffer-major-mode)
                       'mode-line-inactive)
               'help-echo (concat
                           "Current input method: "
