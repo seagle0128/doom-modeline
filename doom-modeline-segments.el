@@ -1364,8 +1364,14 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
                (window-numbering-get-number-string))
               (t ""))))
     (if (and (< 0 (length num))
-             (< (if (active-minibuffer-window) 2 1)
-                (length (cl-mapcan #'window-list (visible-frame-list)))))
+             (< (if (active-minibuffer-window) 2 1) ; exclude minibuffer
+                (length (cl-mapcan
+                         (lambda (frame)
+                           ;; Exclude child frames
+                           (unless (and (fboundp 'frame-parent)
+                                        (frame-parent frame))
+                             (window-list)))
+                         (visible-frame-list)))))
         (propertize (format " %s " num)
                     'face (if (doom-modeline--active)
                               'doom-modeline-buffer-major-mode
