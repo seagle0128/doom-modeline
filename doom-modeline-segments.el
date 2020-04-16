@@ -1683,7 +1683,7 @@ and `xha-fly-kyes', etc."
                             (if (and (rime--should-enable-p)
                                      (not (rime--should-inline-ascii-p)))
                                 'doom-modeline-buffer-major-mode
-                              'doom-modeline-buffer-minor-mode)
+                              '(:inherit (doom-modeline-buffer-minor-mode bold)))
                           'doom-modeline-buffer-major-mode)
                       'mode-line-inactive)
               'help-echo (concat
