@@ -192,6 +192,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;;   truncate-except-project => ~/P/F/emacs/l/comint.el
 ;;   truncate-upto-root => ~/P/F/e/lisp/comint.el
 ;;   truncate-all => ~/P/F/e/l/comint.el
+;;   truncate-nil => ~/Projects/FOSS/emacs/lisp/comint.el
 ;;   relative-from-project => emacs/lisp/comint.el
 ;;   relative-to-project => lisp/comint.el
 ;;   file-name => comint.el
