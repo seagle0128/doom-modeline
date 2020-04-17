@@ -1013,7 +1013,7 @@ directory too."
             ('truncate-all
              (doom-modeline--buffer-file-name-truncate buffer-file-name buffer-file-truename t))
             ('truncate-nil
-             (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename nil))
+             (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename))
             ('relative-to-project
              (doom-modeline--buffer-file-name-relative buffer-file-name buffer-file-truename))
             ('relative-from-project
@@ -1021,9 +1021,8 @@ directory too."
             ('file-name
              (propertize (file-name-nondirectory buffer-file-name)
                          'face 'doom-modeline-buffer-file))
-            ('buffer-name
-             (propertize "%b" 'face 'doom-modeline-buffer-file))
-            (_ (user-error "invalid buffer-file-name-style")))))
+            ((or 'buffer-name _)
+             (propertize "%b" 'face 'doom-modeline-buffer-file)))))
     (propertize (if (string-empty-p file-name)
                     (propertize "%b" 'face 'doom-modeline-buffer-file)
                   file-name)
