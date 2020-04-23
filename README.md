@@ -258,7 +258,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 (setq doom-modeline-display-default-persp-name nil)
 
 ;; If non nil the perspective name is displayed alongside a folder icon.
-(setq doom-modeline-display-persp-icon t)
+(setq doom-modeline-persp-icon t)
 
 ;; Whether display the `lsp' state. Non-nil to display in the mode-line.
 (setq doom-modeline-lsp t)
