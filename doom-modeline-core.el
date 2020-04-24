@@ -303,6 +303,11 @@ Non-nil to display in the mode-line."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-persp-icon t
+  "If non nil the perspective name is displayed alongside a folder icon."
+  :type 'boolean
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-lsp t
   "Whether display the `lsp' state.
 

@@ -1433,8 +1433,8 @@ Requires `eyebrowse-mode' or `tab-bar-mode' to be enabled."
             (when (or doom-modeline-display-default-persp-name
                       (not (string-equal persp-nil-name name)))
               (concat (doom-modeline-spc)
-                      (propertize (concat icon
-                                          (doom-modeline-vspc)
+                      (propertize (concat (when doom-modeline-persp-icon
+                                                (concat icon (doom-modeline-vspc)))
                                           (propertize name 'face face))
                                   'help-echo "mouse-1: Switch perspective
 mouse-2: Show help for minor mode"
