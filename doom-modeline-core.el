@@ -360,6 +360,12 @@ If nil, don't set up a hook."
   :type 'integer
   :group 'doom-modeline)
 
+(defcustom doom-modeline-gnus-excluded-groups nil
+  "A list of groups to be excluded from the unread count."
+
+  :type '(repeat string)
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-irc t
   "Whether display the irc notifications.
 
