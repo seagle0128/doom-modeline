@@ -1353,30 +1353,34 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
 (advice-add #'winum--install-mode-line :override #'ignore)
 (advice-add #'winum--clear-mode-line :override #'ignore)
 
-(doom-modeline-def-segment window-number
-  (let ((num (cond
-              ((bound-and-true-p ace-window-display-mode)
-               (aw-update)
-               (window-parameter (selected-window) 'ace-window-path))
-              ((bound-and-true-p winum-mode)
-               (setq winum-auto-setup-mode-line nil)
-               (winum-get-number-string))
-              ((bound-and-true-p window-numbering-mode)
-               (window-numbering-get-number-string))
-              (t ""))))
-    (if (and (< 0 (length num))
-             (< (if (active-minibuffer-window) 2 1) ; exclude minibuffer
-                (length (cl-mapcan
-                         (lambda (frame)
-                           ;; Exclude child frames
-                           (unless (and (fboundp 'frame-parent)
-                                        (frame-parent frame))
-                             (window-list)))
-                         (visible-frame-list)))))
-        (propertize (format " %s " num)
-                    'face (if (doom-modeline--active)
-                              'doom-modeline-buffer-major-mode
-                            'mode-line-inactive)))))
+(doom-modeline-def-segment workspace-name
+  "The current workspace name or number.
+Requires `winds.el' to be loaded, or `eyebrowse-mode' or
+`Requires tab-bar-mode' to be enabled."
+  (when-let
+      ((name (cond
+              ((featurep 'winds)
+               (format "%s|%s" (winds-get-cur-ws) (winds-get-cur-cfg)))
+
+              ((and (bound-and-true-p eyebrowse-mode)
+                    (< 1 (length (eyebrowse--get 'window-configs))))
+               (assq-delete-all 'eyebrowse-mode mode-line-misc-info)
+               (when-let*
+                   ((num (eyebrowse--get 'current-slot))
+                    (tag (nth 2 (assoc num (eyebrowse--get 'window-configs)))))
+                 (if (< 0 (length tag)) tag (int-to-string num))))
+
+              ((bound-and-true-p tab-bar-mode)
+               (let* ((current-tab (tab-bar--current-tab))
+                      (tab-index (tab-bar--current-tab-index))
+                      (explicit-name (alist-get 'explicit-name current-tab))
+                      (tab-name (alist-get 'name current-tab)))
+                 (if explicit-name tab-name (+ 1 tab-index)))))))
+
+    (propertize (format " %s " name) 'face
+                (if (doom-modeline--active)
+                    'doom-modeline-buffer-major-mode
+                  'mode-line-inactive))))
 
 
 ;;
