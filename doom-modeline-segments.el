@@ -31,6 +31,7 @@
 
 (require 'all-the-icons)
 (require 'cl-lib)
+(require 'seq)
 (require 'subr-x)
 (require 'doom-modeline-core)
 (require 'doom-modeline-env)
