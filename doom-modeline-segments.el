@@ -1359,7 +1359,7 @@ Requires `winds.el' to be loaded, or `eyebrowse-mode' or
 `Requires tab-bar-mode' to be enabled."
   (when-let
       ((name (cond
-              ((featurep 'winds)
+              ((bound-and-true-p winds)
                (format "%s|%s" (winds-get-cur-ws) (winds-get-cur-cfg)))
 
               ((and (bound-and-true-p eyebrowse-mode)
