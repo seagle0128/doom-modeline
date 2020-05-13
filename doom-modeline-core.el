@@ -449,6 +449,16 @@ It requires `circe' or `erc' package."
   "Face for remote hosts in the mode-line."
   :group 'doom-modeline-faces)
 
+(defface doom-modeline-input-method
+  '((t (:inherit (mode-line-emphasis bold))))
+  "Face for input method in the mode-line."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-input-method-alt
+  '((t (:inherit (font-lock-doc-face bold) :slant normal)))
+  "Alternative face for input method in the mode-line."
+  :group 'doom-modeline-faces)
+
 (defface doom-modeline-debug
   '((t (:inherit (font-lock-doc-face bold) :slant normal)))
   "Face for debug-level messages in the mode-line. Used by vcs, checker, etc."

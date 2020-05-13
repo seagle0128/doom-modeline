@@ -1683,9 +1683,9 @@ and `xha-fly-kyes', etc."
                                  (equal current-input-method "rime"))
                             (if (and (rime--should-enable-p)
                                      (not (rime--should-inline-ascii-p)))
-                                'doom-modeline-buffer-major-mode
-                              '(:inherit (doom-modeline-buffer-minor-mode bold)))
-                          'doom-modeline-buffer-major-mode)
+                                'doom-modeline-input-method
+                              'doom-modeline-input-method-alt)
+                          'doom-modeline-input-method)
                       'mode-line-inactive)
               'help-echo (concat
                           "Current input method: "
