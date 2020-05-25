@@ -1110,7 +1110,8 @@ lines are selected, or the NxM dimensions of a block selection."
         '(anzu--total-matched
           anzu--current-position anzu--state anzu--cached-count
           anzu--cached-positions anzu--last-command
-          anzu--last-isearch-string anzu--overflow-p)))
+          anzu--last-isearch-string anzu--overflow-p))
+  (global-anzu-mode +1))
 
 (defsubst doom-modeline--anzu ()
   "Show the match index and total number thereof.
