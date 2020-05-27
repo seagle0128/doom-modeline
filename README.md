@@ -279,7 +279,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether display the gnus notifications.
 (setq doom-modeline-gnus t)
 
-;; Wheter gnus should automatically be updated and how often (set to nil to disable)
+;; Wheter gnus should automatically be updated and how often (set to 0 or smaller than 0 to disable)
 (setq doom-modeline-gnus-timer 2)
 
 ;; Whether display the IRC notifications. It requires `circe' or `erc' package.
