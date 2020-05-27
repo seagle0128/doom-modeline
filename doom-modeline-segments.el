@@ -2148,8 +2148,7 @@ mouse-1: Toggle Debug on Quit"
           (let ((total-unread-news-number 0))
             (mapc (lambda (g)
                     (let* ((group (car g))
-                           ;; `gnus-group-unread' is a macro
-                           (unread (car (gethash group gnus-newsrc-hashtb))))
+                           (unread (eval `(gnus-group-unread ,group))))
                       (when (and (not (seq-contains-p doom-modeline-gnus-excluded-groups group))
                                  (numberp unread)
                                  (> unread 0))
