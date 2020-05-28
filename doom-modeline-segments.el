@@ -1960,7 +1960,7 @@ mouse-3: Fetch notifications"
 ;;
 
 ;; Highlight the mode-line while debugging.
-(defvar doom-modeline--debug-cookie nil)
+(defvar-local doom-modeline--debug-cookie nil)
 (defun doom-modeline--debug-visual (&rest _)
   "Update the face of mode-line for debugging."
   (mapc (lambda (buffer)
@@ -1973,8 +1973,8 @@ mouse-3: Fetch notifications"
 (defun doom-modeline--normal-visual (&rest _)
   "Restore the face of mode-line."
   (mapc (lambda (buffer)
-          (when doom-modeline--debug-cookie
-            (with-current-buffer buffer
+          (with-current-buffer buffer
+            (when doom-modeline--debug-cookie
               (face-remap-remove-relative doom-modeline--debug-cookie)
               (force-mode-line-update))))
         (buffer-list)))
