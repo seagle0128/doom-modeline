@@ -1963,15 +1963,21 @@ mouse-3: Fetch notifications"
 (defvar-local doom-modeline--debug-cookie nil)
 (defun doom-modeline--debug-visual (&rest _)
   "Update the face of mode-line for debugging."
-  (setq doom-modeline--debug-cookie
-        (face-remap-add-relative 'mode-line 'doom-modeline-debug-visual))
-  (force-mode-line-update))
+  (mapc (lambda (buffer)
+          (with-current-buffer buffer
+            (setq doom-modeline--debug-cookie
+                  (face-remap-add-relative 'mode-line 'doom-modeline-debug-visual))
+            (force-mode-line-update)))
+        (buffer-list)))
 
 (defun doom-modeline--normal-visual (&rest _)
   "Restore the face of mode-line."
-  (when doom-modeline--debug-cookie
-    (face-remap-remove-relative doom-modeline--debug-cookie)
-    (force-mode-line-update)))
+  (mapc (lambda (buffer)
+          (with-current-buffer buffer
+            (when doom-modeline--debug-cookie
+              (face-remap-remove-relative doom-modeline--debug-cookie)
+              (force-mode-line-update))))
+        (buffer-list)))
 
 (add-hook 'dap-session-created-hook #'doom-modeline--debug-visual)
 (add-hook 'dap-terminated-hook #'doom-modeline--normal-visual)
