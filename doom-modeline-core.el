@@ -361,7 +361,7 @@ If nil, don't set up a hook."
   :group 'doom-modeline)
 
 (defcustom doom-modeline-gnus-excluded-groups nil
-  "A list of groups to be excluded from the unread count."
+  "A list of groups to be excluded from the unread count. Groups' names list in `gnus-newsrc-alist'`"
 
   :type '(repeat string)
   :group 'doom-modeline)
