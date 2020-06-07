@@ -210,7 +210,6 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
 (defcustom doom-modeline-icon (display-graphic-p)
   "Whether display the icons in the mode-line.
 
-It respects `all-the-icons-color-icons'.
 While using the server mode in GUI, should set the value explicitly."
   :type 'boolean
   :group 'doom-modeline)
@@ -225,7 +224,7 @@ It respects `doom-modeline-icon'."
 (defcustom doom-modeline-major-mode-color-icon t
   "Whether display the colorful icon for `major-mode'.
 
-It respects `doom-modeline-major-mode-icon'."
+It respects `all-the-icons-color-icons'."
   :type 'boolean
   :group'doom-modeline)
 
@@ -874,9 +873,9 @@ See https://github.com/seagle0128/doom-modeline/issues/301."
               (family (plist-get props :family))
               (height (plist-get props :height))
               (face (or face (plist-get props :inherit)))
-              (new-face (append `(:inherit ,face)
-                                `(:family ,family)
-                                `(:height ,height))))
+              (new-face `(:inherit ,face
+                          :family ,family
+                          :height ,height)))
     (propertize icon 'face new-face)))
 
 (defun doom-modeline-icon (icon-set icon-name unicode text &rest args)

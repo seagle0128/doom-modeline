@@ -203,22 +203,22 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Please refer to https://github.com/bbatsov/projectile/issues/657.
 (setq doom-modeline-buffer-file-name-style 'auto)
 
-;; Whether display icons in the mode-line. Respects `all-the-icons-color-icons'.
+;; Whether display icons in the mode-line.
 ;; While using the server mode in GUI, should set the value explicitly.
 (setq doom-modeline-icon (display-graphic-p))
 
-;; Whether display the icon for `major-mode'. Respects `doom-modeline-icon'.
+;; Whether display the icon for `major-mode'. It respects `doom-modeline-icon'.
 (setq doom-modeline-major-mode-icon t)
 
 ;; Whether display the colorful icon for `major-mode'.
-;; Respects `doom-modeline-major-mode-icon'.
+;; It respects `all-the-icons-color-icons'.
 (setq doom-modeline-major-mode-color-icon t)
 
 ;; Whether display the icon for the buffer state. It respects `doom-modeline-icon'.
 (setq doom-modeline-buffer-state-icon t)
 
 ;; Whether display the modification icon for the buffer.
-;; Respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'.
+;; It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'.
 (setq doom-modeline-buffer-modification-icon t)
 
 ;; Whether to use unicode as a fallback (instead of ASCII) when not using icons.
