@@ -871,8 +871,8 @@ So convert the face \":family XXX :height XXX :inherit XXX\" to
 See https://github.com/seagle0128/doom-modeline/issues/301."
   (when-let* ((props (and icon (get-text-property 0 'face icon)))
               (family (plist-get props :family))
-              (height (plist-get props :height))
-              (face (or face (plist-get props :inherit)))
+              (height (plist-get props :height) 1.0)
+              (face (or face (plist-get props :inherit) props))
               (new-face `(:inherit ,face
                           :family ,family
                           :height ,height)))
