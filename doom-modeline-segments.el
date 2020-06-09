@@ -107,6 +107,11 @@
 (declare-function aw-window-list 'ace-window)
 (declare-function battery-format 'battery)
 (declare-function battery-update 'battery)
+(declare-function cider--connection-info 'cider)
+(declare-function cider-connected-p 'cider)
+(declare-function cider-current-repl 'cider)
+(declare-function cider-jack-in 'cider)
+(declare-function cider-quit 'cider)
 (declare-function dap--cur-session 'dap-mode)
 (declare-function dap--debug-session-name 'dap-mode)
 (declare-function dap--debug-session-state 'dap-mode)
@@ -1724,6 +1729,57 @@ mouse-3: Describe current input method")
                    "mouse-1: scroll forward, mouse-3: scroll back"
                    'mouse-face 'mode-line-highlight
                    'local-map Info-mode-line-node-keymap)))))
+
+
+;;
+;; REPL
+;;
+
+(defun doom-modeline-repl-icon (text face)
+  "Display REPL icon (or TEXT in terminal) with FACE."
+  (doom-modeline-icon 'faicon "terminal" "$" text
+                      :face face :height 1.0 :v-adjust -0.0575))
+
+(defvar doom-modeline--cider nil)
+
+(defun doom-modeline-update-cider ()
+  "Update cider repl state."
+  (setq doom-modeline--cider
+        (let* ((connected (cider-connected-p))
+               (face (if connected 'doom-modeline-repl-success 'doom-modeline-repl-warning))
+               (repl-buffer (cider-current-repl nil nil))
+               (cider-info (when repl-buffer
+                             (cider--connection-info repl-buffer t)))
+               (icon (doom-modeline-repl-icon "REPL" face)))
+          (propertize icon
+                      'help-echo
+                      (if connected
+                          (format "CIDER Connected %s\nmouse-2: CIDER quit" cider-info)
+                        "CIDER Disconnected\nmouse-1: CIDER jack-in")
+                      'mouse-face 'mode-line-highlight
+                      'local-map (let ((map (make-sparse-keymap)))
+                                   (if connected
+                                       (define-key map [mode-line mouse-2]
+                                         #'cider-quit)
+                                     (define-key map [mode-line mouse-1]
+                                       #'cider-jack-in))
+                                   map)))))
+
+(add-hook 'cider-connected-hook #'doom-modeline-update-cider)
+(add-hook 'cider-disconnected-hook #'doom-modeline-update-cider)
+(add-hook 'cider-mode-hook #'doom-modeline-update-cider)
+
+(doom-modeline-def-segment repl
+  "The REPL state."
+  (when doom-modeline-repl
+    (when-let (icon (when (bound-and-true-p cider-mode)
+                      doom-modeline--cider))
+      (concat
+       (doom-modeline-spc)
+       (if (doom-modeline--active)
+           icon
+         (doom-modeline-propertize-icon icon 'mode-line-inactive))
+       (doom-modeline-spc)))))
 
 
 ;;

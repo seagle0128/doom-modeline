@@ -98,6 +98,9 @@ It returns a file name which can be used directly as argument of
           ;; Preview
           ?\xe8a0                      ; pageview
 
+          ;; REPL
+          ?\xf155                      ; dollar-sign
+
           ;; LSP
           ?\xf135                      ; rocket
 
@@ -304,6 +307,13 @@ Non-nil to display in the mode-line."
 
 (defcustom doom-modeline-persp-icon t
   "If non nil the perspective name is displayed alongside a folder icon."
+  :type 'boolean
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-repl t
+  "Whether display the `repl' state.
+
+Non-nil to display in the mode-line."
   :type 'boolean
   :group 'doom-modeline)
 
@@ -541,6 +551,16 @@ It requires `circe' or `erc' package."
 (defface doom-modeline-persp-buffer-not-in-persp
   '((t (:inherit (font-lock-doc-face bold italic))))
   "Face for the buffers which are not in the persp."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-repl-success
+  '((t (:inherit success :weight normal)))
+  "Face for REPL success state."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-repl-warning
+  '((t (:inherit warning :weight normal)))
+  "Face for REPL warning state."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-lsp-success
