@@ -403,6 +403,16 @@ It requires `circe' or `erc' package."
   :group 'faces
   :link '(url-link :tag "Homepage" "https://github.com/seagle0128/doom-modeline"))
 
+(defface doom-modeline-spc-face
+  '((t (:inherit mode-line)))
+  "Face used for the white space."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-vspc-face
+  '((t (:inherit variable-pitch)))
+  "Face used for the variable white space."
+  :group 'doom-modeline-faces)
+
 (defface doom-modeline-buffer-path
   '((t (:inherit (mode-line-emphasis bold))))
   "Face used for the dirname part of the buffer path."
@@ -852,14 +862,14 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 (defsubst doom-modeline-spc ()
   "Text style with whitespace."
   (propertize " " 'face (if (doom-modeline--active)
-                            'mode-line
-                          'mode-line-inactive)))
+                            'doom-modeline-spc-face
+                          '(:inherit (doom-modeline-spc-face mode-line-inactive)))))
 
 (defsubst doom-modeline-vspc ()
   "Text style with icons in mode-line."
   (propertize " " 'face (if (doom-modeline--active)
-                            'variable-pitch
-                          '(:inherit (variable-pitch mode-line-inactive)))))
+                            'doom-modeline-vspc-face
+                          '(:inherit (doom-modeline-vspc-face mode-line-inactive)))))
 
 (defun doom-modeline--font-height ()
   "Calculate the actual char height of the mode-line."
