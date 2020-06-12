@@ -863,7 +863,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   "Text style with whitespace."
   (propertize " " 'face (if (doom-modeline--active)
                             'doom-modeline-spc-face
-                          '(:inherit (doom-modeline-spc-face mode-line-inactive)))))
+                          '(:inherit mode-line-inactive))))
 
 (defsubst doom-modeline-vspc ()
   "Text style with icons in mode-line."
