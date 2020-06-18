@@ -1939,14 +1939,13 @@ Example:
         (when (require 'ghub nil t)
           (with-timeout (10)
             (ignore-errors
-              (if (ghub--token ghub-default-host
-                               (ghub--username ghub-default-host)
-                               'ghub
-                               t)
-                  (ghub-get "/notifications"
-                            nil
-                            :query '((notifications . "true"))
-                            :noerror t))))))
+              (when-let* ((username (ghub--username ghub-default-host))
+                          (token (ghub--token ghub-default-host username 'ghub t)))
+                (ghub-get "/notifications" nil
+                          :query '((notifications . "true"))
+                          :username username
+                          :auth token
+                          :noerror t))))))
      (lambda (result)
        (message "")                     ; suppress message
        (setq doom-modeline--github-notification-number (length result))))))
@@ -1985,9 +1984,10 @@ Example:
                            :face 'doom-modeline-warning
                            :v-adjust -0.0575)
        (doom-modeline-vspc)
+       ;; GitHub API is paged, and the limit is 50
        (propertize
-        (if (> doom-modeline--github-notification-number doom-modeline-number-limit)
-            (format "%d+" doom-modeline-number-limit)
+        (if (>= doom-modeline--github-notification-number 50)
+            "50+"
           (number-to-string doom-modeline--github-notification-number))
         'face '(:inherit (doom-modeline-unread-number doom-modeline-warning))))
       'help-echo "Github Notifications
