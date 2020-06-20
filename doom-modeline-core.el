@@ -789,7 +789,8 @@ then this function does nothing."
   "Cache the font width."
   (let ((attributes (face-all-attributes 'mode-line)))
     (or (cdr (assoc attributes doom-modeline--font-width-cache))
-        (let ((width (if (server-running-p) (window-width)
+        (let ((width (if (and (fboundp 'server-running-p) (server-running-p)) 
+                              (window-width)
                        (window-font-width nil 'mode-line))))
           (push (cons attributes width) doom-modeline--font-width-cache)
           width))))
