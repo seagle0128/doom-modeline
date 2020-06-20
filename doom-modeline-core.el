@@ -802,7 +802,6 @@ then this function does nothing."
   (setq doom-modeline--font-width-cache nil)
   (doom-modeline--font-width))
 (add-hook 'window-setup-hook #'doom-modeline-refresh-font-width-cache)
-(add-hook 'after-make-frame-functions #'doom-modeline-refresh-font-width-cache)
 (add-hook 'after-setting-font-hook #'doom-modeline-refresh-font-width-cache)
 
 (defun doom-modeline-def-modeline (name lhs &optional rhs)
