@@ -689,7 +689,8 @@ then this function does nothing."
 (defun doom-modeline-set-selected-window (&rest _)
   "Set `doom-modeline-current-window' appropriately."
   (when-let ((win (doom-modeline--get-current-window)))
-    (unless (minibuffer-window-active-p win)
+    (unless (or (minibuffer-window-active-p win)
+                (and (bound-and-true-p lv-wnd) (eq lv-wnd win)))
       (setq doom-modeline-current-window win))))
 
 (defun doom-modeline-unset-selected-window ()
