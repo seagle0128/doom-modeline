@@ -514,7 +514,10 @@ It requires `circe' or `erc' package."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-debug-visual
-  `((t (:background ,(face-foreground 'all-the-icons-orange))))
+  `((((class color) (background light))
+     (:background ,(face-foreground 'all-the-icons-orange)))
+    (((class color) (background dark))
+     (:background ,(face-foreground 'all-the-icons-dorange))))
   "Face to use for the mode-line while debugging."
   :group 'doom-modeline)
 
