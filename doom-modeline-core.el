@@ -265,7 +265,7 @@ It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'."
   "Major modes in which to display word count continuously.
 
 It respects `doom-modeline-enable-word-count'."
-  :type 'list
+  :type '(repeat (symbol :tag "Major-Mode") )
   :group 'doom-modeline)
 
 (defcustom doom-modeline-buffer-encoding t
