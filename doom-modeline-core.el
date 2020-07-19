@@ -904,14 +904,11 @@ The face should be the first attribute, or the font family may be overridden.
 So convert the face \":family XXX :height XXX :inherit XXX\" to
 \":inherit XXX :family XXX :height XXX\".
 See https://github.com/seagle0128/doom-modeline/issues/301."
-  (when-let* ((props (and icon (get-text-property 0 'face icon)))
-              (family (plist-get props :family))
-              (height (plist-get props :height))
-              (face (or face (plist-get props :inherit) props))
-              (new-face `(:inherit ,face
-                          :family ,family
-                          :height ,height)))
-    (propertize icon 'face new-face)))
+  (when-let ((props (get-text-property 0 'face icon)))
+    (cl-destructuring-bind (&key family height inherit &allow-other-keys) props
+      (propertize icon 'face `( :inherit ,(or face inherit props)
+                                :family  ,family
+                                :height  ,height)))))
 
 (defun doom-modeline-icon (icon-set icon-name unicode text &rest args)
   "Display icon of ICON-NAME with ARGS in mode-line.
