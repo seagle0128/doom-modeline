@@ -302,7 +302,8 @@ Uses `all-the-icons-material' to fetch the icon."
                    (t ""))
              (when (or (buffer-narrowed-p)
                        (and (bound-and-true-p fancy-narrow-mode)
-                            (fancy-narrow-active-p)))
+                            (fancy-narrow-active-p))
+                       (bound-and-true-p dired-narrow-mode))
                (doom-modeline-buffer-file-state-icon
                 "vertical_align_center" "↕" "><" 'doom-modeline-warning)))))))
 
