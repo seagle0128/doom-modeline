@@ -225,20 +225,6 @@
 ;; Buffer information
 ;;
 
-(doom-modeline-def-segment buffer-default-directory
-  "Displays `default-directory'. This is for special buffers like the scratch
-buffer where knowing the current project directory is important."
-  (let* ((active (doom-modeline--active))
-         (face (if active 'doom-modeline-buffer-path 'mode-line-inactive)))
-    (concat (doom-modeline-spc)
-            (and doom-modeline-major-mode-icon
-                 (concat (doom-modeline-icon
-                          'octicon "file-directory" "🖿" ""
-                          :face face :v-adjust -0.05 :height 1.25)
-                         (doom-modeline-vspc)))
-            (propertize (abbreviate-file-name default-directory) 'face face))))
-
-;;
 (defvar-local doom-modeline--buffer-file-icon nil)
 (defun doom-modeline-update-buffer-file-icon (&rest _)
   "Update file icon in mode-line."
@@ -420,6 +406,20 @@ directory, the file name, and its state (modified, read-only or non-existent)."
                'help-echo "Buffer name
 mouse-1: Previous buffer\nmouse-3: Next buffer"
                'local-map mode-line-buffer-identification-keymap)))
+
+(doom-modeline-def-segment buffer-default-directory
+  "Displays `default-directory'. This is for special buffers like the scratch
+buffer where knowing the current project directory is important."
+  (let* ((active (doom-modeline--active))
+         (face (if active 'doom-modeline-buffer-path 'mode-line-inactive)))
+    (concat (doom-modeline-spc)
+            (doom-modeline--buffer-state-icon)
+            (and doom-modeline-major-mode-icon
+                 (concat (doom-modeline-icon
+                          'octicon "file-directory" "🖿" ""
+                          :face face :v-adjust -0.05 :height 1.25)
+                         (doom-modeline-vspc)))
+            (propertize (abbreviate-file-name default-directory) 'face face))))
 
 
 ;;
