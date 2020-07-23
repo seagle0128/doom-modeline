@@ -410,8 +410,10 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 (doom-modeline-def-segment buffer-default-directory
   "Displays `default-directory'. This is for special buffers like the scratch
 buffer where knowing the current project directory is important."
-  (let* ((active (doom-modeline--active))
-         (face (if active 'doom-modeline-buffer-path 'mode-line-inactive)))
+  (let ((face (cond ((buffer-modified-p)
+                     'doom-modeline-buffer-modified)
+                    ((doom-modeline--active) 'doom-modeline-buffer-path)
+                    (t 'mode-line-inactive))))
     (concat (doom-modeline-spc)
             (doom-modeline--buffer-state-icon)
             (and doom-modeline-major-mode-icon
