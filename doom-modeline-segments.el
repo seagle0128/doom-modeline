@@ -481,8 +481,8 @@ buffer where knowing the current project directory is important."
     (let ((do-propertize
            (lambda (mode size)
              (propertize
-              (format " %s %d " mode size 'face
-                      (if (doom-modeline--active) 'mode-line 'mode-line-inactive))))))
+              (format " %s %d " mode size)
+              'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)))))
       (if indent-tabs-mode
           (funcall do-propertize "TAB" tab-width)
         (let ((lookup-var
