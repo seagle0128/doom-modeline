@@ -105,6 +105,10 @@
   '(bar window-number buffer-default-directory)
   '(misc-info battery irc mu4e gnus github debug minor-modes input-method major-mode process))
 
+(doom-modeline-def-modeline 'dashboard
+  '(bar window-number buffer-default-directory-simple)
+  '(misc-info battery irc mu4e gnus github debug minor-modes input-method major-mode process))
+
 (doom-modeline-def-modeline 'vcs
   '(bar window-number modals matches buffer-info buffer-position parrot selection-info)
   '(misc-info battery irc mu4e gnus github debug minor-modes buffer-encoding major-mode process))
@@ -172,6 +176,11 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 (defun doom-modeline-set-project-modeline ()
   "Set project mode-line."
   (doom-modeline-set-modeline 'project))
+
+;;;###autoload
+(defun doom-modeline-set-dashboard-modeline ()
+  "Set dashboard mode-line."
+  (doom-modeline-set-modeline 'dashboard))
 
 ;;;###autoload
 (defun doom-modeline-set-vcs-modeline ()
@@ -255,7 +264,7 @@ So it can be restored when `doom-modeline-mode' is disabled.")
         ;; Add hooks
         (add-hook 'Info-mode-hook #'doom-modeline-set-info-modeline)
         (add-hook 'dired-mode-hook #'doom-modeline-set-project-modeline)
-        (add-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
+        (add-hook 'dashboard-mode-hook #'doom-modeline-set-dashboard-modeline)
         (add-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
         (add-hook 'message-mode-hook #'doom-modeline-set-message-modeline)
         (add-hook 'git-commit-mode-hook #'doom-modeline-set-message-modeline)
@@ -283,7 +292,7 @@ So it can be restored when `doom-modeline-mode' is disabled.")
       ;; Remove hooks
       (remove-hook 'Info-mode-hook #'doom-modeline-set-info-modeline)
       (remove-hook 'dired-mode-hook #'doom-modeline-set-project-modeline)
-      (remove-hook 'dashboard-mode-hook #'doom-modeline-set-project-modeline)
+      (remove-hook 'dashboard-mode-hook #'doom-modeline-set-dashboard-modeline)
       (remove-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
       (remove-hook 'message-mode-hook #'doom-modeline-set-message-modeline)
       (remove-hook 'git-commit-mode-hook #'doom-modeline-set-message-modeline)

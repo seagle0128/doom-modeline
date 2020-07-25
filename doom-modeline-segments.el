@@ -408,14 +408,26 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
                'local-map mode-line-buffer-identification-keymap)))
 
 (doom-modeline-def-segment buffer-default-directory
-  "Displays `default-directory'. This is for special buffers like the scratch
-buffer where knowing the current project directory is important."
+  "Displays `default-directory' with the icon and state . This is for special buffers
+like the scratch buffer where knowing the current project directory is important."
   (let ((face (cond ((buffer-modified-p)
                      'doom-modeline-buffer-modified)
                     ((doom-modeline--active) 'doom-modeline-buffer-path)
                     (t 'mode-line-inactive))))
     (concat (doom-modeline-spc)
             (doom-modeline--buffer-state-icon)
+            (and doom-modeline-major-mode-icon
+                 (concat (doom-modeline-icon
+                          'octicon "file-directory" "🖿" ""
+                          :face face :v-adjust -0.05 :height 1.25)
+                         (doom-modeline-vspc)))
+            (propertize (abbreviate-file-name default-directory) 'face face))))
+
+(doom-modeline-def-segment buffer-default-directory-simple
+  "Displays `default-directory'. This is for special buffers like the scratch
+buffer where knowing the current project directory is important."
+  (let ((face (if (doom-modeline--active) 'doom-modeline-buffer-path 'mode-line-inactive)))
+    (concat (doom-modeline-spc)
             (and doom-modeline-major-mode-icon
                  (concat (doom-modeline-icon
                           'octicon "file-directory" "🖿" ""
@@ -521,9 +533,9 @@ buffer where knowing the current project directory is important."
                           (cadr (assq major-mode delighted-modes)))
                      mode-name))
                 'help-echo "Major mode\n\
-mouse-1: Display major mode menu\n\
-mouse-2: Show help for major mode\n\
-mouse-3: Toggle minor modes"
+  mouse-1: Display major mode menu\n\
+  mouse-2: Show help for major mode\n\
+  mouse-3: Toggle minor modes"
                 'mouse-face 'mode-line-highlight
                 'local-map mode-line-major-mode-keymap)
     (when (and doom-modeline-env-version doom-modeline-env--version)
@@ -564,9 +576,9 @@ mouse-3: Toggle minor modes"
                   'mode-line-inactive))
           (mouse-face 'mode-line-highlight)
           (help-echo "Minor mode
-mouse-1: Display minor mode menu
-mouse-2: Show help for minor mode
-mouse-3: Toggle minor modes"))
+  mouse-1: Display minor mode menu
+  mouse-2: Show help for minor mode
+  mouse-3: Toggle minor modes"))
       (if (bound-and-true-p minions-mode)
           `((:propertize ("" ,(--filter (memq (car it) minions-direct)
                                         minor-mode-alist))
@@ -576,7 +588,7 @@ mouse-3: Toggle minor modes"))
 		     local-map ,mode-line-minor-mode-keymap)
             ,(doom-modeline-spc)
             (:propertize ("" ,(doom-modeline-icon 'octicon "gear" "⚙" ";-"
-                                                  :face face :v-adjust -0.05))
+  :face face :v-adjust -0.05))
              mouse-face ,mouse-face
              help-echo "Minions
 mouse-1: Display minor modes menu"
