@@ -150,6 +150,7 @@
 (declare-function fancy-narrow-active-p 'fancy-narrow)
 (declare-function flycheck-buffer 'flycheck)
 (declare-function flycheck-count-errors 'flycheck)
+(declare-function flycheck-error-level-compilation-level 'flycheck)
 (declare-function flycheck-list-errors 'flycheck)
 (declare-function flycheck-next-error 'flycheck)
 (declare-function flycheck-previous-error 'flycheck)
@@ -718,6 +719,23 @@ Uses `all-the-icons-material' to fetch the icon."
 
 ;; Flycheck
 
+(defun doom-modeline--flycheck-count-errors ()
+  "Count the number of ERRORS, grouped by level.
+
+Return an alist, where each ITEM is a cons cell whose `car' is an
+error level, and whose `cdr' is the number of errors of that
+level."
+  (let ((info 0) (warning 0) (error 0))
+    (mapc
+     (lambda (item)
+       (let ((count (cdr item)))
+         (pcase (flycheck-error-level-compilation-level (car item))
+           (0 (cl-incf info count))
+           (1 (cl-incf warning count))
+           (2 (cl-incf error count)))))
+     (flycheck-count-errors flycheck-current-errors))
+    `((info . ,info) (warning . ,warning) (error . ,error))))
+
 (defvar-local doom-modeline--flycheck-icon nil)
 (defun doom-modeline-update-flycheck-icon (&optional status)
   "Update flycheck icon via STATUS."
@@ -726,11 +744,12 @@ Uses `all-the-icons-material' to fetch the icon."
             ((icon
               (pcase status
                 ('finished  (if flycheck-current-errors
-                                (let-alist (flycheck-count-errors flycheck-current-errors)
-                                  (doom-modeline-checker-icon "block" "🚫" "!"
-                                                              (cond (.error 'doom-modeline-urgent)
-                                                                    (.warning 'doom-modeline-warning)
-                                                                    (t 'doom-modeline-info))))
+                                (let-alist (doom-modeline--flycheck-count-errors)
+                                  (doom-modeline-checker-icon
+                                   "block" "🚫" "!"
+                                   (cond ((> .error 0) 'doom-modeline-urgent)
+                                         ((> .warning 0) 'doom-modeline-warning)
+                                         (t 'doom-modeline-info))))
                               (doom-modeline-checker-icon "check" "✓" "-" 'doom-modeline-info)))
                 ('running     (doom-modeline-checker-icon "access_time" "⏱" "*" 'doom-modeline-debug))
                 ('no-checker  (doom-modeline-checker-icon "sim_card_alert" "⚠" "-" 'doom-modeline-debug))
@@ -788,23 +807,20 @@ mouse-2: Show help for minor mode")
             ((text
               (pcase status
                 ('finished  (when flycheck-current-errors
-                              (let-alist (flycheck-count-errors flycheck-current-errors)
-                                (let ((error (or .error 0))
-                                      (warning (or .warning 0))
-                                      (info (or .info 0)))
-                                  (if doom-modeline-checker-simple-format
-                                      (doom-modeline-checker-text
-                                       (number-to-string (+ error warning info))
-                                       (cond ((> error 0) 'doom-modeline-urgent)
-                                             ((> warning 0) 'doom-modeline-warning)
-                                             (t 'doom-modeline-info)))
-                                    (format "%s/%s/%s"
-                                            (doom-modeline-checker-text (number-to-string error)
-                                                                        'doom-modeline-urgent)
-                                            (doom-modeline-checker-text (number-to-string warning)
-                                                                        'doom-modeline-warning)
-                                            (doom-modeline-checker-text (number-to-string info)
-                                                                        'doom-modeline-info)))))))
+                              (let-alist (doom-modeline--flycheck-count-errors)
+                                (if doom-modeline-checker-simple-format
+                                    (doom-modeline-checker-text
+                                     (number-to-string (+ .error .warning .info))
+                                     (cond ((> .error 0) 'doom-modeline-urgent)
+                                           ((> .warning 0) 'doom-modeline-warning)
+                                           (t 'doom-modeline-info)))
+                                  (format "%s/%s/%s"
+                                          (doom-modeline-checker-text (number-to-string .error)
+                                                                      'doom-modeline-urgent)
+                                          (doom-modeline-checker-text (number-to-string .warning)
+                                                                      'doom-modeline-warning)
+                                          (doom-modeline-checker-text (number-to-string .info)
+                                                                      'doom-modeline-info))))))
                 ('running     nil)
                 ('no-checker  nil)
                 ('errored     (doom-modeline-checker-text "Error" 'doom-modeline-urgent))
@@ -816,10 +832,9 @@ mouse-2: Show help for minor mode")
            'help-echo (pcase status
                         ('finished
                          (concat
-                          (if flycheck-current-errors
-                              (let-alist (flycheck-count-errors flycheck-current-errors)
-                                (format "error: %d, warning: %d, info: %d\n"
-                                        (or .error 0) (or .warning 0) (or .info 0))))
+                          (when flycheck-current-errors
+                            (let-alist (doom-modeline--flycheck-count-errors)
+                              (format "error: %d, warning: %d, info: %d\n" .error .warning .info)))
                           "mouse-1: Show all errors
 mouse-3: Next error"
                           (if (featurep 'mwheel)
@@ -1122,7 +1137,7 @@ lines are selected, or the NxM dimensions of a block selection."
 ;; `anzu' and `evil-anzu' expose current/total state that can be displayed in the
 ;; mode-line.
 (defun doom-modeline-fix-anzu-count (positions here)
-  "Calulate anzu counts via POSITIONS and HERE."
+  "Calulate anzu count via POSITIONS and HERE."
   (cl-loop for (start . end) in positions
            collect t into before
            when (and (>= here start) (<= here end))
