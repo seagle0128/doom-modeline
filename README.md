@@ -1,6 +1,6 @@
 # doom-modeline
 
-[![Build Status](https://travis-ci.org/seagle0128/doom-modeline.svg?branch=master)](https://travis-ci.org/seagle0128/doom-modeline)
+[![Build Status](https://github.com/seagle0128/doom-modeline/workflows/CI/badge.svg?branch=master)](https://github.com/seagle0128/doom-modeline/actions)
 [![MELPA](https://melpa.org/packages/doom-modeline-badge.svg)](https://melpa.org/#/doom-modeline)
 [![MELPA Stable](https://stable.melpa.org/packages/doom-modeline-badge.svg)](https://stable.melpa.org/#/doom-modeline)
 [![License](http://img.shields.io/:license-gpl3-blue.svg)](LICENSE)
