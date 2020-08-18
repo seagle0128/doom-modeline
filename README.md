@@ -49,7 +49,7 @@ The `doom-modeline` was designed for minimalism, and offers:
 - An indicator for GitHub notifications
 - An indicator for unread emails with `mu4e-alert` and `gnus`
 - An indicator for IRC notifications with `circe`, `rcirc` or `erc`
-- An indicator for buffer position which is compatible with `nyan-mode`
+- An indicator for buffer position which is compatible with `nyan-mode` or `poke-line`
 - An indicator for party `parrot`
 - An indicator for PDF page number with `pdf-tools`
 - An indicator for markdown/org preview with `grip`
