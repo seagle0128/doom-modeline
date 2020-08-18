@@ -89,6 +89,7 @@
 (defvar phi-replace--mode-line-format)
 (defvar phi-search--selection)
 (defvar phi-search-mode-line-format)
+(defvar poke-line-minimum-window-width)
 (defvar rcirc-activity)
 (defvar symbol-overlay-keywords-alist)
 (defvar symbol-overlay-temp-symbol)
@@ -194,6 +195,7 @@
 (declare-function persp-contain-buffer-p 'persp-mode)
 (declare-function persp-switch 'persp-mode)
 (declare-function phi-search--initialize 'phi-search)
+(declare-function poke-line-create 'poke-line)
 (declare-function popup-create 'popup)
 (declare-function popup-delete 'popup)
 (declare-function rcirc-next-active-buffer 'rcirc)
@@ -1572,23 +1574,30 @@ mouse-1: Display Line and Column Mode Menu"
                  'mouse-face mouse-face
                  'local-map local-map)
 
-     (if (and active
-              (bound-and-true-p nyan-mode)
-              (>= (window-width) nyan-minimum-window-width))
-         (concat
-          (doom-modeline-spc)
-          (doom-modeline-spc)
-          (propertize (nyan-create) 'mouse-face mouse-face))
-       (when doom-modeline-percent-position
-         (concat
-          (doom-modeline-spc)
-          (propertize (format-mode-line '("" doom-modeline-percent-position "%%"))
-                      'face face
-                      'help-echo "Buffer percentage\n\
+     (cond ((and active
+                 (bound-and-true-p nyan-mode)
+                 (>= (window-width) nyan-minimum-window-width))
+            (concat
+             (doom-modeline-spc)
+             (doom-modeline-spc)
+             (propertize (nyan-create) 'mouse-face mouse-face)))
+           ((and active
+                 (bound-and-true-p poke-line-mode)
+                 (>= (window-width) poke-line-minimum-window-width))
+            (concat
+             (doom-modeline-spc)
+             (doom-modeline-spc)
+             (propertize (poke-line-create) 'mouse-face mouse-face)))
+           (t
+            (when doom-modeline-percent-position
+              (concat
+               (doom-modeline-spc)
+               (propertize (format-mode-line '("" doom-modeline-percent-position "%%"))
+                           'face face
+                           'help-echo "Buffer percentage\n\
 mouse-1: Display Line and Column Mode Menu"
-                      'mouse-face mouse-face
-                      'local-map local-map))))
-
+                           'mouse-face mouse-face
+                           'local-map local-map)))))
      (when (or line-number-mode column-number-mode doom-modeline-percent-position)
        (doom-modeline-spc)))))
 
