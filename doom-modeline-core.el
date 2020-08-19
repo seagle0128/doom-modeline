@@ -814,6 +814,7 @@ then this function does nothing."
 (add-hook 'buffer-list-update-hook #'doom-modeline-set-selected-window)
 (add-hook 'after-make-frame-functions #'doom-modeline-set-selected-window)
 (add-hook 'delete-frame-functions #'doom-modeline-set-selected-window)
+(add-hook 'exwm-workspace-switch-hook #'doom-modeline-set-selected-window)
 (advice-add #'handle-switch-frame :after #'doom-modeline-set-selected-window)
 (with-no-warnings
   (if (boundp 'after-focus-change-function)
