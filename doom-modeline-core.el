@@ -403,6 +403,13 @@ It respects `doom-modeline-enable-word-count'."
   :type 'integer
   :group 'doom-modeline)
 
+(defcustom doom-modeline-workspace-name t
+  "Whether display the workspace name.
+
+Non-nil to display in the mode-line."
+  :type 'boolean
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-persp-name t
   "Whether display the perspective name.
 
