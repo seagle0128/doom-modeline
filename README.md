@@ -36,7 +36,7 @@ The `doom-modeline` was designed for minimalism, and offers:
 - A customizable mode-line height (see `doom-modeline-height`)
 - A minor modes segment which is compatible with `minions`
 - An error/warning count segment for `flymake`/`flycheck`
-- A workspace number segment for `eyebrowse`
+- A workspace number/name segment for `eyebrowse` or `tab-bar-mode`
 - A perspective name segment for `persp-mode`
 - A window number segment for `ace-window`, `winum` and `window-numbering`
 - An indicator for modal editing state, including `evil`, `overwrite`, `god`, `ryo` and
@@ -250,6 +250,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
 ;; The maximum displayed length of the branch name of version control.
 (setq doom-modeline-vcs-max-length 12)
+
+;; Whether display the workspace name. Non-nil to display in the mode-line.
+(setq doom-modeline-workspace-name t)
 
 ;; Whether display the perspective name. Non-nil to display in the mode-line.
 (setq doom-modeline-persp-name t)
