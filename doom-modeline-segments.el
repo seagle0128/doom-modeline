@@ -2009,9 +2009,9 @@ Example:
       (cancel-timer doom-modeline--github-timer))
   (setq doom-modeline--github-timer
         (and doom-modeline-github
-             (run-with-timer 30
-                             doom-modeline-github-interval
-                             #'doom-modeline--github-fetch-notifications))))
+             (run-with-idle-timer 30
+                                  doom-modeline-github-interval
+                                  #'doom-modeline--github-fetch-notifications))))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-github
@@ -2051,7 +2051,7 @@ mouse-3: Fetch notifications"
                      (lambda ()
                        "Open GitHub notifications page."
                        (interactive)
-                       (run-with-timer 300 nil #'doom-modeline--github-fetch-notifications)
+                       (run-with-idle-timer 300 nil #'doom-modeline--github-fetch-notifications)
                        (browse-url "https://github.com/notifications")))
                    (define-key map [mode-line mouse-3]
                      (lambda ()
