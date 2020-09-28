@@ -141,8 +141,9 @@ In `init.el`,
 (require 'doom-modeline)
 (doom-modeline-mode 1)
 
-;; Or use this if the right segment is displayed incorrectly
-(add-hook 'window-setup-hook #'doom-modeline-mode)
+;; Or use this
+;; Use `window-setup-hook' if the right segment is displayed incorrectly
+(add-hook 'after-init-hook #'doom-modeline-mode)
 ```
 
 ### Use-package
@@ -152,10 +153,11 @@ In `init.el`,
   :ensure t
   :init (doom-modeline-mode 1))
 
-;; Or use this if the right segment is displayed incorrectly
+;; Or use this
+;; Use `window-setup-hook' if the right segment is displayed incorrectly
 (use-package doom-modeline
   :ensure t
-  :hook (window-setup . doom-modeline-mode))
+  :hook (after-init . doom-modeline-mode))
 ```
 
 This package requires the fonts included with `all-the-icons` to be installed.

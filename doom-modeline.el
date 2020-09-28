@@ -76,7 +76,7 @@
 ;; or
 ;; (use-package doom-modeline
 ;;   :ensure t
-;;   :hook (window-setup . doom-modeline-mode))
+;;   :hook (after-init . doom-modeline-mode))
 ;;
 
 ;;; Code:
