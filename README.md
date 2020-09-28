@@ -179,7 +179,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
 ;; The limit of the window width.
 ;; If `window-width' is smaller than the limit, some information won't be displayed.
-(setq doom-modeline-window-width-limit fill-column
+(setq doom-modeline-window-width-limit fill-column)
 
 ;; How to detect the project root.
 ;; The default priority of detection is `ffip' > `projectile' > `project'.
