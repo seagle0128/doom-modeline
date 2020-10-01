@@ -1467,7 +1467,6 @@ Requires `eyebrowse-mode' or `tab-bar-mode' to be enabled."
   (setq doom-modeline--persp-name
         ;; Support `persp-mode', while not support `perspective'
         (when (and doom-modeline-persp-name
-                   (not doom-modeline--limited-width-p)
                    (bound-and-true-p persp-mode)
                    (fboundp 'safe-persp-name)
                    (fboundp 'get-current-persp))
@@ -1484,8 +1483,8 @@ Requires `eyebrowse-mode' or `tab-bar-mode' to be enabled."
             (when (or doom-modeline-display-default-persp-name
                       (not (string-equal persp-nil-name name)))
               (concat (doom-modeline-spc)
-                      (propertize (concat (when doom-modeline-persp-icon
-                                                (concat icon (doom-modeline-vspc)))
+                      (propertize (concat (and doom-modeline-persp-icon
+                                               (concat icon (doom-modeline-vspc)))
                                           (propertize name 'face face))
                                   'help-echo "mouse-1: Switch perspective
 mouse-2: Show help for minor mode"
@@ -1507,8 +1506,9 @@ mouse-2: Show help for minor mode"
 
 (doom-modeline-def-segment persp-name
   "The current perspective name."
-  (if (doom-modeline--active)
-      doom-modeline--persp-name))
+  (when (and (doom-modeline--active)
+             (not doom-modeline--limited-width-p))
+    doom-modeline--persp-name))
 
 
 ;;
@@ -1518,8 +1518,9 @@ mouse-2: Show help for minor mode"
 (doom-modeline-def-segment misc-info
   "Mode line construct for miscellaneous information.
 By default, this shows the information specified by `global-mode-string'."
-  (if (doom-modeline--active)
-      '("" mode-line-misc-info)))
+  (when (and (doom-modeline--active)
+             (not doom-modeline--limited-width-p))
+    '("" mode-line-misc-info)))
 
 
 ;;
@@ -1608,6 +1609,7 @@ mouse-1: Display Line and Column Mode Menu"
 (doom-modeline-def-segment parrot
   "The party parrot animated icon. Requires `parrot-mode' to be enabled."
   (when (and (doom-modeline--active)
+             (not doom-modeline--limited-width-p)
              (bound-and-true-p parrot-mode))
     (concat (doom-modeline-spc)
             (doom-modeline-spc)
@@ -1945,7 +1947,8 @@ mouse-1: Start server"))
 
 (doom-modeline-def-segment lsp
   "The LSP server state."
-  (when doom-modeline-lsp
+  (when (and doom-modeline-lsp
+             (not doom-modeline--limited-width-p))
     (let ((active (doom-modeline--active))
           (icon (cond ((bound-and-true-p lsp-mode)
                        doom-modeline--lsp)
@@ -2026,6 +2029,7 @@ Example:
   "The GitHub notifications."
   (when (and doom-modeline-github
              (doom-modeline--active)
+             (not doom-modeline--limited-width-p)
              (numberp doom-modeline--github-notification-number)
              (> doom-modeline--github-notification-number 0))
     (concat
@@ -2165,7 +2169,8 @@ mouse-1: Toggle Debug on Quit"
 
 (doom-modeline-def-segment debug
   "The current debug state."
-  (when (doom-modeline--active)
+  (when (and (doom-modeline--active)
+             (not doom-modeline--limited-width-p))
     (let* ((dap doom-modeline--debug-dap)
            (edebug (doom-modeline--debug-edebug))
            (on-error (doom-modeline--debug-on-error))
@@ -2207,6 +2212,7 @@ mouse-1: Toggle Debug on Quit"
   "Show notifications of any unread emails in `mu4e'."
   (when (and doom-modeline-mu4e
              (doom-modeline--active)
+             (not doom-modeline--limited-width-p)
              (bound-and-true-p mu4e-alert-mode-line)
              (numberp mu4e-alert-mode-line)
              ;; don't display if the unread mails count is zero
@@ -2297,6 +2303,7 @@ mouse-1: Toggle Debug on Quit"
 (doom-modeline-def-segment gnus
   "Show notifications of any unread emails in `gnus'."
   (when (and (doom-modeline--active)
+             (not doom-modeline--limited-width-p)
              doom-modeline-gnus
              doom-modeline--gnus-started
              ;; Don't display if the unread mails count is zero
@@ -2389,7 +2396,8 @@ to be an icon and we don't want to remove that so we just return the original."
 (doom-modeline-def-segment irc-buffers
   "The list of shortened, unread irc buffers."
   (when (and doom-modeline-irc
-             (doom-modeline--active))
+             (doom-modeline--active)
+             (not doom-modeline--limited-width-p))
     (let* ((buffers (doom-modeline--get-buffers))
            (number (length buffers)))
       (when (> number 0)
@@ -2401,7 +2409,8 @@ to be an icon and we don't want to remove that so we just return the original."
 (doom-modeline-def-segment irc
   "A notification icon for any unread irc buffer."
   (when (and doom-modeline-irc
-             (doom-modeline--active))
+             (doom-modeline--active)
+             (not doom-modeline--limited-width-p))
     (let* ((buffers (doom-modeline--get-buffers))
            (number (length buffers)))
       (when (> number 0)
@@ -2543,6 +2552,7 @@ mouse-3: Switch to next unread buffer")))
 (doom-modeline-def-segment battery
   "Display battery status."
   (when (and (doom-modeline--active)
+             (not doom-modeline--limited-width-p)
              (bound-and-true-p display-battery-mode))
     (concat (doom-modeline-spc)
             (concat
