@@ -2231,9 +2231,15 @@ mouse-1: Toggle Debug on Quit"
           (number-to-string mu4e-alert-mode-line))
         'face '(:inherit (doom-modeline-unread-number doom-modeline-warning))))
       'mouse-face 'mode-line-highlight
-      'help-echo (if (= mu4e-alert-mode-line 1)
-                     "You have an unread email"
-                   (format "You have %s unread emails" mu4e-alert-mode-line)))
+      'keymap '(mode-line keymap
+                          (mouse-1 . mu4e-alert-view-unread-mails)
+                          (mouse-2 . mu4e-alert-view-unread-mails)
+                          (mouse-3 . mu4e-alert-view-unread-mails))
+      'help-echo (concat (if (= mu4e-alert-mode-line 1)
+                             "You have an unread email"
+                           (format "You have %s unread emails" mu4e-alert-mode-line))
+                         "\nClick here to view "
+                         (if (= mu4e-alert-mode-line 1) "it" "them")))
      (doom-modeline-spc))))
 
 (defun doom-modeline-override-mu4e-alert-modeline (&rest _)
