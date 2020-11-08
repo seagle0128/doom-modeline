@@ -1676,6 +1676,19 @@ TEXT is alternative if icon is not available."
                                  'doom-modeline-evil-normal-state
                                  (format "Xah-fly command mode")))))
 
+(defsubst doom-modeline--boon ()
+  "The current Boon state. Requires `boon-mode' to be enabled."
+  (when (bound-and-true-p boon-local-mode)
+    (doom-modeline--modal-icon
+     (boon-state-string)
+     (cond
+      (boon-command-state 'doom-modeline-evil-normal-state)
+      (boon-insert-state 'doom-modeline-evil-insert-state)
+      (boon-special-state 'doom-modeline-evil-emacs-state)
+      (boon-off-state 'doom-modeline-evil-operator-state)
+      (t 'doom-modeline-evil-operator-state))
+     (boon-modeline-string))))
+
 (doom-modeline-def-segment modals
   "Displays modal editing states, including `evil', `overwrite', `god', `ryo'
 and `xha-fly-kyes', etc."
@@ -1684,14 +1697,16 @@ and `xha-fly-kyes', etc."
          (god (doom-modeline--god))
          (ryo (doom-modeline--ryo))
          (xf (doom-modeline--xah-fly-keys))
+         (boon (doom-modeline--boon))
          (vsep (doom-modeline-vspc))
-         (sep (and (or evil ow god ryo xf) (doom-modeline-spc))))
+         (sep (and (or evil ow god ryo xf boon) (doom-modeline-spc))))
     (concat sep
-            (and evil (concat evil (and (or ow god ryo xf) vsep)))
-            (and ow (concat ow (and (or god ryo xf) vsep)))
-            (and god (concat god (and (or ryo xf) vsep)))
-            (and ryo (concat ryo (and xf vsep)))
-            xf
+            (and evil (concat evil (and (or ow god ryo xf boon) vsep)))
+            (and ow (concat ow (and (or god ryo xf boon) vsep)))
+            (and god (concat god (and (or ryo xf boon) vsep)))
+            (and ryo (concat ryo (and (or xf boon) vsep)))
+            (and xf (concat xf (and boon vsep)))
+            boon
             sep)))
 
 
