@@ -190,6 +190,7 @@
 (declare-function lsp-workspace-restart 'lsp-mode)
 (declare-function lsp-workspace-shutdown 'lsp-mode)
 (declare-function lsp-workspaces 'lsp-mode)
+(declare-function lv-message 'lv)
 (declare-function mc/num-cursors 'multiple-cursors-core)
 (declare-function mu4e-alert-default-mode-line-formatter 'mu4e-alert)
 (declare-function mu4e-alert-enable-mode-line-display 'mu4e-alert)
@@ -1505,10 +1506,11 @@ mouse-2: Show help for minor mode"
                                                map))
                       (doom-modeline-spc)))))))
 
+(add-hook 'buffer-list-update-hook #'doom-modeline-update-persp-name)
 (add-hook 'find-file-hook #'doom-modeline-update-persp-name)
 (add-hook 'persp-activated-functions #'doom-modeline-update-persp-name)
 (add-hook 'persp-renamed-functions #'doom-modeline-update-persp-name)
-(add-hook 'buffer-list-update-hook #'doom-modeline-update-persp-name)
+(advice-add #'lv-message :after #'doom-modeline-update-persp-name)
 
 (doom-modeline-def-segment persp-name
   "The current perspective name."
