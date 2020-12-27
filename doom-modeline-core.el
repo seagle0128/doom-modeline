@@ -926,6 +926,13 @@ then this function does nothing."
 (add-hook 'after-setting-font-hook #'doom-modeline-refresh-font-width-cache)
 (add-hook 'server-after-make-frame-hook #'doom-modeline-refresh-font-width-cache)
 
+(add-hook 'window-configuration-change-hook
+          (defun doom-modeline-update-window-is-right-most ()
+            (dolist (window (window-list))
+              (set-window-parameter
+               window 'right-most
+               (not (window-in-direction 'right window))))))
+
 (defun doom-modeline-def-modeline (name lhs &optional rhs)
   "Defines a modeline format and byte-compiles it.
 NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
@@ -949,6 +956,7 @@ Example:
                'display `((space
                            :align-to
                            (- (+ right right-fringe right-margin)
+                              ,(if (window-parameter (selected-window) 'right-most) 0 1)
                               ,(* (let ((width (doom-modeline--font-width)))
                                     (or (and (= width 1) 1)
                                         (/ width (frame-char-width) 1.0)))
