@@ -956,7 +956,10 @@ Example:
                'display `((space
                            :align-to
                            (- (+ right right-fringe right-margin)
-                              ,(if (window-parameter (selected-window) 'right-most) 0 1)
+                              ,(if (and (not (display-graphic-p))
+                                        (window-parameter (selected-window) 'right-most))
+                                   0
+                                 1)
                               ,(* (let ((width (doom-modeline--font-width)))
                                     (or (and (= width 1) 1)
                                         (/ width (frame-char-width) 1.0)))
