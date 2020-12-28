@@ -2091,6 +2091,69 @@ mouse-3: Fetch notifications"
 
 
 ;;
+;; Now Playing
+;;
+
+(defvar doom-modeline--now-playing-tokens '())
+(defun doom-modeline--now-playing-update ()
+  "Update the tokens for now-playing."
+  (when (and doom-modeline-now-playing
+             (require 'async nil t))
+    (async-start
+     `(lambda ()
+        (require 'subr-x)
+        ,(async-inject-variables
+          "\\`\\(load-path\\|auth-sources\\|doom-modeline-now-playing-format\\|doom-modeline-now-playing-ignored-players\\)\\'")
+        (string-trim (shell-command-to-string (format "playerctl metadata --ignore-player=%s --format '{{playerName}}|{{lc(status)}}|%s'" (mapconcat 'identity doom-modeline-now-playing-ignored-players ",") doom-modeline-now-playing-format))))
+     (lambda (result)
+       (message "")
+       (setq doom-modeline--now-playing-tokens (split-string result "|"))))))
+
+(defvar doom-modeline--now-playing-timer nil)
+(defun doom-modeline-now-playing-timer ()
+  "Start/Stop the timer for Now Playing updates."
+  (if (timerp doom-modeline--now-playing-timer)
+      (cancel-timer doom-modeline--now-playing-timer))
+  (setq doom-modeline--now-playing-timer
+        (when doom-modeline-now-playing
+          (run-with-timer doom-modeline-now-playing-interval doom-modeline-now-playing-interval #'doom-modeline--now-playing-update))))
+
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-now-playing
+ (lambda (_sym val op _where)
+   (when eq op 'set)
+   (setq doom-modeline-now-playing val)
+   (doom-modeline-now-playing-timer)))
+
+(doom-modeline-now-playing-timer)
+
+(doom-modeline-def-segment now-playing
+  "Current playerctl status."
+  (when (and doom-modeline-now-playing
+             (doom-modeline--active)
+             (= (length doom-modeline--now-playing-tokens) 3))
+    (let ((player (elt doom-modeline--now-playing-tokens 0))
+          (status (elt doom-modeline--now-playing-tokens 1))
+          (text (elt doom-modeline--now-playing-tokens 2)))
+      (concat
+       (doom-modeline-spc)
+       (if (equal "spotify" player)
+           (doom-modeline-icon 'faicon "spotify" "" "#"
+                               :face 'doom-modeline-now-playing-success
+                               :v-adjust -0.0575)
+         (doom-modeline-icon 'faicon "music" "" "#"
+                             :face 'doom-modeline-now-playing-other-icons
+                             :v-adjust -0.0575))
+      (doom-modeline-spc)
+      (if (equal status "playing")
+           (doom-modeline-icon 'faicon "play" "" ">"
+                               :v-adjust -0.0575)
+           (doom-modeline-icon 'faicon "pause" "" "||"
+                               :v-adjust -0.0575))
+      (doom-modeline-spc)
+      (propertize (truncate-string-to-width text 50 nil nil "...") 'face 'doom-modeline-now-playing-text)))))
+
+;;
 ;; Debug states
 ;;
 

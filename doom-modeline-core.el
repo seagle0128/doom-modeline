@@ -427,6 +427,28 @@ Non-nil to display in the mode-line."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-now-playing t
+  "Whether to display the `now-playing' state.
+
+Non-nil to display in the mode-line."
+  :type 'boolean
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-now-playing-format "{{ artist}} - {{ title }}"
+  "Default output format for now-playing."
+  :type 'string
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-now-playing-interval 5
+  "Default delay in seconds to run the update."
+  :type 'integer
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-now-playing-ignored-players '("firefox")
+  "List of players to exclude from the command output."
+  :type '(repeat string)
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-repl t
   "Whether display the `repl' state.
 
@@ -681,6 +703,21 @@ It requires `circe' or `erc' package."
 (defface doom-modeline-persp-buffer-not-in-persp
   '((t (:inherit (font-lock-doc-face bold italic))))
   "Face for the buffers which are not in the persp."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-now-playing-success
+  '((t (:inherit success)))
+  "Face for the icon next to the status."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-now-playing-other-icons
+  '((t (:inherit normal)))
+  "Face for the other icons."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-now-playing-text
+  '((t (:inherit bold)))
+  "Face for the text of the now-playing text"
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-repl-success

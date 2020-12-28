@@ -53,6 +53,7 @@ The `doom-modeline` was designed for minimalism, and offers:
 - An indicator for party `parrot`
 - An indicator for PDF page number with `pdf-tools`
 - An indicator for markdown/org preview with `grip`
+- The current "now playing" status for music/videos
 - Truncated file name, file icon, buffer state and project name in buffer
   information segment, which is compatible with `project`, `projectile` and
   `find-file-in-project`.
