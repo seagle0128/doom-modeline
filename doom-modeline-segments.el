@@ -101,6 +101,7 @@
 (defvar tracking-buffers)
 (defvar winum-auto-setup-mode-line)
 (defvar xah-fly-insert-state-q)
+(defvar meow--indicator)
 
 (declare-function anzu--reset-status 'anzu)
 (declare-function anzu--where-is-here 'anzu)
@@ -1697,6 +1698,11 @@ TEXT is alternative if icon is not available."
       (t 'doom-modeline-evil-operator-state))
      (boon-modeline-string))))
 
+(defsubst doom-modeline--meow ()
+  "The current Meow state. Requires `meow-mode' to be enabled."
+  (when (bound-and-true-p meow-mode)
+    meow--indicator))
+
 (doom-modeline-def-segment modals
   "Displays modal editing states, including `evil', `overwrite', `god', `ryo'
 and `xha-fly-kyes', etc."
@@ -1707,16 +1713,17 @@ and `xha-fly-kyes', etc."
          (xf (doom-modeline--xah-fly-keys))
          (boon (doom-modeline--boon))
          (vsep (doom-modeline-vspc))
+         (meow (doom-modeline--meow))
          (sep (and (or evil ow god ryo xf boon) (doom-modeline-spc))))
     (concat sep
-            (and evil (concat evil (and (or ow god ryo xf boon) vsep)))
-            (and ow (concat ow (and (or god ryo xf boon) vsep)))
-            (and god (concat god (and (or ryo xf boon) vsep)))
-            (and ryo (concat ryo (and (or xf boon) vsep)))
-            (and xf (concat xf (and boon vsep)))
-            boon
+            (and evil (concat evil (and (or ow god ryo xf boon meow) vsep)))
+            (and ow (concat ow (and (or god ryo xf boon meow) vsep)))
+            (and god (concat god (and (or ryo xf boon meow) vsep)))
+            (and ryo (concat ryo (and (or xf boon meow) vsep)))
+            (and xf (concat xf (and (or boon meow) vsep)))
+            (and boon (concat boon (and meow vsep)))
+            meow
             sep)))
-
 
 ;;
 ;; Objed state
