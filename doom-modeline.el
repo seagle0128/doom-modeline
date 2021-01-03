@@ -240,6 +240,7 @@ So it can be restored when `doom-modeline-mode' is disabled.")
 (defvar doom-modeline-mode-map (make-sparse-keymap))
 
 ;; Suppress warnings
+(defvar 2C-mode-line-format)
 (declare-function helm-display-mode-line 'helm)
 
 ;;;###autoload
@@ -260,6 +261,9 @@ So it can be restored when `doom-modeline-mode' is disabled.")
           (if (buffer-live-p (get-buffer bname))
               (with-current-buffer bname
                 (doom-modeline-set-main-modeline))))
+
+        ;; For two-column editing
+        (setq 2C-mode-line-format (doom-modeline 'special))
 
         ;; Add hooks
         (add-hook 'Info-mode-hook #'doom-modeline-set-info-modeline)
@@ -288,6 +292,11 @@ So it can be restored when `doom-modeline-mode' is disabled.")
         (if (buffer-live-p (get-buffer bname))
             (with-current-buffer bname
               (setq mode-line-format doom-modeline--default-format))))
+
+      ;; For two-column editing
+      (setq 2C-mode-line-format
+            '("-%*- %15b --"  (-3 . "%p")  "--%[("  mode-name
+	          minor-mode-alist  "%n"  mode-line-process  ")%]%-"))
 
       ;; Remove hooks
       (remove-hook 'Info-mode-hook #'doom-modeline-set-info-modeline)
