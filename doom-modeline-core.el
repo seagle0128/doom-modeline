@@ -124,11 +124,12 @@ It returns a file name which can be used directly as argument of
           ?\xf243                      ; battery-quarter
           ?\xf241                      ; battery-three-quarters
           ))))
-(doom-modeline--set-char-widths doom-modeline-rhs-icons-alist)
+(when (display-graphic-p)
+  (doom-modeline--set-char-widths doom-modeline-rhs-icons-alist))
 
 
 ;;
-;; Customizations
+;; Customization
 ;;
 
 (defgroup doom-modeline nil
