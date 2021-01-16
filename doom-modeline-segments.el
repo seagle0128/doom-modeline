@@ -2526,7 +2526,8 @@ mouse-3: Switch to next unread buffer")))
   "Update battery status."
   (setq doom-modeline--battery-status
         (when (bound-and-true-p display-battery-mode)
-          (let* ((data (and (bound-and-true-p battery-status-function)
+          (let* ((data (and battery-status-function
+                            (functionp battery-status-function)
                             (funcall battery-status-function)))
                  (charging? (string-equal "AC" (cdr (assoc ?L data))))
                  (percentage (car (read-from-string (or (cdr (assq ?p data)) "ERR"))))
