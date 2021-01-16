@@ -2011,7 +2011,8 @@ mouse-1: Start server"))
 (defvar doom-modeline-before-github-fetch-notification-hook nil
   "Hooks before fetching GitHub notifications.
 Example:
-  (add-hook 'doom-modeline-before-github-fetch-notification-hook #'auth-source-pass-enable)")
+  (add-hook 'doom-modeline-before-github-fetch-notification-hook
+            #'auth-source-pass-enable)")
 (defun doom-modeline--github-fetch-notifications ()
   "Fetch GitHub notifications."
   (when (and doom-modeline-github
