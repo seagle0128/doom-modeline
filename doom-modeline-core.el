@@ -155,7 +155,8 @@ If the actual char height is larger, it respects the actual char height."
 (defcustom doom-modeline-window-width-limit fill-column
   "The limit of the window width.
 
-If `window-width' is smaller than the limit, some information won't be displayed."
+If `window-width' is smaller than the limit, some information won't be
+displayed."
   :type '(choice integer
                  (const :tag "Disable" nil))
   :group 'doom-modeline)
@@ -488,8 +489,8 @@ If nil, don't set up a hook."
   :group 'doom-modeline)
 
 (defcustom doom-modeline-gnus-excluded-groups nil
-  "A list of groups to be excluded from the unread count. Groups' names list in `gnus-newsrc-alist'`"
-
+  "A list of groups to be excluded from the unread count.
+Groups' names list in `gnus-newsrc-alist'`"
   :type '(repeat string)
   :group 'doom-modeline)
 
