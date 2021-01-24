@@ -820,9 +820,7 @@ then this function does nothing."
   (setq doom-modeline-current-window nil))
 
 (add-hook 'window-configuration-change-hook #'doom-modeline-set-selected-window)
-(add-hook 'buffer-list-update-hook #'doom-modeline-set-selected-window)
-(add-hook 'after-make-frame-functions #'doom-modeline-set-selected-window)
-(add-hook 'delete-frame-functions #'doom-modeline-set-selected-window)
+(add-hook 'window-selection-change-functions #'doom-modeline-set-selected-window)
 (add-hook 'exwm-workspace-switch-hook #'doom-modeline-set-selected-window)
 (advice-add #'handle-switch-frame :after #'doom-modeline-set-selected-window)
 (with-no-warnings
