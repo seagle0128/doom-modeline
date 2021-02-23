@@ -821,6 +821,7 @@ then this function does nothing."
 
 (add-hook 'window-configuration-change-hook #'doom-modeline-set-selected-window)
 (add-hook 'window-selection-change-functions #'doom-modeline-set-selected-window)
+(add-hook 'after-make-frame-functions #'doom-modeline-set-selected-window)
 (add-hook 'exwm-workspace-switch-hook #'doom-modeline-set-selected-window)
 (with-no-warnings
   (if (boundp 'after-focus-change-function)
