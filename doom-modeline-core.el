@@ -822,9 +822,10 @@ then this function does nothing."
   "Unset `doom-modeline-current-window' appropriately."
   (setq doom-modeline-current-window nil))
 
+(add-hook 'after-make-frame-functions #'doom-modeline-set-selected-window)
+(add-hook 'buffer-list-update-hook #'doom-modeline-set-selected-window)
 (add-hook 'window-configuration-change-hook #'doom-modeline-set-selected-window)
 (add-hook 'window-selection-change-functions #'doom-modeline-set-selected-window)
-(add-hook 'after-make-frame-functions #'doom-modeline-set-selected-window)
 (add-hook 'exwm-workspace-switch-hook #'doom-modeline-set-selected-window)
 (with-no-warnings
   (if (boundp 'after-focus-change-function)
