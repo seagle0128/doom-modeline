@@ -322,7 +322,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 (setq doom-modeline-env-elixir-executable "iex")
 (setq doom-modeline-env-rust-executable "rustc")
 
-;; What to dispaly as the version while a new one is being loaded
+;; What to display as the version while a new one is being loaded
 (setq doom-modeline-env-load-string "...")
 
 ;; Hooks that run before/after the modeline version string is updated
