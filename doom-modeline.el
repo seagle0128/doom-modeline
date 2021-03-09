@@ -130,7 +130,7 @@
   '(objed-state misc-info battery debug minor-modes input-method indent-info buffer-encoding major-mode))
 
 (doom-modeline-def-modeline 'pdf
-  '(bar window-number matches buffer-info pdf-pages)
+  '(bar window-number matches pdf-pages pdf-icon buffer-name)
   '(misc-info major-mode process vcs))
 
 (doom-modeline-def-modeline 'org-src

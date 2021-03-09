@@ -419,6 +419,12 @@ directory, the file name, and its state (modified, read-only or non-existent)."
 mouse-1: Previous buffer\nmouse-3: Next buffer"
                'local-map mode-line-buffer-identification-keymap)))
 
+(doom-modeline-def-segment buffer-name
+  "Display the current buffer's name, without any other information."
+  (concat
+   (doom-modeline-spc)
+   (doom-modeline--buffer-name)))
+
 (doom-modeline-def-segment buffer-default-directory
   "Displays `default-directory' with the icon and state . This is for special buffers
 like the scratch buffer where knowing the current project directory is important."
@@ -2221,19 +2227,34 @@ mouse-1: Toggle Debug on Quit"
 ;; PDF pages
 ;;
 
+(doom-modeline-def-segment pdf-icon
+  "PDF icon from all-the-icons."
+  (concat
+   (doom-modeline-spc)
+   (doom-modeline-icon 'octicon "file-pdf" nil nil
+                       :face (if (doom-modeline--active)
+                                 'all-the-icons-red
+                               'mode-line-inactive)
+                       :v-adjust 0.02)))
+
 (defvar-local doom-modeline--pdf-pages nil)
 (defun doom-modeline-update-pdf-pages ()
   "Update PDF pages."
   (setq doom-modeline--pdf-pages
-        (format "  P%d/%d "
-                (eval `(pdf-view-current-page))
-                (pdf-cache-number-of-pages))))
+        (let ((current-page-str (number-to-string (eval `(pdf-view-current-page))))
+              (total-page-str (number-to-string (pdf-cache-number-of-pages))))
+          (concat
+           (propertize
+            (concat (make-string (- (length total-page-str) (length current-page-str)) ? )
+                    " P" current-page-str)
+            'face 'mode-line)
+           (propertize (concat "/" total-page-str) 'face 'doom-modeline-buffer-minor-mode)))))
 (add-hook 'pdf-view-change-page-hook #'doom-modeline-update-pdf-pages)
 
 (doom-modeline-def-segment pdf-pages
   "Display PDF pages."
-  (propertize doom-modeline--pdf-pages
-              'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)))
+  (if (doom-modeline--active) doom-modeline--pdf-pages
+    (propertize doom-modeline--pdf-pages 'face 'mode-line-inactive)))
 
 
 ;;
