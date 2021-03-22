@@ -475,7 +475,7 @@ It requires `mu4e-alert' package."
   :group 'doom-modeline)
 
 (defcustom doom-modeline-gnus nil
-  "Wheter to display notifications from gnus.
+  "Whether to display notifications from gnus.
 
 It requires `gnus' to be setup"
   :type 'boolean
