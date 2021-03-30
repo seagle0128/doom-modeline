@@ -59,7 +59,7 @@
 ;; - An indicator for buffer position which is compatible with nyan-mode or poke-line
 ;; - An indicator for party parrot
 ;; - An indicator for PDF page number with pdf-tools
-;; - An indicator for markdown/org preivews with grip
+;; - An indicator for markdown/org previews with grip
 ;; - Truncated file name, file icon, buffer state and project name in buffer
 ;;   information segment, which is compatible with project, find-file-in-project
 ;;   and projectile
@@ -169,7 +169,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
 ;;;###autoload
 (defun doom-modeline-set-special-modeline ()
-  "Set sepcial mode-line."
+  "Set special mode-line."
   (doom-modeline-set-modeline 'special))
 
 ;;;###autoload

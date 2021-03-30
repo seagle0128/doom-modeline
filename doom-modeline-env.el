@@ -43,7 +43,7 @@
   :link '(url-link :tag "Homepage" "https://github.com/seagle0128/doom-modeline"))
 
 (defcustom doom-modeline-env-load-string "..."
-  "What to dispaly as the version while a new one is being loaded."
+  "What to display as the version while a new one is being loaded."
   :type 'string
   :group 'doom-modeline-env)
 
@@ -103,7 +103,7 @@ Example: 'doom-modeline-env--ruby")
 
 (defun doom-modeline-env--get (prog args callback)
   "Start a sub process using PROG and apply the ARGS to the sub process.
-Once it recieves information from STDOUT, it closes off the subprocess and
+Once it receives information from STDOUT, it closes off the subprocess and
 passes on the information into the CALLBACK.
 Example:
   (doom-modeline-env--get
