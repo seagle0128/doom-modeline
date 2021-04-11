@@ -2069,7 +2069,7 @@ Example:
      (propertize
       (concat
        (doom-modeline-icon 'faicon "github" "🔔" "#"
-                           :face 'doom-modeline-warning
+                           :face 'doom-modeline-notification
                            :v-adjust -0.0575)
        (doom-modeline-vspc)
        ;; GitHub API is paged, and the limit is 50
@@ -2077,7 +2077,8 @@ Example:
         (if (>= doom-modeline--github-notification-number 50)
             "50+"
           (number-to-string doom-modeline--github-notification-number))
-        'face '(:inherit (doom-modeline-unread-number doom-modeline-warning))))
+        'face '(:inherit
+                (doom-modeline-unread-number doom-modeline-notification))))
       'help-echo "Github Notifications
 mouse-1: Show notifications
 mouse-3: Fetch notifications"
@@ -2254,14 +2255,15 @@ mouse-1: Toggle Debug on Quit"
      (propertize
       (concat
        (doom-modeline-icon 'material "email" "📧" "#"
-                           :face 'doom-modeline-warning
+                           :face 'doom-modeline-notification
                            :height 1.1 :v-adjust -0.2)
        (doom-modeline-vspc)
        (propertize
         (if (> mu4e-alert-mode-line doom-modeline-number-limit)
             (format "%d+" doom-modeline-number-limit)
           (number-to-string mu4e-alert-mode-line))
-        'face '(:inherit (doom-modeline-unread-number doom-modeline-warning))))
+        'face '(:inherit
+                (doom-modeline-unread-number doom-modeline-notification))))
       'mouse-face 'mode-line-highlight
       'keymap '(mode-line keymap
                           (mouse-1 . mu4e-alert-view-unread-mails)
@@ -2352,14 +2354,15 @@ mouse-1: Toggle Debug on Quit"
      (propertize
       (concat
        (doom-modeline-icon 'material "email" "📧" "#"
-                           :face 'doom-modeline-warning
+                           :face 'doom-modeline-notification
                            :height 1.1 :v-adjust -0.2)
        (doom-modeline-vspc)
        (propertize
         (if (> doom-modeline--gnus-unread-mail doom-modeline-number-limit)
             (format "%d+" doom-modeline-number-limit)
           (number-to-string doom-modeline--gnus-unread-mail))
-        'face '(:inherit (doom-modeline-unread-number doom-modeline-warning))))
+        'face '(:inherit
+                (doom-modeline-unread-number doom-modeline-notification))))
       'mouse-face 'mode-line-highlight
       'help-echo (if (= doom-modeline--gnus-unread-mail 1)
                      "You have an unread email"
@@ -2393,7 +2396,7 @@ to be an icon and we don't want to remove that so we just return the original."
    (lambda (b)
      (propertize
       (doom-modeline--shorten-irc (funcall doom-modeline-irc-stylize b))
-      'face '(:inherit (doom-modeline-unread-number doom-modeline-warning))
+      'face '(:inherit (doom-modeline-unread-number doom-modeline-notification))
       'help-echo (format "IRC Notification: %s\nmouse-1: Switch to buffer" b)
       'mouse-face 'mode-line-highlight
       'local-map (make-mode-line-mouse-map 'mouse-1
@@ -2457,13 +2460,14 @@ to be an icon and we don't want to remove that so we just return the original."
 
          (propertize (concat
                       (doom-modeline-icon 'material "message" "🗊" "#"
-                                          :face 'doom-modeline-warning
+                                          :face 'doom-modeline-notification
                                           :height 1.0 :v-adjust -0.225)
                       (doom-modeline-vspc)
                       ;; Display the number of unread buffers
                       (propertize (number-to-string number)
-                                  'face '(:inherit (doom-modeline-unread-number
-                                                    doom-modeline-warning))))
+                                  'face '(:inherit
+                                          (doom-modeline-unread-number
+                                           doom-modeline-notification))))
                      'help-echo (format "IRC Notifications: %s\n%s"
                                         (mapconcat
                                          (lambda (b) (funcall doom-modeline-irc-stylize b))

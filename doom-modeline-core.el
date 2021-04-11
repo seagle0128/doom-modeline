@@ -617,6 +617,12 @@ It requires `circe' or `erc' package."
   "Face for errors in the mode-line. Used by vcs, checker, etc."
   :group 'doom-modeline-faces)
 
+(defface doom-modeline-notification
+  '((t (:inherit doom-modeline-warning)))
+  "Face for notifications in the mode-line. Used by GitHub, mu4e,
+etc. (also see the face `doom-modeline-unread-number')."
+  :group 'doom-modeline-faces)
+
 (defface doom-modeline-unread-number
   '((t (:slant italic :weight normal)))
   "Face for unread number in the mode-line. Used by GitHub, mu4e, etc."
