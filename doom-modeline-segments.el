@@ -1359,9 +1359,9 @@ of active `multiple-cursors'."
                      (doom-modeline--font-height))))
     (when (and (numberp width) (numberp height))
       (setq doom-modeline--bar-active
-            (doom-modeline--make-xpm 'doom-modeline-bar width height)
+            (doom-modeline--make-image 'doom-modeline-bar width height)
             doom-modeline--bar-inactive
-            (doom-modeline--make-xpm 'doom-modeline-bar-inactive width height)))))
+            (doom-modeline--make-image 'doom-modeline-bar-inactive width height)))))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-height
