@@ -272,7 +272,21 @@ It respects `doom-modeline-enable-word-count'."
 
 (defcustom doom-modeline-buffer-encoding t
   "Whether display the buffer encoding."
-  :type 'boolean
+  :type '(choice (const :tag "Always" t)
+                 (const :tag "When non-default" nondefault)
+                 (const :tag "Never" nil))
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-default-coding-system 'utf-8
+  "Default coding system for `doom-modeline-buffer-encoding' `nondefault'."
+  :type 'coding-system
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-default-eol-type 0
+  "Default EOL type for `doom-modeline-buffer-encoding' `nondefault'."
+  :type '(choice (const :tag "Unix-style LF" 0)
+                 (const :tag "DOS-style CRLF" 1)
+                 (const :tag "Mac-style CR" 2))
   :group 'doom-modeline)
 
 (defcustom doom-modeline-indent-info nil
