@@ -197,7 +197,11 @@ PARSER should be a function for parsing COMMAND's output line-by-line, to
   :hooks   'python-mode-hook
   :command (lambda () (cond ((and (fboundp 'pipenv-project-p)
                              (pipenv-project-p))
-                        (list "pipenv" "run"))
+                        (list "pipenv" "run"
+                              (or doom-modeline-env-python-executable
+                                  python-shell-interpreter
+                                  "python")
+                              "--version"))
                        ((executable-find "pyenv") (list "pyenv" "version-name"))
                        ((list (or doom-modeline-env-python-executable
                                   python-shell-interpreter
