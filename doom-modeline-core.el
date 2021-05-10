@@ -1101,13 +1101,13 @@ ARGS is same as `all-the-icons-octicon' and others."
                   "\n")
           'pbm t :foreground color :ascent 'center))))))
 
-;; Check whether `window-width' is smaller than the limit
+;; Check whether `window-total-width' is smaller than the limit
 (defvar-local doom-modeline--limited-width-p nil)
 (defun doom-modeline-window-size-change-function (&rest _)
   "Function for `window-size-change-functions'."
   (setq doom-modeline--limited-width-p
         (and (numberp doom-modeline-window-width-limit)
-             (<= (+ (window-width)
+             (<= (+ (window-total-width)
                     (or scroll-bar-width 0)
                     (or left-fringe-width 0)
                     (or right-fringe-width 0)
