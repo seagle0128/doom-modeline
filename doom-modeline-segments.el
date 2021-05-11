@@ -1452,7 +1452,7 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
 
 (doom-modeline-def-segment workspace-name
   "The current workspace name or number.
-Requires `eyebrowse-mode' or `tab-bar-mode' to be enabled."
+Requires `eyebrowse-mode' to be enabled or `tab-bar-mode' tabs to be created."
   (when doom-modeline-workspace-name
     (when-let
         ((name (cond
@@ -1463,7 +1463,8 @@ Requires `eyebrowse-mode' or `tab-bar-mode' to be enabled."
                      ((num (eyebrowse--get 'current-slot))
                       (tag (nth 2 (assoc num (eyebrowse--get 'window-configs)))))
                    (if (< 0 (length tag)) tag (int-to-string num))))
-                ((bound-and-true-p tab-bar-mode)
+                ((and (fboundp 'tab-bar-mode)
+                      (< 1 (length (frame-parameter nil 'tabs))))
                  (let* ((current-tab (tab-bar--current-tab))
                         (tab-index (tab-bar--current-tab-index))
                         (explicit-name (alist-get 'explicit-name current-tab))
