@@ -84,7 +84,7 @@
 (require 'doom-modeline-core)
 (require 'doom-modeline-segments)
 
-
+
 ;;
 ;; Mode lines
 ;;
@@ -145,7 +145,7 @@
   '(bar window-number matches git-timemachine buffer-position word-count parrot selection-info)
   '(misc-info minor-modes indent-info buffer-encoding major-mode))
 
-
+
 ;;
 ;; Interfaces
 ;;
@@ -227,7 +227,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   "Set timemachine mode-line."
   (doom-modeline-set-modeline 'timemachine))
 
-
+
 ;;
 ;; Minor mode
 ;;

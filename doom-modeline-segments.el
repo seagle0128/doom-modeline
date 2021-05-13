@@ -36,7 +36,7 @@
 (require 'doom-modeline-core)
 (require 'doom-modeline-env)
 
-
+
 ;;
 ;; Externals
 ;;
@@ -231,6 +231,7 @@
 (declare-function winum--install-mode-line 'winum)
 (declare-function winum-get-number-string 'winum)
 
+
 
 ;;
 ;; Buffer information

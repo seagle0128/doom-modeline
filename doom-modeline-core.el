@@ -34,7 +34,7 @@
 (require 'all-the-icons)
 (require 'shrink-path)
 
-
+
 ;;
 ;; Compatibilities
 ;;
@@ -127,7 +127,7 @@ It returns a file name which can be used directly as argument of
 (when (display-graphic-p)
   (doom-modeline--set-char-widths doom-modeline-rhs-icons-alist))
 
-
+
 ;;
 ;; Customization
 ;;
@@ -525,7 +525,7 @@ It requires `circe' or `erc' package."
   :type 'function
   :group 'doom-modeline)
 
-
+
 ;;
 ;; Faces
 ;;
@@ -770,7 +770,7 @@ etc. (also see the face `doom-modeline-unread-number')."
   "Face for timemachine status."
   :group 'doom-modeline-faces)
 
-
+
 ;;
 ;; Externals
 ;;
@@ -780,7 +780,7 @@ etc. (also see the face `doom-modeline-unread-number')."
 (declare-function project-roots 'project)
 (declare-function projectile-project-root 'projectile)
 
-
+
 ;;
 ;; Core helpers
 ;;
@@ -887,7 +887,7 @@ then this function does nothing."
       (add-hook 'focus-in-hook #'doom-modeline-focus)
       (add-hook 'focus-out-hook #'doom-modeline-unfocus))))
 
-
+
 ;;
 ;; Core
 ;;
