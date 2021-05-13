@@ -30,12 +30,12 @@
 (require 'subr-x)
 (require 'doom-modeline-core)
 
+
 ;; Externals
 (defvar python-shell-interpreter)
 
-;;
+
 ;; Customizations
-;;
 
 (defgroup doom-modeline-env nil
   "The environment parser for doom-modeline."
@@ -58,6 +58,7 @@
   :group 'doom-modeline-env)
 
 
+;; Variables
 
 ;; Show version string for multi-version managers like rvm, rbenv, pyenv, etc.
 (defvar-local doom-modeline-env--version nil
@@ -75,6 +76,9 @@ Example: '(\"--version\") ")
 (defvar-local doom-modeline-env--parser nil
   "A function that returns version number from a command --version (or similar).
 Example: 'doom-modeline-env--ruby")
+
+
+;; Functions & Macros
 
 (defun doom-modeline-update-env ()
   "Update environment info on mode-line."
@@ -192,11 +196,8 @@ PARSER should be a function for parsing COMMAND's output line-by-line, to
            (add-hook hook #',setup-fn)))))))
 
 
-
-;;
 ;; Bootstrap
 ;; Versions, support Python, Ruby, Perl and Golang, etc.
-;;
 
 ;;;###autoload (autoload 'doom-modeline-env-setup-python "doom-modeline-env")
 (doom-modeline-def-env python
