@@ -1364,14 +1364,17 @@ of active `multiple-cursors'."
 
 (defun doom-modeline-refresh-bars (&optional width height)
   "Refresh mode-line bars with `WIDTH' and `HEIGHT'."
-  (let ((width (or width doom-modeline-bar-width))
-        (height (max (or height doom-modeline-height)
-                     (doom-modeline--font-height))))
-    (when (and (numberp width) (numberp height))
-      (setq doom-modeline--bar-active
-            (doom-modeline--make-image 'doom-modeline-bar width height)
-            doom-modeline--bar-inactive
-            (doom-modeline--make-image 'doom-modeline-bar-inactive width height)))))
+  (if doom-modeline-hud
+      (setq doom-modeline--bar-active nil
+            doom-modeline--bar-inactive nil)
+    (let ((width (or width doom-modeline-bar-width))
+          (height (max (or height doom-modeline-height)
+                       (doom-modeline--font-height))))
+      (when (and (numberp width) (numberp height))
+        (setq doom-modeline--bar-active
+              (doom-modeline--make-image 'doom-modeline-bar width height)
+              doom-modeline--bar-inactive
+              (doom-modeline--make-image 'doom-modeline-bar-inactive width height))))))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-height
@@ -1393,38 +1396,39 @@ of active `multiple-cursors'."
 
 (doom-modeline-def-segment hud
   "Powerline's hud segment reimplemented in the style of Doom's bar segment."
-  (let* ((ws (window-start))
-         (we (window-end))
-         (bs (buffer-size))
-         (height (max doom-modeline-height
-                      (doom-modeline--font-height)))
-         (top-margin (if (zerop bs)
-                         0
-                       (/ (* height (1- ws)) bs)))
-         (bottom-margin (if (zerop bs)
-                            0
-                          (max 0 (/ (* height (- bs we 1)) bs))))
-         (cache (or (window-parameter nil 'doom-modeline--hud-cache)
-                    (set-window-parameter nil 'doom-modeline--hud-cache
-                                          (make-doom-modeline--hud-cache)))))
-    (unless (and (doom-modeline--hud-cache-active cache)
-                 (doom-modeline--hud-cache-inactive cache)
-                 (= top-margin (doom-modeline--hud-cache-top-margin cache))
-                 (= bottom-margin
-                    (doom-modeline--hud-cache-bottom-margin cache)))
-      (setf (doom-modeline--hud-cache-active cache)
-            (doom-modeline--create-hud-image
-             'doom-modeline-bar 'default doom-modeline-bar-width
-             height top-margin bottom-margin)
-            (doom-modeline--hud-cache-inactive cache)
-            (doom-modeline--create-hud-image
-             'doom-modeline-bar-inactive 'default doom-modeline-bar-width
-             height top-margin bottom-margin)
-            (doom-modeline--hud-cache-top-margin cache) top-margin
-            (doom-modeline--hud-cache-bottom-margin cache) bottom-margin))
-    (if (doom-modeline--active)
-        (doom-modeline--hud-cache-active cache)
-      (doom-modeline--hud-cache-inactive cache))))
+  (when doom-modeline-hud
+    (let* ((ws (window-start))
+           (we (window-end))
+           (bs (buffer-size))
+           (height (max doom-modeline-height
+                        (doom-modeline--font-height)))
+           (top-margin (if (zerop bs)
+                           0
+                         (/ (* height (1- ws)) bs)))
+           (bottom-margin (if (zerop bs)
+                              0
+                            (max 0 (/ (* height (- bs we 1)) bs))))
+           (cache (or (window-parameter nil 'doom-modeline--hud-cache)
+                      (set-window-parameter nil 'doom-modeline--hud-cache
+                                            (make-doom-modeline--hud-cache)))))
+      (unless (and (doom-modeline--hud-cache-active cache)
+                   (doom-modeline--hud-cache-inactive cache)
+                   (= top-margin (doom-modeline--hud-cache-top-margin cache))
+                   (= bottom-margin
+                      (doom-modeline--hud-cache-bottom-margin cache)))
+        (setf (doom-modeline--hud-cache-active cache)
+              (doom-modeline--create-hud-image
+               'doom-modeline-bar 'default doom-modeline-bar-width
+               height top-margin bottom-margin)
+              (doom-modeline--hud-cache-inactive cache)
+              (doom-modeline--create-hud-image
+               'doom-modeline-bar-inactive 'default doom-modeline-bar-width
+               height top-margin bottom-margin)
+              (doom-modeline--hud-cache-top-margin cache) top-margin
+              (doom-modeline--hud-cache-bottom-margin cache) bottom-margin))
+      (if (doom-modeline--active)
+          (doom-modeline--hud-cache-active cache)
+        (doom-modeline--hud-cache-inactive cache)))))
 
 (defun doom-modeline-invalidate-huds ()
   "Invalidate all cached hud images."
