@@ -1358,15 +1358,14 @@ of active `multiple-cursors'."
 (defvar doom-modeline--bar-inactive nil)
 (doom-modeline-def-segment bar
   "The bar regulates the height of the mode-line in GUI."
-  (if (doom-modeline--active)
-      doom-modeline--bar-active
-    doom-modeline--bar-inactive))
+  (unless doom-modeline-hud
+    (if (doom-modeline--active)
+        doom-modeline--bar-active
+      doom-modeline--bar-inactive)))
 
 (defun doom-modeline-refresh-bars (&optional width height)
   "Refresh mode-line bars with `WIDTH' and `HEIGHT'."
-  (if doom-modeline-hud
-      (setq doom-modeline--bar-active nil
-            doom-modeline--bar-inactive nil)
+  (unless doom-modeline-hud
     (let ((width (or width doom-modeline-bar-width))
           (height (max (or height doom-modeline-height)
                        (doom-modeline--font-height))))
