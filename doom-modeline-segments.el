@@ -1358,7 +1358,7 @@ of active `multiple-cursors'."
 (defvar doom-modeline--bar-inactive nil)
 (doom-modeline-def-segment bar
   "The bar regulates the height of the mode-line in GUI."
-  (unless doom-modeline-hud
+  (when doom-modeline-bar
     (unless (and doom-modeline--bar-active doom-modeline--bar-inactive)
       (let ((width doom-modeline-bar-width)
             (height (max doom-modeline-height
@@ -1450,28 +1450,6 @@ of active `multiple-cursors'."
      (doom-modeline-invalidate-huds))))
 
 (add-hook 'after-setting-font-hook #'doom-modeline-invalidate-huds)
-
-(defun doom-modeline--create-hud-image
-    (face1 face2 width height top-margin bottom-margin)
-  "Create the hud image.
-Use FACE1 for the bar, FACE2 for the background.
-WIDTH and HEIGHT are the image size in pixels.
-TOP-MARGIN and BOTTOM-MARGIN are the size of the margin above and below the bar,
-respectively."
-  (when (and (display-graphic-p)
-             (image-type-available-p 'pbm))
-    (propertize
-     " " 'display
-     (let ((color1 (or (face-background face1 nil t) "None"))
-           (color2 (or (face-background face2 nil t) "None")))
-       (create-image
-          (concat
-           (format "P1\n%i %i\n" width height)
-           (make-string (* top-margin width) ?0)
-           (make-string (* (- height top-margin bottom-margin) width) ?1)
-           (make-string (* bottom-margin width) ?0)
-           "\n")
-          'pbm t :foreground color1 :background color2 :ascent 'center)))))
 
 
 ;;
