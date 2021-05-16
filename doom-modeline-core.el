@@ -1092,8 +1092,10 @@ ARGS is same as `all-the-icons-octicon' and others."
      ;; ASCII text
      (and text (propertize text 'face face)))))
 
-(defun doom-modeline--make-image (face width height)
-  "Create a PBM bitmap via FACE, WIDTH and HEIGHT."
+(defun doom-modeline--create-bar-image (face width height)
+  "Create the bar image.
+Use FACE1 for the bar, FACE2 for the background.
+WIDTH and HEIGHT are the image size in pixels."
   (when (and (display-graphic-p)
              (image-type-available-p 'pbm))
     (propertize
@@ -1105,6 +1107,28 @@ ARGS is same as `all-the-icons-octicon' and others."
                   (make-string (* width height) ?1)
                   "\n")
           'pbm t :foreground color :ascent 'center))))))
+
+(defun doom-modeline--create-hud-image
+    (face1 face2 width height top-margin bottom-margin)
+  "Create the hud image.
+Use FACE1 for the bar, FACE2 for the background.
+WIDTH and HEIGHT are the image size in pixels.
+TOP-MARGIN and BOTTOM-MARGIN are the size of the margin above and below the bar,
+respectively."
+  (when (and (display-graphic-p)
+             (image-type-available-p 'pbm))
+    (propertize
+     " " 'display
+     (let ((color1 (or (face-background face1 nil t) "None"))
+           (color2 (or (face-background face2 nil t) "None")))
+       (create-image
+        (concat
+         (format "P1\n%i %i\n" width height)
+         (make-string (* top-margin width) ?0)
+         (make-string (* (- height top-margin bottom-margin) width) ?1)
+         (make-string (* bottom-margin width) ?0)
+         "\n")
+        'pbm t :foreground color1 :background color2 :ascent 'center)))))
 
 ;; Check whether `window-total-width' is smaller than the limit
 (defvar-local doom-modeline--limited-width-p nil)

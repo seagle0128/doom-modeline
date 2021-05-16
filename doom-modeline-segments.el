@@ -1371,9 +1371,9 @@ of active `multiple-cursors'."
                        (doom-modeline--font-height))))
       (when (and (numberp width) (numberp height))
         (setq doom-modeline--bar-active
-              (doom-modeline--make-image 'doom-modeline-bar width height)
+              (doom-modeline--create-bar-image 'doom-modeline-bar width height)
               doom-modeline--bar-inactive
-              (doom-modeline--make-image 'doom-modeline-bar-inactive width height))))))
+              (doom-modeline--create-bar-image 'doom-modeline-bar-inactive width height))))))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-height
@@ -1449,28 +1449,6 @@ of active `multiple-cursors'."
 
 (add-hook 'after-setting-font-hook #'doom-modeline-invalidate-huds)
 (add-hook 'window-configuration-change-hook #'doom-modeline-invalidate-huds)
-
-(defun doom-modeline--create-hud-image
-    (face1 face2 width height top-margin bottom-margin)
-  "Create the hud image.
-Use FACE1 for the bar, FACE2 for the background.
-WIDTH and HEIGHT are the image size in pixels.
-TOP-MARGIN and BOTTOM-MARGIN are the size of the margin above and below the bar,
-respectively."
-  (when (and (display-graphic-p)
-             (image-type-available-p 'pbm))
-    (propertize
-     " " 'display
-     (let ((color1 (or (face-background face1 nil t) "None"))
-           (color2 (or (face-background face2 nil t) "None")))
-       (create-image
-          (concat
-           (format "P1\n%i %i\n" width height)
-           (make-string (* top-margin width) ?0)
-           (make-string (* (- height top-margin bottom-margin) width) ?1)
-           (make-string (* bottom-margin width) ?0)
-           "\n")
-          'pbm t :foreground color1 :background color2 :ascent 'center)))))
 
 
 ;;
