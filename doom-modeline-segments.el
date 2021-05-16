@@ -1359,36 +1359,38 @@ of active `multiple-cursors'."
 (doom-modeline-def-segment bar
   "The bar regulates the height of the mode-line in GUI."
   (unless doom-modeline-hud
+    (unless (and doom-modeline--bar-active doom-modeline--bar-inactive)
+      (let ((width doom-modeline-bar-width)
+            (height (max doom-modeline-height
+                         (doom-modeline--font-height))))
+        (when (and (numberp width) (numberp height))
+          (setq doom-modeline--bar-active
+                (doom-modeline--make-image 'doom-modeline-bar width height)
+                doom-modeline--bar-inactive
+                (doom-modeline--make-image
+                 'doom-modeline-bar-inactive width height)))))
     (if (doom-modeline--active)
         doom-modeline--bar-active
       doom-modeline--bar-inactive)))
 
-(defun doom-modeline-refresh-bars (&optional width height)
-  "Refresh mode-line bars with `WIDTH' and `HEIGHT'."
-  (unless doom-modeline-hud
-    (let ((width (or width doom-modeline-bar-width))
-          (height (max (or height doom-modeline-height)
-                       (doom-modeline--font-height))))
-      (when (and (numberp width) (numberp height))
-        (setq doom-modeline--bar-active
-              (doom-modeline--make-image 'doom-modeline-bar width height)
-              doom-modeline--bar-inactive
-              (doom-modeline--make-image 'doom-modeline-bar-inactive width height))))))
+(defun doom-modeline-refresh-bars ()
+  "Refresh mode-line bars on next redraw."
+  (setq doom-modeline--bar-active nil
+        doom-modeline--bar-inactive nil))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-height
  (lambda (_sym val op _where)
    (when (and (eq op 'set) (integerp val))
-     (doom-modeline-refresh-bars doom-modeline-bar-width val))))
+     (doom-modeline-refresh-bars))))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-bar-width
  (lambda (_sym val op _where)
    (when (and (eq op 'set) (integerp val))
-     (doom-modeline-refresh-bars val doom-modeline-height))))
+     (doom-modeline-refresh-bars))))
 
 (add-hook 'after-setting-font-hook #'doom-modeline-refresh-bars)
-(add-hook 'window-configuration-change-hook #'doom-modeline-refresh-bars)
 
 
 (cl-defstruct doom-modeline--hud-cache active inactive top-margin bottom-margin)
@@ -1448,7 +1450,6 @@ of active `multiple-cursors'."
      (doom-modeline-invalidate-huds))))
 
 (add-hook 'after-setting-font-hook #'doom-modeline-invalidate-huds)
-(add-hook 'window-configuration-change-hook #'doom-modeline-invalidate-huds)
 
 (defun doom-modeline--create-hud-image
     (face1 face2 width height top-margin bottom-margin)
