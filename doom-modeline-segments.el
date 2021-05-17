@@ -1365,9 +1365,9 @@ of active `multiple-cursors'."
                          (doom-modeline--font-height))))
         (when (and (numberp width) (numberp height))
           (setq doom-modeline--bar-active
-                (doom-modeline--make-image 'doom-modeline-bar width height)
+                (doom-modeline--create-bar-image 'doom-modeline-bar width height)
                 doom-modeline--bar-inactive
-                (doom-modeline--make-image
+                (doom-modeline--create-bar-image
                  'doom-modeline-bar-inactive width height)))))
     (if (doom-modeline--active)
         doom-modeline--bar-active
