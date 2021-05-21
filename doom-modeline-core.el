@@ -164,6 +164,14 @@ It's only respected in GUI."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-hud-min-height 2
+  "Minimum height in pixels of the \"thumb\" of the hud.
+Only respected in GUI."
+  :type 'integer
+  :set (lambda (sym val)
+         (set sym (if (> val 1) val 1)))
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-window-width-limit fill-column
   "The limit of the window width.
 
@@ -1124,6 +1132,11 @@ TOP-MARGIN and BOTTOM-MARGIN are the size of the margin above and below the bar,
 respectively."
   (when (and (display-graphic-p)
              (image-type-available-p 'pbm))
+    (let ((min-height (min height doom-modeline-hud-min-height)))
+      (unless (> (- height top-margin bottom-margin) min-height)
+        (let ((margin (- height min-height)))
+          (setq top-margin (/ (* margin top-margin) (+ top-margin bottom-margin))
+                bottom-margin (- margin top-margin)))))
     (propertize
      " " 'display
      (let ((color1 (or (face-background face1 nil t) "None"))
