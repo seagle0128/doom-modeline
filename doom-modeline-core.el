@@ -549,7 +549,6 @@ It requires `circe' or `erc' package."
   "If non-nil, displays the modeline in the header."
   :type 'boolean
   :group 'doom-modeline)
-
 
 ;;
 ;; Faces
