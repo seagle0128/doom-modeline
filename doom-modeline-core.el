@@ -152,15 +152,8 @@ If the actual char height is larger, it respects the actual char height."
          (set sym (if (> val 0) val 1)))
   :group 'doom-modeline)
 
-(defcustom doom-modeline-bar t
-  "Whether to display the bar to indicate active and inactive windows.
-It's only respected in GUI."
-  :type 'boolean
-  :group 'doom-modeline)
-
 (defcustom doom-modeline-hud nil
-  "Whether to use hud bar to indicate the buffer position.
-It's only respected in GUI."
+  "Whether to use hud instead of default bar. It's only respected in GUI."
   :type 'boolean
   :group 'doom-modeline)
 
