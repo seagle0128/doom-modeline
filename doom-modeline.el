@@ -262,6 +262,14 @@ So it can be restored when `doom-modeline-mode' is disabled.")
               (with-current-buffer bname
                 (doom-modeline-set-main-modeline))))
 
+        ;; Many themes do not set the header-line font correctly, this is just
+        ;; extra precaution
+        (when doom-modeline-header-line
+            (custom-set-faces
+             '(header-line ((t (:foreground nil :background nil :inherit mode-line))))
+             '(header-line-inactive ((t (:foreground nil :background nil :inherit mode-line-inactive))))
+             '(header-line-emphasis ((t (:foreground nil :bacground nil :inherit mode-line-emphasis))))))
+
         ;; For two-column editing
         (setq 2C-mode-line-format (doom-modeline 'special))
 
@@ -286,12 +294,17 @@ So it can be restored when `doom-modeline-mode' is disabled.")
         (advice-add #'helm-display-mode-line :after #'doom-modeline-set-helm-modeline))
     (progn
       ;; Restore mode-line
-      (setq mode-line-format doom-modeline--default-format)
-      (setq-default mode-line-format doom-modeline--default-format)
+      (if doom-modeline-header-line
+          (progn (setq header-line-format doom-modeline--default-format)
+                 (setq-default header-line-format doom-modeline--default-format))
+                (progn (setq mode-line-format doom-modeline--default-format)
+                       (setq-default mode-line-format doom-modeline--default-format)))
       (dolist (bname '("*scratch*" "*Messages*"))
         (if (buffer-live-p (get-buffer bname))
             (with-current-buffer bname
-              (setq mode-line-format doom-modeline--default-format))))
+              (if doom-modeline-header-line
+                  (setq header-line-format doom-modeline--default-format)
+                  (setq mode-line-format doom-modeline--default-format)))))
 
       ;; For two-column editing
       (setq 2C-mode-line-format
