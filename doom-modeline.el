@@ -270,19 +270,6 @@ So it can be restored when `doom-modeline-mode' is disabled.")
              '(header-line-inactive ((t (:foreground nil :background nil :inherit mode-line-inactive))))
              '(header-line-emphasis ((t (:foreground nil :bacground nil :inherit mode-line-emphasis))))))
 
-          ;(custom-set-faces   'header-line nil
-          ;                    :background (face-background 'mode-line)
-          ;                    :foreground (face-foreground 'mode-line)
-          ;                    :box (face-attribute 'mode-line :box)
-          ;(set-face-attribute 'header-line-inactive nil
-          ;                    :background (face-background 'mode-line-inactive)
-          ;                    :foreground (face-foreground 'mode-line-inactive)
-          ;                    :box (face-attribute 'mode-line :box))
-          ;(set-face-attribute 'header-line-emphasis nil
-          ;                    :foreground (face-foreground 'mode-line-emphasis)))))
-
-
-
         ;; For two-column editing
         (setq 2C-mode-line-format (doom-modeline 'special))
 
