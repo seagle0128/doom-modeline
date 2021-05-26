@@ -545,6 +545,11 @@ It requires `circe' or `erc' package."
   :type 'function
   :group 'doom-modeline)
 
+(defcustom doom-modeline-header-line nil
+  "If non-nil, displays the modeline in the header."
+  :type 'boolean
+  :group 'doom-modeline)
+
 
 ;;
 ;; Faces
@@ -1017,8 +1022,11 @@ Throws an error if it doesn't exist."
 If DEFAULT is non-nil, set the default mode-line for all buffers."
   (when-let ((modeline (doom-modeline key)))
     (setf (if default
-              (default-value 'mode-line-format)
-            (buffer-local-value 'mode-line-format (current-buffer)))
+              (if doom-modeline-header-line (default-value 'header-line-format)
+                (default-value 'mode-line-format))
+            (if doom-modeline-header-line
+                (buffer-local-value 'header-line-format (current-buffer))
+                (buffer-local-value 'mode-line-format (current-buffer))))
           (list "%e" modeline))))
 
 
