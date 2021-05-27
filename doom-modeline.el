@@ -232,11 +232,6 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; Minor mode
 ;;
 
-(defvar doom-modeline--default-format mode-line-format
-  "Storage for the default `mode-line-format'.
-
-So it can be restored when `doom-modeline-mode' is disabled.")
-
 (defvar doom-modeline-mode-map (make-sparse-keymap))
 
 ;; Suppress warnings
@@ -284,15 +279,14 @@ So it can be restored when `doom-modeline-mode' is disabled.")
         (advice-add #'helm-display-mode-line :after #'doom-modeline-set-helm-modeline))
     (progn
       ;; Restore mode-line
-      (setq-default mode-line-format doom-modeline--default-format)
-      (dolist (buf (buffer-list))
-        (with-current-buffer buf
-          (setq mode-line-format doom-modeline--default-format)))
+      (let ((original-format (doom-modeline--original-value 'mode-line-format)))
+        (setq-default mode-line-format original-format)
+        (dolist (buf (buffer-list))
+          (with-current-buffer buf
+            (setq mode-line-format original-format))))
 
       ;; For two-column editing
-      (setq 2C-mode-line-format
-            '("-%*- %15b --"  (-3 . "%p")  "--%[("  mode-name
-	          minor-mode-alist  "%n"  mode-line-process  ")%]%-"))
+      (setq 2C-mode-line-format (doom-modeline--original-value '2C-mode-line-format))
 
       ;; Remove hooks
       (remove-hook 'Info-mode-hook #'doom-modeline-set-info-modeline)

@@ -1045,6 +1045,17 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
               ((floatp height) (* height (frame-char-height)))
               (t (frame-char-height)))))))
 
+(defun doom-modeline--original-value (sym)
+  "Return the original value for SYM, if any.
+
+If SYM has an original value, return it in a list. Return nil
+otherwise."
+  (let* ((orig-val-expr (get sym 'standard-value)))
+    (when (consp orig-val-expr)
+      (ignore-errors
+        (list
+         (eval (car orig-val-expr)))))))
+
 (defun doom-modeline-add-variable-watcher (symbol watch-function)
   "Cause WATCH-FUNCTION to be called when SYMBOL is set if possible.
 
