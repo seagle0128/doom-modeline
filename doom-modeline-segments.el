@@ -81,8 +81,11 @@
 (defvar grip--process)
 (defvar helm--mode-line-display-prefarg)
 (defvar iedit-occurrences-overlays)
+(defvar meow--indicator)
 (defvar minions-direct)
 (defvar minions-mode-line-minor-modes-map)
+(defvar mlscroll-minimum-current-width)
+(defvar mlscroll-right-align)
 (defvar mu4e-alert-mode-line)
 (defvar mu4e-alert-modeline-formatter)
 (defvar nyan-minimum-window-width)
@@ -101,7 +104,6 @@
 (defvar tracking-buffers)
 (defvar winum-auto-setup-mode-line)
 (defvar xah-fly-insert-state-q)
-(defvar meow--indicator)
 
 (declare-function anzu--reset-status 'anzu)
 (declare-function anzu--where-is-here 'anzu)
@@ -193,6 +195,7 @@
 (declare-function lsp-workspaces 'lsp-mode)
 (declare-function lv-message 'lv)
 (declare-function mc/num-cursors 'multiple-cursors-core)
+(declare-function mlscroll-mode-line 'mlscroll)
 (declare-function mu4e-alert-default-mode-line-formatter 'mu4e-alert)
 (declare-function mu4e-alert-enable-mode-line-display 'mu4e-alert)
 (declare-function nyan-create 'nyan-mode)
@@ -1659,6 +1662,7 @@ mouse-1: Display Line and Column Mode Menu"
 
      (cond ((and active
                  (bound-and-true-p nyan-mode)
+                 (not doom-modeline--limited-width-p)
                  (>= (window-width) nyan-minimum-window-width))
             (concat
              (doom-modeline-spc)
@@ -1666,11 +1670,21 @@ mouse-1: Display Line and Column Mode Menu"
              (propertize (nyan-create) 'mouse-face mouse-face)))
            ((and active
                  (bound-and-true-p poke-line-mode)
+                 (not doom-modeline--limited-width-p)
                  (>= (window-width) poke-line-minimum-window-width))
             (concat
              (doom-modeline-spc)
              (doom-modeline-spc)
              (propertize (poke-line-create) 'mouse-face mouse-face)))
+           ((and active
+                 (bound-and-true-p mlscroll-mode)
+                 (not doom-modeline--limited-width-p)
+                 (>= (window-width) mlscroll-minimum-current-width))
+            (concat
+             (doom-modeline-spc)
+             (doom-modeline-spc)
+             (let ((mlscroll-right-align nil))
+               (format-mode-line (mlscroll-mode-line)))))
            (t
             (when doom-modeline-percent-position
               (concat
