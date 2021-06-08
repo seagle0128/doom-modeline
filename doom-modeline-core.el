@@ -1171,27 +1171,24 @@ respectively."
 (add-hook 'window-size-change-functions #'doom-modeline-window-size-change-function)
 (add-hook 'buffer-list-update-hook #'doom-modeline-window-size-change-function)
 
-(defvar-local doom-modeline--project-detected-p nil)
 (defvar-local doom-modeline--project-root nil)
 (defun doom-modeline--project-root ()
   "Get the path to the root of your project.
 Return nil if no project was found."
-  (unless doom-modeline--project-detected-p
-    (setq doom-modeline--project-root
-          (pcase doom-modeline-project-detection
-            ('ffip
-             (when (fboundp 'ffip-get-project-root-directory)
-               (let ((inhibit-message t))
-                 (ffip-get-project-root-directory))))
-            ('projectile
-             (when (fboundp 'projectile-project-root)
-               (projectile-project-root)))
-            ('project
-             (when (fboundp 'project-current)
-               (when-let ((project (project-current)))
-                 (car (project-roots project))))))
-          doom-modeline--project-detected-p t))
-  doom-modeline--project-root)
+  (or doom-modeline--project-root
+      (setq doom-modeline--project-root
+            (pcase doom-modeline-project-detection
+              ('ffip
+               (when (fboundp 'ffip-get-project-root-directory)
+                 (let ((inhibit-message t))
+                   (ffip-get-project-root-directory))))
+              ('projectile
+               (when (fboundp 'projectile-project-root)
+                 (projectile-project-root)))
+              ('project
+               (when (fboundp 'project-current)
+                 (when-let ((project (project-current)))
+                   (car (project-roots project)))))))))
 
 (defun doom-modeline-project-p ()
   "Check if the file is in a project."
