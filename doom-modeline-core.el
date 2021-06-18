@@ -946,11 +946,13 @@ then this function does nothing."
 (defvar doom-modeline--font-width-cache nil)
 (defun doom-modeline--font-width ()
   "Cache the font width."
-  (let ((attributes (face-all-attributes 'mode-line)))
-    (or (cdr (assoc attributes doom-modeline--font-width-cache))
-        (let ((width (window-font-width nil 'mode-line)))
-          (push (cons attributes width) doom-modeline--font-width-cache)
-          width))))
+  (if (display-graphic-p)
+      (let ((attributes (face-all-attributes 'mode-line)))
+        (or (cdr (assoc attributes doom-modeline--font-width-cache))
+            (let ((width (window-font-width nil 'mode-line)))
+              (push (cons attributes width) doom-modeline--font-width-cache)
+              width)))
+    1))
 
 ;; Refresh the font width after setting frame parameters
 ;; to ensure the font width is correct.
