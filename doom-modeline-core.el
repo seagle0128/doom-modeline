@@ -124,8 +124,16 @@ It returns a file name which can be used directly as argument of
           ?\xf243                      ; battery-quarter
           ?\xf241                      ; battery-three-quarters
           ))))
-(when (display-graphic-p)
-  (doom-modeline--set-char-widths doom-modeline-rhs-icons-alist))
+
+(defun doom-modeline-set-char-widths (&rest _)
+  "Set char widths for the unicode icons."
+  (when (display-graphic-p)
+    (doom-modeline--set-char-widths doom-modeline-rhs-icons-alist)))
+
+(if (and (daemonp)
+         (not (frame-parameter nil 'client)))
+    (add-hook 'after-make-frame-functions #'doom-modeline-set-char-widths)
+  (doom-modeline-set-char-widths))
 
 
 ;;
