@@ -127,13 +127,12 @@ It returns a file name which can be used directly as argument of
 
 (defun doom-modeline-set-char-widths (&rest _)
   "Set char widths for the unicode icons."
-  (when (display-graphic-p)
-    (doom-modeline--set-char-widths doom-modeline-rhs-icons-alist)))
+  (doom-modeline--set-char-widths doom-modeline-rhs-icons-alist))
 
 (if (and (daemonp)
          (not (frame-parameter nil 'client)))
     (add-hook 'after-make-frame-functions #'doom-modeline-set-char-widths)
-  (doom-modeline-set-char-widths))
+  (and (display-graphic-p) (doom-modeline-set-char-widths)))
 
 
 ;;
