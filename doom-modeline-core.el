@@ -1090,7 +1090,7 @@ See https://github.com/seagle0128/doom-modeline/issues/301."
 (defun doom-modeline-icon (icon-set icon-name unicode text &rest args)
   "Display icon of ICON-NAME with ARGS in mode-line.
 
-ICON-SET includes `octicon', `faicon', `material', `alltheicons' and `fileicon'.
+ICON-SET includes `octicon', `faicon', `material', `alltheicons' and `fileicon', etc.
 UNICODE is the unicode char fallback. TEXT is the ASCII char fallback.
 ARGS is same as `all-the-icons-octicon' and others."
   (let ((face (or (plist-get args :face) 'mode-line)))
@@ -1099,17 +1099,8 @@ ARGS is same as `all-the-icons-octicon' and others."
      (when (and doom-modeline-icon
                 icon-name
                 (not (string-empty-p icon-name)))
-       (let ((icon (pcase icon-set
-                     ('octicon
-                      (apply #'all-the-icons-octicon icon-name args))
-                     ('faicon
-                      (apply #'all-the-icons-faicon icon-name args))
-                     ('material
-                      (apply #'all-the-icons-material icon-name args))
-                     ('alltheicon
-                      (apply #'all-the-icons-alltheicon icon-name args))
-                     ('fileicon
-                      (apply #'all-the-icons-fileicon icon-name args)))))
+       (when-let* ((func (all-the-icons--function-name icon-set))
+                   (icon (and (fboundp func) (apply func icon-name args))))
          (doom-modeline-propertize-icon icon face)))
      ;; Unicode fallback
      (and doom-modeline-unicode-fallback
