@@ -36,7 +36,7 @@
 
 
 ;;
-;; Compatibilities
+;; Compatibility
 ;;
 
 (eval-and-compile

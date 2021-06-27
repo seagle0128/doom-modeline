@@ -122,6 +122,7 @@
 (declare-function cider-current-repl 'cider)
 (declare-function cider-jack-in 'cider)
 (declare-function cider-quit 'cider)
+(declare-function citre-mode 'citre)
 (declare-function dap--cur-session 'dap-mode)
 (declare-function dap--debug-session-name 'dap-mode)
 (declare-function dap--debug-session-state 'dap-mode)
@@ -2061,6 +2062,14 @@ mouse-1: Start server"))
                                    map)))))
 (add-hook 'eglot--managed-mode-hook #'doom-modeline-update-eglot)
 
+(defvar-local doom-modeline--tags
+  (propertize
+   (doom-modeline-lsp-icon "LSP" 'doom-modeline-lsp-success)
+   'help-echo "TAGS: Citre mode
+mouse-1: Toggle citre mode"
+   'mouse-face 'mode-line-highlight
+   'local-map (make-mode-line-mouse-map 'mouse-1 #'citre-mode)))
+
 (doom-modeline-def-segment lsp
   "The LSP server state."
   (when (and doom-modeline-lsp
@@ -2069,7 +2078,9 @@ mouse-1: Start server"))
           (icon (cond ((bound-and-true-p lsp-mode)
                        doom-modeline--lsp)
                       ((bound-and-true-p eglot--managed-mode)
-                       doom-modeline--eglot))))
+                       doom-modeline--eglot)
+                      ((bound-and-true-p citre-mode)
+                       doom-modeline--tags))))
       (when icon
         (concat
          (doom-modeline-spc)
