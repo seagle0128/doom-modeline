@@ -98,6 +98,7 @@
 (defvar phi-search-mode-line-format)
 (defvar poke-line-minimum-window-width)
 (defvar rcirc-activity)
+(defvar sml-modeline-len)
 (defvar symbol-overlay-keywords-alist)
 (defvar symbol-overlay-temp-symbol)
 (defvar text-scale-mode-amount)
@@ -216,6 +217,7 @@
 (declare-function rcirc-window-configuration-change 'rcirc)
 (declare-function rime--should-enable-p 'rime)
 (declare-function rime--should-inline-ascii-p 'rime)
+(declare-function sml-modeline-create 'sml-modeline)
 (declare-function symbol-overlay-assoc 'symbol-overlay)
 (declare-function symbol-overlay-get-list 'symbol-overlay)
 (declare-function symbol-overlay-get-symbol 'symbol-overlay)
@@ -1686,6 +1688,14 @@ mouse-1: Display Line and Column Mode Menu"
              (doom-modeline-spc)
              (let ((mlscroll-right-align nil))
                (format-mode-line (mlscroll-mode-line)))))
+           ((and active
+                 (bound-and-true-p sml-modeline-mode)
+                 (not doom-modeline--limited-width-p)
+                 (>= (window-width) sml-modeline-len))
+            (concat
+             (doom-modeline-spc)
+             (doom-modeline-spc)
+             (propertize (sml-modeline-create) 'mouse-face mouse-face)))
            (t
             (when doom-modeline-percent-position
               (concat
