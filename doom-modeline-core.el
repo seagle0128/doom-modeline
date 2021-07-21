@@ -786,7 +786,7 @@ etc. (also see the face `doom-modeline-unread-number')."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-buffer-timemachine
-  '((t (:inherit (doom-modeline-buffer-file italic underline))))
+  '((t (:inherit doom-modeline-buffer-file :slant italic)))
   "Face for timemachine status."
   :group 'doom-modeline-faces)
 
