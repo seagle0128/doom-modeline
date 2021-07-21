@@ -1079,7 +1079,7 @@ The face should be the first attribute, or the font family may be overridden.
 So convert the face \":family XXX :height XXX :inherit XXX\" to
 \":inherit XXX :family XXX :height XXX\".
 See https://github.com/seagle0128/doom-modeline/issues/301."
-  (if doom-modeline-icon
+  (if (and doom-modeline-icon (display-graphic-p))
       (when-let ((props (get-text-property 0 'face icon)))
         (cl-destructuring-bind (&key family height inherit &allow-other-keys) props
           (propertize icon 'face `(:inherit ,(or face inherit props)
@@ -1096,7 +1096,8 @@ ARGS is same as `all-the-icons-octicon' and others."
   (let ((face (or (plist-get args :face) 'mode-line)))
     (or
      ;; Icons
-     (when (and doom-modeline-icon
+     (when (and (display-graphic-p)
+                doom-modeline-icon
                 icon-name
                 (not (string-empty-p icon-name)))
        (when-let* ((func (all-the-icons--function-name icon-set))
@@ -1109,7 +1110,8 @@ ARGS is same as `all-the-icons-octicon' and others."
           (char-displayable-p (string-to-char unicode))
           (propertize unicode 'face face))
      ;; ASCII text
-     (and text (propertize text 'face face)))))
+     (and text (propertize text 'face face))
+     "")))
 
 (defun doom-modeline--create-bar-image (face width height)
   "Create the bar image.

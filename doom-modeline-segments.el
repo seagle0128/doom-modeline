@@ -247,7 +247,9 @@
 (defun doom-modeline-update-buffer-file-icon (&rest _)
   "Update file icon in mode-line."
   (setq doom-modeline--buffer-file-icon
-        (when (and doom-modeline-icon doom-modeline-major-mode-icon)
+        (when (and (display-graphic-p)
+                   doom-modeline-icon
+                   doom-modeline-major-mode-icon)
           (let ((icon (all-the-icons-icon-for-buffer)))
             (propertize (if (or (null icon) (symbolp icon))
                             (doom-modeline-icon 'faicon "file-o" nil nil

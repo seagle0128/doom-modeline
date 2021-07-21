@@ -140,9 +140,10 @@ In `init.el`,
 ``` emacs-lisp
 (require 'doom-modeline)
 (doom-modeline-mode 1)
+```
+or
 
-;; Or use this
-;; Use `window-setup-hook' if the right segment is displayed incorrectly
+``` elisp
 (add-hook 'after-init-hook #'doom-modeline-mode)
 ```
 
@@ -152,9 +153,10 @@ In `init.el`,
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1))
+```
+or
 
-;; Or use this
-;; Use `window-setup-hook' if the right segment is displayed incorrectly
+``` elisp
 (use-package doom-modeline
   :ensure t
   :hook (after-init . doom-modeline-mode))
