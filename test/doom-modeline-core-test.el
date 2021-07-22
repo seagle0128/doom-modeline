@@ -37,11 +37,11 @@
 (ert-deftest doom-modeline-icon/octicon-icon ()
   (let ((doom-modeline-icon t)
         (doom-modeline-unicode-fallback t))
-    (cl-flet ((display-graphic-p (&optional _display) t))
-      (should
-       (string= (substring-no-properties
-                 (doom-modeline-icon 'octicon "octoface" "☻" ":)" 'error))
-                "")))))
+    ;; In TUI, fallback to unicode.
+    (should
+     (string= (substring-no-properties
+               (doom-modeline-icon 'octicon "octoface" "☻" ":)" 'error))
+              "☻"))))
 
 (ert-deftest doom-modeline-icon/octicon-unicode ()
   (let ((doom-modeline-icon nil)
