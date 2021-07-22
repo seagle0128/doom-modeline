@@ -37,26 +37,29 @@
 (ert-deftest doom-modeline-icon/octicon-icon ()
   (let ((doom-modeline-icon t)
         (doom-modeline-unicode-fallback t))
-    (should
-     (string= (substring-no-properties
-               (doom-modeline-icon 'octicon "octoface" "☻" ":)" 'error))
-              ""))))
+    (cl-flet ((display-graphic-p () t))
+      (should
+       (string= (substring-no-properties
+                 (doom-modeline-icon 'octicon "octoface" "☻" ":)" 'error))
+                "")))))
 
 (ert-deftest doom-modeline-icon/octicon-unicode ()
   (let ((doom-modeline-icon nil)
         (doom-modeline-unicode-fallback t))
-    (should
-     (string= (substring-no-properties
-               (doom-modeline-icon 'octicon "octoface" "☻" ":)" 'error))
-              "☻"))))
+    (cl-flet ((display-graphic-p () t))
+      (should
+       (string= (substring-no-properties
+                 (doom-modeline-icon 'octicon "octoface" "☻" ":)" 'error))
+                "☻")))))
 
 (ert-deftest doom-modeline-icon/octicon-text ()
   (let ((doom-modeline-icon nil)
         (doom-modeline-unicode-fallback nil))
-    (should
-     (string= (substring-no-properties
-               (doom-modeline-icon 'octicon "octoface" "☻" ":)" 'error))
-              ":)"))))
+    (cl-flet ((display-graphic-p () t))
+      (should
+       (string= (substring-no-properties
+                 (doom-modeline-icon 'octicon "octoface" "☻" ":)" 'error))
+                ":)")))))
 
 (ert-deftest doom-modeline-project-root/ffip ()
   (let ((default-directory "/home/user/project/")
