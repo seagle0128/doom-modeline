@@ -294,6 +294,8 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
 ;; Whether display the mu4e notifications. It requires `mu4e-alert' package.
 (setq doom-modeline-mu4e nil)
+;; also enable the start of mu4e-alert
+(mu4e-alert-enable-mode-line-display)
 
 ;; Whether display the gnus notifications.
 (setq doom-modeline-gnus t)
