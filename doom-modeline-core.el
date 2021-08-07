@@ -232,7 +232,7 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
                  (const buffer-name))
   :group'doom-modeline)
 
-(defcustom doom-modeline-icon (display-graphic-p)
+(defcustom doom-modeline-icon t
   "Whether display the icons in the mode-line.
 
 While using the server mode in GUI, should set the value explicitly."
