@@ -1190,7 +1190,7 @@ Return nil if no project was found."
               ('project
                (when (fboundp 'project-current)
                  (when-let ((project (project-current)))
-                   (car (project-roots project)))))))))
+                   (expand-file-name (cdr project)))))))))
 
 (defun doom-modeline-project-p ()
   "Check if the file is in a project."
