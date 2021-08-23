@@ -190,13 +190,12 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 (setq doom-modeline-window-width-limit fill-column)
 
 ;; How to detect the project root.
-;; The default priority of detection is `ffip' > `projectile' > `project'.
 ;; nil means to use `default-directory'.
 ;; The project management packages have some issues on detecting project root.
 ;; e.g. `projectile' doesn't handle symlink folders well, while `project' is unable
 ;; to hanle sub-projects.
 ;; You can specify one if you encounter the issue.
-(setq doom-modeline-project-detection 'project)
+(setq doom-modeline-project-detection 'auto)
 
 ;; Determines the style used by `doom-modeline-buffer-file-name'.
 ;;

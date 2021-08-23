@@ -181,21 +181,17 @@ displayed."
                  (const :tag "Disable" nil))
   :group 'doom-modeline)
 
-(defcustom doom-modeline-project-detection
-  (cond ((fboundp 'ffip-get-project-root-directory) 'ffip)
-        ((fboundp 'projectile-project-root) 'projectile)
-        ((fboundp 'project-current) 'project)
-        (t nil))
+(defcustom doom-modeline-project-detection 'auto
   "How to detect the project root.
 
-The default priority is `ffip' > `projectile' > `project'.
 nil means to use `default-directory'.
 
 The project management packages have some issues on detecting project root.
 e.g. `projectile' doesn't handle symlink folders well, while `project' is
 unable to hanle sub-projects.
 Specify another one if you encounter the issue."
-  :type '(choice (const :tag "Find File in Project" ffip)
+  :type '(choice (const :tag "Auto-detect" auto)
+                 (const :tag "Find File in Project" ffip)
                  (const :tag "Projectile" projectile)
                  (const :tag "Built-in Project" project)
                  (const :tag "Disable" nil))
@@ -1179,18 +1175,21 @@ respectively."
 Return nil if no project was found."
   (or doom-modeline--project-root
       (setq doom-modeline--project-root
-            (pcase doom-modeline-project-detection
+            (pcase (if (eq doom-modeline-project-detection 'auto)
+                       (cond
+                        ((fboundp 'ffip-get-project-root-directory)  'ffip)
+                        ((fboundp 'projectile-project-root) 'projectile)
+                        ((fboundp 'project-current)  'project)
+                        (t 'default))
+                     doom-modeline-project-detection)
               ('ffip
-               (when (fboundp 'ffip-get-project-root-directory)
-                 (let ((inhibit-message t))
-                   (ffip-get-project-root-directory))))
+               (let ((inhibit-message t))
+                 (ffip-get-project-root-directory)))
               ('projectile
-               (when (fboundp 'projectile-project-root)
-                 (projectile-project-root)))
+               (projectile-project-root))
               ('project
-               (when (fboundp 'project-current)
-                 (when-let ((project (project-current)))
-                   (expand-file-name (cdr project)))))))))
+               (when-let ((project (project-current)))
+                 (expand-file-name (cdr project))))))))
 
 (defun doom-modeline-project-p ()
   "Check if the file is in a project."
