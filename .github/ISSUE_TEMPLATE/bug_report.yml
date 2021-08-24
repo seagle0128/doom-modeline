@@ -11,14 +11,11 @@ body:
     options:
       - label: I am using the latest version of `doom-mode` related packages.
         required: true
-      - label: "I checked [FAQ](https://github.com/seagle0128/doom-modeline#faq)"
+      - label: "I checked [FAQ](https://github.com/seagle0128/doom-modeline#faq)".
         required: true
       - label: |
           You may also try reproduce the issue using clean environment and minimal configurations with
-          the following command:
-          ```bash
-          emacs -Q
-          ```
+          the command `emacs -Q`.
 - type: textarea
   id: bug-description
   attributes:
@@ -52,7 +49,7 @@ body:
   validations:
     required: true
 - type: dropdown
-  id: which-version
+  id: emacs-version
   attributes:
     label: Emacs Version
     description: Which version of Emacs are you using?
@@ -65,9 +62,9 @@ body:
   validations:
     required: true
 - type: input
-  id: config
+  id: which-config
   attributes:
-    label: Configuration
+    label: Emacs Configurations
     description: Which configuration are you using?
     placeholder: "Spacemacs, Doom Emacs, Centaur Emacs, or URL"
   validations:
@@ -85,7 +82,7 @@ body:
 - type: textarea
   id: anything-else
   attributes:
-    label: Anything else?
+    label: Anything else
     description: Let us know if you have any additional context, like screenshots, recordings and logs, etc.
   validations:
     required: false
