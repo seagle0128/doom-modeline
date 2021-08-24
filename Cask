@@ -7,4 +7,6 @@
 (files "*.el")
 
 (development
- (depends-on "ert-runner"))
+ (depends-on "ert-runner")
+ (depends-on "projectile")
+ (depends-on "find-file-in-project"))
