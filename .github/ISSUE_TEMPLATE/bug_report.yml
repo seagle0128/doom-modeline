@@ -45,7 +45,7 @@ body:
   attributes:
     label: Package Version
     description: Which version of doom-modeline package are you using?
-    placeholder: 20101010
+    placeholder: "20101010"
   validations:
     required: false    
 - type: dropdown
@@ -77,7 +77,7 @@ body:
   attributes:
     label: Configuration
     description: Which configuration are you using?
-    placeholder: Spacemacs, Doom Emacs, Centaur Emacs, or URL
+    placeholder: "Spacemacs, Doom Emacs, Centaur Emacs, or URL"
   validations:
     required: false
 - type: textarea
@@ -90,7 +90,7 @@ body:
       If `emacs` hangs please do `M-x` `toggle-debug-on-quit` and then do `C-g` when emacs hangs and include the callstack as part of the issue report.
 
     render: "emacs-lisp"
-- type: textarea
+- type: markdown
   id: anything-else
   attributes:
     label: Anything else?
