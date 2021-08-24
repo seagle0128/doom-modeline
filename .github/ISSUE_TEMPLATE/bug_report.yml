@@ -45,9 +45,9 @@ body:
   attributes:
     label: Package Version
     description: Which version of doom-modeline package are you using?
-    placeholder: "20101010"
+    placeholder: 20101010
   validations:
-    required: false    
+    required: true
 - type: dropdown
   id: which-os
   attributes:
@@ -93,5 +93,4 @@ body:
 - type: markdown
   id: anything-else
   attributes:
-    label: Anything else?
-    description: Let us know if you have any additional context, like screenshots, recordings and logs, etc.
+    value: Let us know if you have any additional context, like screenshots, recordings and logs, etc.
