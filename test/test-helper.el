@@ -36,4 +36,13 @@
 (when (> emacs-major-version 26)
   (defalias 'ert--print-backtrace 'backtrace-to-string))
 
+(defun ffip-get-project-root-directory ()
+  default-directory)
+
+(defun projectile-project-root ()
+  default-directory)
+
+(defun project-current ()
+  `(vc . ,default-directory))
+
 ;;; test-helper.el ends here
