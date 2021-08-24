@@ -45,7 +45,7 @@ body:
   attributes:
     label: Package Version
     description: Which version of doom-modeline package are you using?
-    placeholder: 20101010
+    placeholder: "20101010"
   validations:
     required: true
 - type: dropdown
