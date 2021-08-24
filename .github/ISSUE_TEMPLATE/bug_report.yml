@@ -92,7 +92,7 @@ body:
     render: "emacs-lisp"
 - type: textarea
   id: anything-else
-  render: markdown
   attributes:
     label: Anything else?
     description: Let us know if you have any additional context, like screenshots, recordings and logs, etc.
+    render: markdown
