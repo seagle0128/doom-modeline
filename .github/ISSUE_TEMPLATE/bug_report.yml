@@ -95,4 +95,5 @@ body:
   attributes:
     label: Anything else?
     description: Let us know if you have any additional context, like screenshots, recordings and logs, etc.
-    render: markdown
+  validations:
+    required: false
