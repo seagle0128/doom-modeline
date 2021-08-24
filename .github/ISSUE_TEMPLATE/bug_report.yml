@@ -41,13 +41,13 @@ body:
   validations:
     required: true
 - type: input
-    id: package-version
-    attributes:
-      label: Package Version
-      description: Which version of doom-modeline package are you using?
-      placeholder: 20101010
-    validations:
-      required: false    
+  id: package-version
+  attributes:
+    label: Package Version
+    description: Which version of doom-modeline package are you using?
+    placeholder: 20101010
+  validations:
+    required: false    
 - type: dropdown
   id: which-os
   attributes:
@@ -73,13 +73,13 @@ body:
   validations:
     required: true
 - type: input
-    id: config
-    attributes:
-      label: Configuration
-      description: Which configuration are you using?
-      placeholder: Spacemacs, Doom Emacs, Centaur Emacs, or URL
-    validations:
-      required: false
+  id: config
+  attributes:
+    label: Configuration
+    description: Which configuration are you using?
+    placeholder: Spacemacs, Doom Emacs, Centaur Emacs, or URL
+  validations:
+    required: false
 - type: textarea
   id: error-callstack
   attributes:
