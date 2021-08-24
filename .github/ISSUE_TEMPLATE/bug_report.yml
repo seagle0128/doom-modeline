@@ -9,7 +9,7 @@ body:
     label: Thank you for the bug report
     description: Please check the suggestion below before proceeding
     options:
-      - label: I am using the latest version of `lsp-mode` related packages.
+      - label: I am using the latest version of `doom-mode` related packages.
         required: true
       - label: "I checked [FAQ](https://github.com/seagle0128/doom-modeline#faq)"
         required: true
@@ -38,14 +38,6 @@ body:
   attributes:
     label: Expected behavior
     description: A clear and concise description of what you expected to happen
-  validations:
-    required: true
-- type: input
-  id: package-version
-  attributes:
-    label: Package Version
-    description: Which version of doom-modeline package are you using?
-    placeholder: "20101010"
   validations:
     required: true
 - type: dropdown
