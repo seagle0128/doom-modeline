@@ -11,7 +11,7 @@ body:
     options:
       - label: I am using the latest version of `doom-mode` related packages.
         required: true
-      - label: "I checked [FAQ](https://github.com/seagle0128/doom-modeline#faq)".
+      - label: I checked [FAQ](https://github.com/seagle0128/doom-modeline#faq).
         required: true
       - label: |
           You may also try reproduce the issue using clean environment and minimal configurations with
