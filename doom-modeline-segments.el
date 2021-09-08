@@ -2864,13 +2864,8 @@ The cdr can also be a function that returns a name to use.")
   (let ((active (doom-modeline--active)))
     (concat
      (doom-modeline-spc)
-     ;; Snapshot icon
-     (doom-modeline-icon 'material "camera_alt" "📷" "%1*"
-                         :face (if active 'doom-modeline-highlight 'mode-line-inactive)
-                         :height 1.1 :v-adjust -0.25)
-     (and doom-modeline-icon (doom-modeline-vspc))
      (doom-modeline--buffer-mode-icon)
-     ;; Buffer name
+     (doom-modeline--buffer-state-icon)
      (propertize "*%b*" 'face (if active
                                   'doom-modeline-buffer-timemachine
                                 'mode-line-inactive)))))
