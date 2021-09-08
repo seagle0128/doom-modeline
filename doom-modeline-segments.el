@@ -436,12 +436,12 @@ like the scratch buffer where knowing the current project directory is important
                     ((doom-modeline--active) 'doom-modeline-buffer-path)
                     (t 'mode-line-inactive))))
     (concat (doom-modeline-spc)
-            (doom-modeline--buffer-state-icon)
             (and doom-modeline-major-mode-icon
                  (concat (doom-modeline-icon
                           'octicon "file-directory" "🖿" ""
                           :face face :v-adjust -0.05 :height 1.25)
                          (doom-modeline-vspc)))
+            (doom-modeline--buffer-state-icon)
             (propertize (abbreviate-file-name default-directory) 'face face))))
 
 (doom-modeline-def-segment buffer-default-directory-simple
