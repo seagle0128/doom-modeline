@@ -73,7 +73,7 @@
 (defvar evil-visual-selection)
 (defvar flycheck-current-errors)
 (defvar flycheck-mode-menu-map)
-(defvar flymake--backend-state)
+(defvar flymake--state)
 (defvar flymake--mode-line-format)
 (defvar flymake-menu)
 (defvar gnus-newsrc-alist)
@@ -166,7 +166,7 @@
 (declare-function flycheck-list-errors 'flycheck)
 (declare-function flycheck-next-error 'flycheck)
 (declare-function flycheck-previous-error 'flycheck)
-(declare-function flymake--backend-state-diags 'flymake)
+(declare-function flymake--state-diags 'flymake)
 (declare-function flymake--diag-type 'flymake)
 (declare-function flymake--handle-report 'flymake)
 (declare-function flymake--lookup-type-property 'flymake)
@@ -903,7 +903,7 @@ mouse-3: Next error"
   "Update flymake icon."
   (setq flymake--mode-line-format nil) ; remove the lighter of minor mode
   (setq doom-modeline--flymake-icon
-        (let* ((known (hash-table-keys flymake--backend-state))
+        (let* ((known (hash-table-keys flymake--state))
                (running (flymake-running-backends))
                (disabled (flymake-disabled-backends))
                (reported (flymake-reporting-backends))
@@ -922,9 +922,9 @@ mouse-3: Next error"
                         (cl-loop
                          with warning-level = (warning-numeric-level :warning)
                          with note-level = (warning-numeric-level :debug)
-                         for state being the hash-values of flymake--backend-state
+                         for state being the hash-values of flymake--state
                          do (cl-loop
-                             with diags = (flymake--backend-state-diags state)
+                             with diags = (flymake--state-diags state)
                              for diag in diags do
                              (let ((severity (flymake--lookup-type-property (flymake--diag-type diag) 'severity
                                                                             (warning-numeric-level :error))))
@@ -984,7 +984,7 @@ mouse-2: Show help for minor mode"
   "Update flymake text."
   (setq flymake--mode-line-format nil) ; remove the lighter of minor mode
   (setq doom-modeline--flymake-text
-        (let* ((known (hash-table-keys flymake--backend-state))
+        (let* ((known (hash-table-keys flymake--state))
                (running (flymake-running-backends))
                (disabled (flymake-disabled-backends))
                (reported (flymake-reporting-backends))
@@ -997,14 +997,14 @@ mouse-2: Show help for minor mode"
                (.note 0))
           (maphash (lambda (_b state)
                      (cl-loop
-                      with diags = (flymake--backend-state-diags state)
+                      with diags = (flymake--state-diags state)
                       for diag in diags do
                       (let ((severity (flymake--lookup-type-property (flymake--diag-type diag) 'severity
                                                                      (warning-numeric-level :error))))
                         (cond ((> severity warning-level) (cl-incf .error))
                               ((> severity note-level) (cl-incf .warning))
                               (t (cl-incf .note))))))
-                   flymake--backend-state)
+                   flymake--state)
           (when-let
               ((text
                 (cond
@@ -1060,7 +1060,7 @@ mouse-1: List all problems%s"
   "Displays color-coded error status in the current buffer with pretty icons."
   (let ((active (doom-modeline--active))
         (seg (cond ((and (bound-and-true-p flymake-mode)
-                         (bound-and-true-p flymake--backend-state)) ; only support 26+
+                         (bound-and-true-p flymake--state)) ; only support 26+
                     `(,doom-modeline--flymake-icon . ,doom-modeline--flymake-text))
                    ((bound-and-true-p flycheck-mode)
                     `(,doom-modeline--flycheck-icon . ,doom-modeline--flycheck-text)))))
