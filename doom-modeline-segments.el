@@ -237,6 +237,10 @@
 (declare-function winum--install-mode-line 'winum)
 (declare-function winum-get-number-string 'winum)
 
+(when (boundp 'flymake--backend-state)
+  (defvaralias 'flymake--state 'flymake--backend-state)
+  (defalias 'flymake--state-diags 'flymake--backend-state-diags))
+
 
 
 ;;
