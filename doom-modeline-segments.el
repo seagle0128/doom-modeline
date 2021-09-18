@@ -237,6 +237,12 @@
 (declare-function winum--install-mode-line 'winum)
 (declare-function winum-get-number-string 'winum)
 
+
+;;
+;; Compatibility
+;;
+
+;; @see https://github.com/emacs-mirror/emacs/commit/6e100869012da9244679696634cab6b9cac96303.
 (when (boundp 'flymake--backend-state)
   (defvaralias 'flymake--state 'flymake--backend-state)
   (defalias 'flymake--state-diags 'flymake--backend-state-diags))
