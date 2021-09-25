@@ -238,16 +238,6 @@
 (declare-function winum-get-number-string 'winum)
 
 
-;;
-;; Compatibility
-;;
-
-;; @see https://github.com/emacs-mirror/emacs/commit/6e100869012da9244679696634cab6b9cac96303.
-(when (boundp 'flymake--backend-state)
-  (defvaralias 'flymake--state 'flymake--backend-state)
-  (defalias 'flymake--state-diags 'flymake--backend-state-diags))
-
-
 
 ;;
 ;; Buffer information
@@ -907,6 +897,14 @@ mouse-3: Next error"
 (add-hook 'flycheck-mode-hook #'doom-modeline-update-flycheck-text)
 
 ;; Flymake
+
+;; Compatibility
+;; @see https://github.com/emacs-mirror/emacs/commit/6e100869012da9244679696634cab6b9cac96303.
+(with-eval-after-load 'flymake
+  (unless (boundp 'flymake--state)
+    (defvaralias 'flymake--state 'flymake--backend-state))
+  (unless (fboundp 'flymake--state-diags)
+    (defalias 'flymake--state-diags 'flymake--backend-state-diags)))
 
 (defvar-local doom-modeline--flymake-icon nil)
 (defun doom-modeline-update-flymake-icon (&rest _)
