@@ -429,8 +429,9 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
                'local-map mode-line-buffer-identification-keymap)))
 
 (doom-modeline-def-segment buffer-default-directory
-  "Displays `default-directory' with the icon and state . This is for special buffers
-like the scratch buffer where knowing the current project directory is important."
+  "Displays `default-directory' with the icon and state . This is for special
+buffers like the scratch buffer where knowing the current project directory is
+important."
   (let ((face (cond ((buffer-modified-p)
                      'doom-modeline-buffer-modified)
                     ((doom-modeline--active) 'doom-modeline-buffer-path)
@@ -1331,10 +1332,10 @@ mouse-1: Display Line and Column Mode Menu"
 
 (doom-modeline-def-segment matches
   "Displays: 1. the currently recording macro, 2. A current/total for the
-current search term (with `anzu'), 3. The number of substitutions being conducted
-with `evil-ex-substitute', and/or 4. The number of active `iedit' regions,
-5. The current/total for the highlight term (with `symbol-overlay'), 6. The number
-of active `multiple-cursors'."
+current search term (with `anzu'), 3. The number of substitutions being
+conducted with `evil-ex-substitute', and/or 4. The number of active `iedit'
+regions, 5. The current/total for the highlight term (with `symbol-overlay'),
+6. The number of active `multiple-cursors'."
   (let ((meta (concat (doom-modeline--macro-recording)
                       (doom-modeline--anzu)
                       (doom-modeline--phi-search)

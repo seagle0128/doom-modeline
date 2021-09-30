@@ -1086,7 +1086,8 @@ See https://github.com/seagle0128/doom-modeline/issues/301."
 (defun doom-modeline-icon (icon-set icon-name unicode text &rest args)
   "Display icon of ICON-NAME with ARGS in mode-line.
 
-ICON-SET includes `octicon', `faicon', `material', `alltheicons' and `fileicon', etc.
+ICON-SET includes `octicon', `faicon', `material', `alltheicons' and `fileicon',
+etc.
 UNICODE is the unicode char fallback. TEXT is the ASCII char fallback.
 ARGS is same as `all-the-icons-octicon' and others."
   (let ((face (or (plist-get args :face) 'mode-line)))
@@ -1223,7 +1224,8 @@ directory too."
 (advice-add #'shrink-path--dirs-internal :override #'doom-modeline-shrink-path--dirs-internal)
 
 (defun doom-modeline-buffer-file-name ()
-  "Propertized variable `buffer-file-name' based on `doom-modeline-buffer-file-name-style'."
+  "Propertized variable `buffer-file-name' based on
+`doom-modeline-buffer-file-name-style'."
   (let* ((buffer-file-name (file-local-name (or (buffer-file-name (buffer-base-buffer)) "")))
          (buffer-file-truename (file-local-name
                                 (or buffer-file-truename (file-truename buffer-file-name) "")))
@@ -1283,7 +1285,8 @@ If TRUNCATE-TAIL is t also truncate the parent directory of the file."
                             'face 'doom-modeline-buffer-file))))))
 
 (defun doom-modeline--buffer-file-name-relative (_file-path true-file-path &optional include-project)
-  "Propertized variable `buffer-file-name' showing directories relative to project's root only."
+  "Propertized variable `buffer-file-name' showing directories relative to
+project's root only."
   (let ((root (file-local-name (doom-modeline-project-root))))
     (if (null root)
         (propertize "%b" 'face 'doom-modeline-buffer-file)
