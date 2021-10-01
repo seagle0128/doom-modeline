@@ -1140,7 +1140,8 @@ lines are selected, or the NxM dimensions of a block selection."
                         (format "%dL" lines))
                        ((> lines 1)
                         (format "%dC %dL" (- end beg) lines))
-                       ((format "%dC" (- end beg))))
+                       (t
+                        (format "%dC" (- end beg))))
                  (when doom-modeline-enable-word-count
                    (format " %dW" (count-words beg end)))
                  (doom-modeline-spc)))
