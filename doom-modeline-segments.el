@@ -410,7 +410,7 @@ directory, the file name, and its state (modified, read-only or non-existent)."
    (doom-modeline-spc)
    (doom-modeline--buffer-mode-icon)
    (doom-modeline--buffer-state-icon)
-   (doom-modeline--buffer-name)))
+   (doom-modeline-buffer-file-name)))
 
 (doom-modeline-def-segment buffer-info-simple
   "Display only the current buffer's name, but with fontification."
