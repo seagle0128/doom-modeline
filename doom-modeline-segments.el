@@ -2084,13 +2084,44 @@ mouse-1: Start server"))
                                    map)))))
 (add-hook 'eglot--managed-mode-hook #'doom-modeline-update-eglot)
 
-(defvar-local doom-modeline--tags
-  (propertize
-   (doom-modeline-lsp-icon "LSP" 'doom-modeline-lsp-success)
-   'help-echo "TAGS: Citre mode
+(defvar-local doom-modeline--tags nil)
+(defun doom-modeline-update-tags ()
+  "Update tags state."
+  (setq doom-modeline--tags
+        (propertize
+         (doom-modeline-lsp-icon "LSP" 'doom-modeline-lsp-success)
+         'help-echo "TAGS: Citre mode
 mouse-1: Toggle citre mode"
-   'mouse-face 'mode-line-highlight
-   'local-map (make-mode-line-mouse-map 'mouse-1 #'citre-mode)))
+         'mouse-face 'mode-line-highlight
+         'local-map (make-mode-line-mouse-map 'mouse-1 #'citre-mode))))
+(add-hook 'citre-mode-hook #'doom-modeline-update-tags)
+
+(defun doom-modeline-update-lsp-icon ()
+  "Update lsp icon."
+  (cond ((bound-and-true-p lsp-mode)
+         (doom-modeline-update-lsp))
+        ((bound-and-true-p eglot--managed-mode)
+         (doom-modeline-update-eglot))
+        ((bound-and-true-p citre-mode)
+         (doom-modeline-update-tags))))
+
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-icon
+ (lambda (_sym val op _where)
+   (when (eq op 'set)
+     (setq doom-modeline-icon val)
+     (dolist (buf (buffer-list))
+       (with-current-buffer buf
+         (doom-modeline-update-lsp-icon))))))
+
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-unicode-fallback
+ (lambda (_sym val op _where)
+   (when (eq op 'set)
+     (setq doom-modeline-unicode-fallback val)
+     (dolist (buf (buffer-list))
+       (with-current-buffer buf
+         (doom-modeline-update-lsp-icon))))))
 
 (doom-modeline-def-segment lsp
   "The LSP server state."
