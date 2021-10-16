@@ -188,7 +188,7 @@ nil means to use `default-directory'.
 
 The project management packages have some issues on detecting project root.
 e.g. `projectile' doesn't handle symlink folders well, while `project' is
-unable to hanle sub-projects.
+unable to handle sub-projects.
 Specify another one if you encounter the issue."
   :type '(choice (const :tag "Auto-detect" auto)
                  (const :tag "Find File in Project" ffip)
