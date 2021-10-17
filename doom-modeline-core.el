@@ -146,10 +146,11 @@ It returns a file name which can be used directly as argument of
 
 (defcustom doom-modeline-height 25
   "How tall the mode-line should be. It's only respected in GUI.
-If the actual char height is larger, it respects the actual char height."
+If the actual char height is larger, it respects the actual char
+height.  If `doom-modeline-height' is <= 0 and
+`doom-modeline-icon' is nil, a simpler modeline with default
+height and no icons will be created."
   :type 'integer
-  :set (lambda (sym val)
-         (set sym (if (> val 0) val 1)))
   :group 'doom-modeline)
 
 (defcustom doom-modeline-bar-width 4
@@ -231,7 +232,9 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
 (defcustom doom-modeline-icon t
   "Whether display the icons in the mode-line.
 
-While using the server mode in GUI, should set the value explicitly."
+While using the server mode in GUI, should set the value explicitly.
+If it is nil and `doom-modeline-height' is <= 0, a simpler modeline
+with default height and no icons will be created."
   :type 'boolean
   :group 'doom-modeline)
 
@@ -803,7 +806,7 @@ etc. (also see the face `doom-modeline-unread-number')."
 
 ;; FIXME #183: Force to calculate mode-line height
 ;; @see https://github.com/seagle0128/doom-modeline/issues/183
-(defvar-local doom-modeline--size-hacked-p nil)
+;; @see https://github.com/seagle0128/doom-modeline/issues/483
 (defun doom-modeline-redisplay (&rest _)
   "Call `redisplay' to trigger mode-line height calculations.
 
@@ -817,18 +820,16 @@ These calculations can be triggered by calling `redisplay'
 explicitly at the appropriate time and this functions purpose
 is to make it easier to do so.
 
-This function is like `redisplay' with non-nil FORCE argument.
-It accepts an arbitrary number of arguments making it suitable
-as a `:before' advice for any function.  If the current buffer
-has no mode-line or this function has already been called in it,
-then this function does nothing."
+This function is like `redisplay' with non-nil FORCE argument,
+but it will only trigger a redisplay when there is a non nil
+`mode-line-format' and the height of the mode-line is different
+from that of the `default' face. This function is intended to be
+used as an advice to window creation functions."
   (when (and (bound-and-true-p doom-modeline-mode)
              mode-line-format
-             (not doom-modeline--size-hacked-p))
-    (setq doom-modeline--size-hacked-p t)
+             (/= (frame-char-height) (window-mode-line-height)))
     (redisplay t)))
-(advice-add #'fit-window-to-buffer :before #'doom-modeline-redisplay)
-(advice-add #'resize-temp-buffer-window :before #'doom-modeline-redisplay)
+(advice-add 'split-window :after #'doom-modeline-redisplay)
 
 ;; Keep `doom-modeline-current-window' up-to-date
 (defun doom-modeline--get-current-window (&optional frame)
@@ -1042,8 +1043,10 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
     ;; WORKAROUND: Fix tall issue of 27 on Linux
     ;; @see https://github.com/seagle0128/doom-modeline/issues/271
     (round
-     (* (if (and (>= emacs-major-version 27)
-                 (not (eq system-type 'darwin)))
+     (* (if (or (and (<= doom-modeline-height 0)
+                     (not doom-modeline-icon))
+                (and (>= emacs-major-version 27)
+                     (not (eq system-type 'darwin))))
             1.0
           (if doom-modeline-icon 1.68 1.25))
         (cond ((integerp height) (/ height 10))
