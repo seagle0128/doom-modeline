@@ -146,10 +146,8 @@ It returns a file name which can be used directly as argument of
 
 (defcustom doom-modeline-height 25
   "How tall the mode-line should be. It's only respected in GUI.
-If the actual char height is larger, it respects the actual char
-height.  If `doom-modeline-height' is <= 0 and
-`doom-modeline-icon' is nil, a simpler modeline with default
-height and no icons will be created."
+If the actual char height is larger, it respects the actual char height.
+If `doom-modeline-height' is <= 0 the modeline will have default height."
   :type 'integer
   :group 'doom-modeline)
 
@@ -232,9 +230,7 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
 (defcustom doom-modeline-icon t
   "Whether display the icons in the mode-line.
 
-While using the server mode in GUI, should set the value explicitly.
-If it is nil and `doom-modeline-height' is <= 0, a simpler modeline
-with default height and no icons will be created."
+While using the server mode in GUI, should set the value explicitly."
   :type 'boolean
   :group 'doom-modeline)
 
@@ -1043,8 +1039,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
     ;; WORKAROUND: Fix tall issue of 27 on Linux
     ;; @see https://github.com/seagle0128/doom-modeline/issues/271
     (round
-     (* (if (or (and (<= doom-modeline-height 0)
-                     (not doom-modeline-icon))
+     (* (if (or (<= doom-modeline-height 0)
                 (and (>= emacs-major-version 27)
                      (not (eq system-type 'darwin))))
             1.0
