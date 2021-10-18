@@ -803,6 +803,7 @@ etc. (also see the face `doom-modeline-unread-number')."
 ;; FIXME #183: Force to calculate mode-line height
 ;; @see https://github.com/seagle0128/doom-modeline/issues/183
 ;; @see https://github.com/seagle0128/doom-modeline/issues/483
+(defvar-local doom-modeline--size-hacked-p nil)
 (defun doom-modeline-redisplay (&rest _)
   "Call `redisplay' to trigger mode-line height calculations.
 
@@ -823,8 +824,9 @@ from that of the `default' face. This function is intended to be
 used as an advice to window creation functions."
   (when (and (bound-and-true-p doom-modeline-mode)
              mode-line-format
-             (/= (frame-char-height) (window-mode-line-height)))
-    (redisplay t)))
+             (not doom-modeline--size-hacked-p))
+    (redisplay t)
+    (setq doom-modeline--size-hacked-p t)))
 (advice-add 'split-window :after #'doom-modeline-redisplay)
 
 ;; Keep `doom-modeline-current-window' up-to-date
