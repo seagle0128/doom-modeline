@@ -848,34 +848,17 @@ used as an advice to window creation functions."
 
 (defun doom-modeline-set-selected-window (&rest _)
   "Set `doom-modeline-current-window' appropriately."
-  (when-let ((win (doom-modeline--get-current-window)))
-    (unless (or (minibuffer-window-active-p win)
-                (and (bound-and-true-p lv-wnd) (eq lv-wnd win)))
-      (setq doom-modeline-current-window win))))
+  (let ((win (doom-modeline--get-current-window)))
+    (setq doom-modeline-current-window
+          (if (minibuffer-window-active-p win)
+              (minibuffer-selected-window)
+            win))))
 
 (defun doom-modeline-unset-selected-window ()
   "Unset `doom-modeline-current-window' appropriately."
   (setq doom-modeline-current-window nil))
 
-(add-hook 'after-make-frame-functions #'doom-modeline-set-selected-window)
-(add-hook 'buffer-list-update-hook #'doom-modeline-set-selected-window)
-(add-hook 'window-configuration-change-hook #'doom-modeline-set-selected-window)
-(add-hook 'window-selection-change-functions #'doom-modeline-set-selected-window)
-(add-hook 'exwm-workspace-switch-hook #'doom-modeline-set-selected-window)
-(with-no-warnings
-  (if (boundp 'after-focus-change-function)
-      (progn
-        (defun doom-modeline-refresh-frame ()
-          (setq doom-modeline-current-window nil)
-          (cl-loop for frame in (frame-list)
-                   if (eq (frame-focus-state frame) t)
-                   return (setq doom-modeline-current-window
-                                (doom-modeline--get-current-window frame)))
-          (force-mode-line-update))
-        (add-function :after after-focus-change-function #'doom-modeline-refresh-frame))
-    (progn
-      (add-hook 'focus-in-hook #'doom-modeline-set-selected-window)
-      (add-hook 'focus-out-hook #'doom-modeline-unset-selected-window))))
+(add-hook 'pre-redisplay-functions #'doom-modeline-set-selected-window)
 
 ;; Ensure modeline is inactive when Emacs is unfocused (and active otherwise)
 (defvar doom-modeline-remap-face-cookie nil)
