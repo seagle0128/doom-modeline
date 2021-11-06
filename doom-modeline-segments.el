@@ -1665,8 +1665,7 @@ See `mode-line-percent-position'.")
          (mouse-face 'mode-line-highlight)
          (local-map mode-line-column-line-number-mode-map))
     (concat
-     (doom-modeline-spc)
-     (doom-modeline-spc)
+     (doom-modeline-wspc)
 
      ;; Line and column
      (propertize (format-mode-line lc)
@@ -1682,24 +1681,21 @@ mouse-1: Display Line and Column Mode Menu"
                  (not doom-modeline--limited-width-p)
                  (>= (window-width) nyan-minimum-window-width))
             (concat
-             (doom-modeline-spc)
-             (doom-modeline-spc)
+             (doom-modeline-wspc)
              (propertize (nyan-create) 'mouse-face mouse-face)))
            ((and active
                  (bound-and-true-p poke-line-mode)
                  (not doom-modeline--limited-width-p)
                  (>= (window-width) poke-line-minimum-window-width))
             (concat
-             (doom-modeline-spc)
-             (doom-modeline-spc)
+             (doom-modeline-wspc)
              (propertize (poke-line-create) 'mouse-face mouse-face)))
            ((and active
                  (bound-and-true-p mlscroll-mode)
                  (not doom-modeline--limited-width-p)
                  (>= (window-width) mlscroll-minimum-current-width))
             (concat
-             (doom-modeline-spc)
-             (doom-modeline-spc)
+             (doom-modeline-wspc)
              (let ((mlscroll-right-align nil))
                (format-mode-line (mlscroll-mode-line)))))
            ((and active
@@ -1707,8 +1703,7 @@ mouse-1: Display Line and Column Mode Menu"
                  (not doom-modeline--limited-width-p)
                  (>= (window-width) sml-modeline-len))
             (concat
-             (doom-modeline-spc)
-             (doom-modeline-spc)
+             (doom-modeline-wspc)
              (propertize (sml-modeline-create) 'mouse-face mouse-face)))
            (t ""))
 
@@ -1734,8 +1729,7 @@ mouse-1: Display Line and Column Mode Menu"
   (when (and (doom-modeline--active)
              (not doom-modeline--limited-width-p)
              (bound-and-true-p parrot-mode))
-    (concat (doom-modeline-spc)
-            (doom-modeline-spc)
+    (concat (doom-modeline-wspc)
             (parrot-create)
             (doom-modeline-spc))))
 

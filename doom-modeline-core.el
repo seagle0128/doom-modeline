@@ -1010,6 +1010,12 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
                             'doom-modeline-spc-face
                           '(:inherit mode-line-inactive))))
 
+(defsubst doom-modeline-wspc ()
+  "Text style with wide whitespace."
+  (propertize "  " 'face (if (doom-modeline--active)
+                            'doom-modeline-spc-face
+                          '(:inherit mode-line-inactive))))
+
 (defsubst doom-modeline-vspc ()
   "Text style with icons in mode-line."
   (propertize " " 'face (if (doom-modeline--active)
