@@ -1668,6 +1668,7 @@ See `mode-line-percent-position'.")
      (doom-modeline-spc)
      (doom-modeline-spc)
 
+     ;; Line and column
      (propertize (format-mode-line lc)
                  'face face
                  'help-echo "Buffer position\n\
@@ -1675,6 +1676,7 @@ mouse-1: Display Line and Column Mode Menu"
                  'mouse-face mouse-face
                  'local-map local-map)
 
+     ;; Position
      (cond ((and active
                  (bound-and-true-p nyan-mode)
                  (not doom-modeline--limited-width-p)
@@ -1708,16 +1710,19 @@ mouse-1: Display Line and Column Mode Menu"
              (doom-modeline-spc)
              (doom-modeline-spc)
              (propertize (sml-modeline-create) 'mouse-face mouse-face)))
-           (t
-            (when doom-modeline-percent-position
-              (concat
-               (doom-modeline-spc)
-               (propertize (format-mode-line '("" doom-modeline-percent-position "%%"))
-                           'face face
-                           'help-echo "Buffer percentage\n\
+           (t ""))
+
+     ;; Percent position
+     (when doom-modeline-percent-position
+       (concat
+        (doom-modeline-spc)
+        (propertize (format-mode-line '("" doom-modeline-percent-position "%%"))
+                    'face face
+                    'help-echo "Buffer percentage\n\
 mouse-1: Display Line and Column Mode Menu"
-                           'mouse-face mouse-face
-                           'local-map local-map)))))
+                    'mouse-face mouse-face
+                    'local-map local-map)))
+
      (when (or line-number-mode column-number-mode doom-modeline-percent-position)
        (doom-modeline-spc)))))
 
