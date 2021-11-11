@@ -90,7 +90,7 @@
 ;;
 
 (doom-modeline-def-modeline 'main
-  '(bar workspace-name window-number modals matches buffer-info remote-host buffer-position word-count parrot selection-info)
+  '(bar workspace-name window-number modals matches follow buffer-info remote-host buffer-position word-count parrot selection-info)
   '(objed-state misc-info persp-name battery grip irc mu4e gnus github debug repl lsp minor-modes input-method indent-info buffer-encoding major-mode process vcs checker))
 
 (doom-modeline-def-modeline 'minimal

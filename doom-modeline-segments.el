@@ -2915,6 +2915,21 @@ mouse-3: Restart preview"
                                 map)))
      (doom-modeline-spc))))
 
+;;
+;; Follow mode
+;;
+
+(doom-modeline-def-segment follow
+  (when (bound-and-true-p follow-mode)
+    (let* ((windows (follow-all-followers))
+           (nwindows (length windows))
+           (nfollowing (- (length (memq (selected-window) windows))
+                          1)))
+      (concat
+       (doom-modeline-spc)
+       (propertize (format "Follow %d/%d" (- nwindows nfollowing) nwindows)
+                   'face 'doom-modeline-buffer-minor-mode)))))
+
 (provide 'doom-modeline-segments)
 
 ;;; doom-modeline-segments.el ends here
