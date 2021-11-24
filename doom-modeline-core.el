@@ -825,7 +825,8 @@ used as an advice to window creation functions."
              mode-line-format
              (/= (frame-char-height) (window-mode-line-height)))
     (redisplay t)))
-(advice-add 'split-window :after #'doom-modeline-redisplay)
+(unless (>= emacs-major-version 29)
+  (advice-add 'split-window :after #'doom-modeline-redisplay))
 
 ;; Keep `doom-modeline-current-window' up-to-date
 (defun doom-modeline--get-current-window (&optional frame)
