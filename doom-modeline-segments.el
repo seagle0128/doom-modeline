@@ -881,14 +881,12 @@ mouse-3: Next error"
                         (define-key map [mode-line mouse-3]
                           #'flycheck-next-error)
                         (when (featurep 'mwheel)
-                          (define-key map (vector 'mode-line
-                                                  mouse-wheel-down-event)
+                          (define-key map [mode-line mouse-wheel-down-event]
                             (lambda (event)
                               (interactive "e")
                               (with-selected-window (posn-window (event-start event))
                                 (flycheck-previous-error 1))))
-                          (define-key map (vector 'mode-line
-                                                  mouse-wheel-up-event)
+                          (define-key map [mode-line mouse-wheel-up-event]
                             (lambda (event)
                               (interactive "e")
                               (with-selected-window (posn-window (event-start event))
