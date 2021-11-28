@@ -2373,7 +2373,7 @@ mouse-1: Toggle Debug on Quit"
   "Update PDF pages."
   (setq doom-modeline--pdf-pages
         (format "  P%d/%d "
-                (eval `(pdf-view-current-page))
+                (or (eval `(pdf-view-current-page)) 0)
                 (pdf-cache-number-of-pages))))
 (add-hook 'pdf-view-change-page-hook #'doom-modeline-update-pdf-pages)
 
