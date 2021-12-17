@@ -971,7 +971,7 @@ Example:
                'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
                'display `((space
                            :align-to
-                           (- (+ right right-fringe right-margin)
+                           (- (+ right right-fringe right-margin scroll-bar)
                               ,(* (let ((width (doom-modeline--font-width)))
                                     (or (and (= width 1) 1)
                                         (/ width (frame-char-width) 1.0)))
