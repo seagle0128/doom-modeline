@@ -164,7 +164,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 (setq doom-modeline-bar-width 4)
 
 ;; Whether to use hud instead of default bar. It's only respected in GUI.
-(defcustom doom-modeline-hud nil)
+(setq doom-modeline-hud nil)
 
 ;; The limit of the window width.
 ;; If `window-width' is smaller than the limit, some information won't be displayed.
