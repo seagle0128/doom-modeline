@@ -102,7 +102,7 @@
 (defvar text-scale-mode-amount)
 (defvar tracking-buffers)
 (defvar winum-auto-setup-mode-line)
-(defvar xah-fly-insert-state-q)
+(defvar xah-fly-insert-state-p)
 
 (declare-function anzu--reset-status 'anzu)
 (declare-function anzu--where-is-here 'anzu)
@@ -1781,7 +1781,7 @@ TEXT is alternative if icon is not available."
 (defsubst doom-modeline--xah-fly-keys ()
   "The current `xah-fly-keys' state."
   (when (bound-and-true-p xah-fly-keys)
-    (if xah-fly-insert-state-q
+    (if xah-fly-insert-state-p
         (doom-modeline--modal-icon " <I> "
                                    'doom-modeline-evil-insert-state
                                    (format "Xah-fly insert mode"))
