@@ -100,7 +100,7 @@
   '(objed-state misc-info battery irc-buffers debug minor-modes input-method indent-info buffer-encoding major-mode process))
 
 (doom-modeline-def-modeline 'project
-  '(bar window-number buffer-default-directory)
+  '(bar window-number modals buffer-default-directory)
   '(misc-info battery irc mu4e gnus github debug minor-modes input-method major-mode process))
 
 (doom-modeline-def-modeline 'dashboard
@@ -140,7 +140,7 @@
   '(helm-help))
 
 (doom-modeline-def-modeline 'timemachine
-  '(bar window-number matches git-timemachine buffer-position word-count parrot selection-info)
+  '(bar window-number modals matches git-timemachine buffer-position word-count parrot selection-info)
   '(misc-info minor-modes indent-info buffer-encoding major-mode))
 
 
