@@ -280,7 +280,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether display the gnus notifications.
 (setq doom-modeline-gnus t)
 
-;; Wheter gnus should automatically be updated and how often (set to 0 or smaller than 0 to disable)
+;; Whether gnus should automatically be updated and how often (set to 0 or smaller than 0 to disable)
 (setq doom-modeline-gnus-timer 2)
 
 ;; Wheter groups should be excludede when gnus automatically being updated.
