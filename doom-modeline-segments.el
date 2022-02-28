@@ -71,8 +71,8 @@
 (defvar evil-visual-selection)
 (defvar flycheck-current-errors)
 (defvar flycheck-mode-menu-map)
-(defvar flymake--state)
 (defvar flymake--mode-line-format)
+(defvar flymake--state)
 (defvar flymake-menu)
 (defvar gnus-newsrc-alist)
 (defvar gnus-newsrc-hashtb)
@@ -81,6 +81,7 @@
 (defvar iedit-occurrences-overlays)
 (defvar meow--indicator)
 (defvar minions-direct)
+(defvar minions-mode-line-lighter)
 (defvar minions-mode-line-minor-modes-map)
 (defvar mlscroll-minimum-current-width)
 (defvar mlscroll-right-align)
@@ -617,8 +618,9 @@ buffer where knowing the current project directory is important."
 		     help-echo ,help-echo
 		     local-map ,mode-line-minor-mode-keymap)
             ,(doom-modeline-spc)
-            (:propertize ("" ,(doom-modeline-icon 'octicon "gear" "⚙" ";-"
-  :face face :v-adjust -0.05))
+            (:propertize ("" ,(doom-modeline-icon 'octicon "gear" "⚙"
+                                                  minions-mode-line-lighter
+                                                  :face face :v-adjust -0.05))
              mouse-face ,mouse-face
              help-echo "Minions
 mouse-1: Display minor modes menu"
