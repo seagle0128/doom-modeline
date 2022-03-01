@@ -6,8 +6,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        fail-fast: false
         emacs-version:
           - 25.1
           - 25.2
