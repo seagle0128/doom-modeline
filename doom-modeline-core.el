@@ -790,7 +790,7 @@ etc. (also see the face `doom-modeline-unread-number')."
 
 (declare-function face-remap-remove-relative 'face-remap)
 (declare-function ffip-get-project-root-directory 'find-file-in-project)
-(declare-function project-roots 'project)
+(declare-function project-root 'project)
 (declare-function projectile-project-root 'projectile)
 
 
@@ -1164,9 +1164,9 @@ Return nil if no project was found."
       (setq doom-modeline--project-root
             (pcase (if (eq doom-modeline-project-detection 'auto)
                        (cond
-                        ((fboundp 'ffip-get-project-root-directory)  'ffip)
+                        ((fboundp 'ffip-get-project-root-directory) 'ffip)
                         ((fboundp 'projectile-project-root) 'projectile)
-                        ((fboundp 'project-current)  'project)
+                        ((fboundp 'project-current) 'project)
                         (t 'default))
                      doom-modeline-project-detection)
               ('ffip
