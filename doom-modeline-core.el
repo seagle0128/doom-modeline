@@ -1176,7 +1176,7 @@ Return nil if no project was found."
                (projectile-project-root))
               ('project
                (when-let ((project (project-current)))
-                 (expand-file-name (cdr project))))))))
+                 (expand-file-name (project-root project))))))))
 
 (defun doom-modeline-project-p ()
   "Check if the file is in a project."
