@@ -788,10 +788,10 @@ etc. (also see the face `doom-modeline-unread-number')."
 ;; Externals
 ;;
 
-(declare-function face-remap-remove-relative 'face-remap)
-(declare-function ffip-get-project-root-directory 'find-file-in-project)
-(declare-function project-root 'project)
-(declare-function projectile-project-root 'projectile)
+(declare-function face-remap-remove-relative "face-remap")
+(declare-function ffip-get-project-root-directory "ext:find-file-in-project")
+(declare-function project-root "ext:project")
+(declare-function projectile-project-root "ext:projectile")
 
 
 ;;

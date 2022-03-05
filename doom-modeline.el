@@ -234,7 +234,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
 ;; Suppress warnings
 (defvar 2C-mode-line-format)
-(declare-function helm-display-mode-line 'helm)
+(declare-function helm-display-mode-line "ext:helm-core")
 
 ;;;###autoload
 (define-minor-mode doom-modeline-mode

@@ -32,6 +32,10 @@
 (require 'cl-lib)
 (require 'doom-modeline-core)
 
+;; ;; XXX: This is a precaution for older Emacsen that may ship with
+;; outdated versions of `project'.
+(load "project")
+
 (ert-deftest doom-modeline-icon/octicon-icon ()
   (let ((doom-modeline-icon t)
         (doom-modeline-unicode-fallback t))
@@ -58,6 +62,8 @@
               ":)"))))
 
 (ert-deftest doom-modeline-project-root/auto ()
+  ;; The latest `project' requires Emacs >= 26.1
+  (skip-unless (>= emacs-major-version 26))
   (let ((default-directory "/home/user/project/")
         (doom-modeline-project-detection 'auto)
         (doom-modeline--project-root nil))
