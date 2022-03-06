@@ -67,9 +67,15 @@
   (let ((default-directory "/home/user/project/")
         (doom-modeline-project-detection 'auto)
         (doom-modeline--project-root nil))
-    (cl-flet ((project-current (&optional _maybe-prompt _dir)
-                               `(vc . ,default-directory)))
-      (should (string= (doom-modeline-project-root) default-directory)))))
+    (should (string= (doom-modeline-project-root) default-directory))))
+
+(ert-deftest doom-modeline-project-root/auto-old ()
+  ;; Old versions of project.el do not have `project-root'
+  (skip-unless (< emacs-major-version 26))
+  (let ((default-directory "/home/user/project-current/")
+        (doom-modeline-project-detection 'auto)
+        (doom-modeline--project-root nil))
+    (should (string= (doom-modeline-project-root) default-directory))))
 
 (ert-deftest doom-modeline-project-root/ffip ()
   (let ((default-directory "/home/user/project-ffip/")
@@ -86,12 +92,20 @@
       (should (string= (doom-modeline-project-root) default-directory)))))
 
 (ert-deftest doom-modeline-project-root/project ()
+  ;; The latest `project' requires Emacs >= 26.1
+  (skip-unless (>= emacs-major-version 26))
   (let ((default-directory "/home/user/project-current/")
         (doom-modeline-project-detection 'project)
         (doom-modeline--project-root nil))
-    (cl-flet ((project-current (&optional _maybe-prompt _dir)
-                               `(vc . ,default-directory)))
-      (should (string= (doom-modeline-project-root) default-directory)))))
+    (should (string= (doom-modeline-project-root) default-directory))))
+
+(ert-deftest doom-modeline-project-root/project-old ()
+  ;; Old versions of project.el do not have `project-root'
+  (skip-unless (< emacs-major-version 26))
+  (let ((default-directory "/home/user/project-current/")
+        (doom-modeline-project-detection 'project)
+        (doom-modeline--project-root nil))
+    (should (string= (doom-modeline-project-root) default-directory))))
 
 (ert-deftest doom-modeline-project-root/default ()
   (let ((default-directory "/home/user/project/")
