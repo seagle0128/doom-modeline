@@ -167,8 +167,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 (setq doom-modeline-hud nil)
 
 ;; The limit of the window width.
-;; If `window-width' is smaller than the limit, some information won't be displayed.
-(setq doom-modeline-window-width-limit fill-column)
+;; If `window-width' is smaller than the limit, some information won't be
+;; displayed. It can be an integer or a float number. `nil' means no limit."
+(setq doom-modeline-window-width-limit 0.25)
 
 ;; How to detect the project root.
 ;; nil means to use `default-directory'.

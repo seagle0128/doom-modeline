@@ -169,12 +169,13 @@ Only respected in GUI."
          (set sym (if (> val 1) val 1)))
   :group 'doom-modeline)
 
-(defcustom doom-modeline-window-width-limit fill-column
+(defcustom doom-modeline-window-width-limit 0.25
   "The limit of the window width.
 
 If `window-width' is smaller than the limit, some information won't be
-displayed."
+displayed. It can be an integer or a float number. `nil' means no limit."
   :type '(choice integer
+                 float
                  (const :tag "Disable" nil))
   :group 'doom-modeline)
 
@@ -1149,14 +1150,12 @@ respectively."
 (defun doom-modeline-window-size-change-function (&rest _)
   "Function for `window-size-change-functions'."
   (setq doom-modeline--limited-width-p
-        (and (numberp doom-modeline-window-width-limit)
-             (<= (+ (window-total-width)
-                    (or scroll-bar-width 0)
-                    (or left-fringe-width 0)
-                    (or right-fringe-width 0)
-                    (or left-margin-width 0)
-                    (or right-margin-width 0))
-                 doom-modeline-window-width-limit))))
+        (cond
+         ((integerp doom-modeline-window-width-limit)
+          (<= (window-total-width) doom-modeline-window-width-limit))
+         ((floatp doom-modeline-window-width-limit)
+          (<= (/ (window-total-width) (frame-width) 1.0)
+              doom-modeline-window-width-limit)))))
 
 (add-hook 'window-size-change-functions #'doom-modeline-window-size-change-function)
 (add-hook 'buffer-list-update-hook #'doom-modeline-window-size-change-function)
