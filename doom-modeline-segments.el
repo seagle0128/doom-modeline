@@ -382,27 +382,28 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 
 (defsubst doom-modeline--buffer-name ()
   "The current buffer name."
-  ;; Only display the buffer name if the window is small, but doesn't need to
-  ;; respect file-name style.
-  (if (and (not (eq doom-modeline-buffer-file-name-style 'file-name))
-           doom-modeline--limited-width-p)
-      (propertize "%b"
-                  'face (cond ((and buffer-file-name (buffer-modified-p))
-                               'doom-modeline-buffer-modified)
-                              ((doom-modeline--active) 'doom-modeline-buffer-file)
-                              (t 'mode-line-inactive))
-                  'mouse-face 'mode-line-highlight
-                  'help-echo "Buffer name
+  (when doom-modeline-buffer-name
+    (if (and (not (eq doom-modeline-buffer-file-name-style 'file-name))
+             doom-modeline--limited-width-p)
+        ;; Only display the buffer name if the window is small, and doesn't need to
+        ;; respect file-name style.
+        (propertize "%b"
+                    'face (cond ((and buffer-file-name (buffer-modified-p))
+                                 'doom-modeline-buffer-modified)
+                                ((doom-modeline--active) 'doom-modeline-buffer-file)
+                                (t 'mode-line-inactive))
+                    'mouse-face 'mode-line-highlight
+                    'help-echo "Buffer name
 mouse-1: Previous buffer\nmouse-3: Next buffer"
-                  'local-map mode-line-buffer-identification-keymap)
-    (when-let ((name (or doom-modeline--buffer-file-name
-                         (doom-modeline-update-buffer-file-name))))
-      (if (doom-modeline--active)
-          ;; Check if the buffer is modified
-          (if (and buffer-file-name (buffer-modified-p))
-              (propertize name 'face 'doom-modeline-buffer-modified)
-            name)
-        (propertize name 'face 'mode-line-inactive)))))
+                    'local-map mode-line-buffer-identification-keymap)
+      (when-let ((name (or doom-modeline--buffer-file-name
+                           (doom-modeline-update-buffer-file-name))))
+        (if (doom-modeline--active)
+            ;; Check if the buffer is modified
+            (if (and buffer-file-name (buffer-modified-p))
+                (propertize name 'face 'doom-modeline-buffer-modified)
+              name)
+          (propertize name 'face 'mode-line-inactive))))))
 
 (doom-modeline-def-segment buffer-info
   "Combined information about the current buffer, including the current working
