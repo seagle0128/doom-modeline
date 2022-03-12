@@ -2082,7 +2082,7 @@ mouse-1: Start server"))
                                          (t (define-key map [mode-line mouse-1]
                                               #'eglot)))
                                    map)))))
-(add-hook 'eglot--managed-mode-hook #'doom-modeline-update-eglot)
+(add-hook 'eglot-managed-mode-hook #'doom-modeline-update-eglot)
 
 (defvar-local doom-modeline--tags nil)
 (defun doom-modeline-update-tags ()
@@ -2149,7 +2149,7 @@ mouse-1: Toggle citre mode"
             (delq (assq 'eglot--managed-mode mode-line-misc-info) mode-line-misc-info))
     (add-to-list 'mode-line-misc-info
                  `(eglot--managed-mode (" [" eglot--mode-line-format "] ")))))
-(add-hook 'eglot--managed-mode-hook #'doom-modeline-override-eglot-modeline)
+(add-hook 'eglot-managed-mode-hook #'doom-modeline-override-eglot-modeline)
 (add-hook 'doom-modeline-mode-hook #'doom-modeline-override-eglot-modeline)
 
 
