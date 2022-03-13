@@ -141,6 +141,7 @@
 (declare-function eglot-current-server "ext:eglot")
 (declare-function eglot-events-buffer "ext:eglot")
 (declare-function eglot-forget-pending-continuations "ext:eglot")
+(declare-function eglot-managed-p "ext:glot")
 (declare-function eglot-reconnect "ext:eglot")
 (declare-function eglot-shutdown "ext:eglot")
 (declare-function eglot-stderr-buffer "ext:eglot")
@@ -2033,7 +2034,7 @@ mouse-1: Reload to start server")
 (defun doom-modeline-update-eglot ()
   "Update `eglot' state."
   (setq doom-modeline--eglot
-        (pcase-let* ((server (eglot-current-server))
+        (pcase-let* ((server (and (eglot-managed-p) (eglot-current-server)))
                      (nick (and server (eglot--project-nickname server)))
                      (pending (and server (hash-table-count
                                            (jsonrpc--request-continuations server))))
