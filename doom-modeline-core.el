@@ -521,6 +521,18 @@ If nil, don't set up a hook."
   :type 'integer
   :group 'doom-modeline)
 
+(defcustom doom-modeline-gnus-idle nil
+  "Whether to wait an idle time to scan for news.
+
+When t, sets `doom-modeline-gnus-timer' as an idle timer.  If a
+number, Emacs must have been idle this given time, checked after
+reach the defined timer, to fetch news.  The time step can be
+configured in `gnus-demon-timestep'."
+  :type '(choice
+	  (boolean :tag "Set `doom-modeline-gnus-timer' as an idle timer")
+	  (number :tag "Set a custom idle timer"))
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-gnus-excluded-groups nil
   "A list of groups to be excluded from the unread count.
 Groups' names list in `gnus-newsrc-alist'`"
