@@ -2481,7 +2481,7 @@ mouse-1: Toggle Debug on Quit"
     ;; Scan gnus in the background if the timer is higher than 0
     (doom-modeline-update-gnus-status)
     (if (> doom-modeline-gnus-timer 0)
-        (gnus-demon-add-handler 'gnus-demon-scan-news doom-modeline-gnus-timer nil))))
+        (gnus-demon-add-handler 'gnus-demon-scan-news doom-modeline-gnus-timer doom-modeline-gnus-idle))))
 (add-hook 'gnus-started-hook #'doom-modeline-start-gnus-listener)
 
 ;; Stop the listener if gnus isn't running
