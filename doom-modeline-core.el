@@ -572,8 +572,18 @@ It requires `circe' or `erc' package."
   "Face used for the white space."
   :group 'doom-modeline-faces)
 
+(defface doom-modeline-spc-inactive-face
+  '((t (:inherit mode-line-inactive)))
+  "Face used for the inactive white space."
+  :group 'doom-modeline-faces)
+
 (defface doom-modeline-vspc-face
   '((t (:inherit variable-pitch)))
+  "Face used for the variable white space."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-vspc-inactive-face
+  '((t (:inherit (mode-line-inactive doom-modeline-vspc-face))))
   "Face used for the variable white space."
   :group 'doom-modeline-faces)
 
@@ -1025,19 +1035,19 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   "Text style with whitespace."
   (propertize " " 'face (if (doom-modeline--active)
                             'doom-modeline-spc-face
-                          '(:inherit mode-line-inactive))))
+                          'doom-modeline-spc-inactive-face)))
 
 (defsubst doom-modeline-wspc ()
   "Text style with wide whitespace."
   (propertize "  " 'face (if (doom-modeline--active)
-                            'doom-modeline-spc-face
-                          '(:inherit mode-line-inactive))))
+                             'doom-modeline-spc-face
+                           'doom-modeline-spc-inactive-face)))
 
 (defsubst doom-modeline-vspc ()
   "Text style with icons in mode-line."
   (propertize " " 'face (if (doom-modeline--active)
                             'doom-modeline-vspc-face
-                          '(:inherit (doom-modeline-vspc-face mode-line-inactive)))))
+                          'doom-modeline-vspc-inactive-face)))
 
 (defun doom-modeline--font-height ()
   "Calculate the actual char height of the mode-line."
