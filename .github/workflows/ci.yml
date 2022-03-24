@@ -5,19 +5,14 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrx.experimental }}
     strategy:
       fail-fast: false
       matrix:
-        emacs-version:
-          - 25.1
-          - 25.2
-          - 25.3
-          - 26.1
-          - 26.2
-          - 26.3
-          - 27.1
-          - 27.2
-          - snapshot
+        emacs-version: [25.1, 25.2, 25.3, 26.1, 26.2, 26.3, 27.1, 27.2]
+        include:
+          - emacs-version: snapshot
+            experimental: true
 
     steps:
     - name: setenv
