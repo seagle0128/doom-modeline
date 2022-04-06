@@ -156,6 +156,12 @@ Strongly recommend to use
 Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
 ```emacs-lisp
+;; If non-nil, cause imenu to see `doom-modeline' declarations.
+;; This is done by adjusting `lisp-imenu-generic-expression' to
+;; include support for finding `doom-modeline-def-*' forms.
+;; Must be set before loading doom-modeline.
+(setq doom-modeline-support-imenu t)
+
 ;; How tall the mode-line should be. It's only respected in GUI.
 ;; If the actual char height is larger, it respects the actual height.
 (setq doom-modeline-height 25)

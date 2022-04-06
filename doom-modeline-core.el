@@ -142,6 +142,19 @@ It returns a file name which can be used directly as argument of
   :group 'mode-line
   :link '(url-link :tag "Homepage" "https://github.com/seagle0128/doom-modeline"))
 
+(defcustom doom-modeline-support-imenu nil
+  "If non-nil, cause imenu to see `doom-modeline' declarations.
+This is done by adjusting `lisp-imenu-generic-expression' to
+include support for finding `doom-modeline-def-*' forms.
+
+Must be set before loading doom-modeline."
+  :type 'boolean
+  :set (lambda (_sym val)
+         (if val
+             (add-hook 'emacs-lisp-mode-hook #'doom-modeline-add-imenu)
+           (remove-hook 'emacs-lisp-mode-hook #'doom-modeline-add-imenu)))
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-height 25
   "How tall the mode-line should be. It's only respected in GUI.
 If the actual char height is larger, it respects the actual char height.
@@ -820,6 +833,56 @@ etc. (also see the face `doom-modeline-unread-number')."
 (declare-function ffip-get-project-root-directory "ext:find-file-in-project")
 (declare-function project-root "ext:project")
 (declare-function projectile-project-root "ext:projectile")
+
+
+;;
+;; Utilities
+;;
+
+(defun doom-modeline-add-font-lock ()
+  "Fontify `doom-modeline-def-*' statements."
+  (font-lock-add-keywords
+   'emacs-lisp-mode
+   '(("(\\(doom-modeline-def-.+\\)\\_> +\\(.*?\\)\\_>"
+      (1 font-lock-keyword-face)
+      (2 font-lock-constant-face)))))
+(doom-modeline-add-font-lock)
+
+(defun doom-modeline-add-imenu ()
+  "Add to `imenu' index."
+  (add-to-list
+   'imenu-generic-expression
+   '("Modelines"
+     "^\\s-*(\\(doom-modeline-def-modeline\\)\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)"
+     2))
+  (add-to-list
+   'imenu-generic-expression
+   '("Segments"
+     "^\\s-*(\\(doom-modeline-def-segment\\)\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)"
+     2))
+  (add-to-list
+   'imenu-generic-expression
+   '("Envs"
+     "^\\s-*(\\(doom-modeline-def-env\\)\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)"
+     2)))
+
+(defun doom-modeline-remove-imenu ()
+  "Remove from `imenu' index."
+  (remove
+   '("Modelines"
+     "^\\s-*(\\(doom-modeline-def-modeline\\)\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)"
+     2)
+   imenu-generic-expression)
+  (remove
+   '("Segments"
+     "^\\s-*(\\(doom-modeline-def-segment\\)\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)"
+     2)
+   imenu-generic-expression)
+  (remove
+   '("Envs"
+     "^\\s-*(\\(doom-modeline-def-env\\)\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)"
+     2)
+   imenu-generic-expression))
 
 
 ;;
