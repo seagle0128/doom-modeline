@@ -853,7 +853,7 @@ etc. (also see the face `doom-modeline-unread-number')."
   (add-to-list
    'imenu-generic-expression
    '("Modelines"
-     "^\\s-*(\\(doom-modeline-def-modeline\\)\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)"
+     "^\\s-*(\\(doom-modeline-def-modeline\\)\\s-+\\(\\(?:\\sw\\|\\s_\\|\\s'\\|\\\\.\\)+\\)"
      2))
   (add-to-list
    'imenu-generic-expression
