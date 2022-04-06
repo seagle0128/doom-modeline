@@ -866,24 +866,6 @@ etc. (also see the face `doom-modeline-unread-number')."
      "^\\s-*(\\(doom-modeline-def-env\\)\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)"
      2)))
 
-(defun doom-modeline-remove-imenu ()
-  "Remove from `imenu' index."
-  (remove
-   '("Modelines"
-     "^\\s-*(\\(doom-modeline-def-modeline\\)\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)"
-     2)
-   imenu-generic-expression)
-  (remove
-   '("Segments"
-     "^\\s-*(\\(doom-modeline-def-segment\\)\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)"
-     2)
-   imenu-generic-expression)
-  (remove
-   '("Envs"
-     "^\\s-*(\\(doom-modeline-def-env\\)\\s-+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)+\\)"
-     2)
-   imenu-generic-expression))
-
 
 ;;
 ;; Core helpers
