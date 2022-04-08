@@ -1524,8 +1524,7 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
         (propertize (format " %s " num)
                     'face (if (doom-modeline--active)
                               'doom-modeline-buffer-major-mode
-                            'mode-line-inactive))
-      (doom-modeline-spc))))
+                            'mode-line-inactive)))))
 
 
 ;;
