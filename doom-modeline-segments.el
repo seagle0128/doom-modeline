@@ -1346,12 +1346,11 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
                       (doom-modeline--iedit)
                       (doom-modeline--symbol-overlay)
                       (doom-modeline--multiple-cursors))))
-    (or (and (not (equal meta "")) meta)
-        (doom-modeline--buffer-size)))
-  )
+    (or (and (not (string-empty-p meta)) meta)
+        (doom-modeline--buffer-size))))
 
 (doom-modeline-def-segment buffer-size
-  "Display buffer size"
+  "Display buffer size."
   (doom-modeline--buffer-size))
 
 ;;
@@ -1524,7 +1523,8 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
         (propertize (format " %s " num)
                     'face (if (doom-modeline--active)
                               'doom-modeline-buffer-major-mode
-                            'mode-line-inactive)))))
+                            'mode-line-inactive))
+      (doom-modeline-spc))))
 
 
 ;;
