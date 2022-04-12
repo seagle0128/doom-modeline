@@ -32,7 +32,7 @@ Emacs](https://github.com/hlissner/doom-emacs) and
 The `doom-modeline` was designed for minimalism, and offers:
 
 - A match count panel (for `anzu`, `iedit`, `multiple-cursors`, `symbol-overlay`,
-  `evil-search` and `evil-substitute`)
+  and `evil-search`, etc.)
 - An indicator for recording a macro
 - Current environment version (e.g. `python`, `ruby`, `go`, etc.) in the major-mode
 - A customizable mode-line height (see `doom-modeline-height`)
@@ -449,6 +449,10 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
    For more details, refer to
    [#209](https://github.com/seagle0128/doom-modeline/issues/209) and
    [#224](https://github.com/seagle0128/doom-modeline/issues/224).
+
+1. Can `doom-modeline` show match count while search with `evil-search`?
+
+   Yes. For better experience, should enable `anzu-mode` and load `evil-anzu`.
 
 1. How to show that the R is running in inferior ess R mode?
 
