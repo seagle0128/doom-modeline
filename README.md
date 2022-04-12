@@ -69,6 +69,8 @@ The `doom-modeline` was designed for minimalism, and offers:
 
 ![search_replace](https://user-images.githubusercontent.com/140797/49694189-6913d480-fbc0-11e8-93ae-9578455dcd2c.png "Search and Replace")
 
+![evil_search](https://user-images.githubusercontent.com/140797/162925065-0ffe40fd-1efd-469b-bf09-c62fe2d22fd2.png "Evil Search")
+
 ![macro](https://user-images.githubusercontent.com/140797/49694199-cc056b80-fbc0-11e8-9bb1-533b1e64da66.png "Macro")
 
 ![no_icons](https://user-images.githubusercontent.com/140797/51301117-0805d900-1a69-11e9-957d-b4c7a70a1cf8.png "No Icons")
