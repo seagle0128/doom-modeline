@@ -38,7 +38,6 @@
 ;; Externals
 ;;
 
-(declare-function doom-modeline-icon-displayable-p 'doom-modeline-core)
 (declare-function all-the-icons--function-name "ext:all-the-icons")
 
 
@@ -134,7 +133,8 @@ It returns a file name which can be used directly as argument of
 
 (defun doom-modeline-set-char-widths (&rest _)
   "Set char widths for the unicode icons."
-  (when (doom-modeline-icon-displayable-p)
+  (when (and (display-graphic-p)
+             (require 'all-the-icons nil t))
     (doom-modeline--set-char-widths doom-modeline-rhs-icons-alist)))
 
 (if (and (daemonp)
