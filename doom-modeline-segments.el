@@ -27,7 +27,6 @@
 
 ;;; Code:
 
-(require 'all-the-icons)
 (require 'cl-lib)
 (require 'seq)
 (require 'subr-x)
@@ -105,6 +104,7 @@
 (defvar winum-auto-setup-mode-line)
 (defvar xah-fly-insert-state-p)
 
+(declare-function all-the-icons-icon-for-buffer "ext:all-the-icons")
 (declare-function anzu--reset-status "ext:anzu")
 (declare-function anzu--where-is-here "ext:anzu")
 (declare-function async-inject-variables "ext:async")
@@ -249,9 +249,8 @@
 (defun doom-modeline-update-buffer-file-icon (&rest _)
   "Update file icon in mode-line."
   (setq doom-modeline--buffer-file-icon
-        (when (and (display-graphic-p)
-                   doom-modeline-icon
-                   doom-modeline-major-mode-icon)
+        (when (and doom-modeline-major-mode-icon
+                   (doom-modeline-icon-displayable-p))
           (let ((icon (all-the-icons-icon-for-buffer)))
             (propertize (if (or (null icon) (symbolp icon))
                             (doom-modeline-icon 'faicon "file-o" nil nil

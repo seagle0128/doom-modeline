@@ -29,8 +29,16 @@
 (require 'cl-lib)
 (require 'subr-x)
 (require 'dash)
-(require 'all-the-icons)
 (require 'shrink-path)
+
+(require 'all-the-icons nil t)
+
+
+;;
+;; Externals
+;;
+
+(declare-function all-the-icons--function-name "ext:all-the-icons")
 
 
 ;;
@@ -125,12 +133,13 @@ It returns a file name which can be used directly as argument of
 
 (defun doom-modeline-set-char-widths (&rest _)
   "Set char widths for the unicode icons."
-  (doom-modeline--set-char-widths doom-modeline-rhs-icons-alist))
+  (when (doom-modeline-icon-displayable-p)
+    (doom-modeline--set-char-widths doom-modeline-rhs-icons-alist)))
 
 (if (and (daemonp)
          (not (frame-parameter nil 'client)))
     (add-hook 'after-make-frame-functions #'doom-modeline-set-char-widths)
-  (and (display-graphic-p) (doom-modeline-set-char-widths)))
+  (doom-modeline-set-char-widths))
 
 
 ;;
@@ -707,10 +716,8 @@ etc. (also see the face `doom-modeline-unread-number')."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-debug-visual
-  `((((class color) (background light))
-     (:background ,(face-foreground 'all-the-icons-orange)))
-    (((class color) (background dark))
-     (:background ,(face-foreground 'all-the-icons-dorange))))
+  '((((background light)) :foreground "#D4843E")
+    (((background dark)) :foreground "#915B2D"))
   "Face to use for the mode-line while debugging."
   :group 'doom-modeline)
 
@@ -898,6 +905,12 @@ used as an advice to window creation functions."
     (redisplay t)))
 (unless (>= emacs-major-version 29)
   (advice-add #'fit-window-to-buffer :before #'doom-modeline-redisplay))
+
+(defun doom-modeline-icon-displayable-p ()
+  "Return non-nil if icons are displayable."
+  (and doom-modeline-icon
+       (display-graphic-p)
+       (require 'all-the-icons nil t)))
 
 ;; Keep `doom-modeline-current-window' up-to-date
 (defun doom-modeline--get-current-window (&optional frame)
@@ -1134,7 +1147,7 @@ The face should be the first attribute, or the font family may be overridden.
 So convert the face \":family XXX :height XXX :inherit XXX\" to
 \":inherit XXX :family XXX :height XXX\".
 See https://github.com/seagle0128/doom-modeline/issues/301."
-  (if (and doom-modeline-icon (display-graphic-p))
+  (if (doom-modeline-icon-displayable-p)
       (when-let ((props (get-text-property 0 'face icon)))
         (cl-destructuring-bind (&key family height inherit &allow-other-keys) props
           (propertize icon 'face `(:inherit ,(or face inherit props)
@@ -1152,8 +1165,7 @@ ARGS is same as `all-the-icons-octicon' and others."
   (let ((face (or (plist-get args :face) 'mode-line)))
     (or
      ;; Icons
-     (when (and (display-graphic-p)
-                doom-modeline-icon
+     (when (and (doom-modeline-icon-displayable-p)
                 icon-name
                 (not (string-empty-p icon-name)))
        (when-let* ((func (all-the-icons--function-name icon-set))
