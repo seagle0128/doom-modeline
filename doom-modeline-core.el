@@ -38,6 +38,7 @@
 ;; Externals
 ;;
 
+(declare-function doom-modeline-icon-displayable-p 'doom-modeline-core)
 (declare-function all-the-icons--function-name "ext:all-the-icons")
 
 
