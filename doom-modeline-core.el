@@ -1150,10 +1150,11 @@ So convert the face \":family XXX :height XXX :inherit XXX\" to
 See https://github.com/seagle0128/doom-modeline/issues/301."
   (if (doom-modeline-icon-displayable-p)
       (when-let ((props (get-text-property 0 'face icon)))
-        (cl-destructuring-bind (&key family height inherit &allow-other-keys) props
-          (propertize icon 'face `(:inherit ,(or face inherit props)
-                                   :family  ,family
-                                   :height  ,height))))
+        (when (listp props)
+          (cl-destructuring-bind (&key family height inherit &allow-other-keys) props
+            (propertize icon 'face `(:inherit ,(or face inherit props 'mode-line)
+                                     :family  ,(or family "")
+                                     :height  ,(or height 1.0))))))
     (propertize icon 'face face)))
 
 (defun doom-modeline-icon (icon-set icon-name unicode text &rest args)
@@ -1164,23 +1165,26 @@ etc.
 UNICODE is the unicode char fallback. TEXT is the ASCII char fallback.
 ARGS is same as `all-the-icons-octicon' and others."
   (let ((face (or (plist-get args :face) 'mode-line)))
-    (or
-     ;; Icons
-     (when (and (doom-modeline-icon-displayable-p)
-                icon-name
-                (not (string-empty-p icon-name)))
-       (when-let* ((func (all-the-icons--function-name icon-set))
-                   (icon (and (fboundp func) (apply func icon-name args))))
-         (doom-modeline-propertize-icon icon face)))
+    (cond
+     ;; Icon
+     ((and (doom-modeline-icon-displayable-p)
+           icon-name
+           (not (string-empty-p icon-name)))
+      (when-let* ((func (all-the-icons--function-name icon-set))
+                  (icon (and (fboundp func)
+                             (apply func icon-name args))))
+        (doom-modeline-propertize-icon icon face)))
      ;; Unicode fallback
-     (and doom-modeline-unicode-fallback
-          unicode
-          (not (string-empty-p unicode))
-          (char-displayable-p (string-to-char unicode))
-          (propertize unicode 'face face))
+     ((and doom-modeline-unicode-fallback
+           unicode
+           (not (string-empty-p unicode))
+           (char-displayable-p (string-to-char unicode)))
+      (propertize unicode 'face face))
      ;; ASCII text
-     (and text (propertize text 'face face))
-     "")))
+     (text
+      (propertize text 'face face))
+     ;; Fallback
+     (t ""))))
 
 (defun doom-modeline--create-bar-image (face width height)
   "Create the bar image.
