@@ -966,12 +966,12 @@ used as an advice to window creation functions."
 
 ;; Ensure modeline is inactive when Emacs is unfocused (and active otherwise)
 (defvar doom-modeline--remap-face-cookie-alist nil)
-(defvar doom-modeline--remap-faces '(mode-line highlight))
+(defvar doom-modeline--remap-faces nil)
 
 ;; Get `doom-modeline-faces'
 (dolist (face (face-list))
   (let ((f (symbol-name face)))
-    (when (and (string-match-p "^\\(doom-modeline\\|all-the-icons\\)" f)
+    (when (and (string-match-p "^\\(mode-line\\|doom-modeline\\|all-the-icons\\)" f)
                (not (string-match-p "\\(-inactive\\|-dired\\|ivy\\|ibuffer\\)" f)))
       (add-to-list 'doom-modeline--remap-faces face))))
 
