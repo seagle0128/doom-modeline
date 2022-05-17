@@ -945,16 +945,25 @@ used as an advice to window creation functions."
 (add-hook 'pre-redisplay-functions #'doom-modeline-set-selected-window)
 
 ;; Ensure modeline is inactive when Emacs is unfocused (and active otherwise)
-(defvar doom-modeline-remap-face-cookie nil)
+(defvar doom-modeline--remap-face-cookie-alist nil)
+(defvar doom-modeline--remap-faces
+  '(mode-line mode-line-emphasis mode-line-highlight mode-line-buffer-id))
+
+;; Get `doom-modeline-faces'
+(dolist (face (face-list))
+  (when (string-prefix-p "doom-modeline-" (symbol-name face))
+    (add-to-list 'doom-modeline--remap-faces face)))
+
 (defun doom-modeline-focus ()
   "Focus mode-line."
-  (when doom-modeline-remap-face-cookie
-    (require 'face-remap)
-    (face-remap-remove-relative doom-modeline-remap-face-cookie)))
+  (mapc #'face-remap-remove-relative doom-modeline--remap-face-cookie-alist)
+  (setq doom-modeline--remap-face-cookie-alist nil))
+
 (defun doom-modeline-unfocus ()
   "Unfocus mode-line."
-  (setq doom-modeline-remap-face-cookie
-        (face-remap-add-relative 'mode-line 'mode-line-inactive)))
+  (dolist (face doom-modeline--remap-faces)
+    (add-to-list 'doom-modeline--remap-face-cookie-alist
+                 (face-remap-add-relative face 'mode-line-inactive))))
 
 (with-no-warnings
   (if (boundp 'after-focus-change-function)
