@@ -590,13 +590,38 @@ It requires `circe' or `erc' package."
   :group 'faces
   :link '(url-link :tag "Homepage" "https://github.com/seagle0128/doom-modeline"))
 
-(defface doom-modeline-spc-face
+(defface doom-modeline
   '((t (:inherit mode-line)))
+  "Face used for default."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-inactive
+  '((t (:inherit mode-line-inactive)))
+  "Face used for inactive."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-emphasis
+  '((t (:inherit mode-line-emphasis)))
+  "Face used for emphasis."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-highlight
+  '((t (:inherit mode-line-highlight)))
+  "Face used for highlighting."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-misc-info
+  '((t (:inherit font-lock-doc-face)))
+  "Face used for highlighting."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-spc-face
+  '((t (:inherit doom-modeline)))
   "Face used for the white space."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-spc-inactive-face
-  '((t (:inherit mode-line-inactive)))
+  '((t (:inherit doom-modeline-inactive)))
   "Face used for the inactive white space."
   :group 'doom-modeline-faces)
 
@@ -606,12 +631,12 @@ It requires `circe' or `erc' package."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-vspc-inactive-face
-  '((t (:inherit (mode-line-inactive doom-modeline-vspc-face))))
+  '((t (:inherit (doom-modeline-inactive doom-modeline-vspc-face))))
   "Face used for the variable white space."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-buffer-path
-  '((t (:inherit (mode-line-emphasis bold))))
+  '((t (:inherit (doom-modeline-emphasis bold))))
   "Face used for the dirname part of the buffer path."
   :group 'doom-modeline-faces)
 
@@ -626,7 +651,7 @@ It requires `circe' or `erc' package."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-buffer-major-mode
-  '((t (:inherit (mode-line-emphasis bold))))
+  '((t (:inherit (doom-modeline-emphasis bold))))
   "Face used for the major-mode segment in the mode-line."
   :group 'doom-modeline-faces)
 
@@ -646,17 +671,12 @@ It requires `circe' or `erc' package."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-project-root-dir
-  '((t (:inherit (mode-line-emphasis bold))))
+  '((t (:inherit (doom-modeline-emphasis bold))))
   "Face used for the project part of the mode-line buffer path."
   :group 'doom-modeline-faces)
 
-(defface doom-modeline-highlight
-  '((t (:inherit mode-line-emphasis)))
-  "Face for bright segments of the mode-line."
-  :group 'doom-modeline-faces)
-
 (defface doom-modeline-panel
-  '((t (:inherit mode-line-highlight)))
+  '((t (:inherit doom-modeline-highlight)))
   "Face for 'X out of Y' segments, such as `anzu', `evil-substitute' and`iedit', etc."
   :group 'doom-modeline-faces)
 
@@ -666,7 +686,7 @@ It requires `circe' or `erc' package."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-input-method
-  '((t (:inherit (mode-line-emphasis bold))))
+  '((t (:inherit (doom-modeline-emphasis bold))))
   "Face for input method in the mode-line."
   :group 'doom-modeline-faces)
 
@@ -707,12 +727,12 @@ etc. (also see the face `doom-modeline-unread-number')."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-bar
-  '((t (:inherit highlight)))
+  '((t (:inherit doom-modeline-highlight)))
   "The face used for the left-most bar in the mode-line of an active window."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-bar-inactive
-  `((t (:background ,(face-foreground 'mode-line-inactive))))
+  `((t (:background ,(face-foreground 'doom-modeline-inactive))))
   "The face used for the left-most bar in the mode-line of an inactive window."
   :group 'doom-modeline-faces)
 
@@ -946,24 +966,24 @@ used as an advice to window creation functions."
 
 ;; Ensure modeline is inactive when Emacs is unfocused (and active otherwise)
 (defvar doom-modeline--remap-face-cookie-alist nil)
-(defvar doom-modeline--remap-faces
-  '(mode-line mode-line-emphasis mode-line-highlight mode-line-buffer-id))
+(defvar doom-modeline--remap-faces '(mode-line highlight))
 
 ;; Get `doom-modeline-faces'
 (dolist (face (face-list))
-  (when (string-prefix-p "doom-modeline-" (symbol-name face))
-    (add-to-list 'doom-modeline--remap-faces face)))
+  (let ((f (symbol-name face)))
+    (when (and (string-match-p "^\\(doom-modeline\\|all-the-icons\\)" f)
+               (not (string-match-p "\\(-inactive\\|-dired\\|ivy\\|ibuffer\\)" f)))
+      (add-to-list 'doom-modeline--remap-faces face))))
 
 (defun doom-modeline-focus ()
   "Focus mode-line."
-  (mapc #'face-remap-remove-relative doom-modeline--remap-face-cookie-alist)
-  (setq doom-modeline--remap-face-cookie-alist nil))
+  (mapc #'face-remap-remove-relative doom-modeline--remap-face-cookie-alist))
 
 (defun doom-modeline-unfocus ()
   "Unfocus mode-line."
   (dolist (face doom-modeline--remap-faces)
     (add-to-list 'doom-modeline--remap-face-cookie-alist
-                 (face-remap-add-relative face 'mode-line-inactive))))
+                 (face-remap-add-relative face 'doom-modeline-inactive))))
 
 (with-no-warnings
   (if (boundp 'after-focus-change-function)
@@ -1062,7 +1082,7 @@ Example:
         (list lhs-forms
               (propertize
                " "
-               'face (if (doom-modeline--active) 'mode-line 'mode-line-inactive)
+               'face (if (doom-modeline--active) 'doom-modeline 'doom-modeline-inactive)
                'display `((space
                            :align-to
                            (- (+ right right-fringe right-margin scroll-bar)
