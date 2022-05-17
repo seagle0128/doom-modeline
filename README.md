@@ -151,6 +151,13 @@ fonts are installed. Run `M-x all-the-icons-install-fonts` to install the
 necessary fonts. Please refer to the
 [installation guide](https://github.com/domtronn/all-the-icons.el#installation).
 
+Add this to `init.el` if you want to use icons,
+
+``` elisp
+(use-package all-the-icons
+  :ensure t)
+```
+
 Strongly recommend to use
 [doom-themes](https://github.com/hlissner/emacs-doom-themes) at the same time.
 
