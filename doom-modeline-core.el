@@ -1045,9 +1045,9 @@ used as an advice to window creation functions."
 (defun doom-modeline--font-width ()
   "Cache the font width."
   (if (display-graphic-p)
-      (let ((attributes (face-all-attributes 'mode-line)))
+      (let ((attributes (face-all-attributes 'doom-modeline)))
         (or (cdr (assoc attributes doom-modeline--font-width-cache))
-            (let ((width (window-font-width nil 'mode-line)))
+            (let ((width (window-font-width nil 'doom-modeline)))
               (push (cons attributes width) doom-modeline--font-width-cache)
               width)))
     1))
@@ -1082,7 +1082,9 @@ Example:
         (list lhs-forms
               (propertize
                " "
-               'face (if (doom-modeline--active) 'doom-modeline 'doom-modeline-inactive)
+               'face (if (doom-modeline--active)
+                         'doom-modeline
+                       'doom-modeline-inactive)
                'display `((space
                            :align-to
                            (- (+ right right-fringe right-margin scroll-bar)
@@ -1139,7 +1141,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
 (defun doom-modeline--font-height ()
   "Calculate the actual char height of the mode-line."
-  (let ((height (face-attribute 'mode-line :height)))
+  (let ((height (face-attribute 'doom-modeline :height)))
     ;; WORKAROUND: Fix tall issue of 27 on Linux
     ;; @see https://github.com/seagle0128/doom-modeline/issues/271
     (round
@@ -1181,7 +1183,7 @@ See https://github.com/seagle0128/doom-modeline/issues/301."
       (when-let ((props (get-text-property 0 'face icon)))
         (when (listp props)
           (cl-destructuring-bind (&key family height inherit &allow-other-keys) props
-            (propertize icon 'face `(:inherit ,(or face inherit props 'mode-line)
+            (propertize icon 'face `(:inherit ,(or face inherit props 'doom-modeline)
                                      :family  ,(or family "")
                                      :height  ,(or height 1.0))))))
     (propertize icon 'face face)))
@@ -1193,7 +1195,7 @@ ICON-SET includes `octicon', `faicon', `material', `alltheicons' and `fileicon',
 etc.
 UNICODE is the unicode char fallback. TEXT is the ASCII char fallback.
 ARGS is same as `all-the-icons-octicon' and others."
-  (let ((face (or (plist-get args :face) 'mode-line)))
+  (let ((face (or (plist-get args :face) 'doom-modeline)))
     (cond
      ;; Icon
      ((and (doom-modeline-icon-displayable-p)

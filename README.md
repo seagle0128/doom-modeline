@@ -423,16 +423,16 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
    ```emacs-lisp
    (setq doom-modeline-height 1)
-   (set-face-attribute 'mode-line nil :family "Noto Sans" :height 100)
-   (set-face-attribute 'mode-line-inactive nil :family "Noto Sans" :height 100)
+   (set-face-attribute 'doom-modeline nil :family "Noto Sans" :height 100)
+   (set-face-attribute 'doom-modeline-inactive nil :family "Noto Sans" :height 100)
    ```
 
    or
 
    ```emacs-lisp
    (custom-set-faces
-     '(mode-line ((t (:family "Noto Sans" :height 0.9))))
-     '(mode-line-inactive ((t (:family "Noto Sans" :height 0.9)))))
+     '(doom-modeline ((t (:family "Noto Sans" :height 0.9))))
+     '(doom-modeline-inactive ((t (:family "Noto Sans" :height 0.9)))))
    ```
 
    Please refer to
