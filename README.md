@@ -154,6 +154,13 @@ necessary fonts. Please refer to the
 Add this to `init.el` if you want to use icons,
 
 ``` elisp
+;; Install via `M-x package-install RET all-the-icons RET`
+(require 'all-the-icons)
+```
+
+or
+
+``` elisp
 (use-package all-the-icons
   :ensure t)
 ```

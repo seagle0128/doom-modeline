@@ -592,10 +592,10 @@ buffer where knowing the current project directory is important."
 
 (doom-modeline-def-segment process
   "The process info."
-  (if (doom-modeline--active)
-      mode-line-process
-    (propertize (format-mode-line mode-line-process)
-                'face 'doom-modeline-inactive)))
+  (propertize (format-mode-line mode-line-process)
+              'face (if (doom-modeline--active)
+                        'doom-modeline
+                      'doom-modeline-inactive)))
 
 
 ;;
