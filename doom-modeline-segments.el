@@ -492,7 +492,7 @@ buffer where knowing the current project directory is important."
                                  (2 "Mac-style CR")
                                  (_ "Undecided")))
             'local-map (let ((map (make-sparse-keymap)))
-                         (define-key map [doom-modeline mouse-1] 'mode-line-change-eol)
+                         (define-key map [mode-line mouse-1] 'mode-line-change-eol)
                          map))))
 
        ;; coding system
@@ -802,9 +802,9 @@ mouse-2: Show help for minor mode")
                                            ('suspicious "Suspicious")))
                       'mouse-face 'doom-modeline-highlight
                       'local-map (let ((map (make-sparse-keymap)))
-                                   (define-key map [doom-modeline down-mouse-1]
+                                   (define-key map [mode-line down-mouse-1]
                                      flycheck-mode-menu-map)
-                                   (define-key map [doom-modeline mouse-2]
+                                   (define-key map [mode-line mouse-2]
                                      (lambda ()
                                        (interactive)
                                        (describe-function 'flycheck-mode)))
@@ -879,17 +879,17 @@ mouse-3: Next error"
                         ('suspicious "Suspicious"))
            'mouse-face 'doom-modeline-highlight
            'local-map (let ((map (make-sparse-keymap)))
-                        (define-key map [doom-modeline mouse-1]
+                        (define-key map [mode-line mouse-1]
                           #'flycheck-list-errors)
-                        (define-key map [doom-modeline mouse-3]
+                        (define-key map [mode-line mouse-3]
                           #'flycheck-next-error)
                         (when (featurep 'mwheel)
-                          (define-key map [doom-modeline mouse-wheel-down-event]
+                          (define-key map [mode-line mouse-wheel-down-event]
                             (lambda (event)
                               (interactive "e")
                               (with-selected-window (posn-window (event-start event))
                                 (flycheck-previous-error 1))))
-                          (define-key map [doom-modeline mouse-wheel-up-event]
+                          (define-key map [mode-line mouse-wheel-up-event]
                             (lambda (event)
                               (interactive "e")
                               (with-selected-window (posn-window (event-start event))
@@ -960,9 +960,9 @@ mouse-2: Show help for minor mode"
                                             (length running) (length known)))))
              'mouse-face 'doom-modeline-highlight
              'local-map (let ((map (make-sparse-keymap)))
-                          (define-key map [doom-modeline down-mouse-1]
+                          (define-key map [mode-line down-mouse-1]
                             flymake-menu)
-                          (define-key map [doom-modeline mouse-2]
+                          (define-key map [mode-line mouse-2]
                             (lambda ()
                               (interactive)
                               (describe-function 'flymake-mode)))
@@ -1048,7 +1048,7 @@ mouse-1: List all problems%s"
                                         "\nwheel-up/wheel-down: Previous/next problem"))))
              'mouse-face 'doom-modeline-highlight
              'local-map (let ((map (make-sparse-keymap)))
-                          (define-key map [doom-modeline mouse-1]
+                          (define-key map [mode-line mouse-1]
                             #'flymake-show-diagnostics-buffer)
                           (when (featurep 'mwheel)
                             (define-key map (vector 'doom-modeline
@@ -1589,9 +1589,9 @@ Requires `eyebrowse-mode' to be enabled or `tab-bar-mode' tabs to be created."
 mouse-2: Show help for minor mode"
                                   'mouse-face 'doom-modeline-highlight
                                   'local-map (let ((map (make-sparse-keymap)))
-                                               (define-key map [doom-modeline mouse-1]
+                                               (define-key map [mode-line mouse-1]
                                                  #'persp-switch)
-                                               (define-key map [doom-modeline mouse-2]
+                                               (define-key map [mode-line mouse-2]
                                                  (lambda ()
                                                    (interactive)
                                                    (describe-function 'persp-mode)))
@@ -1955,9 +1955,9 @@ mouse-3: Describe current input method")
                       'mouse-face 'doom-modeline-highlight
                       'local-map (let ((map (make-sparse-keymap)))
                                    (if connected
-                                       (define-key map [doom-modeline mouse-2]
+                                       (define-key map [mode-line mouse-2]
                                          #'cider-quit)
-                                     (define-key map [doom-modeline mouse-1]
+                                     (define-key map [mode-line mouse-1]
                                        #'cider-jack-in))
                                    map)))))
 
@@ -2012,16 +2012,16 @@ mouse-1: Reload to start server")
                       'local-map (let ((map (make-sparse-keymap)))
                                    (if workspaces
                                        (progn
-                                         (define-key map [doom-modeline C-mouse-1]
+                                         (define-key map [mode-line C-mouse-1]
                                            #'lsp-workspace-folders-open)
-                                         (define-key map [doom-modeline mouse-1]
+                                         (define-key map [mode-line mouse-1]
                                            #'lsp-describe-session)
-                                         (define-key map [doom-modeline mouse-2]
+                                         (define-key map [mode-line mouse-2]
                                            #'lsp-workspace-shutdown)
-                                         (define-key map [doom-modeline mouse-3]
+                                         (define-key map [mode-line mouse-3]
                                            #'lsp-workspace-restart))
                                      (progn
-                                       (define-key map [doom-modeline mouse-1]
+                                       (define-key map [mode-line mouse-1]
                                          (lambda ()
                                            (interactive)
                                            (ignore-errors (revert-buffer t t))))))
@@ -2068,21 +2068,21 @@ mouse-1: Start server"))
                       'mouse-face 'doom-modeline-highlight
                       'local-map (let ((map (make-sparse-keymap)))
                                    (cond (last-error
-                                          (define-key map [doom-modeline mouse-3]
+                                          (define-key map [mode-line mouse-3]
                                             #'eglot-clear-status))
                                          ((and pending (cl-plusp pending))
-                                          (define-key map [doom-modeline mouse-3]
+                                          (define-key map [mode-line mouse-3]
                                             #'eglot-forget-pending-continuations))
                                          (nick
-                                          (define-key map [doom-modeline C-mouse-1]
+                                          (define-key map [mode-line C-mouse-1]
                                             #'eglot-stderr-buffer)
-                                          (define-key map [doom-modeline mouse-1]
+                                          (define-key map [mode-line mouse-1]
                                             #'eglot-events-buffer)
-                                          (define-key map [doom-modeline mouse-2]
+                                          (define-key map [mode-line mouse-2]
                                             #'eglot-shutdown)
-                                          (define-key map [doom-modeline mouse-3]
+                                          (define-key map [mode-line mouse-3]
                                             #'eglot-reconnect))
-                                         (t (define-key map [doom-modeline mouse-1]
+                                         (t (define-key map [mode-line mouse-1]
                                               #'eglot)))
                                    map)))))
 (add-hook 'eglot-managed-mode-hook #'doom-modeline-update-eglot)
@@ -2236,13 +2236,13 @@ mouse-1: Show notifications
 mouse-3: Fetch notifications"
       'mouse-face 'doom-modeline-highlight
       'local-map (let ((map (make-sparse-keymap)))
-                   (define-key map [doom-modeline mouse-1]
+                   (define-key map [mode-line mouse-1]
                      (lambda ()
                        "Open GitHub notifications page."
                        (interactive)
                        (run-with-idle-timer 300 nil #'doom-modeline--github-fetch-notifications)
                        (browse-url "https://github.com/notifications")))
-                   (define-key map [doom-modeline mouse-3]
+                   (define-key map [mode-line mouse-3]
                      (lambda ()
                        "Fetching GitHub notifications."
                        (interactive)
@@ -2298,11 +2298,11 @@ mouse-3: Disconnect session"
                                        (dap--debug-session-state session))
                     'mouse-face 'doom-modeline-highlight
                     'local-map (let ((map (make-sparse-keymap)))
-                                 (define-key map [doom-modeline mouse-1]
+                                 (define-key map [mode-line mouse-1]
                                    #'dap-hydra)
-                                 (define-key map [doom-modeline mouse-2]
+                                 (define-key map [mode-line mouse-2]
                                    #'dap-debug-recent)
-                                 (define-key map [doom-modeline mouse-3]
+                                 (define-key map [mode-line mouse-3]
                                    #'dap-disconnect)
                                  map))))))
 
@@ -2326,11 +2326,11 @@ mouse-3: Stop debugging"
                                    edebug-execution-mode)
                 'mouse-face 'doom-modeline-highlight
                 'local-map (let ((map (make-sparse-keymap)))
-                             (define-key map [doom-modeline mouse-1]
+                             (define-key map [mode-line mouse-1]
                                #'edebug-help)
-                             (define-key map [doom-modeline mouse-2]
+                             (define-key map [mode-line mouse-2]
                                #'edebug-next-mode)
-                             (define-key map [doom-modeline mouse-3]
+                             (define-key map [mode-line mouse-3]
                                #'edebug-stop)
                              map))))
 
@@ -2639,19 +2639,19 @@ mouse-3: Switch to next unread buffer")))
                      'local-map (let ((map (make-sparse-keymap)))
                                   (cond
                                    ((doom-modeline--circe-p)
-                                    (define-key map [doom-modeline mouse-1]
+                                    (define-key map [mode-line mouse-1]
                                       #'tracking-previous-buffer)
-                                    (define-key map [doom-modeline mouse-3]
+                                    (define-key map [mode-line mouse-3]
                                       #'tracking-next-buffer))
                                    ((doom-modeline--erc-p)
-                                    (define-key map [doom-modeline mouse-1]
+                                    (define-key map [mode-line mouse-1]
                                       #'erc-switch-to-buffer)
-                                    (define-key map [doom-modeline mouse-3]
+                                    (define-key map [mode-line mouse-3]
                                       #'erc-track-switch-buffer))
                                    ((doom-modeline--rcirc-p)
-                                    (define-key map [doom-modeline mouse-1]
+                                    (define-key map [mode-line mouse-1]
                                       #'rcirc-switch-to-server-buffer)
-                                    (define-key map [doom-modeline mouse-3]
+                                    (define-key map [mode-line mouse-3]
                                       #'rcirc-next-active-buffer)))
                                   map))
 
@@ -2942,11 +2942,11 @@ mouse-3: Restart preview"
                                       (grip--preview-url))
                    'mouse-face 'doom-modeline-highlight
                    'local-map (let ((map (make-sparse-keymap)))
-                                (define-key map [doom-modeline mouse-1]
+                                (define-key map [mode-line mouse-1]
                                   #'grip-browse-preview)
-                                (define-key map [doom-modeline mouse-2]
+                                (define-key map [mode-line mouse-2]
                                   #'grip-stop-preview)
-                                (define-key map [doom-modeline mouse-3]
+                                (define-key map [mode-line mouse-3]
                                   #'grip-restart-preview)
                                 map)))
      (doom-modeline-spc))))
