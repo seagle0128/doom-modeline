@@ -134,7 +134,7 @@ It returns a file name which can be used directly as argument of
 (defun doom-modeline-set-char-widths (&rest _)
   "Set char widths for the unicode icons."
   (when (and (display-graphic-p)
-             (require 'all-the-icons nil t))
+             (featurep 'all-the-icons))
     (doom-modeline--set-char-widths doom-modeline-rhs-icons-alist)))
 
 (if (and (daemonp)
@@ -931,7 +931,7 @@ used as an advice to window creation functions."
   "Return non-nil if icons are displayable."
   (and doom-modeline-icon
        (display-graphic-p)
-       (require 'all-the-icons nil t)))
+       (featurep 'all-the-icons)))
 
 ;; Keep `doom-modeline-current-window' up-to-date
 (defun doom-modeline--get-current-window (&optional frame)
