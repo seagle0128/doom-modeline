@@ -1070,10 +1070,10 @@ LHS and RHS are lists of symbols of modeline segments defined with
 `doom-modeline-def-segment'.
 
 Example:
-  (doom-modeline-def-modeline 'minimal
-    '(bar matches \" \" buffer-info)
-    '(media-info major-mode))
-  (doom-modeline-set-modeline 'minimal t)"
+  (doom-modeline-def-modeline \\='minimal
+    \\='(bar matches \" \" buffer-info)
+    \\='(media-info major-mode))
+  (doom-modeline-set-modeline \\='minimal t)"
   (let ((sym (intern (format "doom-modeline-format--%s" name)))
         (lhs-forms (doom-modeline--prepare-segments lhs))
         (rhs-forms (doom-modeline--prepare-segments rhs)))
