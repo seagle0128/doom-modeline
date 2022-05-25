@@ -69,11 +69,11 @@ Example: \"ruby\"")
 
 (defvar-local doom-modeline-env--command-args nil
   "A list of arguments for the command to extract the version from.
-Example: '(\"--version\") ")
+Example: \\='(\"--version\") ")
 
 (defvar-local doom-modeline-env--parser nil
   "A function that returns version number from a command --version (or similar).
-Example: 'doom-modeline-env--ruby")
+Example: \\='doom-modeline-env--ruby")
 
 
 ;; Functions & Macros
@@ -115,7 +115,7 @@ passes on the information into the CALLBACK.
 Example:
   (doom-modeline-env--get
      \"ruby\"
-     '(\"--version\")
+     \\='(\"--version\")
      (lambda (line)
         (message (doom-modeline-parser--ruby line)))"
   (let ((proc (apply 'start-process
