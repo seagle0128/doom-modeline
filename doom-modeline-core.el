@@ -1020,11 +1020,13 @@ used as an advice to window creation functions."
           (t
            (add-to-list 'doom-modeline-fn-alist (cons name sym))
            `(progn
-              (fset ',sym (lambda () ,docstring ,@body))
+              (defun ,sym () ,docstring ,@body)
               (add-to-list 'doom-modeline-fn-alist (cons ',name ',sym))
               ,(unless (bound-and-true-p byte-compile-current-file)
                  `(let (byte-compile-warnings)
-                    (byte-compile #',sym))))))))
+                    (unless (and (fboundp 'subr-native-elisp-p)
+                                 (subr-native-elisp-p (symbol-function #',sym)))
+                      (byte-compile #',sym)))))))))
 
 (defun doom-modeline--prepare-segments (segments)
   "Prepare mode-line `SEGMENTS'."
