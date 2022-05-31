@@ -378,7 +378,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
        (if (doom-modeline--active)
            icon
          (doom-modeline-propertize-icon icon 'doom-modeline-inactive))
-       (doom-modeline-vspc)))))
+       (and (not (equal doom-modeline--buffer-file-state-icon "")) (doom-modeline-vspc))))))
 
 (defsubst doom-modeline--buffer-name ()
   "The current buffer name."
