@@ -361,24 +361,26 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
   (when (and doom-modeline-icon doom-modeline-major-mode-icon)
     (when-let ((icon (or doom-modeline--buffer-file-icon
                          (doom-modeline-update-buffer-file-icon))))
-      (concat
-       (let ((active (doom-modeline--active)))
-         (if (and active doom-modeline-major-mode-color-icon)
-             icon
-           (doom-modeline-propertize-icon icon (if active
-                                                   'doom-modeline
-                                                 'doom-modeline-inactive))))
-       (doom-modeline-vspc)))))
+      (unless (string-empty-p icon)
+        (concat
+         (let ((active (doom-modeline--active)))
+           (if (and active doom-modeline-major-mode-color-icon)
+               icon
+             (doom-modeline-propertize-icon icon (if active
+                                                     'doom-modeline
+                                                   'doom-modeline-inactive))))
+         (doom-modeline-vspc))))))
 
 (defsubst doom-modeline--buffer-state-icon ()
   "The icon of the current buffer state."
   (when doom-modeline-buffer-state-icon
     (when-let ((icon (doom-modeline-update-buffer-file-state-icon)))
-      (concat
-       (if (doom-modeline--active)
-           icon
-         (doom-modeline-propertize-icon icon 'doom-modeline-inactive))
-       (doom-modeline-vspc)))))
+      (unless (string-empty-p icon)
+        (concat
+         (if (doom-modeline--active)
+             icon
+           (doom-modeline-propertize-icon icon 'doom-modeline-inactive))
+         (doom-modeline-vspc))))))
 
 (defsubst doom-modeline--buffer-name ()
   "The current buffer name."
