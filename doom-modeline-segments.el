@@ -1469,8 +1469,8 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
      (doom-modeline-refresh-bars)
      (doom-modeline-invalidate-huds))))
 
-(add-hook 'after-setting-font-hook #'doom-modeline-refresh-bars)
-(add-hook 'after-setting-font-hook #'doom-modeline-invalidate-huds)
+(add-hook 'window-configuration-change-hook #'doom-modeline-refresh-bars)
+(add-hook 'window-configuration-change-hook #'doom-modeline-invalidate-huds)
 
 (doom-modeline-def-segment bar
   "The bar regulates the height of the doom-modeline in GUI."
