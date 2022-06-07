@@ -1141,20 +1141,20 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
                             'doom-modeline-vspc-face
                           'doom-modeline-vspc-inactive-face)))
 
+;; Since 27, the calculation of char height was changed
+;; @see https://github.com/seagle0128/doom-modeline/issues/271
 (defun doom-modeline--font-height ()
   "Calculate the actual char height of the mode-line."
-  (let ((height (face-attribute 'doom-modeline :height)))
-    ;; WORKAROUND: Fix tall issue of 27 on Linux
-    ;; @see https://github.com/seagle0128/doom-modeline/issues/271
+  (let ((height (face-attribute 'doom-modeline :height))
+        (char-height (frame-char-height)))
     (round
-     (* (if (or (<= doom-modeline-height 0)
-                (and (>= emacs-major-version 27)
-                     (not (eq system-type 'darwin))))
-            1.0
-          (if doom-modeline-icon 1.68 1.25))
+     (* (pcase system-type
+          ('darwin (if doom-modeline-icon 1.5 1.2))
+          ('windows-nt (if doom-modeline-icon 1.1 0.83))
+          (_ (if (and doom-modeline-icon (< emacs-major-version 27)) 1.4 1.0)))
         (cond ((integerp height) (/ height 10))
-              ((floatp height) (* height (frame-char-height)))
-              (t (frame-char-height)))))))
+              ((floatp height) (* height char-height))
+              (t char-height))))))
 
 (defun doom-modeline--original-value (sym)
   "Return the original value for SYM, if any.

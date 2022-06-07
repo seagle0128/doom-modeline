@@ -1455,6 +1455,20 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
      (doom-modeline-refresh-bars)
      (doom-modeline-invalidate-huds))))
 
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-icon
+ (lambda (_sym _val op _where)
+   (when (eq op 'set)
+     (doom-modeline-refresh-bars)
+     (doom-modeline-invalidate-huds))))
+
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-unicode-fallback
+ (lambda (_sym _val op _where)
+   (when (eq op 'set)
+     (doom-modeline-refresh-bars)
+     (doom-modeline-invalidate-huds))))
+
 (add-hook 'after-setting-font-hook #'doom-modeline-refresh-bars)
 (add-hook 'after-setting-font-hook #'doom-modeline-invalidate-huds)
 
