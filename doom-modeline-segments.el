@@ -1073,7 +1073,8 @@ mouse-1: List all problems%s"
         (seg (cond ((and (bound-and-true-p flymake-mode)
                          (bound-and-true-p flymake--state)) ; only support 26+
                     `(,doom-modeline--flymake-icon . ,doom-modeline--flymake-text))
-                   ((bound-and-true-p flycheck-mode)
+                   ((and (bound-and-true-p flycheck-mode)
+                        flycheck--automatically-enabled-checkers)
                     `(,doom-modeline--flycheck-icon . ,doom-modeline--flycheck-text)))))
     (let ((icon (car seg))
           (text (cdr seg)))
