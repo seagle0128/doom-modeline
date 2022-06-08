@@ -1383,12 +1383,11 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
     (let ((width doom-modeline-bar-width)
           (height (max doom-modeline-height
                        (doom-modeline--font-height))))
-      (when (and (numberp width) (numberp height))
-        (setq doom-modeline--bar-active
-              (doom-modeline--create-bar-image 'doom-modeline-bar width height)
-              doom-modeline--bar-inactive
-              (doom-modeline--create-bar-image
-               'doom-modeline-bar-inactive width height)))))
+      (setq doom-modeline--bar-active
+            (doom-modeline--create-bar-image 'doom-modeline-bar width height)
+            doom-modeline--bar-inactive
+            (doom-modeline--create-bar-image
+             'doom-modeline-bar-inactive width height))))
   (if (doom-modeline--active)
       doom-modeline--bar-active
     doom-modeline--bar-inactive))

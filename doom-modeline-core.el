@@ -1223,7 +1223,9 @@ ARGS is same as `all-the-icons-octicon' and others."
 Use FACE1 for the bar, FACE2 for the background.
 WIDTH and HEIGHT are the image size in pixels."
   (when (and (display-graphic-p)
-             (image-type-available-p 'pbm))
+             (image-type-available-p 'pbm)
+             (numberp width) (> width 0)
+             (numberp height) (> height 0))
     (propertize
      " " 'display
      (let ((color (or (face-background face nil t) "None")))
@@ -1242,7 +1244,9 @@ WIDTH and HEIGHT are the image size in pixels.
 TOP-MARGIN and BOTTOM-MARGIN are the size of the margin above and below the bar,
 respectively."
   (when (and (display-graphic-p)
-             (image-type-available-p 'pbm))
+             (image-type-available-p 'pbm)
+             (numberp width) (> width 0)
+             (numberp height) (> height 0))
     (let ((min-height (min height doom-modeline-hud-min-height)))
       (unless (> (- height top-margin bottom-margin) min-height)
         (let ((margin (- height min-height)))
