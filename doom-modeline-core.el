@@ -167,8 +167,7 @@ Must be set before loading doom-modeline."
 
 (defcustom doom-modeline-height 25
   "How tall the mode-line should be. It's only respected in GUI.
-If the actual char height is larger, it respects the actual char height.
-If `doom-modeline-height' is <= 0 the modeline will have default height."
+If the actual char height is larger, it respects the actual char height."
   :type 'integer
   :group 'doom-modeline)
 
