@@ -988,7 +988,7 @@ used as an advice to window creation functions."
   (if (boundp 'after-focus-change-function)
       (progn
         (defun doom-modeline-focus-change (&rest _)
-          (if (frame-focus-state)
+          (if (frame-focus-state (frame-parent))
               (doom-modeline-focus)
             (doom-modeline-unfocus)))
         (advice-add #'handle-switch-frame :after #'doom-modeline-focus-change)
