@@ -68,6 +68,7 @@
 (defvar evil-visual-beginning)
 (defvar evil-visual-end)
 (defvar evil-visual-selection)
+(defvar flycheck--automatically-enabled-checkers)
 (defvar flycheck-current-errors)
 (defvar flycheck-mode-menu-map)
 (defvar flymake--mode-line-format)
