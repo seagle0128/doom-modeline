@@ -68,6 +68,7 @@
 (defvar evil-visual-beginning)
 (defvar evil-visual-end)
 (defvar evil-visual-selection)
+(defvar flycheck--automatically-enabled-checkers)
 (defvar flycheck-current-errors)
 (defvar flycheck-mode-menu-map)
 (defvar flymake--mode-line-format)
@@ -1075,7 +1076,7 @@ mouse-1: List all problems%s"
                          (bound-and-true-p flymake--state)) ; only support 26+
                     `(,doom-modeline--flymake-icon . ,doom-modeline--flymake-text))
                    ((and (bound-and-true-p flycheck-mode)
-                        flycheck--automatically-enabled-checkers)
+                         (bound-and-true-p flycheck--automatically-enabled-checkers))
                     `(,doom-modeline--flycheck-icon . ,doom-modeline--flycheck-text)))))
     (let ((icon (car seg))
           (text (cdr seg)))
