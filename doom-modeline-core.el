@@ -1148,7 +1148,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (char-height (frame-char-height)))
     (round
      (* (pcase system-type
-          ('darwin (if doom-modeline-icon 1.5 1.2))
+          ('darwin (if doom-modeline-icon 1.5 1.0))
           ('windows-nt (if doom-modeline-icon 1.1 0.83))
           (_ (if (and doom-modeline-icon (< emacs-major-version 27)) 1.4 1.0)))
         (cond ((integerp height) (/ height 10))
