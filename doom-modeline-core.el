@@ -630,7 +630,7 @@ It requires `circe' or `erc' package."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-vspc-inactive-face
-  '((t (:inherit (doom-modeline-inactive doom-modeline-vspc-face))))
+  '((t (:inherit (doom-modeline-vspc-face doom-modeline-inactive))))
   "Face used for the variable white space."
   :group 'doom-modeline-faces)
 
@@ -1087,9 +1087,7 @@ Example:
         (list lhs-forms
               (propertize
                " "
-               'face (if (doom-modeline--active)
-                         'doom-modeline
-                       'doom-modeline-inactive)
+               'face (doom-modeline-face 'doom-modeline)
                'display `((space
                            :align-to
                            (- (+ right right-fringe right-margin scroll-bar)
@@ -1123,23 +1121,27 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; Helpers
 ;;
 
+(defun doom-modeline-face (face &optional inactive-face)
+  "Display FACE in mode-line."
+  (if (doom-modeline--active)
+      face
+    (or inactive-face 'doom-modeline-inactive)))
+
 (defsubst doom-modeline-spc ()
   "Text style with whitespace."
-  (propertize " " 'face (if (doom-modeline--active)
-                            'doom-modeline-spc-face
-                          'doom-modeline-spc-inactive-face)))
+  (propertize " " 'face (doom-modeline-face
+                         'doom-modeline-spc-face)))
 
 (defsubst doom-modeline-wspc ()
   "Text style with wide whitespace."
-  (propertize "  " 'face (if (doom-modeline--active)
-                             'doom-modeline-spc-face
-                           'doom-modeline-spc-inactive-face)))
+  (propertize "  " 'face (doom-modeline-face
+                          'doom-modeline-spc-face)))
 
 (defsubst doom-modeline-vspc ()
   "Text style with icons in mode-line."
-  (propertize " " 'face (if (doom-modeline--active)
-                            'doom-modeline-vspc-face
-                          'doom-modeline-vspc-inactive-face)))
+  (propertize " " 'face (doom-modeline-face
+                         'doom-modeline-vspc-face
+                         'doom-modeline-vspc-inactive-face)))
 
 (defun doom-modeline--original-value (sym)
   "Return the original value for SYM, if any.
@@ -1203,6 +1205,18 @@ ARGS is same as `all-the-icons-octicon' and others."
       (propertize text 'face face))
      ;; Fallback
      (t ""))))
+
+(defun doom-modeline-display-icon (icon)
+  "Display ICON in mode-line."
+  (if (doom-modeline--active)
+      icon
+    (doom-modeline-propertize-icon icon 'doom-modeline-inactive)))
+
+(defun doom-modeline-display-text (text)
+  "Display TEXT in mode-line."
+  (if (doom-modeline--active)
+      text
+    (propertize text 'face 'doom-modeline-inactive)))
 
 (defun doom-modeline--create-bar-image (face width height)
   "Create the bar image.
