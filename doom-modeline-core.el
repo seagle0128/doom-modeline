@@ -1053,17 +1053,6 @@ used as an advice to window creation functions."
               width)))
     1))
 
-;; Refresh the font width after setting frame parameters
-;; to ensure the font width is correct.
-(defun doom-modeline-refresh-font-width-cache (&rest _)
-  "Refresh the font width cache."
-  (setq doom-modeline--font-width-cache nil)
-  (doom-modeline--font-width))
-(add-hook 'window-setup-hook #'doom-modeline-refresh-font-width-cache)
-(add-hook 'after-make-frame-functions #'doom-modeline-refresh-font-width-cache)
-(add-hook 'after-setting-font-hook #'doom-modeline-refresh-font-width-cache)
-(add-hook 'server-after-make-frame-hook #'doom-modeline-refresh-font-width-cache)
-
 ;; Since 27, the calculation of char height was changed
 ;; @see https://github.com/seagle0128/doom-modeline/issues/271
 (defun doom-modeline--font-height ()
@@ -1104,11 +1093,8 @@ Example:
                'display `((space
                            :align-to
                            (- (+ right right-fringe right-margin scroll-bar)
-                              ,(* (let ((width (doom-modeline--font-width)))
-                                    (or (and (= width 1) 1)
-                                        (/ width (frame-char-width) 1.0)))
-                                  (string-width
-                                   (format-mode-line (cons "" rhs-forms))))))))
+                              ,(string-width
+                                (format-mode-line (cons "" rhs-forms)))))))
               rhs-forms))
       (concat "Modeline:\n"
               (format "  %s\n  %s"
