@@ -1046,9 +1046,9 @@ used as an advice to window creation functions."
 (defun doom-modeline--font-width ()
   "Cache the font width."
   (if (display-graphic-p)
-      (let ((attributes (face-all-attributes 'doom-modeline)))
+      (let ((attributes (face-all-attributes 'mode-line)))
         (or (cdr (assoc attributes doom-modeline--font-width-cache))
-            (let ((width (window-font-width nil 'doom-modeline)))
+            (let ((width (window-font-width nil 'mode-line)))
               (push (cons attributes width) doom-modeline--font-width-cache)
               width)))
     1))
@@ -1063,6 +1063,21 @@ used as an advice to window creation functions."
 (add-hook 'after-make-frame-functions #'doom-modeline-refresh-font-width-cache)
 (add-hook 'after-setting-font-hook #'doom-modeline-refresh-font-width-cache)
 (add-hook 'server-after-make-frame-hook #'doom-modeline-refresh-font-width-cache)
+
+;; Since 27, the calculation of char height was changed
+;; @see https://github.com/seagle0128/doom-modeline/issues/271
+(defun doom-modeline--font-height ()
+  "Calculate the actual char height of the mode-line."
+  (let ((height (face-attribute 'mode-line :height))
+        (char-height (window-font-height nil 'mode-line)))
+    (round
+     (* (pcase system-type
+          ('darwin (if doom-modeline-icon 1.5 1.0))
+          ('windows-nt (if doom-modeline-icon 1.1 0.83))
+          (_ (if (and doom-modeline-icon (< emacs-major-version 27)) 1.4 1.0)))
+        (cond ((integerp height) (/ height 10))
+              ((floatp height) (* height char-height))
+              (t char-height))))))
 
 (defun doom-modeline-def-modeline (name lhs &optional rhs)
   "Defines a modeline format and byte-compiles it.
@@ -1139,21 +1154,6 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   (propertize " " 'face (if (doom-modeline--active)
                             'doom-modeline-vspc-face
                           'doom-modeline-vspc-inactive-face)))
-
-;; Since 27, the calculation of char height was changed
-;; @see https://github.com/seagle0128/doom-modeline/issues/271
-(defun doom-modeline--font-height ()
-  "Calculate the actual char height of the mode-line."
-  (let ((height (face-attribute 'doom-modeline :height))
-        (char-height (frame-char-height)))
-    (round
-     (* (pcase system-type
-          ('darwin (if doom-modeline-icon 1.5 1.0))
-          ('windows-nt (if doom-modeline-icon 1.1 0.83))
-          (_ (if (and doom-modeline-icon (< emacs-major-version 27)) 1.4 1.0)))
-        (cond ((integerp height) (/ height 10))
-              ((floatp height) (* height char-height))
-              (t char-height))))))
 
 (defun doom-modeline--original-value (sym)
   "Return the original value for SYM, if any.
