@@ -691,7 +691,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
                  (str (if vc-display-status
                           (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
                         "")))
-            (propertize (if (> (length str) doom-modeline-vcs-max-length)
+            (propertize (if (length> str doom-modeline-vcs-max-length)
                             (concat
                              (substring str 0 (- doom-modeline-vcs-max-length 3))
                              "...")
@@ -1504,14 +1504,15 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
               ((bound-and-true-p window-numbering-mode)
                (window-numbering-get-number-string))
               (t ""))))
-    (if (and (< 0 (length num))
-             (< 1 (length (cl-mapcan
-                           (lambda (frame)
-                             ;; Exclude minibuffer and child frames
-                             (unless (and (fboundp 'frame-parent)
-                                          (frame-parent frame))
-                               (window-list frame 'never)))
-                           (visible-frame-list)))))
+    (if (and (length> num 0)
+             (length> (cl-mapcan
+                       (lambda (frame)
+                         ;; Exclude minibuffer and child frames
+                         (unless (and (fboundp 'frame-parent)
+                                      (frame-parent frame))
+                           (window-list frame 'never)))
+                       (visible-frame-list))
+                      1))
         (propertize (format " %s " num)
                     'face (doom-modeline-face 'doom-modeline-buffer-major-mode))
       (doom-modeline-spc))))
@@ -1528,14 +1529,14 @@ Requires `eyebrowse-mode' to be enabled or `tab-bar-mode' tabs to be created."
     (when-let
         ((name (cond
                 ((and (bound-and-true-p eyebrowse-mode)
-                      (< 1 (length (eyebrowse--get 'window-configs))))
+                      (length> (eyebrowse--get 'window-configs) 1))
                  (assq-delete-all 'eyebrowse-mode mode-line-misc-info)
                  (when-let*
                      ((num (eyebrowse--get 'current-slot))
                       (tag (nth 2 (assoc num (eyebrowse--get 'window-configs)))))
-                   (if (< 0 (length tag)) tag (int-to-string num))))
+                   (if (length> tag 0) tag (int-to-string num))))
                 ((and (fboundp 'tab-bar-mode)
-                      (< 1 (length (frame-parameter nil 'tabs))))
+                      (length> (frame-parameter nil 'tabs) 1))
                  (let* ((current-tab (tab-bar--current-tab))
                         (tab-index (tab-bar--current-tab-index))
                         (explicit-name (alist-get 'explicit-name current-tab))
@@ -2922,8 +2923,7 @@ mouse-3: Restart preview"
   (when (bound-and-true-p follow-mode)
     (let* ((windows (follow-all-followers))
            (nwindows (length windows))
-           (nfollowing (- (length (memq (selected-window) windows))
-                          1)))
+           (nfollowing (- (length (memq (selected-window) windows)) 1)))
       (concat
        (doom-modeline-spc)
        (propertize (format "Follow %d/%d" (- nwindows nfollowing) nwindows)

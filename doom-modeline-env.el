@@ -213,7 +213,7 @@ PARSER should be a function for parsing COMMAND's output line-by-line, to
                                   "python")
                               "--version"))))
   :parser  (lambda (line) (let ((version (split-string line)))
-                       (if (>= (length version) 2)
+                       (if (length> version 1)
                            (cadr version)
                          (car version)))))
 
