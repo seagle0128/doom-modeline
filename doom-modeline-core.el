@@ -30,7 +30,6 @@
 (require 'subr-x)
 
 (require 'compat)
-(require 'dash)
 (require 'shrink-path)
 
 (require 'all-the-icons nil t)
