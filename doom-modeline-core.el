@@ -157,7 +157,7 @@ It returns a file name which can be used directly as argument of
 This is done by adjusting `lisp-imenu-generic-expression' to
 include support for finding `doom-modeline-def-*' forms.
 
-Must be set before loading doom-modeline."
+Must be set before loading `doom-modeline'."
   :type 'boolean
   :set (lambda (_sym val)
          (if val
@@ -195,7 +195,7 @@ Only respected in GUI."
   "The limit of the window width.
 
 If `window-width' is smaller than the limit, some information won't be
-displayed. It can be an integer or a float number. `nil' means no limit."
+displayed. It can be an integer or a float number. nil means no limit."
   :type '(choice integer
                  float
                  (const :tag "Disable" nil))
@@ -258,7 +258,7 @@ While using the server mode in GUI, should set the value explicitly."
 (defcustom doom-modeline-major-mode-icon t
   "Whether display the icon for `major-mode'.
 
-It respects `doom-modeline-icon'."
+It respects variable `doom-modeline-icon'."
   :type 'boolean
   :group'doom-modeline)
 
@@ -272,14 +272,14 @@ It respects `all-the-icons-color-icons'."
 (defcustom doom-modeline-buffer-state-icon t
   "Whether display the icon for the buffer state.
 
-It respects `doom-modeline-icon'."
+It respects variable `doom-modeline-icon'."
   :type 'boolean
   :group 'doom-modeline)
 
 (defcustom doom-modeline-buffer-modification-icon t
   "Whether display the modification icon for the buffer.
 
-It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'."
+It respects variable `doom-modeline-icon' and `doom-modeline-buffer-state-icon'."
   :type 'boolean
   :group 'doom-modeline)
 
@@ -438,10 +438,11 @@ It respects `doom-modeline-enable-word-count'."
               web-mode-script-padding
               web-mode-style-padding)
     (yaml-mode yaml-indent-offset))
-  "Indentation retrieving variables matched to major modes used
-  when `doom-modeline-indent-info' is non-nil. When multiple
-  variables are specified for a mode, they will be tried resolved
-  in the given order."
+  "Indentation retrieving variables matched to major modes.
+
+Which is used when `doom-modeline-indent-info' is non-nil.
+When multiple variables are specified for a mode, they will be tried resolved
+in the given order."
   :type '(alist :key-type symbol :value-type sexp)
   :group 'doom-modeline)
 
@@ -716,8 +717,8 @@ It requires `circe' or `erc' package."
 
 (defface doom-modeline-notification
   '((t (:inherit doom-modeline-warning)))
-  "Face for notifications in the mode-line. Used by GitHub, mu4e,
-etc. (also see the face `doom-modeline-unread-number')."
+  "Face for notifications in the mode-line. Used by GitHub, mu4e, etc.
+Also see the face `doom-modeline-unread-number'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-unread-number
@@ -934,7 +935,9 @@ used as an advice to window creation functions."
 
 ;; Keep `doom-modeline-current-window' up-to-date
 (defun doom-modeline--get-current-window (&optional frame)
-  "Get the current window but should exclude the child windows."
+  "Get the current window but should exclude the child windows.
+
+If FRAME is nil, it means the current frame."
   (if (and (fboundp 'frame-parent) (frame-parent frame))
       (frame-selected-window (frame-parent frame))
     (frame-selected-window frame)))
@@ -1006,7 +1009,7 @@ used as an advice to window creation functions."
 (defvar doom-modeline-var-alist ())
 
 (defmacro doom-modeline-def-segment (name &rest body)
-  "Defines a modeline segment NAME with BODY and byte compiles it."
+  "Define a modeline segment NAME with BODY and byte compiles it."
   (declare (indent defun) (doc-string 2))
   (let ((sym (intern (format "doom-modeline-segment--%s" name)))
         (docstring (if (stringp (car body))
@@ -1069,7 +1072,7 @@ used as an advice to window creation functions."
               (t char-height))))))
 
 (defun doom-modeline-def-modeline (name lhs &optional rhs)
-  "Defines a modeline format and byte-compiles it.
+  "Define a modeline format and byte-compiles it.
 NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
 LHS and RHS are lists of symbols of modeline segments defined with
 `doom-modeline-def-segment'.
@@ -1122,7 +1125,9 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 ;;
 
 (defun doom-modeline-face (face &optional inactive-face)
-  "Display FACE in mode-line."
+  "Display FACE in mode-line.
+
+If INACTIVE-FACE is nil, will use `doom-modeline-inactive' face."
   (if (doom-modeline--active)
       face
     (or inactive-face 'doom-modeline-inactive)))
@@ -1220,8 +1225,8 @@ ARGS is same as `all-the-icons-octicon' and others."
 
 (defun doom-modeline--create-bar-image (face width height)
   "Create the bar image.
-Use FACE1 for the bar, FACE2 for the background.
-WIDTH and HEIGHT are the image size in pixels."
+
+Use FACE for the bar, WIDTH and HEIGHT are the image size in pixels."
   (when (and (display-graphic-p)
              (image-type-available-p 'pbm)
              (numberp width) (> width 0)
@@ -1239,6 +1244,7 @@ WIDTH and HEIGHT are the image size in pixels."
 (defun doom-modeline--create-hud-image
     (face1 face2 width height top-margin bottom-margin)
   "Create the hud image.
+
 Use FACE1 for the bar, FACE2 for the background.
 WIDTH and HEIGHT are the image size in pixels.
 TOP-MARGIN and BOTTOM-MARGIN are the size of the margin above and below the bar,
@@ -1314,8 +1320,7 @@ Return `default-directory' if no project was found."
   (or (doom-modeline--project-root) default-directory))
 
 (defun doom-modeline-buffer-file-name ()
-  "Propertized variable `buffer-file-name' based on
-`doom-modeline-buffer-file-name-style'."
+  "Propertize file name based on `doom-modeline-buffer-file-name-style'."
   (let* ((buffer-file-name (file-local-name (or (buffer-file-name (buffer-base-buffer)) "")))
          (buffer-file-truename (file-local-name
                                 (or buffer-file-truename (file-truename buffer-file-name) "")))
@@ -1360,7 +1365,8 @@ Return `default-directory' if no project was found."
                 'local-map mode-line-buffer-identification-keymap)))
 
 (defun doom-modeline--buffer-file-name-truncate (file-path true-file-path &optional truncate-tail)
-  "Propertized variable `buffer-file-name' that truncates every dir along path.
+  "Propertize file name that truncates every dir along path.
+
 If TRUNCATE-TAIL is t also truncate the parent directory of the file."
   (let ((dirs (shrink-path-prompt (file-name-directory true-file-path))))
     (if (null dirs)
@@ -1375,8 +1381,9 @@ If TRUNCATE-TAIL is t also truncate the parent directory of the file."
                             'face 'doom-modeline-buffer-file))))))
 
 (defun doom-modeline--buffer-file-name-relative (_file-path true-file-path &optional include-project)
-  "Propertized variable `buffer-file-name' showing directories relative to
-project's root only."
+  "Propertize file name showing directories relative to project's root only.
+
+If INCLUDE-PROJECT is non-nil, the project path will be included."
   (let ((root (file-local-name (doom-modeline-project-root))))
     (if (null root)
         (propertize "%b" 'face 'doom-modeline-buffer-file)
@@ -1393,7 +1400,8 @@ project's root only."
                                         truncate-project-root-parent
                                         truncate-project-relative-path
                                         hide-project-root-parent)
-  "Propertized variable `buffer-file-name' given by FILE-PATH.
+  "Propertize buffer name given by FILE-PATH.
+
 If TRUNCATE-PROJECT-ROOT-PARENT is non-nil will be saved by truncating project
 root parent down fish-shell style.
 

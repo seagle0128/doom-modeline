@@ -36,7 +36,7 @@
 ;; Customizations
 
 (defgroup doom-modeline-env nil
-  "The environment parser for doom-modeline."
+  "The environment parser for `doom-modeline'."
   :group 'doom-modeline
   :link '(url-link :tag "Homepage" "https://github.com/seagle0128/doom-modeline"))
 
@@ -69,7 +69,7 @@ Example: \"ruby\"")
 
 (defvar-local doom-modeline-env--command-args nil
   "A list of arguments for the command to extract the version from.
-Example: \\='(\"--version\") ")
+Example: \\='(\"--version\")")
 
 (defvar-local doom-modeline-env--parser nil
   "A function that returns version number from a command --version (or similar).
@@ -131,7 +131,7 @@ Example:
                             (funcall parser line))))))
 
 (cl-defmacro doom-modeline-def-env (name &key hooks command parser)
-  "Defines a handler for updating & displaying a version string for a language.
+  "Define a handler for updating & displaying a version string for a language.
 
 NAME is an unquoted symbol representing the handler's unique ID.
 HOOKS is a list of hook symbols where this handler should be triggered.

@@ -238,7 +238,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
 ;;;###autoload
 (define-minor-mode doom-modeline-mode
-  "Toggle doom-modeline on or off."
+  "Toggle `doom-modeline' on or off."
   :group 'doom-modeline
   :global t
   :lighter nil

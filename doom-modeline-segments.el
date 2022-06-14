@@ -406,8 +406,10 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
             (doom-modeline-display-text name)))))))
 
 (doom-modeline-def-segment buffer-info
-  "Combined information about the current buffer, including the current working
-directory, the file name, and its state (modified, read-only or non-existent)."
+  "Combined information about the current buffer.
+
+Including the current working directory, the file name, and its state (modified,
+read-only or non-existent)."
   (concat
    (doom-modeline-spc)
    (doom-modeline--buffer-mode-icon)
@@ -431,9 +433,10 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
                'local-map mode-line-buffer-identification-keymap)))
 
 (doom-modeline-def-segment buffer-default-directory
-  "Displays `default-directory' with the icon and state . This is for special
-buffers like the scratch buffer where knowing the current project directory is
-important."
+  "Displays `default-directory' with the icon and state.
+
+This is for special buffers like the scratch buffer where knowing the current
+project directory is important."
   (let ((face (doom-modeline-face
                (if (and buffer-file-name (buffer-modified-p))
                    'doom-modeline-buffer-modified
@@ -448,8 +451,10 @@ important."
             (propertize (abbreviate-file-name default-directory) 'face face))))
 
 (doom-modeline-def-segment buffer-default-directory-simple
-  "Displays `default-directory'. This is for special buffers like the scratch
-buffer where knowing the current project directory is important."
+  "Displays `default-directory'.
+
+This is for special buffers like the scratch buffer where knowing the current
+project directory is important."
   (let ((face (doom-modeline-face 'doom-modeline-buffer-path)))
     (concat (doom-modeline-spc)
             (and doom-modeline-major-mode-icon
@@ -465,7 +470,7 @@ buffer where knowing the current project directory is important."
 ;;
 
 (doom-modeline-def-segment buffer-encoding
-  "Displays the eol and the encoding style of the buffer the same way Atom does."
+  "Displays the eol and the encoding style of the buffer."
   (when doom-modeline-buffer-encoding
     (let ((face (doom-modeline-face 'doom-modeline))
           (mouse-face 'doom-modeline-highlight))
@@ -1100,8 +1105,10 @@ Respects `doom-modeline-enable-word-count'."
                   (current-column)))
 
 (doom-modeline-def-segment selection-info
-  "Information about the current selection, such as how many characters and
-lines are selected, or the NxM dimensions of a block selection."
+  "Information about the current selection.
+
+Such as how many characters and lines are selected, or the NxM dimensions of a
+block selection."
   (when (and (or mark-active (and (bound-and-true-p evil-local-mode)
                                   (eq evil-state 'visual)))
              (doom-modeline--active))
@@ -1294,7 +1301,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
          'face (doom-modeline-face 'doom-modeline-panel))))))
 
 (defun doom-modeline--override-phi-search-mode-line (orig-fun &rest args)
-  "Override the doom-modeline of `phi-search' and `phi-replace'."
+  "Override the mode-line of `phi-search' and `phi-replace'."
   (if (bound-and-true-p doom-modeline-mode)
       (apply orig-fun mode-line-format (cdr args))
     (apply orig-fun args)))
@@ -1313,7 +1320,10 @@ mouse-1: Display Line and Column Mode Menu"
             (doom-modeline-spc))))
 
 (doom-modeline-def-segment matches
-  "Displays: 1. the currently recording macro, 2. A current/total for the
+  "Displays matches.
+
+Including:
+1. the currently recording macro, 2. A current/total for the
 current search term (with `anzu'), 3. The number of substitutions being
 conducted with `evil-ex-substitute', and/or 4. The number of active `iedit'
 regions, 5. The current/total for the highlight term (with `symbol-overlay'),
@@ -1356,7 +1366,7 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
 (defvar doom-modeline--bar-inactive nil)
 
 (defsubst doom-modeline--bar ()
-  "The default bar regulates the height of the doom-modeline in GUI."
+  "The default bar regulates the height of the mode-line in GUI."
   (unless (and doom-modeline--bar-active doom-modeline--bar-inactive)
     (let ((width doom-modeline-bar-width)
           (height (max doom-modeline-height
@@ -1371,7 +1381,7 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
     doom-modeline--bar-inactive))
 
 (defun doom-modeline-refresh-bars ()
-  "Refresh doom-modeline bars on next redraw."
+  "Refresh mode-line bars on next redraw."
   (setq doom-modeline--bar-active nil
         doom-modeline--bar-inactive nil))
 
@@ -1450,7 +1460,7 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
 (add-hook 'window-configuration-change-hook #'doom-modeline-invalidate-huds)
 
 (doom-modeline-def-segment bar
-  "The bar regulates the height of the doom-modeline in GUI."
+  "The bar regulates the height of the `doom-modeline' in GUI."
   (if doom-modeline-hud
       (doom-modeline--hud)
     (doom-modeline--bar)))
@@ -1803,8 +1813,9 @@ TEXT is alternative if icon is not available."
     meow--indicator))
 
 (doom-modeline-def-segment modals
-  "Displays modal editing states, including `evil', `overwrite', `god', `ryo'
-and `xha-fly-kyes', etc."
+  "Displays modal editing states.
+
+Including `evil', `overwrite', `god', `ryo' and `xha-fly-kyes', etc."
   (let* ((evil (doom-modeline--evil))
          (ow (doom-modeline--overwrite))
          (god (doom-modeline--god))
@@ -2239,7 +2250,7 @@ mouse-3: Fetch notifications"
 ;; Highlight the doom-modeline while debugging.
 (defvar-local doom-modeline--debug-cookie nil)
 (defun doom-modeline--debug-visual (&rest _)
-  "Update the face of doom-modeline for debugging."
+  "Update the face of mode-line for debugging."
   (mapc (lambda (buffer)
           (with-current-buffer buffer
             (setq doom-modeline--debug-cookie
