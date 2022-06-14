@@ -28,6 +28,8 @@
 
 (require 'cl-lib)
 (require 'subr-x)
+
+(require 'compat)
 (require 'dash)
 (require 'shrink-path)
 
