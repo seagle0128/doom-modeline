@@ -42,26 +42,12 @@
 
 
 ;;
-;; Compatibility
+;; Optimization
 ;;
-
-(eval-and-compile
-  (when (< emacs-major-version 26)
-    ;; Define `if-let*' and `when-let*' variants for 25 users.
-    (unless (fboundp 'if-let*) (defalias 'if-let* #'if-let))
-    (unless (fboundp 'when-let*) (defalias 'when-let* #'when-let))))
 
 ;; Don’t compact font caches during GC.
 (when (eq system-type 'windows-nt)
   (setq inhibit-compacting-font-caches t))
-
-;;`file-local-name' is introduced in 25.2.2.
-(unless (fboundp 'file-local-name)
-  (defun file-local-name (file)
-    "Return the local name component of FILE.
-It returns a file name which can be used directly as argument of
-`process-file', `start-file-process', or `shell-command'."
-    (or (file-remote-p file 'localname) file)))
 
 ;; Set correct font width for `all-the-icons' for appropriate mode-line width.
 ;; @see https://emacs.stackexchange.com/questions/14420/how-can-i-fix-incorrect-character-width
