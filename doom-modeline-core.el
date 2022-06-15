@@ -120,9 +120,9 @@
 
 (defun doom-modeline-set-char-widths (&rest _)
   "Set char widths for the unicode icons."
-  (when (and (display-graphic-p)
-             (featurep 'all-the-icons))
-    (doom-modeline--set-char-widths doom-modeline-rhs-icons-alist)))
+  (and (display-graphic-p)
+       (featurep 'all-the-icons)
+       (doom-modeline--set-char-widths doom-modeline-rhs-icons-alist)))
 
 (if (and (daemonp)
          (not (frame-parameter nil 'client)))
@@ -1032,21 +1032,6 @@ If FRAME is nil, it means the current frame."
             ((error "%s is not a valid segment" seg))))
     (nreverse forms)))
 
-;; Since 27, the calculation of char height was changed
-;; @see https://github.com/seagle0128/doom-modeline/issues/271
-(defun doom-modeline--font-height ()
-  "Calculate the actual char height of the mode-line."
-  (let ((height (face-attribute 'mode-line :height))
-        (char-height (window-font-height nil 'mode-line)))
-    (round
-     (* (pcase system-type
-          ('darwin (if doom-modeline-icon 1.5 1.0))
-          ('windows-nt (if doom-modeline-icon 1.1 0.83))
-          (_ (if (and doom-modeline-icon (< emacs-major-version 27)) 1.4 1.0)))
-        (cond ((integerp height) (/ height 10))
-              ((floatp height) (* height char-height))
-              (t char-height))))))
-
 (defun doom-modeline-def-modeline (name lhs &optional rhs)
   "Define a modeline format and byte-compiles it.
 NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
@@ -1123,6 +1108,21 @@ If INACTIVE-FACE is nil, will use `doom-modeline-inactive' face."
   (propertize " " 'face (doom-modeline-face
                          'doom-modeline-vspc-face
                          'doom-modeline-vspc-inactive-face)))
+
+;; Since 27, the calculation of char height was changed
+;; @see https://github.com/seagle0128/doom-modeline/issues/271
+(defun doom-modeline--font-height ()
+  "Calculate the actual char height of the mode-line."
+  (let ((height (face-attribute 'mode-line :height))
+        (char-height (window-font-height nil 'mode-line)))
+    (round
+     (* (pcase system-type
+          ('darwin (if doom-modeline-icon 1.5 1.0))
+          ('windows-nt (if doom-modeline-icon 1.1 0.83))
+          (_ (if (and doom-modeline-icon (< emacs-major-version 27)) 1.4 1.0)))
+        (cond ((integerp height) (/ height 10))
+              ((floatp height) (* height char-height))
+              (t char-height))))))
 
 (defun doom-modeline--original-value (sym)
   "Return the original value for SYM, if any.

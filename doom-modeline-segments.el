@@ -1369,8 +1369,7 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
   "The default bar regulates the height of the mode-line in GUI."
   (unless (and doom-modeline--bar-active doom-modeline--bar-inactive)
     (let ((width doom-modeline-bar-width)
-          (height (max doom-modeline-height
-                       (doom-modeline--font-height))))
+          (height (max doom-modeline-height (doom-modeline--font-height))))
       (setq doom-modeline--bar-active
             (doom-modeline--create-bar-image 'doom-modeline-bar width height)
             doom-modeline--bar-inactive
@@ -1392,8 +1391,7 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
   (let* ((ws (window-start))
          (we (window-end))
          (bs (buffer-size))
-         (height (max doom-modeline-height
-                      (doom-modeline--font-height)))
+         (height (max doom-modeline-height (doom-modeline--font-height)))
          (top-margin (if (zerop bs)
                          0
                        (/ (* height (1- ws)) bs)))
@@ -1401,8 +1399,10 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
                             0
                           (max 0 (/ (* height (- bs we 1)) bs))))
          (cache (or (window-parameter nil 'doom-modeline--hud-cache)
-                    (set-window-parameter nil 'doom-modeline--hud-cache
-                                          (make-doom-modeline--hud-cache)))))
+                    (set-window-parameter
+                     nil
+                     'doom-modeline--hud-cache
+                     (make-doom-modeline--hud-cache)))))
     (unless (and (doom-modeline--hud-cache-active cache)
                  (doom-modeline--hud-cache-inactive cache)
                  (= top-margin (doom-modeline--hud-cache-top-margin cache))
