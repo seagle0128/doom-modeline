@@ -92,7 +92,7 @@
           ?\xe8a0                      ; pageview
 
           ;; REPL
-          ?\xf155                      ; dollar-sign
+          ?\xf120                      ; terminal
 
           ;; LSP
           ?\xf135                      ; rocket
