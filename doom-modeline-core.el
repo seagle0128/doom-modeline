@@ -1032,17 +1032,6 @@ If FRAME is nil, it means the current frame."
             ((error "%s is not a valid segment" seg))))
     (nreverse forms)))
 
-(defvar doom-modeline--font-width-cache nil)
-(defun doom-modeline--font-width ()
-  "Cache the font width."
-  (if (display-graphic-p)
-      (let ((attributes (face-all-attributes 'mode-line)))
-        (or (cdr (assoc attributes doom-modeline--font-width-cache))
-            (let ((width (window-font-width nil 'mode-line)))
-              (push (cons attributes width) doom-modeline--font-width-cache)
-              width)))
-    1))
-
 ;; Since 27, the calculation of char height was changed
 ;; @see https://github.com/seagle0128/doom-modeline/issues/271
 (defun doom-modeline--font-height ()
