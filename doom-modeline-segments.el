@@ -1039,13 +1039,13 @@ mouse-1: List all problems%s"
                           (define-key map [mode-line mouse-1]
                             #'flymake-show-diagnostics-buffer)
                           (when (featurep 'mwheel)
-                            (define-key map (vector 'doom-modeline
+                            (define-key map (vector 'mode-line
                                                     mouse-wheel-down-event)
                               (lambda (event)
                                 (interactive "e")
                                 (with-selected-window (posn-window (event-start event))
                                   (flymake-goto-prev-error 1 nil t))))
-                            (define-key map (vector 'doom-modeline
+                            (define-key map (vector 'mode-line
                                                     mouse-wheel-up-event)
                               (lambda (event)
                                 (interactive "e")
