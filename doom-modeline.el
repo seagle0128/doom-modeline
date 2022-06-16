@@ -149,12 +149,6 @@
 ;;
 
 ;;;###autoload
-(defun doom-modeline-init ()
-  "Initialize doom mode-line."
-  (doom-modeline-mode 1))
-(make-obsolete 'doom-modeline-init 'doom-modeline-mode "1.6.0")
-
-;;;###autoload
 (defun doom-modeline-set-main-modeline (&optional default)
   "Set main mode-line.
 If DEFAULT is non-nil, set the default mode-line for all buffers."
