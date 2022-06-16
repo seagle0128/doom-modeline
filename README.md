@@ -424,27 +424,33 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
      (add-hook 'doom-modeline-mode-hook 'setup-custom-doom-modeline)
      ```
 
-1. How to specify font family in modeline?
+1. How to specify font family and size in modeline?
 
    For example:
 
    ```emacs-lisp
-   (setq doom-modeline-height 1)
-   (set-face-attribute 'doom-modeline nil :family "Noto Sans" :height 100)
-   (set-face-attribute 'doom-modeline-inactive nil :family "Noto Sans" :height 100)
+   (setq doom-modeline-height 1) ; optional
+   (set-face-attribute 'mode-line nil :family "Noto Sans" :height 100)
+   (set-face-attribute 'mode-line-inactive nil :family "Noto Sans" :height 100)
    ```
 
    or
 
    ```emacs-lisp
+   (setq doom-modeline-height 1) ; optional
    (custom-set-faces
-     '(doom-modeline ((t (:family "Noto Sans" :height 0.9))))
-     '(doom-modeline-inactive ((t (:family "Noto Sans" :height 0.9)))))
+     '(mode-line ((t (:family "Noto Sans" :height 0.9))))
+     '(mode-line-inactive ((t (:family "Noto Sans" :height 0.9)))))
    ```
 
    Please refer to
    [#189](https://github.com/seagle0128/doom-modeline/issues/189) and
    [#301](https://github.com/seagle0128/doom-modeline/issues/301).
+
+1. The right side of the modeline is cut off. How to fix it?
+
+   - Tweak `all-the-icons-scale-factor`. e.g. `(setq all-the-icons-scale-factor 1.1)`
+   - Use another font family or size. See above.
 
 1. How to disable symbolic links expanding in mode-line?
 
@@ -452,7 +458,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
    ![Screenshot](https://user-images.githubusercontent.com/9449246/62822565-c3f93380-bb74-11e9-95f6-f9c24a6cbd14.png)
 
-   please try this setting
+   please try this:
 
    ```elisp
    ;; built-in `project' on 26+
