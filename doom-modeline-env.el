@@ -33,7 +33,7 @@
 (defvar python-shell-interpreter)
 
 
-;; Customizations
+;; Customization
 
 (defgroup doom-modeline-env nil
   "The environment parser for `doom-modeline'."

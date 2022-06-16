@@ -80,7 +80,6 @@
 (defvar helm--mode-line-display-prefarg)
 (defvar iedit-occurrences-overlays)
 (defvar meow--indicator)
-(defvar minions-direct)
 (defvar minions-mode-line-lighter)
 (defvar minions-mode-line-minor-modes-map)
 (defvar mlscroll-minimum-current-width)
@@ -201,6 +200,7 @@
 (declare-function lsp-workspaces "ext:lsp-mode")
 (declare-function lv-message "ext:lv")
 (declare-function mc/num-cursors "ext:multiple-cursors-core")
+(declare-function minions--prominent-modes "ext:minions")
 (declare-function mlscroll-mode-line "ext:mlscroll")
 (declare-function mu4e-alert-default-mode-line-formatter "ext:mu4e-alert")
 (declare-function mu4e-alert-enable-mode-line-display "ext:mu4e-alert")
@@ -607,8 +607,7 @@ project directory is important."
   mouse-2: Show help for minor mode
   mouse-3: Toggle minor modes"))
       (if (bound-and-true-p minions-mode)
-          `((:propertize ("" ,(--filter (memq (car it) minions-direct)
-                                        minor-mode-alist))
+          `((:propertize ("" ,(minions--prominent-modes))
              face ,face
 		     mouse-face ,mouse-face
 		     help-echo ,help-echo
@@ -2831,18 +2830,18 @@ The cdr can also be a function that returns a name to use.")
                  'face (doom-modeline-face 'doom-modeline-info)))))
 
 (doom-modeline-def-segment helm-help
-"Helm keybindings help."
-(when (bound-and-true-p helm-alive-p)
-  (-interleave
-   (mapcar (lambda (s)
-             (propertize (substitute-command-keys s)
-                         'face (doom-modeline-face
-                                'doom-modeline-buffer-file)))
-           '("\\<helm-map>\\[helm-help]"
-             "\\<helm-map>\\[helm-select-action]"
-             "\\<helm-map>\\[helm-maybe-exit-minibuffer]/F1/F2..."))
-   (mapcar (lambda (s) s)
-           '("(help) " "(actions) " "(action) ")))))
+  "Helm keybindings help."
+  (when (bound-and-true-p helm-alive-p)
+    (mapcar
+     (lambda (s)
+       (if (string-prefix-p "\\<" s)
+           (propertize (substitute-command-keys s)
+                       'face (doom-modeline-face
+                              'doom-modeline-buffer-file))
+         s))
+     '("\\<helm-map>\\[helm-help]" "(help) "
+       "\\<helm-map>\\[helm-select-action]" "(actions) "
+       "\\<helm-map>\\[helm-maybe-exit-minibuffer]/F1/F2..." "(action) "))))
 
 (doom-modeline-def-segment helm-prefix-argument
   "Helm prefix argument."
@@ -2857,10 +2856,10 @@ The cdr can also be a function that returns a name to use.")
   "The currently active helm source.")
 (doom-modeline-def-segment helm-follow
   "Helm follow indicator."
-  (when (and (bound-and-true-p helm-alive-p)
-             doom-modeline--helm-current-source
-             (eq 1 (cdr (assq 'follow doom-modeline--helm-current-source))))
-    "HF"))
+  (and (bound-and-true-p helm-alive-p)
+       doom-modeline--helm-current-source
+       (eq 1 (cdr (assq 'follow doom-modeline--helm-current-source)))
+       "HF"))
 
 ;;
 ;; Git timemachine
