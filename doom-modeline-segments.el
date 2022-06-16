@@ -369,7 +369,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
              (doom-modeline-display-icon icon)
            (doom-modeline-propertize-icon
             icon
-            (doom-modeline-face 'doom-modeline)))
+            (doom-modeline-face)))
          doom-modeline-vspc)))))
 
 (defsubst doom-modeline--buffer-state-icon ()
@@ -736,7 +736,7 @@ Uses `all-the-icons-material' to fetch the icon."
 
 (defun doom-modeline-checker-text (text &optional face)
   "Displays TEXT with FACE."
-  (propertize text 'face (or face 'doom-modeline)))
+  (propertize text 'face (or face 'mode-line)))
 
 ;; Flycheck
 
@@ -2770,7 +2770,7 @@ mouse-3: Switch to next unread buffer")))
                           :face (doom-modeline-face
                                  (if doom-modeline-major-mode-color-icon
                                      'all-the-icons-silver
-                                   'doom-modeline))
+                                   'mode-line))
                           :height 1.0
                           :v-adjust -0.0575)))
    (doom-modeline-display-text
@@ -2802,9 +2802,8 @@ The cdr can also be a function that returns a name to use.")
        (concat
         (doom-modeline-icon 'fileicon "elisp" nil nil
                             :face (doom-modeline-face
-                                   (if doom-modeline-major-mode-color-icon
-                                       'all-the-icons-blue
-                                     'doom-modeline))
+                                   (and doom-modeline-major-mode-color-icon
+                                        'all-the-icons-blue))
                             :height 1.0
                             :v-adjust -0.15)
         doom-modeline-spc))

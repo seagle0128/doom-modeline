@@ -697,7 +697,7 @@ Also see the face `doom-modeline-unread-number'."
   '((((background light)) :foreground "#D4843E")
     (((background dark)) :foreground "#915B2D"))
   "Face to use for the mode-line while debugging."
-  :group 'doom-modeline)
+  :group 'doom-modeline-faces)
 
 (defface doom-modeline-evil-emacs-state
   '((t (:inherit (font-lock-builtin-face bold))))
@@ -1022,10 +1022,9 @@ Example:
         (list lhs-forms
               (propertize
                " "
-               'face (doom-modeline-face 'doom-modeline)
                'display `((space
                            :align-to
-                           (- (+ right  right-fringe scroll-bar)
+                           (- (+ right right-fringe right-margin scroll-bar)
                               ,(string-width
                                 (format-mode-line (cons "" rhs-forms)))))))
               rhs-forms))
@@ -1065,12 +1064,13 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 (defconst doom-modeline-vspc (propertize " " 'face 'variable-pitch)
   "Whitespace with variable pitch style.")
 
-(defun doom-modeline-face (face &optional inactive-face)
-  "Display FACE in mode-line.
+(defun doom-modeline-face (&optional face inactive-face)
+  "Display FACE in active window, and INACTIVE-FACE in inactive window.
 
-If INACTIVE-FACE is nil, will use `mode-line-inactive' face."
+IF FACE is nil, `mode-line' face will be used.
+If INACTIVE-FACE is nil, `mode-line-inactive' face will be used."
   (if (doom-modeline--active)
-      face
+      (or face 'mode-line)
     (or inactive-face 'mode-line-inactive)))
 
 ;; Since 27, the calculation of char height was changed
@@ -1117,7 +1117,7 @@ See https://github.com/seagle0128/doom-modeline/issues/301."
       (when-let ((props (get-text-property 0 'face icon)))
         (when (listp props)
           (cl-destructuring-bind (&key family height inherit &allow-other-keys) props
-            (propertize icon 'face `(:inherit ,(or face inherit props 'doom-modeline)
+            (propertize icon 'face `(:inherit ,(or face inherit props 'mode-line)
                                      :family  ,(or family "")
                                      :height  ,(or height 1.0))))))
     (propertize icon 'face face)))
@@ -1129,7 +1129,7 @@ ICON-SET includes `octicon', `faicon', `material', `alltheicons' and `fileicon',
 etc.
 UNICODE is the unicode char fallback. TEXT is the ASCII char fallback.
 ARGS is same as `all-the-icons-octicon' and others."
-  (let ((face (or (plist-get args :face) 'doom-modeline)))
+  (let ((face (or (plist-get args :face) 'mode-line)))
     (cond
      ;; Icon
      ((and (doom-modeline-icon-displayable-p)
