@@ -370,7 +370,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
            (doom-modeline-propertize-icon
             icon
             (doom-modeline-face 'doom-modeline)))
-         (doom-modeline-vspc))))))
+         doom-modeline-vspc)))))
 
 (defsubst doom-modeline--buffer-state-icon ()
   "The icon of the current buffer state."
@@ -379,7 +379,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
       (unless (string-empty-p icon)
         (concat
          (doom-modeline-display-icon icon)
-         (doom-modeline-vspc))))))
+         doom-modeline-vspc)))))
 
 (defsubst doom-modeline--buffer-name ()
   "The current buffer name."
@@ -411,7 +411,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 Including the current working directory, the file name, and its state (modified,
 read-only or non-existent)."
   (concat
-   (doom-modeline-spc)
+   doom-modeline-spc
    (doom-modeline--buffer-mode-icon)
    (doom-modeline--buffer-state-icon)
    (doom-modeline--buffer-name)))
@@ -419,7 +419,7 @@ read-only or non-existent)."
 (doom-modeline-def-segment buffer-info-simple
   "Display only the current buffer's name, but with fontification."
   (concat
-   (doom-modeline-spc)
+   doom-modeline-spc
    (doom-modeline--buffer-mode-icon)
    (doom-modeline--buffer-state-icon)
    (propertize "%b"
@@ -441,12 +441,12 @@ project directory is important."
                (if (and buffer-file-name (buffer-modified-p))
                    'doom-modeline-buffer-modified
                  'doom-modeline-buffer-path))))
-    (concat (doom-modeline-spc)
+    (concat doom-modeline-spc
             (and doom-modeline-major-mode-icon
                  (concat (doom-modeline-icon
                           'octicon "file-directory" "🖿" ""
                           :face face :v-adjust -0.05 :height 1.25)
-                         (doom-modeline-vspc)))
+                         doom-modeline-vspc))
             (doom-modeline--buffer-state-icon)
             (propertize (abbreviate-file-name default-directory) 'face face))))
 
@@ -456,12 +456,12 @@ project directory is important."
 This is for special buffers like the scratch buffer where knowing the current
 project directory is important."
   (let ((face (doom-modeline-face 'doom-modeline-buffer-path)))
-    (concat (doom-modeline-spc)
+    (concat doom-modeline-spc
             (and doom-modeline-major-mode-icon
                  (concat (doom-modeline-icon
                           'octicon "file-directory" "🖿" ""
                           :face face :v-adjust -0.05 :height 1.25)
-                         (doom-modeline-vspc)))
+                         doom-modeline-vspc))
             (propertize (abbreviate-file-name default-directory) 'face face))))
 
 
@@ -472,10 +472,9 @@ project directory is important."
 (doom-modeline-def-segment buffer-encoding
   "Displays the eol and the encoding style of the buffer."
   (when doom-modeline-buffer-encoding
-    (let ((face (doom-modeline-face 'doom-modeline))
-          (mouse-face 'doom-modeline-highlight))
+    (let ((mouse-face 'doom-modeline-highlight))
       (concat
-       (doom-modeline-spc)
+       doom-modeline-spc
 
        ;; eol type
        (let ((eol (coding-system-eol-type buffer-file-coding-system)))
@@ -488,7 +487,6 @@ project directory is important."
               (1 "CRLF ")
               (2 "CR ")
               (_ ""))
-            'face face
             'mouse-face mouse-face
             'help-echo (format "End-of-line style: %s\nmouse-1: Cycle"
                                (pcase eol
@@ -513,12 +511,11 @@ project directory is important."
                         (not (eq sym doom-modeline-default-coding-system))))
            (propertize
             (upcase (symbol-name sym))
-            'face face
             'mouse-face mouse-face
             'help-echo 'mode-line-mule-info-help-echo
             'local-map mode-line-coding-system-map)))
 
-       (doom-modeline-spc)))))
+       doom-modeline-spc))))
 
 
 ;;
@@ -531,8 +528,7 @@ project directory is important."
     (let ((do-propertize
            (lambda (mode size)
              (propertize
-              (format " %s %d " mode size)
-              'face (doom-modeline-face 'doom-modeline)))))
+              (format " %s %d " mode size)))))
       (if indent-tabs-mode
           (funcall do-propertize "TAB" tab-width)
         (let ((lookup-var
@@ -565,7 +561,7 @@ project directory is important."
   "The major mode, including environment and text-scale info."
   (propertize
    (concat
-    (doom-modeline-spc)
+    doom-modeline-spc
     (propertize (format-mode-line
                  (or (and (boundp 'delighted-modes)
                           (cadr (assq major-mode delighted-modes)))
@@ -585,7 +581,7 @@ project directory is important."
               " (%+d)"
             " (%-d)")
           text-scale-mode-amount))
-    (doom-modeline-spc))
+    doom-modeline-spc)
    'face (doom-modeline-face 'doom-modeline-buffer-major-mode)))
 
 
@@ -595,8 +591,7 @@ project directory is important."
 
 (doom-modeline-def-segment process
   "The process info."
-  (propertize (format-mode-line mode-line-process)
-              'face (doom-modeline-face 'doom-modeline)))
+  (format-mode-line mode-line-process))
 
 
 ;;
@@ -618,7 +613,7 @@ project directory is important."
 		     mouse-face ,mouse-face
 		     help-echo ,help-echo
 		     local-map ,mode-line-minor-mode-keymap)
-            ,(doom-modeline-spc)
+            ,doom-modeline-spc
             (:propertize ("" ,(doom-modeline-icon 'octicon "gear" "⚙"
                                                   minions-mode-line-lighter
                                                   :face face :v-adjust -0.05))
@@ -626,13 +621,13 @@ project directory is important."
              help-echo "Minions
 mouse-1: Display minor modes menu"
              local-map ,minions-mode-line-minor-modes-map)
-            ,(doom-modeline-spc))
+            ,doom-modeline-spc)
         `((:propertize ("" minor-mode-alist)
            face ,face
            mouse-face ,mouse-face
            help-echo ,help-echo
            local-map ,mode-line-minor-mode-keymap)
-          ,(doom-modeline-spc))))))
+          ,doom-modeline-spc)))))
 
 
 ;;
@@ -716,15 +711,15 @@ Uses `all-the-icons-octicon' to fetch the icon."
   (when-let ((icon doom-modeline--vcs-icon)
              (text doom-modeline--vcs-text))
     (concat
-     (doom-modeline-spc)
+     doom-modeline-spc
      (propertize (concat
                   (doom-modeline-display-icon icon)
-                  (doom-modeline-vspc))
+                  doom-modeline-vspc)
                  'mouse-face 'doom-modeline-highlight
                  'help-echo (get-text-property 1 'help-echo vc-mode)
                  'local-map (get-text-property 1 'local-map vc-mode))
      (doom-modeline-display-text text)
-     (doom-modeline-spc))))
+     doom-modeline-spc)))
 
 
 ;;
@@ -1073,11 +1068,11 @@ mouse-1: List all problems%s"
     (concat
      (and icon
           (concat
-           (doom-modeline-spc)
+           doom-modeline-spc
            (doom-modeline-display-icon icon)))
      (and text
           (concat
-           (if icon (doom-modeline-vspc) (doom-modeline-spc))
+           (if icon doom-modeline-vspc doom-modeline-spc)
            (doom-modeline-display-text text))))))
 
 
@@ -1091,8 +1086,7 @@ Displayed when in a major mode in `doom-modeline-continuous-word-count-modes'.
 Respects `doom-modeline-enable-word-count'."
   (when (and doom-modeline-enable-word-count
              (member major-mode doom-modeline-continuous-word-count-modes))
-    (propertize (format " %dW" (count-words (point-min) (point-max)))
-                'face (doom-modeline-face 'doom-modeline))))
+    (format " %dW" (count-words (point-min) (point-max)))))
 
 
 ;;
@@ -1118,7 +1112,7 @@ block selection."
           (cons (region-beginning) (region-end)))
       (propertize
        (let ((lines (count-lines beg (min end (point-max)))))
-         (concat (doom-modeline-spc)
+         (concat doom-modeline-spc
                  (cond ((or (bound-and-true-p rectangle-mark-mode)
                             (and (bound-and-true-p evil-visual-selection)
                                  (eq 'block evil-visual-selection)))
@@ -1134,7 +1128,7 @@ block selection."
                         (format "%dC" (- end beg))))
                  (when doom-modeline-enable-word-count
                    (format " %dW" (count-words beg end)))
-                 (doom-modeline-spc)))
+                 doom-modeline-spc))
        'face 'doom-modeline-emphasis))))
 
 
@@ -1284,7 +1278,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
                   (propertize "I"
                               'face `(:inherit ,face :height 1.4 :weight normal)
                               'display '(raise -0.1)))
-              (propertize (doom-modeline-vspc)
+              (propertize doom-modeline-vspc
                           'face `(:inherit (variable-pitch ,face)))
               (propertize (format "%d " count)
                           'face face)))))
@@ -1310,14 +1304,13 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
 (defsubst doom-modeline--buffer-size ()
   "Show buffer size."
   (when size-indication-mode
-    (concat (doom-modeline-spc)
+    (concat doom-modeline-spc
             (propertize "%I"
-                        'face (doom-modeline-face 'doom-modeline)
                         'help-echo "Buffer size
 mouse-1: Display Line and Column Mode Menu"
                         'mouse-face 'doom-modeline-highlight
                         'local-map mode-line-column-line-number-mode-map)
-            (doom-modeline-spc))))
+            doom-modeline-spc)))
 
 (doom-modeline-def-segment matches
   "Displays matches.
@@ -1353,9 +1346,7 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
          (cl-destructuring-bind (width . height)
              (when (fboundp 'image-size)
                (image-size (image-get-display-property) :pixels))
-           (propertize
-            (format "  %dx%d  " width height)
-            'face (doom-modeline-face 'doom-modeline))))))
+           (format "  %dx%d  " width height)))))
 
 
 ;;
@@ -1525,7 +1516,7 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
                       1))
         (propertize (format " %s " num)
                     'face (doom-modeline-face 'doom-modeline-buffer-major-mode))
-      (doom-modeline-spc))))
+      doom-modeline-spc)))
 
 
 ;;
@@ -1581,9 +1572,9 @@ Requires `eyebrowse-mode' to be enabled or `tab-bar-mode' tabs to be created."
                                            :v-adjust -0.225)))
             (when (or doom-modeline-display-default-persp-name
                       (not (string-equal persp-nil-name name)))
-              (concat (doom-modeline-spc)
+              (concat doom-modeline-spc
                       (propertize (concat (and doom-modeline-persp-icon
-                                               (concat icon (doom-modeline-vspc)))
+                                               (concat icon doom-modeline-vspc))
                                           (propertize name 'face face))
                                   'help-echo "mouse-1: Switch perspective
 mouse-2: Show help for minor mode"
@@ -1596,7 +1587,7 @@ mouse-2: Show help for minor mode"
                                                    (interactive)
                                                    (describe-function 'persp-mode)))
                                                map))
-                      (doom-modeline-spc)))))))
+                      doom-modeline-spc))))))
 
 (add-hook 'buffer-list-update-hook #'doom-modeline-update-persp-name)
 (add-hook 'find-file-hook #'doom-modeline-update-persp-name)
@@ -1663,15 +1654,13 @@ See `mode-line-percent-position'.")
                (doom-modeline-column-zero-based "%l:%c" "%l:%C")
                "%l")
               (column-number-mode (doom-modeline-column-zero-based ":%c" ":%C"))))
-        (face (doom-modeline-face 'doom-modeline))
         (mouse-face 'doom-modeline-highlight)
         (local-map mode-line-column-line-number-mode-map))
     (concat
-     (doom-modeline-wspc)
+     doom-modeline-wspc
 
      ;; Line and column
      (propertize (format-mode-line lc)
-                 'face face
                  'help-echo "Buffer position\n\
 mouse-1: Display Line and Column Mode Menu"
                  'mouse-face mouse-face
@@ -1683,21 +1672,21 @@ mouse-1: Display Line and Column Mode Menu"
                  (not doom-modeline--limited-width-p)
                  (>= (window-width) nyan-minimum-window-width))
             (concat
-             (doom-modeline-wspc)
+             doom-modeline-wspc
              (propertize (nyan-create) 'mouse-face mouse-face)))
            ((and active
                  (bound-and-true-p poke-line-mode)
                  (not doom-modeline--limited-width-p)
                  (>= (window-width) poke-line-minimum-window-width))
             (concat
-             (doom-modeline-wspc)
+             doom-modeline-wspc
              (propertize (poke-line-create) 'mouse-face mouse-face)))
            ((and active
                  (bound-and-true-p mlscroll-mode)
                  (not doom-modeline--limited-width-p)
                  (>= (window-width) mlscroll-minimum-current-width))
             (concat
-             (doom-modeline-wspc)
+             doom-modeline-wspc
              (let ((mlscroll-right-align nil))
                (format-mode-line (mlscroll-mode-line)))))
            ((and active
@@ -1705,23 +1694,22 @@ mouse-1: Display Line and Column Mode Menu"
                  (not doom-modeline--limited-width-p)
                  (>= (window-width) sml-modeline-len))
             (concat
-             (doom-modeline-wspc)
+             doom-modeline-wspc
              (propertize (sml-modeline-create) 'mouse-face mouse-face)))
            (t ""))
 
      ;; Percent position
      (when doom-modeline-percent-position
        (concat
-        (doom-modeline-spc)
+        doom-modeline-spc
         (propertize (format-mode-line '("" doom-modeline-percent-position "%%"))
-                    'face face
                     'help-echo "Buffer percentage\n\
 mouse-1: Display Line and Column Mode Menu"
                     'mouse-face mouse-face
                     'local-map local-map)))
 
      (when (or line-number-mode column-number-mode doom-modeline-percent-position)
-       (doom-modeline-spc)))))
+       doom-modeline-spc))))
 
 ;;
 ;; Party parrot
@@ -1731,9 +1719,9 @@ mouse-1: Display Line and Column Mode Menu"
   (when (and (doom-modeline--active)
              (not doom-modeline--limited-width-p)
              (bound-and-true-p parrot-mode))
-    (concat (doom-modeline-wspc)
+    (concat doom-modeline-wspc
             (parrot-create)
-            (doom-modeline-spc))))
+            doom-modeline-spc)))
 
 ;;
 ;; Modals (evil, overwrite, god, ryo and xah-fly-keys, etc.)
@@ -1823,9 +1811,9 @@ Including `evil', `overwrite', `god', `ryo' and `xha-fly-kyes', etc."
          (ryo (doom-modeline--ryo))
          (xf (doom-modeline--xah-fly-keys))
          (boon (doom-modeline--boon))
-         (vsep (doom-modeline-vspc))
+         (vsep doom-modeline-vspc)
          (meow (doom-modeline--meow))
-         (sep (and (or evil ow god ryo xf boon) (doom-modeline-spc))))
+         (sep (and (or evil ow god ryo xf boon) doom-modeline-spc)))
     (concat sep
             (and evil (concat evil (and (or ow god ryo xf boon meow) vsep)))
             (and ow (concat ow (and (or god ryo xf boon meow) vsep)))
@@ -1868,15 +1856,15 @@ Including `evil', `overwrite', `god', `ryo' and `xha-fly-kyes', etc."
 (doom-modeline-def-segment input-method
   "The current input method."
   (propertize (cond (current-input-method
-                     (concat (doom-modeline-spc)
+                     (concat doom-modeline-spc
                              current-input-method-title
-                             (doom-modeline-spc)))
+                             doom-modeline-spc))
                     ((and (bound-and-true-p evil-local-mode)
                           (bound-and-true-p evil-input-method))
                      (concat
-                      (doom-modeline-spc)
+                      doom-modeline-spc
                       (nth 3 (assoc default-input-method input-method-alist))
-                      (doom-modeline-spc)))
+                      doom-modeline-spc))
                     (t ""))
               'face (doom-modeline-face
                      (if (and (bound-and-true-p rime-mode)
@@ -1903,7 +1891,7 @@ mouse-3: Describe current input method")
 (doom-modeline-def-segment info-nodes
   "The topic and nodes in the Info buffer."
   (concat
-   (propertize " (" 'face (doom-modeline-face 'doom-modeline))
+   " ("
    ;; topic
    (propertize (if (stringp Info-current-file)
                    (replace-regexp-in-string
@@ -1912,7 +1900,7 @@ mouse-3: Describe current input method")
                      (file-name-nondirectory Info-current-file)))
                  (format "*%S*" Info-current-file))
                'face (doom-modeline-face 'doom-modeline-info))
-   (propertize ") " 'face (doom-modeline-face 'doom-modeline))
+   ") "
    ;; node
    (when Info-current-node
      (propertize (replace-regexp-in-string
@@ -1968,9 +1956,9 @@ mouse-3: Describe current input method")
     (when-let (icon (when (bound-and-true-p cider-mode)
                       doom-modeline--cider))
       (concat
-       (doom-modeline-spc)
+       doom-modeline-spc
        (doom-modeline-display-icon icon)
-       (doom-modeline-spc)))))
+       doom-modeline-spc))))
 
 
 ;;
@@ -2133,9 +2121,9 @@ mouse-1: Toggle citre mode"
                        doom-modeline--tags))))
       (when icon
         (concat
-         (doom-modeline-spc)
+         doom-modeline-spc
          (doom-modeline-display-icon icon)
-         (doom-modeline-spc))))))
+         doom-modeline-spc)))))
 
 (defun doom-modeline-override-eglot-modeline ()
   "Override `eglot' mode-line."
@@ -2209,13 +2197,13 @@ Example:
              (numberp doom-modeline--github-notification-number)
              (> doom-modeline--github-notification-number 0))
     (concat
-     (doom-modeline-spc)
+     doom-modeline-spc
      (propertize
       (concat
        (doom-modeline-icon 'faicon "github" "🔔" "#"
                            :face 'doom-modeline-notification
                            :v-adjust -0.0575)
-       (doom-modeline-vspc)
+       doom-modeline-vspc
        ;; GitHub API is paged, and the limit is 50
        (propertize
         (if (>= doom-modeline--github-notification-number 50)
@@ -2241,7 +2229,7 @@ mouse-3: Fetch notifications"
                        (message "Fetching GitHub notifications...")
                        (doom-modeline--github-fetch-notifications)))
                    map))
-     (doom-modeline-spc))))
+     doom-modeline-spc)))
 
 
 ;;
@@ -2352,8 +2340,8 @@ mouse-1: Toggle Debug on Quit"
            (edebug (doom-modeline--debug-edebug))
            (on-error (doom-modeline--debug-on-error))
            (on-quit (doom-modeline--debug-on-quit))
-           (vsep (doom-modeline-vspc))
-           (sep (and (or dap edebug on-error on-quit) (doom-modeline-spc))))
+           (vsep doom-modeline-vspc)
+           (sep (and (or dap edebug on-error on-quit) doom-modeline-spc)))
       (concat sep
               (and dap (concat dap (and (or edebug on-error on-quit) vsep)))
               (and edebug (concat edebug (and (or on-error on-quit) vsep)))
@@ -2377,8 +2365,7 @@ mouse-1: Toggle Debug on Quit"
 
 (doom-modeline-def-segment pdf-pages
   "Display PDF pages."
-  (propertize doom-modeline--pdf-pages
-              'face (doom-modeline-face 'doom-modeline)))
+  doom-modeline--pdf-pages)
 
 
 ;;
@@ -2395,13 +2382,13 @@ mouse-1: Toggle Debug on Quit"
              ;; don't display if the unread mails count is zero
              (> mu4e-alert-mode-line 0))
     (concat
-     (doom-modeline-spc)
+     doom-modeline-spc
      (propertize
       (concat
        (doom-modeline-icon 'material "email" "📧" "#"
                            :face 'doom-modeline-notification
                            :height 1.1 :v-adjust -0.2)
-       (doom-modeline-vspc)
+       doom-modeline-vspc
        (propertize
         (if (> mu4e-alert-mode-line doom-modeline-number-limit)
             (format "%d+" doom-modeline-number-limit)
@@ -2410,15 +2397,15 @@ mouse-1: Toggle Debug on Quit"
                 (doom-modeline-unread-number doom-modeline-notification))))
       'mouse-face 'doom-modeline-highlight
       'keymap '(doom-modeline keymap
-                          (mouse-1 . mu4e-alert-view-unread-mails)
-                          (mouse-2 . mu4e-alert-view-unread-mails)
-                          (mouse-3 . mu4e-alert-view-unread-mails))
+                              (mouse-1 . mu4e-alert-view-unread-mails)
+                              (mouse-2 . mu4e-alert-view-unread-mails)
+                              (mouse-3 . mu4e-alert-view-unread-mails))
       'help-echo (concat (if (= mu4e-alert-mode-line 1)
                              "You have an unread email"
                            (format "You have %s unread emails" mu4e-alert-mode-line))
                          "\nClick here to view "
                          (if (= mu4e-alert-mode-line 1) "it" "them")))
-     (doom-modeline-spc))))
+     doom-modeline-spc)))
 
 (defun doom-modeline-override-mu4e-alert-modeline (&rest _)
   "Delete `mu4e-alert-mode-line' from global modeline string."
@@ -2494,13 +2481,13 @@ mouse-1: Toggle Debug on Quit"
              (numberp doom-modeline--gnus-unread-mail)
              (> doom-modeline--gnus-unread-mail 0))
     (concat
-     (doom-modeline-spc)
+     doom-modeline-spc
      (propertize
       (concat
        (doom-modeline-icon 'material "email" "📧" "#"
                            :face 'doom-modeline-notification
                            :height 1.1 :v-adjust -0.2)
-       (doom-modeline-vspc)
+       doom-modeline-vspc
        (propertize
         (if (> doom-modeline--gnus-unread-mail doom-modeline-number-limit)
             (format "%d+" doom-modeline-number-limit)
@@ -2511,7 +2498,7 @@ mouse-1: Toggle Debug on Quit"
       'help-echo (if (= doom-modeline--gnus-unread-mail 1)
                      "You have an unread email"
                    (format "You have %s unread emails" doom-modeline--gnus-unread-mail)))
-     (doom-modeline-spc))))
+     doom-modeline-spc)))
 
 
 ;;
@@ -2549,7 +2536,7 @@ to be an icon and we don't want to remove that so we just return the original."
                                              (when (buffer-live-p (get-buffer b))
                                                (switch-to-buffer b))))))
    buffers
-   (doom-modeline-vspc)))
+   doom-modeline-vspc))
 
 (defun doom-modeline--circe-p ()
   "Check if `circe' is in use."
@@ -2587,9 +2574,9 @@ to be an icon and we don't want to remove that so we just return the original."
            (number (length buffers)))
       (when (> number 0)
         (concat
-         (doom-modeline-spc)
+         doom-modeline-spc
          (doom-modeline--tracking-buffers buffers)
-         (doom-modeline-spc))))))
+         doom-modeline-spc)))))
 
 (doom-modeline-def-segment irc
   "A notification icon for any unread irc buffer."
@@ -2600,13 +2587,13 @@ to be an icon and we don't want to remove that so we just return the original."
            (number (length buffers)))
       (when (> number 0)
         (concat
-         (doom-modeline-spc)
+         doom-modeline-spc
 
          (propertize (concat
                       (doom-modeline-icon 'material "message" "🗊" "#"
                                           :face 'doom-modeline-notification
                                           :height 1.0 :v-adjust -0.225)
-                      (doom-modeline-vspc)
+                      doom-modeline-vspc
                       ;; Display the number of unread buffers
                       (propertize (number-to-string number)
                                   'face '(:inherit
@@ -2649,10 +2636,10 @@ mouse-3: Switch to next unread buffer")))
 
          ;; Display the unread irc buffers as well
          (when doom-modeline-irc-buffers
-           (concat (doom-modeline-spc)
+           (concat doom-modeline-spc
                    (doom-modeline--tracking-buffers buffers)))
 
-         (doom-modeline-spc))))))
+         doom-modeline-spc)))))
 
 (defun doom-modeline-override-rcirc-modeline ()
   "Override default `rcirc' mode-line."
@@ -2741,12 +2728,12 @@ mouse-3: Switch to next unread buffer")))
   (when (and (doom-modeline--active)
              (not doom-modeline--limited-width-p)
              (bound-and-true-p display-battery-mode))
-    (concat (doom-modeline-spc)
+    (concat doom-modeline-spc
             (concat
              (car doom-modeline--battery-status)
-             (doom-modeline-vspc)
+             doom-modeline-vspc
              (cdr doom-modeline--battery-status))
-            (doom-modeline-spc))))
+            doom-modeline-spc)))
 
 (defun doom-modeline-override-battery-modeline ()
   "Override default battery mode-line."
@@ -2778,7 +2765,7 @@ mouse-3: Switch to next unread buffer")))
 
    (when (and doom-modeline-icon doom-modeline-major-mode-icon)
      (concat
-      (doom-modeline-spc)
+      doom-modeline-spc
       (doom-modeline-icon 'faicon "archive" nil nil
                           :face (doom-modeline-face
                                  (if doom-modeline-major-mode-color-icon
@@ -2810,7 +2797,7 @@ The cdr can also be a function that returns a name to use.")
   "Helm session identifier."
   (when (bound-and-true-p helm-alive-p)
     (concat
-     (doom-modeline-spc)
+     doom-modeline-spc
      (when doom-modeline-icon
        (concat
         (doom-modeline-icon 'fileicon "elisp" nil nil
@@ -2820,7 +2807,7 @@ The cdr can also be a function that returns a name to use.")
                                      'doom-modeline))
                             :height 1.0
                             :v-adjust -0.15)
-        (doom-modeline-spc)))
+        doom-modeline-spc))
      (propertize
       (let ((custom (cdr (assoc (buffer-name) doom-modeline--helm-buffer-ids)))
             (case-fold-search t)
@@ -2831,7 +2818,7 @@ The cdr can also be a function that returns a name to use.")
                (string-match "\\*helm:? \\(mode \\)?\\([^\\*]+\\)\\*" name)
                (concat "HELM " (capitalize (match-string 2 name))))))
       'face (doom-modeline-face 'doom-modeline-buffer-file))
-     (doom-modeline-spc))))
+     doom-modeline-spc)))
 
 (doom-modeline-def-segment helm-number
   "Number of helm candidates."
@@ -2845,19 +2832,18 @@ The cdr can also be a function that returns a name to use.")
                  'face (doom-modeline-face 'doom-modeline-info)))))
 
 (doom-modeline-def-segment helm-help
-  "Helm keybindings help."
-  (when (bound-and-true-p helm-alive-p)
-    (-interleave
-     (mapcar (lambda (s)
-               (propertize (substitute-command-keys s)
-                           'face (doom-modeline-face
-                                  'doom-modeline-buffer-file)))
-             '("\\<helm-map>\\[helm-help]"
-               "\\<helm-map>\\[helm-select-action]"
-               "\\<helm-map>\\[helm-maybe-exit-minibuffer]/F1/F2..."))
-     (mapcar (lambda (s)
-               (propertize s 'face (doom-modeline-face 'doom-modeline)))
-             '("(help) " "(actions) " "(action) ")))))
+"Helm keybindings help."
+(when (bound-and-true-p helm-alive-p)
+  (-interleave
+   (mapcar (lambda (s)
+             (propertize (substitute-command-keys s)
+                         'face (doom-modeline-face
+                                'doom-modeline-buffer-file)))
+           '("\\<helm-map>\\[helm-help]"
+             "\\<helm-map>\\[helm-select-action]"
+             "\\<helm-map>\\[helm-maybe-exit-minibuffer]/F1/F2..."))
+   (mapcar (lambda (s) s)
+           '("(help) " "(actions) " "(action) ")))))
 
 (doom-modeline-def-segment helm-prefix-argument
   "Helm prefix argument."
@@ -2875,7 +2861,7 @@ The cdr can also be a function that returns a name to use.")
   (when (and (bound-and-true-p helm-alive-p)
              doom-modeline--helm-current-source
              (eq 1 (cdr (assq 'follow doom-modeline--helm-current-source))))
-    (propertize "HF" 'face (doom-modeline-face 'doom-modeline))))
+    "HF"))
 
 ;;
 ;; Git timemachine
@@ -2883,7 +2869,7 @@ The cdr can also be a function that returns a name to use.")
 
 (doom-modeline-def-segment git-timemachine
   (concat
-   (doom-modeline-spc)
+   doom-modeline-spc
    (doom-modeline--buffer-mode-icon)
    (doom-modeline--buffer-state-icon)
    (propertize
@@ -2897,7 +2883,7 @@ The cdr can also be a function that returns a name to use.")
 (doom-modeline-def-segment grip
   (when (bound-and-true-p grip-mode)
     (concat
-     (doom-modeline-spc)
+     doom-modeline-spc
      (let ((face (doom-modeline-face
                   (if grip--process
                       (pcase (process-status grip--process)
@@ -2924,7 +2910,7 @@ mouse-3: Restart preview"
                                 (define-key map [mode-line mouse-3]
                                   #'grip-restart-preview)
                                 map)))
-     (doom-modeline-spc))))
+     doom-modeline-spc)))
 
 ;;
 ;; Follow mode
@@ -2936,7 +2922,7 @@ mouse-3: Restart preview"
            (nwindows (length windows))
            (nfollowing (- (length (memq (selected-window) windows)) 1)))
       (concat
-       (doom-modeline-spc)
+       doom-modeline-spc
        (propertize (format "Follow %d/%d" (- nwindows nfollowing) nwindows)
                    'face 'doom-modeline-buffer-minor-mode)))))
 

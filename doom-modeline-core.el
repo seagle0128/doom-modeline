@@ -577,16 +577,6 @@ It requires `circe' or `erc' package."
   :group 'faces
   :link '(url-link :tag "Homepage" "https://github.com/seagle0128/doom-modeline"))
 
-(defface doom-modeline
-  '((t (:inherit mode-line)))
-  "Face used for default."
-  :group 'doom-modeline-faces)
-
-(defface doom-modeline-inactive
-  '((t (:inherit mode-line-inactive)))
-  "Face used for inactive."
-  :group 'doom-modeline-faces)
-
 (defface doom-modeline-emphasis
   '((t (:inherit mode-line-emphasis)))
   "Face used for emphasis."
@@ -600,26 +590,6 @@ It requires `circe' or `erc' package."
 (defface doom-modeline-misc-info
   '((t (:inherit font-lock-doc-face)))
   "Face used for highlighting."
-  :group 'doom-modeline-faces)
-
-(defface doom-modeline-spc-face
-  '((t (:inherit doom-modeline)))
-  "Face used for the white space."
-  :group 'doom-modeline-faces)
-
-(defface doom-modeline-spc-inactive-face
-  '((t (:inherit doom-modeline-inactive)))
-  "Face used for the inactive white space."
-  :group 'doom-modeline-faces)
-
-(defface doom-modeline-vspc-face
-  '((t (:inherit variable-pitch)))
-  "Face used for the variable white space."
-  :group 'doom-modeline-faces)
-
-(defface doom-modeline-vspc-inactive-face
-  '((t (:inherit (doom-modeline-vspc-face doom-modeline-inactive))))
-  "Face used for the variable white space."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-buffer-path
@@ -719,7 +689,7 @@ Also see the face `doom-modeline-unread-number'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-bar-inactive
-  `((t (:background ,(face-foreground 'doom-modeline-inactive))))
+  `((t (:background ,(face-foreground 'mode-line-inactive))))
   "The face used for the left-most bar in the mode-line of an inactive window."
   :group 'doom-modeline-faces)
 
@@ -929,7 +899,8 @@ If FRAME is nil, it means the current frame."
       (frame-selected-window (frame-parent frame))
     (frame-selected-window frame)))
 
-(defvar doom-modeline-current-window (doom-modeline--get-current-window))
+(defvar doom-modeline-current-window (doom-modeline--get-current-window)
+  "Current window.")
 
 (defun doom-modeline--active ()
   "Whether is an active window."
@@ -972,7 +943,7 @@ If FRAME is nil, it means the current frame."
   "Unfocus mode-line."
   (dolist (face doom-modeline--remap-faces)
     (add-to-list 'doom-modeline--remap-face-cookie-alist
-                 (face-remap-add-relative face 'doom-modeline-inactive))))
+                 (face-remap-add-relative face 'mode-line-inactive))))
 
 (with-no-warnings
   (if (boundp 'after-focus-change-function)
@@ -1054,7 +1025,7 @@ Example:
                'face (doom-modeline-face 'doom-modeline)
                'display `((space
                            :align-to
-                           (- (+ right right-fringe right-margin scroll-bar)
+                           (- (+ right  right-fringe scroll-bar)
                               ,(string-width
                                 (format-mode-line (cons "" rhs-forms)))))))
               rhs-forms))
@@ -1085,29 +1056,22 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; Helpers
 ;;
 
+(defconst doom-modeline-spc " "
+  "Whitespace.")
+
+(defconst doom-modeline-wspc "  "
+  "Wide whitespace.")
+
+(defconst doom-modeline-vspc (propertize " " 'face 'variable-pitch)
+  "Whitespace with variable pitch style.")
+
 (defun doom-modeline-face (face &optional inactive-face)
   "Display FACE in mode-line.
 
-If INACTIVE-FACE is nil, will use `doom-modeline-inactive' face."
+If INACTIVE-FACE is nil, will use `mode-line-inactive' face."
   (if (doom-modeline--active)
       face
-    (or inactive-face 'doom-modeline-inactive)))
-
-(defsubst doom-modeline-spc ()
-  "Text style with whitespace."
-  (propertize " " 'face (doom-modeline-face
-                         'doom-modeline-spc-face)))
-
-(defsubst doom-modeline-wspc ()
-  "Text style with wide whitespace."
-  (propertize "  " 'face (doom-modeline-face
-                          'doom-modeline-spc-face)))
-
-(defsubst doom-modeline-vspc ()
-  "Text style with icons in mode-line."
-  (propertize " " 'face (doom-modeline-face
-                         'doom-modeline-vspc-face
-                         'doom-modeline-vspc-inactive-face)))
+    (or inactive-face 'mode-line-inactive)))
 
 ;; Since 27, the calculation of char height was changed
 ;; @see https://github.com/seagle0128/doom-modeline/issues/271
@@ -1191,13 +1155,13 @@ ARGS is same as `all-the-icons-octicon' and others."
   "Display ICON in mode-line."
   (if (doom-modeline--active)
       icon
-    (doom-modeline-propertize-icon icon 'doom-modeline-inactive)))
+    (doom-modeline-propertize-icon icon 'mode-line-inactive)))
 
 (defun doom-modeline-display-text (text)
   "Display TEXT in mode-line."
   (if (doom-modeline--active)
       text
-    (propertize text 'face 'doom-modeline-inactive)))
+    (propertize text 'face 'mode-line-inactive)))
 
 (defun doom-modeline--create-bar-image (face width height)
   "Create the bar image.
