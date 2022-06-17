@@ -1082,7 +1082,7 @@ If INACTIVE-FACE is nil, `mode-line-inactive' face will be used."
     (round
      (* (pcase system-type
           ('darwin (if doom-modeline-icon 1.5 1.0))
-          ('windows-nt (if doom-modeline-icon 1.1 0.83))
+          ('windows-nt (if doom-modeline-icon 0.88 0.625))
           (_ (if (and doom-modeline-icon (< emacs-major-version 27)) 1.4 1.0)))
         (cond ((integerp height) (/ height 10))
               ((floatp height) (* height char-height))
