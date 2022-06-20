@@ -924,16 +924,17 @@ If FRAME is nil, it means the current frame."
 
 (add-hook 'pre-redisplay-functions #'doom-modeline-set-selected-window)
 
-;; Ensure modeline is inactive when Emacs is unfocused (and active otherwise)
+;; Ensure modeline is inactive when Emacs is unfocused
 (defvar doom-modeline--remap-face-cookie-alist nil)
 (defvar doom-modeline--remap-faces nil)
 
-;; Get `doom-modeline-faces'
+;; Get remapping faces
 (dolist (face (face-list))
   (let ((f (symbol-name face)))
-    (when (and (string-match-p "^\\(mode-line\\|doom-modeline\\|all-the-icons\\|flycheck-color\\)" f)
-               (not (string-match-p "\\(-inactive\\|-dired\\|ivy\\|ibuffer\\)" f)))
-      (add-to-list 'doom-modeline--remap-faces face))))
+    (and
+     (string-match-p "^\\(mode-line\\|doom-modeline\\|all-the-icons\\|solaire\\|flycheck-color\\)" f)
+     (not (string-match-p "\\(-inactive\\|-dired\\|-ivy\\|-ibuffer\\)" f))
+     (add-to-list 'doom-modeline--remap-faces face))))
 
 (defun doom-modeline-focus ()
   "Focus mode-line."
@@ -1070,7 +1071,10 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 IF FACE is nil, `mode-line' face will be used.
 If INACTIVE-FACE is nil, `mode-line-inactive' face will be used."
   (if (doom-modeline--active)
-      (or face 'mode-line)
+      (or face
+          (if (facep 'mode-line-active)
+              'mode-line-active
+            'mode-line))
     (or inactive-face 'mode-line-inactive)))
 
 ;; Since 27, the calculation of char height was changed
