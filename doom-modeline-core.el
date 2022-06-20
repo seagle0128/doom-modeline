@@ -931,7 +931,7 @@ If FRAME is nil, it means the current frame."
 ;; Get `doom-modeline-faces'
 (dolist (face (face-list))
   (let ((f (symbol-name face)))
-    (when (and (string-match-p "^\\(mode-line\\|doom-modeline\\|all-the-icons\\)" f)
+    (when (and (string-match-p "^\\(mode-line\\|doom-modeline\\|all-the-icons\\|flycheck-color\\)" f)
                (not (string-match-p "\\(-inactive\\|-dired\\|ivy\\|ibuffer\\)" f)))
       (add-to-list 'doom-modeline--remap-faces face))))
 
