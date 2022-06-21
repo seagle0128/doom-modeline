@@ -925,16 +925,18 @@ If FRAME is nil, it means the current frame."
 (add-hook 'pre-redisplay-functions #'doom-modeline-set-selected-window)
 
 ;; Ensure modeline is inactive when Emacs is unfocused
-(defvar doom-modeline--remap-face-cookie-alist nil)
-(defvar doom-modeline--remap-faces nil)
-
-;; Get remapping faces
+(defvar doom-modeline--remap-faces '(mode-line
+                                     mode-line-active
+                                     solaire-mode-line-face
+                                     solaire-mode-line-active-face))
 (dolist (face (face-list))
   (let ((f (symbol-name face)))
     (and
-     (string-match-p "^\\(mode-line\\|doom-modeline\\|solaire-mode-line\\|flycheck-color\\)" f)
+     (string-match-p "^\\(doom-modeline\\|all-the-icons\\|flycheck-color\\)" f)
+     (not (string-match-p "\\(-inactive\\|-dired\\|-ivy\\|-ibuffer\\)" f))
      (add-to-list 'doom-modeline--remap-faces face))))
 
+(defvar doom-modeline--remap-face-cookie-alist nil)
 (defun doom-modeline-focus ()
   "Focus mode-line."
   (mapc #'face-remap-remove-relative doom-modeline--remap-face-cookie-alist))
