@@ -430,7 +430,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
    ```emacs-lisp
    (setq doom-modeline-height 1) ; optional
-   (set-face-attribute 'mode-line nil :family "Noto Sans" :height 100)
+   (if (facep 'mode-line-active)
+       (set-face-attribute 'mode-line-active nil :family "Noto Sans" :height 100) ; For 29+
+     (set-face-attribute 'mode-line nil :family "Noto Sans" :height 100))
    (set-face-attribute 'mode-line-inactive nil :family "Noto Sans" :height 100)
    ```
 
@@ -440,6 +442,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
    (setq doom-modeline-height 1) ; optional
    (custom-set-faces
      '(mode-line ((t (:family "Noto Sans" :height 0.9))))
+     '(mode-line-active ((t (:family "Noto Sans" :height 0.9)))) ; For 29+
      '(mode-line-inactive ((t (:family "Noto Sans" :height 0.9)))))
    ```
 
