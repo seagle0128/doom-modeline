@@ -604,7 +604,7 @@ It requires `circe' or `erc' package."
 
 (defface doom-modeline-buffer-modified
   '((t (:inherit (error bold) :background nil)))
-  "Face used for the 'unsaved' symbol in the mode-line."
+  "Face used for the \\='unsaved\\=' symbol in the mode-line."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-buffer-major-mode
@@ -634,7 +634,8 @@ It requires `circe' or `erc' package."
 
 (defface doom-modeline-panel
   '((t (:inherit doom-modeline-highlight)))
-  "Face for 'X out of Y' segments, such as `anzu', `evil-substitute' and`iedit', etc."
+  "Face for \\='X out of Y\\=' segments.
+This applies to `anzu', `evil-substitute', `iedit' etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-host
