@@ -490,6 +490,10 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
            (add-to-list 'mode-line-process '(:eval (nth ess--busy-count ess-busy-strings)))))
    ```
 
+1. How to display company mode-line information?
+
+   Enable `doom-modeline-minor-modes` or `(add-to-list 'global-mode-string company-lighter)`.
+
 ## Donate
 
 If you think it's helpful for you, please consider paying a cup of coffee for
