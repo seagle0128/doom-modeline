@@ -928,11 +928,15 @@ If FRAME is nil, it means the current frame."
 (defvar doom-modeline--remap-faces '(mode-line
                                      mode-line-active
                                      solaire-mode-line-face
-                                     solaire-mode-line-active-face))
+                                     solaire-mode-line-active-face
+                                     flycheck-color-mode-line-error-face
+                                     flycheck-color-mode-line-warning-face
+                                     flycheck-color-mode-line-info-face
+                                     flycheck-color-mode-line-success-face))
 (dolist (face (face-list))
   (let ((f (symbol-name face)))
     (and
-     (string-match-p "^\\(doom-modeline\\|all-the-icons\\|flycheck-color\\)" f)
+     (string-match-p "^\\(doom-modeline\\|all-the-icons\\)" f)
      (not (string-match-p "\\(-inactive\\|-dired\\|-ivy\\|-ibuffer\\)" f))
      (add-to-list 'doom-modeline--remap-faces face))))
 
@@ -1068,7 +1072,6 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
 (defun doom-modeline-face (&optional face inactive-face)
   "Display FACE in active window, and INACTIVE-FACE in inactive window.
-
 IF FACE is nil, `mode-line' face will be used.
 If INACTIVE-FACE is nil, `mode-line-inactive' face will be used."
   (if (doom-modeline--active)
