@@ -2395,7 +2395,7 @@ mouse-1: Toggle Debug on Quit"
         'face '(:inherit
                 (doom-modeline-unread-number doom-modeline-notification))))
       'mouse-face 'doom-modeline-highlight
-      'keymap '(doom-modeline keymap
+      'keymap '(mode-line keymap
                               (mouse-1 . mu4e-alert-view-unread-mails)
                               (mouse-2 . mu4e-alert-view-unread-mails)
                               (mouse-3 . mu4e-alert-view-unread-mails))
