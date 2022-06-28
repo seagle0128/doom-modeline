@@ -977,9 +977,9 @@ If FRAME is nil, it means the current frame."
   (defun doom-modeline--font-width ()
     "Cache the font width."
     (if (display-graphic-p)
-        (let ((attributes (face-all-attributes 'doom-modeline)))
+        (let ((attributes (face-all-attributes 'mode-line)))
           (or (cdr (assoc attributes doom-modeline--font-width-cache))
-              (let ((width (window-font-width nil 'doom-modeline)))
+              (let ((width (window-font-width nil 'mode-line)))
                 (push (cons attributes width) doom-modeline--font-width-cache)
                 width)))
       1))
