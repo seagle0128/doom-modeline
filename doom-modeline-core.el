@@ -36,24 +36,6 @@
 
 
 ;;
-;; Compatibility
-;;
-
-;; `string-pixel-width' is introduced in 29
-(unless (fboundp 'string-pixel-width)
-  (defun string-pixel-width (string)
-    "Return the width of STRING in pixels."
-    (if (zerop (length string))
-        0
-      ;; Keeping a work buffer around is more efficient than creating a
-      ;; new temporary buffer.
-      (with-current-buffer (get-buffer-create " *string-pixel-width*")
-        (delete-region (point-min) (point-max))
-        (insert string)
-        (car (buffer-text-pixel-size nil nil t))))))
-
-
-;;
 ;; Externals
 ;;
 
@@ -68,84 +50,88 @@
 (when (eq system-type 'windows-nt)
   (setq inhibit-compacting-font-caches t))
 
-;; Set correct font width for `all-the-icons' for appropriate mode-line width.
-;; @see https://emacs.stackexchange.com/questions/14420/how-can-i-fix-incorrect-character-width
-(defun doom-modeline--set-char-widths (alist)
-  "Set correct widths of icons characters in ALIST."
-  (while (char-table-parent char-width-table)
-    (setq char-width-table (char-table-parent char-width-table)))
-  (dolist (pair alist)
-    (let ((width (car pair))
-          (chars (cdr pair))
-          (table (make-char-table nil)))
-      (dolist (char chars)
-        (set-char-table-range table char width))
-      (optimize-char-table table)
-      (set-char-table-parent table char-width-table)
-      (setq char-width-table table))))
+;; `string-pixel-width' is introduced in 29,
+;; which is able to calculating the accurate string width.
+;; Thus
+(unless (fboundp 'string-pixel-width)
+  ;; Set correct font width for `all-the-icons' for appropriate mode-line width.
+  ;; @see https://emacs.stackexchange.com/questions/14420/how-can-i-fix-incorrect-character-width
+  (defun doom-modeline--set-char-widths (alist)
+    "Set correct widths of icons characters in ALIST."
+    (while (char-table-parent char-width-table)
+      (setq char-width-table (char-table-parent char-width-table)))
+    (dolist (pair alist)
+      (let ((width (car pair))
+            (chars (cdr pair))
+            (table (make-char-table nil)))
+        (dolist (char chars)
+          (set-char-table-range table char width))
+        (optimize-char-table table)
+        (set-char-table-parent table char-width-table)
+        (setq char-width-table table))))
 
-(defconst doom-modeline-rhs-icons-alist
-  '((2 . (;; VCS
-          ?\xf0ac                      ; git-compare
-          ?\xf023                      ; git-merge
-          ?\xf03f                      ; arrow-down
-          ?\xf02d                      ; alert
-          ?\xf020                      ; git-branch
+  (defconst doom-modeline-rhs-icons-alist
+    '((2 . (;; VCS
+            ?\xf0ac                      ; git-compare
+            ?\xf023                      ; git-merge
+            ?\xf03f                      ; arrow-down
+            ?\xf02d                      ; alert
+            ?\xf020                      ; git-branch
 
-          ;; Checker
-          ?\xe611                      ; do_not_disturb_alt
-          ?\xe5ca                      ; check
-          ?\xe192                      ; access_time
-          ?\xe624                      ; sim_card_alert
-          ?\xe034                      ; pause
-          ?\xe645                      ; priority_high
+            ;; Checker
+            ?\xe611                      ; do_not_disturb_alt
+            ?\xe5ca                      ; check
+            ?\xe192                      ; access_time
+            ?\xe624                      ; sim_card_alert
+            ?\xe034                      ; pause
+            ?\xe645                      ; priority_high
 
-          ;; Minor modes
-          ?\xf02f                      ; gear
+            ;; Minor modes
+            ?\xf02f                      ; gear
 
-          ;; Persp
-          ?\xe2c7                      ; folder
+            ;; Persp
+            ?\xe2c7                      ; folder
 
-          ;; Preview
-          ?\xe8a0                      ; pageview
+            ;; Preview
+            ?\xe8a0                      ; pageview
 
-          ;; REPL
-          ?\xf120                      ; terminal
+            ;; REPL
+            ?\xf120                      ; terminal
 
-          ;; LSP
-          ?\xf135                      ; rocket
+            ;; LSP
+            ?\xf135                      ; rocket
 
-          ;; GitHub
-          ?\xf09b                      ; github
+            ;; GitHub
+            ?\xf09b                      ; github
 
-          ;; Debug
-          ?\xf188                      ; bug
+            ;; Debug
+            ?\xf188                      ; bug
 
-          ;; Mail
-          ?\xe0be                      ; email
+            ;; Mail
+            ?\xe0be                      ; email
 
-          ;; IRC
-          ?\xe0c9                      ; message
+            ;; IRC
+            ?\xe0c9                      ; message
 
-          ;; Battery
-          ?\xe939                      ; battery-charging
-          ?\xf244                      ; battery-empty
-          ?\xf240                      ; battery-full
-          ?\xf242                      ; battery-half
-          ?\xf243                      ; battery-quarter
-          ?\xf241                      ; battery-three-quarters
-          ))))
+            ;; Battery
+            ?\xe939                      ; battery-charging
+            ?\xf244                      ; battery-empty
+            ?\xf240                      ; battery-full
+            ?\xf242                      ; battery-half
+            ?\xf243                      ; battery-quarter
+            ?\xf241                      ; battery-three-quarters
+            ))))
 
-(defun doom-modeline-set-char-widths (&rest _)
-  "Set char widths for the unicode icons."
-  (and (display-graphic-p)
-       (featurep 'all-the-icons)
-       (doom-modeline--set-char-widths doom-modeline-rhs-icons-alist)))
+  (defun doom-modeline-set-char-widths (&rest _)
+    "Set char widths for the unicode icons."
+    (and (display-graphic-p)
+         (featurep 'all-the-icons)
+         (doom-modeline--set-char-widths doom-modeline-rhs-icons-alist)))
 
-(if (and (daemonp)
-         (not (frame-parameter nil 'client)))
-    (add-hook 'after-make-frame-functions #'doom-modeline-set-char-widths)
-  (doom-modeline-set-char-widths))
+  (if (and (daemonp)
+           (not (frame-parameter nil 'client)))
+      (add-hook 'after-make-frame-functions #'doom-modeline-set-char-widths)
+    (doom-modeline-set-char-widths)))
 
 
 ;;
@@ -1050,12 +1036,16 @@ Example:
                'display `((space
                            :align-to
                            (- right
-                              ,(/ (string-pixel-width
-                                   (propertize
-                                    (format-mode-line (cons "" rhs-forms))
-                                    'face 'mode-line))
-                                  (frame-char-width)
-                                  1.0)))))
+                              ,(if (fboundp 'string-pixel-width)
+                                   (/ (string-pixel-width
+                                       (propertize
+                                        (format-mode-line (cons "" rhs-forms))
+                                        'face 'mode-line))
+                                      (frame-char-width)
+                                      1.0)
+                                 (* (/ (window-font-width nil 'mode-line) (frame-char-width) 1.0)
+                                    (string-width
+                                     (format-mode-line (cons "" rhs-forms)))))))))
               rhs-forms))
       (concat "Modeline:\n"
               (format "  %s\n  %s"
