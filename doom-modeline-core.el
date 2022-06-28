@@ -51,8 +51,8 @@
   (setq inhibit-compacting-font-caches t))
 
 ;; WORKAROUND: `string-pixel-width' is introduced in 29,
-;; which is able to calculating the accurate string width.
-;; Thus the workaround below is not necessary.
+;; which is able to calculate the accurate string width.
+;; Below is the workaround for backward compatibility.
 (unless (fboundp 'string-pixel-width)
   ;; Set correct font width for `all-the-icons' for appropriate mode-line width.
   ;; @see https://emacs.stackexchange.com/questions/14420/how-can-i-fix-incorrect-character-width
