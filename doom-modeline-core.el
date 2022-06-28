@@ -131,7 +131,30 @@
   (if (and (daemonp)
            (not (frame-parameter nil 'client)))
       (add-hook 'after-make-frame-functions #'doom-modeline-set-char-widths)
-    (doom-modeline-set-char-widths)))
+    (doom-modeline-set-char-widths))
+
+  ;; `window-font-width' consumes a lot
+  (defvar doom-modeline--font-width-cache nil)
+  (defun doom-modeline--font-width ()
+    "Cache the font width for better performance."
+    (if (display-graphic-p)
+        (let ((attributes (face-all-attributes 'mode-line)))
+          (or (cdr (assoc attributes doom-modeline--font-width-cache))
+              (let ((width (window-font-width nil 'mode-line)))
+                (push (cons attributes width) doom-modeline--font-width-cache)
+                width)))
+      1))
+
+  ;; Refresh the font width after setting frame parameters
+  ;; to ensure the font width is correct.
+  (defun doom-modeline-refresh-font-width-cache (&rest _)
+    "Refresh the font width cache."
+    (setq doom-modeline--font-width-cache nil)
+    (doom-modeline--font-width))
+  (add-hook 'window-setup-hook #'doom-modeline-refresh-font-width-cache)
+  (add-hook 'after-make-frame-functions #'doom-modeline-refresh-font-width-cache)
+  (add-hook 'after-setting-font-hook #'doom-modeline-refresh-font-width-cache)
+  (add-hook 'server-after-make-frame-hook #'doom-modeline-refresh-font-width-cache))
 
 
 ;;
@@ -969,47 +992,6 @@ If FRAME is nil, it means the current frame."
       (add-hook 'focus-in-hook #'doom-modeline-focus)
       (add-hook 'focus-out-hook #'doom-modeline-unfocus))))
 
-;; WORKAROUND: `string-pixel-width' is introduced in 29,
-;; which is able to calculating the accurate string width.
-;; Thus the workaround below is not necessary.
-(unless (fboundp 'string-pixel-width)
-  (defvar doom-modeline--font-width-cache nil)
-  (defun doom-modeline--font-width ()
-    "Cache the font width."
-    (if (display-graphic-p)
-        (let ((attributes (face-all-attributes 'mode-line)))
-          (or (cdr (assoc attributes doom-modeline--font-width-cache))
-              (let ((width (window-font-width nil 'mode-line)))
-                (push (cons attributes width) doom-modeline--font-width-cache)
-                width)))
-      1))
-
-  ;; Refresh the font width after setting frame parameters
-  ;; to ensure the font width is correct.
-  (defun doom-modeline-refresh-font-width-cache (&rest _)
-    "Refresh the font width cache."
-    (setq doom-modeline--font-width-cache nil)
-    (doom-modeline--font-width))
-  (add-hook 'window-setup-hook #'doom-modeline-refresh-font-width-cache)
-  (add-hook 'after-make-frame-functions #'doom-modeline-refresh-font-width-cache)
-  (add-hook 'after-setting-font-hook #'doom-modeline-refresh-font-width-cache)
-  (add-hook 'server-after-make-frame-hook #'doom-modeline-refresh-font-width-cache))
-
-;; Since 27, the calculation of char height was changed
-;; @see https://github.com/seagle0128/doom-modeline/issues/271
-(defun doom-modeline--font-height ()
-  "Calculate the actual char height of the mode-line."
-  (let ((height (face-attribute 'mode-line :height))
-        (char-height (window-font-height nil 'mode-line)))
-    (round
-     (* (pcase system-type
-          ('darwin (if doom-modeline-icon 1.7 1.0))
-          ('windows-nt (if doom-modeline-icon 0.88 0.625))
-          (_ (if (and doom-modeline-icon (< emacs-major-version 27)) 1.4 1.0)))
-        (cond ((integerp height) (/ height 10))
-              ((floatp height) (* height char-height))
-              (t char-height))))))
-
 
 ;;
 ;; Core
@@ -1077,16 +1059,17 @@ Example:
                'display `((space
                            :align-to
                            (- right
-                              ,(let ((rhs-str (format-mode-line (cons "" rhs-forms))))
+                              ,(let ((rhs-str (format-mode-line (cons "" rhs-forms)))
+                                     (char-width (frame-char-width)))
                                  (if (fboundp 'string-pixel-width)
                                      ;; Accurate calculations in 29+
                                      (/ (string-pixel-width
                                          (propertize rhs-str 'face 'mode-line))
-                                        (frame-char-width)
+                                        char-width
                                         1.0)
                                    ;; Backward compatibility
                                    (* (/ (doom-modeline--font-width)
-                                         (frame-char-width)
+                                         char-width
                                          1.0)
                                       (string-width rhs-str))))))))
               rhs-forms))
@@ -1136,6 +1119,21 @@ If INACTIVE-FACE is nil, `mode-line-inactive' face will be used."
               'mode-line-active
             'mode-line))
     (or inactive-face 'mode-line-inactive)))
+
+;; Since 27, the calculation of char height was changed
+;; @see https://github.com/seagle0128/doom-modeline/issues/271
+(defun doom-modeline--font-height ()
+  "Calculate the actual char height of the mode-line."
+  (let ((height (face-attribute 'mode-line :height))
+        (char-height (window-font-height nil 'mode-line)))
+    (round
+     (* (pcase system-type
+          ('darwin (if doom-modeline-icon 1.7 1.0))
+          ('windows-nt (if doom-modeline-icon 0.88 0.625))
+          (_ (if (and doom-modeline-icon (< emacs-major-version 27)) 1.4 1.0)))
+        (cond ((integerp height) (/ height 10))
+              ((floatp height) (* height char-height))
+              (t char-height))))))
 
 (defun doom-modeline--original-value (sym)
   "Return the original value for SYM, if any.
