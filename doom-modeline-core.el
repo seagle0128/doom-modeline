@@ -205,7 +205,7 @@ Only respected in GUI."
          (set sym (if (> val 1) val 1)))
   :group 'doom-modeline)
 
-(defcustom doom-modeline-window-width-limit 0.25
+(defcustom doom-modeline-window-width-limit 85
   "The limit of the window width.
 
 If `window-width' is smaller than the limit, some information won't be
