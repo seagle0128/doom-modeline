@@ -36,6 +36,24 @@
 
 
 ;;
+;; Compatibility
+;;
+
+;; `string-pixel-width' is introduced in 29
+(unless (fboundp 'string-pixel-width)
+  (defun string-pixel-width (string)
+    "Return the width of STRING in pixels."
+    (if (zerop (length string))
+        0
+      ;; Keeping a work buffer around is more efficient than creating a
+      ;; new temporary buffer.
+      (with-current-buffer (get-buffer-create " *string-pixel-width*")
+        (delete-region (point-min) (point-max))
+        (insert string)
+        (car (buffer-text-pixel-size nil nil t))))))
+
+
+;;
 ;; Externals
 ;;
 
