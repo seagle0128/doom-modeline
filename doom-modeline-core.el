@@ -36,19 +36,8 @@
 
 
 ;;
-;; Externals
-;;
-
-(declare-function all-the-icons--function-name "ext:all-the-icons")
-
-
-;;
 ;; Compatibility
 ;;
-
-;; Don’t compact font caches during GC.
-(when (eq system-type 'windows-nt)
-  (setq inhibit-compacting-font-caches t))
 
 ;; `string-pixel-width' is introduced in 29
 (unless (fboundp 'string-pixel-width)
@@ -62,6 +51,101 @@
         (delete-region (point-min) (point-max))
         (insert string)
         (car (buffer-text-pixel-size nil nil t))))))
+
+
+;;
+;; Externals
+;;
+
+(declare-function all-the-icons--function-name "ext:all-the-icons")
+
+
+;;
+;; Optimization
+;;
+
+;; Don’t compact font caches during GC.
+(when (eq system-type 'windows-nt)
+  (setq inhibit-compacting-font-caches t))
+
+;; Set correct font width for `all-the-icons' for appropriate mode-line width.
+;; @see https://emacs.stackexchange.com/questions/14420/how-can-i-fix-incorrect-character-width
+(defun doom-modeline--set-char-widths (alist)
+  "Set correct widths of icons characters in ALIST."
+  (while (char-table-parent char-width-table)
+    (setq char-width-table (char-table-parent char-width-table)))
+  (dolist (pair alist)
+    (let ((width (car pair))
+          (chars (cdr pair))
+          (table (make-char-table nil)))
+      (dolist (char chars)
+        (set-char-table-range table char width))
+      (optimize-char-table table)
+      (set-char-table-parent table char-width-table)
+      (setq char-width-table table))))
+
+(defconst doom-modeline-rhs-icons-alist
+  '((2 . (;; VCS
+          ?\xf0ac                      ; git-compare
+          ?\xf023                      ; git-merge
+          ?\xf03f                      ; arrow-down
+          ?\xf02d                      ; alert
+          ?\xf020                      ; git-branch
+
+          ;; Checker
+          ?\xe611                      ; do_not_disturb_alt
+          ?\xe5ca                      ; check
+          ?\xe192                      ; access_time
+          ?\xe624                      ; sim_card_alert
+          ?\xe034                      ; pause
+          ?\xe645                      ; priority_high
+
+          ;; Minor modes
+          ?\xf02f                      ; gear
+
+          ;; Persp
+          ?\xe2c7                      ; folder
+
+          ;; Preview
+          ?\xe8a0                      ; pageview
+
+          ;; REPL
+          ?\xf120                      ; terminal
+
+          ;; LSP
+          ?\xf135                      ; rocket
+
+          ;; GitHub
+          ?\xf09b                      ; github
+
+          ;; Debug
+          ?\xf188                      ; bug
+
+          ;; Mail
+          ?\xe0be                      ; email
+
+          ;; IRC
+          ?\xe0c9                      ; message
+
+          ;; Battery
+          ?\xe939                      ; battery-charging
+          ?\xf244                      ; battery-empty
+          ?\xf240                      ; battery-full
+          ?\xf242                      ; battery-half
+          ?\xf243                      ; battery-quarter
+          ?\xf241                      ; battery-three-quarters
+          ))))
+
+(defun doom-modeline-set-char-widths (&rest _)
+  "Set char widths for the unicode icons."
+  (and (display-graphic-p)
+       (featurep 'all-the-icons)
+       (doom-modeline--set-char-widths doom-modeline-rhs-icons-alist)))
+
+(if (and (daemonp)
+         (not (frame-parameter nil 'client)))
+    (add-hook 'after-make-frame-functions #'doom-modeline-set-char-widths)
+  (doom-modeline-set-char-widths))
 
 
 ;;
