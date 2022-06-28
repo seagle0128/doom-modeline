@@ -1068,8 +1068,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 (defconst doom-modeline-wspc "  "
   "Wide whitespace.")
 
-(defconst doom-modeline-vspc (propertize " " 'face 'variable-pitch)
-  "Whitespace with variable pitch style.")
+(defconst doom-modeline-vspc (propertize " " 'display '((space :relative-width 0.5)))
+  "Thin whitespace.")
 
 (defun doom-modeline-face (&optional face inactive-face)
   "Display FACE in active window, and INACTIVE-FACE in inactive window.
