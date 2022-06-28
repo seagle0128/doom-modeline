@@ -366,6 +366,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
    conflict with `all-the-icons`. The workaround is
    [here](https://github.com/seagle0128/doom-modeline/issues/278#issuecomment-569510336).
 
+   In terminal mode, no icons or bars will be displayed, even though `all-the-icons`
+   fonts are installed successfully, and `doom-modeline-icon` is non-nil.
+
 1. I am experiencing the laggy issue, how to resolve it?
 
    Add this configuration into your init file:
