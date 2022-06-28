@@ -1031,9 +1031,13 @@ Example:
                " "
                'display `((space
                            :align-to
-                           (- (+ right right-fringe right-margin scroll-bar)
-                              ,(string-width
-                                (format-mode-line (cons "" rhs-forms)))))))
+                           (- right
+                              ,(/ (string-pixel-width
+                                   (propertize
+                                    (format-mode-line (cons "" rhs-forms))
+                                    'face 'mode-line))
+                                  (frame-char-width)
+                                  1.0)))))
               rhs-forms))
       (concat "Modeline:\n"
               (format "  %s\n  %s"
