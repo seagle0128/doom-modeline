@@ -1610,8 +1610,7 @@ mouse-2: Show help for minor mode"
 By default, this shows the information specified by `global-mode-string'."
   (when (and (doom-modeline--active)
              (not doom-modeline--limited-width-p))
-    (propertize (format-mode-line mode-line-misc-info)
-                'face (doom-modeline-face 'doom-modeline-misc-info))))
+    '("" mode-line-misc-info)))
 
 
 ;;

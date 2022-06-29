@@ -536,11 +536,6 @@ It requires `circe' or `erc' package."
   "Face used for highlighting."
   :group 'doom-modeline-faces)
 
-(defface doom-modeline-misc-info
-  '((t (:inherit font-lock-doc-face)))
-  "Face used for highlighting."
-  :group 'doom-modeline-faces)
-
 (defface doom-modeline-buffer-path
   '((t (:inherit (doom-modeline-emphasis bold))))
   "Face used for the dirname part of the buffer path."
