@@ -53,25 +53,26 @@
 ;; WORKAROUND: `string-pixel-width' is introduced in 29,
 ;; which is able to calculate the accurate string width.
 ;; Below is the workaround for backward compatibility.
-(unless (fboundp 'string-pixel-width)
-  ;; `window-font-width' consumes a lot
-  (defvar doom-modeline--font-width-cache nil)
-  (defun doom-modeline--font-width ()
-    "Cache the font width for better performance."
-    (if (display-graphic-p)
-        (let ((attributes (face-all-attributes 'mode-line)))
-          (or (cdr (assoc attributes doom-modeline--font-width-cache))
-              (let ((width (window-font-width nil 'mode-line)))
-                (push (cons attributes width) doom-modeline--font-width-cache)
-                width)))
-      1))
+;; `window-font-width' consumes a lot
+(defvar doom-modeline--font-width-cache nil)
+(defun doom-modeline--font-width ()
+  "Cache the font width for better performance."
+  (if (display-graphic-p)
+      (let ((attributes (face-all-attributes 'mode-line)))
+        (or (cdr (assoc attributes doom-modeline--font-width-cache))
+            (let ((width (window-font-width nil 'mode-line)))
+              (push (cons attributes width) doom-modeline--font-width-cache)
+              width)))
+    1))
 
-  ;; Refresh the font width after setting frame parameters
-  ;; to ensure the font width is correct.
-  (defun doom-modeline-refresh-font-width-cache (&rest _)
-    "Refresh the font width cache."
-    (setq doom-modeline--font-width-cache nil)
-    (doom-modeline--font-width))
+;; Refresh the font width after setting frame parameters
+;; to ensure the font width is correct.
+(defun doom-modeline-refresh-font-width-cache (&rest _)
+  "Refresh the font width cache."
+  (setq doom-modeline--font-width-cache nil)
+  (doom-modeline--font-width))
+
+(unless (fboundp 'string-pixel-width)
   (add-hook 'window-setup-hook #'doom-modeline-refresh-font-width-cache)
   (add-hook 'after-make-frame-functions #'doom-modeline-refresh-font-width-cache)
   (add-hook 'after-setting-font-hook #'doom-modeline-refresh-font-width-cache)
