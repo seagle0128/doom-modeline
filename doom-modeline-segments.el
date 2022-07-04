@@ -1797,7 +1797,11 @@ TEXT is alternative if icon is not available."
 (defsubst doom-modeline--meow ()
   "The current Meow state. Requires `meow-mode' to be enabled."
   (when (bound-and-true-p meow-mode)
-    meow--indicator))
+    (if (doom-modeline--active)
+	    meow--indicator
+	  (propertize (substring-no-properties meow--indicator)
+		          'face
+		          'mode-line-inactive))))
 
 (doom-modeline-def-segment modals
   "Displays modal editing states.
