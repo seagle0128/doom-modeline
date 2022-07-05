@@ -975,7 +975,7 @@ Example:
                " "
                'display `((space
                            :align-to
-                           (- right
+                           (- (+ right right-margin scroll-bar)
                               ,(let ((rhs-str (format-mode-line (cons "" rhs-forms)))
                                      (char-width (frame-char-width)))
                                  (if (fboundp 'string-pixel-width)
