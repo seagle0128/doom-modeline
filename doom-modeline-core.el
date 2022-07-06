@@ -874,6 +874,7 @@ If FRAME is nil, it means the current frame."
                                      mode-line-active
                                      solaire-mode-line-face
                                      solaire-mode-line-active-face
+                                     paradox-mode-line-face
                                      flycheck-color-mode-line-error-face
                                      flycheck-color-mode-line-warning-face
                                      flycheck-color-mode-line-info-face
