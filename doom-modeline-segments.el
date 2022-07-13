@@ -1065,13 +1065,11 @@ mouse-1: List all problems%s"
          (icon (car seg))
          (text (cdr seg)))
     (concat
-     (and icon
-          (concat
-           doom-modeline-spc
-           (doom-modeline-display-icon icon)))
+     (and (or icon text) doom-modeline-spc)
+     (and icon (doom-modeline-display-icon icon))
      (and text
           (concat
-           (if icon doom-modeline-vspc doom-modeline-spc)
+           (and icon doom-modeline-vspc)
            (doom-modeline-display-text text)))
      (and (or icon text) doom-modeline-spc))))
 
