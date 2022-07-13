@@ -1072,7 +1072,8 @@ mouse-1: List all problems%s"
      (and text
           (concat
            (if icon doom-modeline-vspc doom-modeline-spc)
-           (doom-modeline-display-text text))))))
+           (doom-modeline-display-text text)))
+     (and (or icon text) doom-modeline-spc))))
 
 
 ;;
