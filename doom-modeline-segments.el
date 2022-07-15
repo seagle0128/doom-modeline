@@ -573,7 +573,7 @@ project directory is important."
                 'mouse-face 'doom-modeline-highlight
                 'local-map mode-line-major-mode-keymap)
     (when (and doom-modeline-env-version doom-modeline-env--version)
-      (format " %s" doom-modeline-env--version))
+      (format "%s%s" doom-modeline-vspc doom-modeline-env--version))
     (and (boundp 'text-scale-mode-amount)
          (/= text-scale-mode-amount 0)
          (format
@@ -693,7 +693,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
             (propertize (if (length> str doom-modeline-vcs-max-length)
                             (concat
                              (substring str 0 (- doom-modeline-vcs-max-length 3))
-                             "...")
+                             doom-moeline-ellipsis)
                           str)
                         'mouse-face 'doom-modeline-highlight
                         'face (cond ((eq state 'needs-update)

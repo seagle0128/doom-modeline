@@ -1018,14 +1018,15 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; Helpers
 ;;
 
-(defconst doom-modeline-spc " "
-  "Whitespace.")
-
-(defconst doom-modeline-wspc "  "
-  "Wide whitespace.")
-
-(defconst doom-modeline-vspc (propertize " " 'display '((space :relative-width 0.5)))
+(defconst doom-modeline-spc " " "Whitespace.")
+(defconst doom-modeline-wspc "  " "Wide whitespace.")
+(defconst doom-modeline-vspc
+  (propertize " " 'display '((space :relative-width 0.5)))
   "Thin whitespace.")
+
+(defconst doom-moeline-ellipsis
+  (if (char-displayable-p ?…) "…" "...")
+  "Ellipsis.")
 
 (defun doom-modeline-face (&optional face inactive-face)
   "Display FACE in active window, and INACTIVE-FACE in inactive window.
