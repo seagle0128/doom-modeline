@@ -1188,8 +1188,9 @@ respectively."
           (<= (/ (window-total-width) (frame-width) 1.0)
               doom-modeline-window-width-limit)))))
 
-(add-hook 'window-size-change-functions #'doom-modeline-window-size-change-function)
+(add-hook 'after-revert-hook #'doom-modeline-window-size-change-function)
 (add-hook 'buffer-list-update-hook #'doom-modeline-window-size-change-function)
+(add-hook 'window-size-change-functions #'doom-modeline-window-size-change-function)
 
 (defvar-local doom-modeline--project-root nil)
 (defun doom-modeline--project-root ()
