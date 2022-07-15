@@ -713,11 +713,11 @@ Uses `all-the-icons-octicon' to fetch the icon."
      doom-modeline-spc
      (propertize (concat
                   (doom-modeline-display-icon icon)
-                  doom-modeline-vspc)
+                  doom-modeline-vspc
+                  (doom-modeline-display-text text))
                  'mouse-face 'doom-modeline-highlight
                  'help-echo (get-text-property 1 'help-echo vc-mode)
                  'local-map (get-text-property 1 'local-map vc-mode))
-     (doom-modeline-display-text text)
      doom-modeline-spc)))
 
 
@@ -2112,8 +2112,7 @@ mouse-1: Toggle citre mode"
 
 (doom-modeline-def-segment lsp
   "The LSP server state."
-  (when (and doom-modeline-lsp
-             (not doom-modeline--limited-width-p))
+  (when doom-modeline-lsp
     (let ((icon (cond ((bound-and-true-p lsp-mode)
                        doom-modeline--lsp)
                       ((bound-and-true-p eglot--managed-mode)
