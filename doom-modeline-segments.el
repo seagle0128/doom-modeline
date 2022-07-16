@@ -693,7 +693,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
             (propertize (if (length> str doom-modeline-vcs-max-length)
                             (concat
                              (substring str 0 (- doom-modeline-vcs-max-length 3))
-                             doom-moeline-ellipsis)
+                             doom-modeline-ellipsis)
                           str)
                         'mouse-face 'doom-modeline-highlight
                         'face (cond ((eq state 'needs-update)

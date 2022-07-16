@@ -40,7 +40,7 @@
   :group 'doom-modeline
   :link '(url-link :tag "Homepage" "https://github.com/seagle0128/doom-modeline"))
 
-(defcustom doom-modeline-env-load-string doom-moeline-ellipsis
+(defcustom doom-modeline-env-load-string doom-modeline-ellipsis
   "What to display as the version while a new one is being loaded."
   :type 'string
   :group 'doom-modeline-env)

@@ -1024,7 +1024,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   (propertize " " 'display '((space :relative-width 0.5)))
   "Thin whitespace.")
 
-(defconst doom-moeline-ellipsis
+(defconst doom-modeline-ellipsis
   (if (char-displayable-p ?…) "…" "...")
   "Ellipsis.")
 
