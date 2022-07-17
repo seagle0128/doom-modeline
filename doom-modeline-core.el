@@ -1235,7 +1235,7 @@ Return `default-directory' if no project was found."
           (pcase doom-modeline-buffer-file-name-style
             ('auto
              (if (doom-modeline-project-p)
-                 (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename nil nil 'hide)
+                 (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink 'shrink 'hide)
                (propertize "%b" 'face 'doom-modeline-buffer-file)))
             ('truncate-upto-project
              (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink))
