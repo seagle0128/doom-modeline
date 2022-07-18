@@ -157,7 +157,7 @@ Specify another one if you encounter the issue."
   "Determines the style used by `doom-modeline-buffer-file-name'.
 
 Given ~/Projects/FOSS/emacs/lisp/comint.el
-  auto => emacs/lisp/comint.el (in a project) or comint.el
+  auto => emacs/l/comint.el (in a project) or comint.el
   truncate-upto-project => ~/P/F/emacs/lisp/comint.el
   truncate-from-project => ~/Projects/FOSS/emacs/l/comint.el
   truncate-with-project => emacs/l/comint.el
