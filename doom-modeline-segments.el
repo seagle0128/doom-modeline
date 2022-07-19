@@ -348,6 +348,15 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 (advice-add #'org-edit-src-save :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'symbol-overlay-rename :after #'doom-modeline-update-buffer-file-name)
 
+(with-no-warnings
+  (if (boundp 'after-focus-change-function)
+      (progn
+        (advice-add #'handle-switch-frame :after #'doom-modeline-update-buffer-file-name)
+        (add-function :after after-focus-change-function #'doom-modeline-update-buffer-file-name))
+    (progn
+      (add-hook 'focus-in-hook #'doom-modeline-update-buffer-file-name)
+      (add-hook 'focus-out-hook #'doom-modeline-update-buffer-file-name))))
+
 (doom-modeline-add-variable-watcher
  'doom-modeline-buffer-file-name-style
  (lambda (_sym val op _where)
