@@ -104,6 +104,7 @@
 (defvar tracking-buffers)
 (defvar winum-auto-setup-mode-line)
 (defvar xah-fly-insert-state-p)
+(defvar display-time-string)
 
 (declare-function all-the-icons-icon-for-buffer "ext:all-the-icons")
 (declare-function anzu--reset-status "ext:anzu")
@@ -2933,6 +2934,21 @@ mouse-3: Restart preview"
        doom-modeline-spc
        (propertize (format "Follow %d/%d" (- nwindows nfollowing) nwindows)
                    'face 'doom-modeline-buffer-minor-mode)))))
+
+(doom-modeline-def-segment date
+  "date"
+  (when (bound-and-true-p display-time-mode)
+    (propertize
+     (concat
+      (when doom-modeline-icon
+        doom-modeline-spc
+        (doom-modeline-icon 'faicon  "calendar" "📅" ""
+                            :face 'doom-modeline-date
+                            :height 1.2 :v-adjust -0.0575))
+      doom-modeline-spc
+      (format "%s" display-time-string)
+      doom-modeline-spc)
+     'face (doom-modeline-face 'doom-modeline-date))))
 
 (provide 'doom-modeline-segments)
 
