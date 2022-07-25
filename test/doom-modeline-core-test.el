@@ -135,7 +135,7 @@
               (doom-modeline-project-root () default-directory))
       (should
        (string= (substring-no-properties (doom-modeline-buffer-file-name))
-                "project/relative/test.txt")))))
+                "project/r/test.txt")))))
 
 (ert-deftest doom-modeline-buffer-file-name/auto-file-name ()
   (let ((default-directory "/home/user/project/")
@@ -146,7 +146,7 @@
               (doom-modeline-project-root () default-directory))
       (should
        (string= (substring-no-properties (doom-modeline-buffer-file-name))
-                "project/relative/test.txt")))))
+                "project/r/test.txt")))))
 
 (ert-deftest doom-modeline-buffer-file-name/file-name ()
   (let ((default-directory "/home/user/project/")
