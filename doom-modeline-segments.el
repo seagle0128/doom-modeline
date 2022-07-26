@@ -2935,17 +2935,22 @@ mouse-3: Restart preview"
        (propertize (format "Follow %d/%d" (- nwindows nfollowing) nwindows)
                    'face 'doom-modeline-buffer-minor-mode)))))
 
-(doom-modeline-def-segment date
-  "date"
-  (when (bound-and-true-p display-time-mode)
+;;
+;; Display time
+;;
+
+(doom-modeline-def-segment time
+  (when (and (doom-modeline--active)
+             (bound-and-true-p display-time-mode))
     (propertize
      (concat
+      doom-modeline-spc
       (doom-modeline-icon 'faicon  "calendar" "📅" ""
                           :face 'doom-modeline-date
                           :height 1.2 :v-adjust -0.0575)
-      doom-modeline-spc
-      (format "%s" display-time-string)
-      doom-modeline-spc)
+      (when (or doom-modeline-icon doom-modeline-unicode-fallback)
+        doom-modeline-spc)
+      display-time-string)
      'face (doom-modeline-face 'doom-modeline-date))))
 
 (defun doom-modeline-override-display-time-modeline ()
