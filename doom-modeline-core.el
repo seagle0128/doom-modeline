@@ -959,11 +959,6 @@ If FRAME is nil, it means the current frame."
             ((error "%s is not a valid segment" seg))))
     (nreverse forms)))
 
-(defvar doom-modeline--date-not-removed-p t)
-(defun doom-modeline--display-time-clean ()
-  "remove display-time string in misc-info"
-  (setq global-mode-string (delete 'display-time-string global-mode-string)))
-
 (defun doom-modeline-def-modeline (name lhs &optional rhs)
   "Define a modeline format and byte-compiles it.
 NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
@@ -975,11 +970,6 @@ Example:
     \\='(bar matches \" \" buffer-info)
     \\='(media-info major-mode))
   (doom-modeline-set-modeline \\='minimal t)"
-  (when (and doom-modeline--date-not-removed-p
-             (or (member 'date lhs) (member 'date rhs)))
-    (add-hook 'display-time-hook #'doom-modeline--display-time-clean t t)
-    (setq doom-modeline--date-not-removed-p nil))
-
   (let ((sym (intern (format "doom-modeline-format--%s" name)))
         (lhs-forms (doom-modeline--prepare-segments lhs))
         (rhs-forms (doom-modeline--prepare-segments rhs)))

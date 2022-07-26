@@ -2940,15 +2940,21 @@ mouse-3: Restart preview"
   (when (bound-and-true-p display-time-mode)
     (propertize
      (concat
-      (when doom-modeline-icon
-        doom-modeline-spc
-        (doom-modeline-icon 'faicon  "calendar" "📅" ""
-                            :face 'doom-modeline-date
-                            :height 1.2 :v-adjust -0.0575))
+      (doom-modeline-icon 'faicon  "calendar" "📅" ""
+                          :face 'doom-modeline-date
+                          :height 1.2 :v-adjust -0.0575)
       doom-modeline-spc
       (format "%s" display-time-string)
       doom-modeline-spc)
      'face (doom-modeline-face 'doom-modeline-date))))
+
+(defun doom-modeline-override-display-time-modeline ()
+  "Override default display-time mode-line."
+  (if (bound-and-true-p doom-modeline-mode)
+      (setq global-mode-string (delq 'display-time-string global-mode-string))
+    (setq global-mode-string (append global-mode-string '(display-time-string)))))
+(add-hook 'display-time-mode-hook #'doom-modeline-override-display-time-modeline)
+(add-hook 'doom-modeline-mode-hook #'doom-modeline-override-display-time-modeline)
 
 (provide 'doom-modeline-segments)
 
