@@ -2948,8 +2948,8 @@ mouse-3: Restart preview"
       (doom-modeline-icon 'faicon  "calendar" "📅" ""
                           :face 'doom-modeline-date
                           :height 1.2 :v-adjust -0.0575)
-      (when (or doom-modeline-icon doom-modeline-unicode-fallback)
-        doom-modeline-spc)
+      (and (or doom-modeline-icon doom-modeline-unicode-fallback)
+           doom-modeline-spc)
       display-time-string)
      'face (doom-modeline-face 'doom-modeline-date))))
 

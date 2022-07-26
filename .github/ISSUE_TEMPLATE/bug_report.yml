@@ -9,7 +9,7 @@ body:
     label: Thank you for the bug report
     description: Please check the suggestion below before proceeding
     options:
-      - label: I am using the latest version of `doom-mode` related packages.
+      - label: I am using the latest version of `doom-modeline` related packages.
         required: true
       - label: I checked [FAQ](https://github.com/seagle0128/doom-modeline#faq).
         required: true
