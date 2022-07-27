@@ -754,7 +754,7 @@ Also see the face `doom-modeline-unread-number'."
   "Face for timemachine status."
   :group 'doom-modeline-faces)
 
-(defface doom-modeline-date
+(defface doom-modeline-time
   '((t (:inherit (mode-line-buffer-id bold))))
   "Face for display time."
   :group 'doom-modeline-faces)
