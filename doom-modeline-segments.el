@@ -2944,11 +2944,13 @@ mouse-3: Restart preview"
              (bound-and-true-p display-time-mode))
     (concat
      doom-modeline-spc
-     (doom-modeline-icon 'faicon  "calendar" "📅" ""
-                         :face 'doom-modeline-time
-                         :v-adjust -0.0575)
-     (and (or doom-modeline-icon doom-modeline-unicode-fallback)
-          doom-modeline-spc)
+     (when doom-modeline-time-icon
+       (concat
+        (doom-modeline-icon 'octicon "calendar" "📅" ""
+                            :face 'doom-modeline-time
+                            :v-adjust -0.05)
+        (and (or doom-modeline-icon doom-modeline-unicode-fallback)
+             doom-modeline-spc)))
      (propertize display-time-string
                  'face (doom-modeline-face 'doom-modeline-time)))))
 

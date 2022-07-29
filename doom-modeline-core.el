@@ -219,6 +219,13 @@ It respects variable `doom-modeline-icon' and `doom-modeline-buffer-state-icon'.
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-time-icon t
+  "Whether display the time icon.
+
+It respects variable `doom-modeline-icon'."
+  :type 'boolean
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-unicode-fallback nil
   "Whether to use unicode as a fallback (instead of ASCII) when not using icons."
   :type 'boolean

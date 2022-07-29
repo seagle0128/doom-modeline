@@ -241,6 +241,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'.
 (setq doom-modeline-buffer-modification-icon t)
 
+;; Whether display the time icon. It respects variable `doom-modeline-icon'.
+(setq doom-modeline-time-icon t)
+
 ;; Whether to use unicode as a fallback (instead of ASCII) when not using icons.
 (setq doom-modeline-unicode-fallback nil)
 
