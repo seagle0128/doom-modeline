@@ -1617,8 +1617,7 @@ mouse-2: Show help for minor mode"
 (doom-modeline-def-segment misc-info
   "Mode line construct for miscellaneous information.
 By default, this shows the information specified by `global-mode-string'."
-  (when (and (doom-modeline--active)
-             (not doom-modeline--limited-width-p))
+  (unless doom-modeline--limited-width-p
     '("" mode-line-misc-info)))
 
 
@@ -2940,8 +2939,8 @@ mouse-3: Restart preview"
 ;;
 
 (doom-modeline-def-segment time
-  (when (and (doom-modeline--active)
-             (bound-and-true-p display-time-mode))
+  (when (and (bound-and-true-p display-time-mode)
+             (not doom-modeline--limited-width-p))
     (concat
      doom-modeline-spc
      (when doom-modeline-time-icon
