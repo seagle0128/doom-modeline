@@ -391,29 +391,32 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
          (doom-modeline-display-icon icon)
          doom-modeline-vspc)))))
 
+(defsubst doom-modeline--buffer-simple-name ()
+  "The buffer simple name."
+  (propertize "%b"
+              'face (doom-modeline-face
+                     (if (and buffer-file-name (buffer-modified-p))
+                         'doom-modeline-buffer-modified
+                       'doom-modeline-buffer-file))
+              'mouse-face 'doom-modeline-highlight
+              'help-echo "Buffer name
+mouse-1: Previous buffer\nmouse-3: Next buffer"
+              'local-map mode-line-buffer-identification-keymap))
+
 (defsubst doom-modeline--buffer-name ()
   "The current buffer name."
   (when doom-modeline-buffer-name
-    (let ((face (doom-modeline-face
-                 (if (and buffer-file-name (buffer-modified-p))
-                     'doom-modeline-buffer-modified
-                   'doom-modeline-buffer-file))))
-      (if (and (not (eq doom-modeline-buffer-file-name-style 'file-name))
-               doom-modeline--limited-width-p)
-          ;; Only display the buffer name if the window is small, and doesn't
-          ;; need to respect file-name style.
-          (propertize "%b"
-                      'face face
-                      'mouse-face 'doom-modeline-highlight
-                      'help-echo "Buffer name
-mouse-1: Previous buffer\nmouse-3: Next buffer"
-                      'local-map mode-line-buffer-identification-keymap)
-        (when-let ((name (or doom-modeline--buffer-file-name
-                             (doom-modeline-update-buffer-file-name))))
-          ;; Check if the buffer is modified
-          (if (and buffer-file-name (buffer-modified-p))
-              (propertize name 'face face)
-            (doom-modeline-display-text name)))))))
+    (if (and (not (eq doom-modeline-buffer-file-name-style 'file-name))
+             doom-modeline--limited-width-p)
+        ;; Only display the buffer name if the window is small, and doesn't
+        ;; need to respect file-name style.
+        (doom-modeline--buffer-simple-name)
+      (when-let ((name (or doom-modeline--buffer-file-name
+                           (doom-modeline-update-buffer-file-name))))
+        ;; Check if the buffer is modified
+        (if (and buffer-file-name (buffer-modified-p))
+            (propertize name 'face (doom-modeline-face 'doom-modeline-buffer-modified))
+          (doom-modeline-display-text name))))))
 
 (doom-modeline-def-segment buffer-info
   "Combined information about the current buffer.
@@ -432,15 +435,7 @@ read-only or non-existent)."
    doom-modeline-spc
    (doom-modeline--buffer-mode-icon)
    (doom-modeline--buffer-state-icon)
-   (propertize "%b"
-               'face (doom-modeline-face
-                      (if (and buffer-file-name (buffer-modified-p))
-                          'doom-modeline-buffer-modified
-                        'doom-modeline-buffer-file))
-               'mouse-face 'doom-modeline-highlight
-               'help-echo "Buffer name
-mouse-1: Previous buffer\nmouse-3: Next buffer"
-               'local-map mode-line-buffer-identification-keymap)))
+   (doom-modeline--buffer-simple-name)))
 
 (doom-modeline-def-segment buffer-default-directory
   "Displays `default-directory' with the icon and state.

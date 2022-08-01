@@ -1044,11 +1044,11 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 IF FACE is nil, `mode-line' face will be used.
 If INACTIVE-FACE is nil, `mode-line-inactive' face will be used."
   (if (doom-modeline--active)
-      (or face
-          (if (facep 'mode-line-active)
-              'mode-line-active
-            'mode-line))
-    (or inactive-face 'mode-line-inactive)))
+      (or (and (facep face) face)
+          (and (facep 'mode-line-active) 'mode-line-active)
+          'mode-line)
+    (or (and (facep inactive-face) inactive-face)
+        'mode-line-inactive)))
 
 ;; Since 27, the calculation of char height was changed
 ;; @see https://github.com/seagle0128/doom-modeline/issues/271
