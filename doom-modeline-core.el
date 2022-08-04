@@ -771,8 +771,8 @@ Also see the face `doom-modeline-unread-number'."
 ;;
 
 (declare-function face-remap-remove-relative "face-remap")
+(declare-function project-root "project")
 (declare-function ffip-get-project-root-directory "ext:find-file-in-project")
-(declare-function project-root "ext:project")
 (declare-function projectile-project-root "ext:projectile")
 
 
@@ -1206,27 +1206,25 @@ respectively."
 
 (defvar-local doom-modeline--project-root nil)
 (defun doom-modeline--project-root ()
-  "Get the path to the root of your project.
+  "Get the path to the project root.
 Return nil if no project was found."
   (or doom-modeline--project-root
       (setq doom-modeline--project-root
-            (pcase (if (eq doom-modeline-project-detection 'auto)
-                       (cond
-                        ((fboundp 'ffip-get-project-root-directory) 'ffip)
-                        ((fboundp 'projectile-project-root) 'projectile)
-                        ((fboundp 'project-current) 'project)
-                        (t 'default))
-                     doom-modeline-project-detection)
-              ('ffip
-               (let ((inhibit-message t))
-                 (ffip-get-project-root-directory)))
-              ('projectile
-               (projectile-project-root))
-              ('project
-               (when-let ((project (project-current)))
-                 (expand-file-name (if (fboundp 'project-root)
-                                       (project-root project)
-                                     (cdr project)))))))))
+            (cond
+             ((and (memq doom-modeline-project-detection '(auto ffip))
+                   (fboundp 'ffip-get-project-root-directory))
+              (let ((inhibit-message t))
+                (ffip-get-project-root-directory)))
+             ((and (memq doom-modeline-project-detection '(auto projectile))
+                   (or (fboundp 'projectile-project-root)
+                       (require 'projectile nil t)))
+              (projectile-project-root))
+             ((and (memq doom-modeline-project-detection '(auto project))
+                   (fboundp 'project-current))
+              (when-let ((project (project-current)))
+                (expand-file-name (if (fboundp 'project-root)
+                                      (project-root project)
+                                    (cdr project)))))))))
 
 (defun doom-modeline-project-p ()
   "Check if the file is in a project."
