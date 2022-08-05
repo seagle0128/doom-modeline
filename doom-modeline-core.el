@@ -51,9 +51,9 @@
   (setq inhibit-compacting-font-caches t))
 
 ;; WORKAROUND: `string-pixel-width' is introduced in 29,
-;; which is able to calculate the accurate string width.
-;; Below is the workaround for backward compatibility.
-;; `window-font-width' consumes a lot
+;; and is able to calculate the accurate string width.
+;; Below is the workaround for backward compatibility
+;; since `window-font-width' consumes a lot.
 (defvar doom-modeline--font-width-cache nil)
 (defun doom-modeline--font-width ()
   "Cache the font width for better performance."
