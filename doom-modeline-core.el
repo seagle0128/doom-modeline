@@ -523,7 +523,9 @@ It requires `circe' or `erc' package."
   :group 'doom-modeline)
 
 (defcustom doom-modeline-time t
-  "Whether display the time."
+  "Whether display the time.
+
+It respects `display-time-mode'."
   :type 'boolean
   :group 'doom-modeline)
 
