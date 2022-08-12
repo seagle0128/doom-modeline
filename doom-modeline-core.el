@@ -522,6 +522,11 @@ It requires `circe' or `erc' package."
   :type 'function
   :group 'doom-modeline)
 
+(defcustom doom-modeline-time t
+  "Whether display the time."
+  :type 'boolean
+  :group 'doom-modeline)
+
 
 ;;
 ;; Faces

@@ -322,6 +322,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Function to stylize the irc buffer names.
 (setq doom-modeline-irc-stylize 'identity)
 
+;; Whether display the time. Non-nil to display in the mode-line.
+(setq doom-modeline-time t)
+
 ;; Whether display the environment version.
 (setq doom-modeline-env-version t)
 ;; Or for individual languages

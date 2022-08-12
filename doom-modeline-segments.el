@@ -2934,7 +2934,8 @@ mouse-3: Restart preview"
 ;;
 
 (doom-modeline-def-segment time
-  (when (and (bound-and-true-p display-time-mode)
+  (when (and doom-modeline-time
+             (bound-and-true-p display-time-mode)
              (not doom-modeline--limited-width-p))
     (concat
      doom-modeline-spc
