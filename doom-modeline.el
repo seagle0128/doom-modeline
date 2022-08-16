@@ -96,19 +96,19 @@
   '(media-info major-mode time))
 
 (doom-modeline-def-modeline 'special
-  '(bar window-number modals matches buffer-info buffer-position word-count parrot selection-info)
+  '(bar window-number modals matches buffer-info remote-host buffer-position word-count parrot selection-info)
   '(objed-state misc-info battery irc-buffers debug minor-modes input-method indent-info buffer-encoding major-mode process time))
 
 (doom-modeline-def-modeline 'project
-  '(bar window-number modals buffer-default-directory)
+  '(bar window-number modals buffer-default-directory remote-host buffer-position)
   '(misc-info battery irc mu4e gnus github debug minor-modes input-method major-mode process time))
 
 (doom-modeline-def-modeline 'dashboard
-  '(bar window-number buffer-default-directory-simple)
+  '(bar window-number buffer-default-directory-simple remote-host)
   '(misc-info battery irc mu4e gnus github debug minor-modes input-method major-mode process time))
 
 (doom-modeline-def-modeline 'vcs
-  '(bar window-number modals matches buffer-info buffer-position parrot selection-info)
+  '(bar window-number modals matches buffer-info remote-host buffer-position parrot selection-info)
   '(misc-info battery irc mu4e gnus github debug minor-modes buffer-encoding major-mode process time))
 
 (doom-modeline-def-modeline 'package
