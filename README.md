@@ -503,6 +503,17 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
    Enable `doom-modeline-minor-modes` or `(add-to-list 'global-mode-string company-lighter)`.
 
+1. How to display LaTeX compilation information in the mode line?
+
+   Use [process](https://github.com/haji-ali/procress) package.
+   Refer to [#387](https://github.com/seagle0128/doom-modeline/issues/387) for more details.
+
+   ```elisp
+   (require 'procress)
+   (procress-load-default-svg-images)
+   (add-hook 'LaTeX-mode-hook #'procress-auctex-mode)
+   ```
+
 ## Donate
 
 If you think it's helpful for you, please consider paying a cup of coffee for
