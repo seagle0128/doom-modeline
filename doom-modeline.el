@@ -154,70 +154,15 @@
 If DEFAULT is non-nil, set the default mode-line for all buffers."
   (doom-modeline-set-modeline 'main default))
 
-;;;###autoload
-(defun doom-modeline-set-minimal-modeline ()
-  "Set minimal mode-line."
-  (doom-modeline-set-modeline 'minimal))
-
-;;;###autoload
-(defun doom-modeline-set-special-modeline ()
-  "Set special mode-line."
-  (doom-modeline-set-modeline 'special))
-
-;;;###autoload
-(defun doom-modeline-set-project-modeline ()
-  "Set project mode-line."
-  (doom-modeline-set-modeline 'project))
-
-;;;###autoload
-(defun doom-modeline-set-dashboard-modeline ()
-  "Set dashboard mode-line."
-  (doom-modeline-set-modeline 'dashboard))
-
-;;;###autoload
-(defun doom-modeline-set-vcs-modeline ()
-  "Set vcs mode-line."
-  (doom-modeline-set-modeline 'vcs))
-
-;;;###autoload
-(defun doom-modeline-set-info-modeline ()
-  "Set Info mode-line."
-  (doom-modeline-set-modeline 'info))
-
-;;;###autoload
-(defun doom-modeline-set-package-modeline ()
-  "Set package mode-line."
-  (doom-modeline-set-modeline 'package))
-
-;;;###autoload
-(defun doom-modeline-set-media-modeline ()
-  "Set media mode-line."
-  (doom-modeline-set-modeline 'media))
-
-;;;###autoload
-(defun doom-modeline-set-message-modeline ()
-  "Set message mode-line."
-  (doom-modeline-set-modeline 'message))
-
-;;;###autoload
-(defun doom-modeline-set-pdf-modeline ()
-  "Set pdf mode-line."
-  (doom-modeline-set-modeline 'pdf))
-
-;;;###autoload
-(defun doom-modeline-set-org-src-modeline ()
-  "Set org-src mode-line."
-  (doom-modeline-set-modeline 'org-src))
-
-;;;###autoload
-(defun doom-modeline-set-helm-modeline (&rest _) ; To advice helm
-  "Set helm mode-line."
-  (doom-modeline-set-modeline 'helm))
-
-;;;###autoload
-(defun doom-modeline-set-timemachine-modeline ()
-  "Set timemachine mode-line."
-  (doom-modeline-set-modeline 'timemachine))
+(defun doom-modeline-auto-set (&optional mode)
+  "Set mode-line base on MODE."
+  (catch 'found
+    (dolist (x doom-modeline-mode-alist)
+      (when (provided-mode-derived-p
+             (or mode major-mode)
+             (car x))
+        (doom-modeline-set-modeline (cdr x))
+        (throw 'found x)))))
 
 
 ;;
@@ -225,6 +170,23 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 ;;
 
 (defvar doom-modeline-mode-map (make-sparse-keymap))
+
+(defvar doom-modeline-mode-alist
+  '((message-mode . message)
+    (Info-mode .  project)
+    (dashboard-mode . dashboard)
+    (image-mode . media)
+    (message-mode . message)
+    (git-commit-mode . message)
+    (magit-mode . vcs)
+    (circe-mode . special)
+    (erc-mode . special)
+    (rcirc-mode . special)
+    (pdf-view-mode . pdf)
+    (org-src-mode . org-src)
+    (git-timemachine-mode . timemachine)
+    (paradox-menu-mode . package)
+    (xwidget-webkit-mode . minimal)))
 
 ;; Suppress warnings
 (defvar 2C-mode-line-format)
@@ -251,21 +213,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (setq 2C-mode-line-format (doom-modeline 'special))
 
         ;; Add hooks
-        (add-hook 'Info-mode-hook #'doom-modeline-set-info-modeline)
-        (add-hook 'dired-mode-hook #'doom-modeline-set-project-modeline)
-        (add-hook 'dashboard-mode-hook #'doom-modeline-set-dashboard-modeline)
-        (add-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
-        (add-hook 'message-mode-hook #'doom-modeline-set-message-modeline)
-        (add-hook 'git-commit-mode-hook #'doom-modeline-set-message-modeline)
-        (add-hook 'magit-mode-hook #'doom-modeline-set-vcs-modeline)
-        (add-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
-        (add-hook 'erc-mode-hook #'doom-modeline-set-special-modeline)
-        (add-hook 'rcirc-mode-hook #'doom-modeline-set-special-modeline)
-        (add-hook 'pdf-view-mode-hook #'doom-modeline-set-pdf-modeline)
-        (add-hook 'org-src-mode-hook #'doom-modeline-set-org-src-modeline)
-        (add-hook 'git-timemachine-mode-hook #'doom-modeline-set-timemachine-modeline)
-        (add-hook 'paradox-menu-mode-hook #'doom-modeline-set-package-modeline)
-        (add-hook 'xwidget-webkit-mode-hook #'doom-modeline-set-minimal-modeline)
+        (add-hook 'change-major-mode-hook #'doom-modeline-auto-set)
 
         ;; Add advices
         (advice-add #'helm-display-mode-line :after #'doom-modeline-set-helm-modeline))
@@ -281,21 +229,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
       (setq 2C-mode-line-format (doom-modeline--original-value '2C-mode-line-format))
 
       ;; Remove hooks
-      (remove-hook 'Info-mode-hook #'doom-modeline-set-info-modeline)
-      (remove-hook 'dired-mode-hook #'doom-modeline-set-project-modeline)
-      (remove-hook 'dashboard-mode-hook #'doom-modeline-set-dashboard-modeline)
-      (remove-hook 'image-mode-hook #'doom-modeline-set-media-modeline)
-      (remove-hook 'message-mode-hook #'doom-modeline-set-message-modeline)
-      (remove-hook 'git-commit-mode-hook #'doom-modeline-set-message-modeline)
-      (remove-hook 'magit-mode-hook #'doom-modeline-set-vcs-modeline)
-      (remove-hook 'circe-mode-hook #'doom-modeline-set-special-modeline)
-      (remove-hook 'erc-mode-hook #'doom-modeline-set-special-modeline)
-      (remove-hook 'rcirc-mode-hook #'doom-modeline-set-special-modeline)
-      (remove-hook 'pdf-view-mode-hook #'doom-modeline-set-pdf-modeline)
-      (remove-hook 'org-src-mode-hook #'doom-modeline-set-org-src-modeline)
-      (remove-hook 'git-timemachine-mode-hook #'doom-modeline-set-timemachine-modeline)
-      (remove-hook 'paradox-menu-mode-hook #'doom-modeline-set-package-modeline)
-      (remove-hook 'xwidget-webkit-mode-hook #'doom-modeline-set-minimal-modeline)
+      (remove-hook 'change-major-mode-hook #'doom-modeline-auto-set)
 
       ;; Remove advices
       (advice-remove #'helm-display-mode-line #'doom-modeline-set-helm-modeline))))
