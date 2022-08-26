@@ -529,6 +529,13 @@ It respects `display-time-mode'."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-display-misc-in-all-mode-lines t
+  "Whether display the misc segment on all mode lines.
+
+If nil, display only if the mode line is active."
+  :type 'boolean
+  :group 'doom-modeline)
+
 
 ;;
 ;; Faces
