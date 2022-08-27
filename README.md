@@ -325,6 +325,10 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether display the time. It respects `display-time-mode'.
 (setq doom-modeline-time t)
 
+;; Whether display the misc segment on all mode lines.
+;; If nil, display only if the mode line is active.
+(setq doom-modeline-display-misc-in-all-mode-lines t)
+
 ;; Whether display the environment version.
 (setq doom-modeline-env-version t)
 ;; Or for individual languages
