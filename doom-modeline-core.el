@@ -1230,7 +1230,7 @@ Return nil if no project was found."
               (let ((inhibit-message t))
                 (ffip-project-root)))
              ((and (memq doom-modeline-project-detection '(auto projectile))
-                   (bound-and-true-p 'projectile-mode))
+                   (bound-and-true-p projectile-mode))
               (projectile-project-root))
              ((and (memq doom-modeline-project-detection '(auto project))
                    (fboundp 'project-current))
