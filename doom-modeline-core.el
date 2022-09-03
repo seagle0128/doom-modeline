@@ -785,8 +785,8 @@ Also see the face `doom-modeline-unread-number'."
 ;;
 
 (declare-function face-remap-remove-relative "face-remap")
+(declare-function ffip-project-root "ext:find-file-in-project")
 (declare-function project-root "project")
-(declare-function ffip-get-project-root-directory "ext:find-file-in-project")
 (declare-function projectile-project-root "ext:projectile")
 
 
@@ -1226,9 +1226,9 @@ Return nil if no project was found."
       (setq doom-modeline--project-root
             (cond
              ((and (memq doom-modeline-project-detection '(auto ffip))
-                   (fboundp 'ffip-get-project-root-directory))
+                   (fboundp 'ffip-project-root))
               (let ((inhibit-message t))
-                (ffip-get-project-root-directory)))
+                (ffip-project-root)))
              ((and (memq doom-modeline-project-detection '(auto projectile))
                    (or (fboundp 'projectile-project-root)
                        (require 'projectile nil t)))
