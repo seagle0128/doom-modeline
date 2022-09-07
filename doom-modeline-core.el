@@ -568,7 +568,7 @@ If nil, display only if the mode line is active."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-buffer-modified
-  '((t (:inherit (error bold) :background nil)))
+  '((t (:inherit (error bold) :background 'unspecified)))
   "Face used for the \\='unsaved\\=' symbol in the mode-line."
   :group 'doom-modeline-faces)
 
@@ -655,7 +655,7 @@ Also see the face `doom-modeline-unread-number'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-bar-inactive
-  `((t (:background ,(face-foreground 'mode-line-inactive))))
+  `((t (:background ,(or (face-foreground 'mode-line-inactive) 'unspecified))))
   "The face used for the left-most bar in the mode-line of an inactive window."
   :group 'doom-modeline-faces)
 
