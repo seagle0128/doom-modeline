@@ -529,6 +529,13 @@ It respects `display-time-mode'."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-display-misc-in-all-mode-lines t
+  "Whether display the misc segment on all mode lines.
+
+If nil, display only if the mode line is active."
+  :type 'boolean
+  :group 'doom-modeline)
+
 
 ;;
 ;; Faces
@@ -778,8 +785,8 @@ Also see the face `doom-modeline-unread-number'."
 ;;
 
 (declare-function face-remap-remove-relative "face-remap")
+(declare-function ffip-project-root "ext:find-file-in-project")
 (declare-function project-root "project")
-(declare-function ffip-get-project-root-directory "ext:find-file-in-project")
 (declare-function projectile-project-root "ext:projectile")
 
 
@@ -1028,7 +1035,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   (when-let ((modeline (doom-modeline key)))
     (setf (if default
               (default-value 'mode-line-format)
-            (buffer-local-value 'mode-line-format (current-buffer)))
+            mode-line-format)
           (list "%e" modeline))))
 
 
@@ -1219,12 +1226,11 @@ Return nil if no project was found."
       (setq doom-modeline--project-root
             (cond
              ((and (memq doom-modeline-project-detection '(auto ffip))
-                   (fboundp 'ffip-get-project-root-directory))
+                   (fboundp 'ffip-project-root))
               (let ((inhibit-message t))
-                (ffip-get-project-root-directory)))
+                (ffip-project-root)))
              ((and (memq doom-modeline-project-detection '(auto projectile))
-                   (or (fboundp 'projectile-project-root)
-                       (require 'projectile nil t)))
+                   (bound-and-true-p projectile-mode))
               (projectile-project-root))
              ((and (memq doom-modeline-project-detection '(auto project))
                    (fboundp 'project-current))
