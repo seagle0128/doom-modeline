@@ -154,6 +154,7 @@
 If DEFAULT is non-nil, set the default mode-line for all buffers."
   (doom-modeline-set-modeline 'main default))
 
+;;;###autoload
 (defun doom-modeline-auto-set (&optional mode)
   "Set mode-line base on MODE."
   (catch 'found
@@ -163,6 +164,11 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
              (car x))
         (doom-modeline-set-modeline (cdr x))
         (throw 'found x)))))
+
+;;;###autoload
+(defun doom-modeline-set-helm-modeline (&rest _) ; To advice helm
+  "Set helm mode-line."
+  (doom-modeline-set-modeline 'helm))
 
 
 ;;
