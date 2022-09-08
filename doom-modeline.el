@@ -154,8 +154,7 @@
 If DEFAULT is non-nil, set the default mode-line for all buffers."
   (doom-modeline-set-modeline 'main default))
 
-;;;###autoload
-(defun doom-modeline-auto-set (&optional mode)
+(defun doom-modeline-auto-set-modeline (&optional mode)
   "Set mode-line base on MODE."
   (catch 'found
     (dolist (x doom-modeline-mode-alist)
@@ -165,7 +164,6 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (doom-modeline-set-modeline (cdr x))
         (throw 'found x)))))
 
-;;;###autoload
 (defun doom-modeline-set-helm-modeline (&rest _) ; To advice helm
   "Set helm mode-line."
   (doom-modeline-set-modeline 'helm))
@@ -192,7 +190,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
     (org-src-mode . org-src)
     (git-timemachine-mode . timemachine)
     (paradox-menu-mode . package)
-    (xwidget-webkit-mode . minimal)))
+    (xwidget-webkit-mode . minimal))
+  "Alist of major modes and mode-lines.")
 
 ;; Suppress warnings
 (defvar 2C-mode-line-format)
@@ -219,7 +218,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (setq 2C-mode-line-format (doom-modeline 'special))
 
         ;; Add hooks
-        (add-hook 'change-major-mode-hook #'doom-modeline-auto-set)
+        (add-hook 'change-major-mode-hook #'doom-modeline-auto-set-modeline)
 
         ;; Add advices
         (advice-add #'helm-display-mode-line :after #'doom-modeline-set-helm-modeline))
@@ -235,7 +234,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
       (setq 2C-mode-line-format (doom-modeline--original-value '2C-mode-line-format))
 
       ;; Remove hooks
-      (remove-hook 'change-major-mode-hook #'doom-modeline-auto-set)
+      (remove-hook 'change-major-mode-hook #'doom-modeline-auto-set-modeline)
 
       ;; Remove advices
       (advice-remove #'helm-display-mode-line #'doom-modeline-set-helm-modeline))))
