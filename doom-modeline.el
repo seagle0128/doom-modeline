@@ -183,15 +183,11 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
     (xwidget-webkit-mode . minimal))
   "Alist of major modes and mode-lines.")
 
-(defun doom-modeline-auto-set-modeline (&optional mode)
-  "Set mode-line base on MODE."
-  (catch 'found
-    (dolist (x doom-modeline-mode-alist)
-      (when (provided-mode-derived-p
-             (or mode major-mode)
-             (car x))
-        (doom-modeline-set-modeline (cdr x))
-        (throw 'found x)))))
+(defun doom-modeline-auto-set-modeline ()
+  "Set mode-line base on major-mode."
+  (dolist (x doom-modeline-mode-alist)
+    (when (derived-mode-p (car x))
+      (doom-modeline-set-modeline (cdr x)))))
 
 (defun doom-modeline-set-helm-modeline (&rest _) ; To advice helm
   "Set helm mode-line."
