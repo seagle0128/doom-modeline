@@ -154,24 +154,14 @@
 If DEFAULT is non-nil, set the default mode-line for all buffers."
   (doom-modeline-set-modeline 'main default))
 
-(defun doom-modeline-auto-set-modeline (&optional mode)
-  "Set mode-line base on MODE."
-  (catch 'found
-    (dolist (x doom-modeline-mode-alist)
-      (when (provided-mode-derived-p
-             (or mode major-mode)
-             (car x))
-        (doom-modeline-set-modeline (cdr x))
-        (throw 'found x)))))
-
-(defun doom-modeline-set-helm-modeline (&rest _) ; To advice helm
-  "Set helm mode-line."
-  (doom-modeline-set-modeline 'helm))
-
 
 ;;
 ;; Minor mode
 ;;
+
+;; Suppress warnings
+(defvar 2C-mode-line-format)
+(declare-function helm-display-mode-line "ext:helm-core")
 
 (defvar doom-modeline-mode-map (make-sparse-keymap))
 
@@ -193,9 +183,19 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
     (xwidget-webkit-mode . minimal))
   "Alist of major modes and mode-lines.")
 
-;; Suppress warnings
-(defvar 2C-mode-line-format)
-(declare-function helm-display-mode-line "ext:helm-core")
+(defun doom-modeline-auto-set-modeline (&optional mode)
+  "Set mode-line base on MODE."
+  (catch 'found
+    (dolist (x doom-modeline-mode-alist)
+      (when (provided-mode-derived-p
+             (or mode major-mode)
+             (car x))
+        (doom-modeline-set-modeline (cdr x))
+        (throw 'found x)))))
+
+(defun doom-modeline-set-helm-modeline (&rest _) ; To advice helm
+  "Set helm mode-line."
+  (doom-modeline-set-modeline 'helm))
 
 ;;;###autoload
 (define-minor-mode doom-modeline-mode
@@ -217,10 +217,10 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         ;; For two-column editing
         (setq 2C-mode-line-format (doom-modeline 'special))
 
-        ;; Add hooks
-        (add-hook 'change-major-mode-hook #'doom-modeline-auto-set-modeline)
+        ;; Automatically set mode-lines
+        (add-hook 'after-change-major-mode-hook #'doom-modeline-auto-set-modeline)
 
-        ;; Add advices
+        ;; Special handles
         (advice-add #'helm-display-mode-line :after #'doom-modeline-set-helm-modeline))
     (progn
       ;; Restore mode-line
@@ -233,10 +233,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
       ;; For two-column editing
       (setq 2C-mode-line-format (doom-modeline--original-value '2C-mode-line-format))
 
-      ;; Remove hooks
-      (remove-hook 'change-major-mode-hook #'doom-modeline-auto-set-modeline)
-
-      ;; Remove advices
+      ;; Cleanup
+      (remove-hook 'after-change-major-mode-hook #'doom-modeline-auto-set-modeline)
       (advice-remove #'helm-display-mode-line #'doom-modeline-set-helm-modeline))))
 
 (provide 'doom-modeline)
