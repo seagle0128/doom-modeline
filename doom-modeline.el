@@ -167,27 +167,28 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
 (defvar doom-modeline-mode-alist
   '((message-mode . message)
-    (Info-mode .  project)
-    (dashboard-mode . dashboard)
-    (image-mode . media)
-    (message-mode . message)
     (git-commit-mode . message)
     (magit-mode . vcs)
-    (circe-mode . special)
-    (erc-mode . special)
-    (rcirc-mode . special)
+    (dashboard-mode . dashboard)
+    (Info-mode .  project)
+    (image-mode . media)
     (pdf-view-mode . pdf)
     (org-src-mode . org-src)
-    (git-timemachine-mode . timemachine)
     (paradox-menu-mode . package)
-    (xwidget-webkit-mode . minimal))
+    (xwidget-webkit-mode . minimal)
+    (git-timemachine-mode . timemachine)
+    (circe-mode . special)
+    (erc-mode . special)
+    (rcirc-mode . special))
   "Alist of major modes and mode-lines.")
 
 (defun doom-modeline-auto-set-modeline ()
   "Set mode-line base on major-mode."
-  (dolist (x doom-modeline-mode-alist)
-    (when (derived-mode-p (car x))
-      (doom-modeline-set-modeline (cdr x)))))
+  (catch 'found
+    (dolist (x doom-modeline-mode-alist)
+      (when (derived-mode-p (car x))
+        (doom-modeline-set-modeline (cdr x))
+        (throw 'found x)))))
 
 (defun doom-modeline-set-helm-modeline (&rest _) ; To advice helm
   "Set helm mode-line."

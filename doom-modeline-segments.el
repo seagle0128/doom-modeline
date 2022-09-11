@@ -1344,7 +1344,7 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
 
 (doom-modeline-def-segment media-info
   "Metadata regarding the current file, such as dimensions for images."
-  ;; TODO Include other information
+  ;; TODO: Include other information
   (cond ((eq major-mode 'image-mode)
          (cl-destructuring-bind (width . height)
              (when (fboundp 'image-size)
