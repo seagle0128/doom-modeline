@@ -8,7 +8,7 @@
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 
-**Table of Contents**
+## Table of Contents
 
 - [doom-modeline](#doom-modeline)
   - [Feature](#feature)
@@ -18,6 +18,7 @@
     - [Use-package](#use-package)
   - [Customize](#customize)
   - [FAQ](#faq)
+  - [Donate](#donate)
 
 <!-- markdown-toc end -->
 
