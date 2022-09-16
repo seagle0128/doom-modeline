@@ -10,15 +10,14 @@
 
 ## Table of Contents
 
-- [doom-modeline](#doom-modeline)
-  - [Feature](#feature)
-  - [Screenshots](#screenshots)
-  - [Install](#install)
-    - [Manual](#manual)
-    - [Use-package](#use-package)
-  - [Customize](#customize)
-  - [FAQ](#faq)
-  - [Donate](#donate)
+- [Feature](#feature)
+- [Screenshots](#screenshots)
+- [Install](#install)
+  - [Manual](#manual)
+  - [Use-package](#use-package)
+- [Customize](#customize)
+- [FAQ](#faq)
+- [Donate](#donate)
 
 <!-- markdown-toc end -->
 
@@ -154,14 +153,14 @@ necessary fonts. Please refer to the
 
 Add this to `init.el` if you want to use icons,
 
-``` elisp
+```elisp
 ;; Install via `M-x package-install RET all-the-icons RET`
 (require 'all-the-icons)
 ```
 
 or
 
-``` elisp
+```elisp
 (use-package all-the-icons
   :ensure t)
 ```
