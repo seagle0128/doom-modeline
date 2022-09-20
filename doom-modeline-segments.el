@@ -771,23 +771,23 @@ level."
                 ('finished  (if flycheck-current-errors
                                 (let-alist (doom-modeline--flycheck-count-errors)
                                   (doom-modeline-checker-icon
-                                   "error_outline" "🚫" "!"
+                                   "error_outline" "❗" "!"
                                    (cond ((> .error 0) 'doom-modeline-urgent)
                                          ((> .warning 0) 'doom-modeline-warning)
                                          (t 'doom-modeline-info))))
-                              (doom-modeline-checker-icon "check" "✓" "-" 'doom-modeline-info)))
-                ('running     (doom-modeline-checker-icon "update" "⏳" "*" 'doom-modeline-debug))
+                              (doom-modeline-checker-icon "check" "✔" "-" 'doom-modeline-info)))
+                ('running     (doom-modeline-checker-icon "hourglass_empty" "⏳" "*" 'doom-modeline-debug))
                 ('no-checker  (doom-modeline-checker-icon "sim_card_alert" "⚠" "-" 'doom-modeline-debug))
                 ('errored     (doom-modeline-checker-icon "sim_card_alert" "⚠" "-" 'doom-modeline-urgent))
-                ('interrupted (doom-modeline-checker-icon "pause" "⏸" "=" 'doom-modeline-debug))
-                ('suspicious  (doom-modeline-checker-icon "priority_high" "❗" "!" 'doom-modeline-urgent))
+                ('interrupted (doom-modeline-checker-icon "pause_circle_outline" "⏸" "=" 'doom-modeline-debug))
+                ('suspicious  (doom-modeline-checker-icon "info_outline" "❓" "?" 'doom-modeline-debug))
                 (_ nil))))
           (propertize icon
                       'help-echo (concat "Flycheck\n"
                                          (pcase status
                                            ('finished "mouse-1: Display minor mode menu
 mouse-2: Show help for minor mode")
-                                           ('running "Running...")
+                                           ('running "Checking...")
                                            ('no-checker "No Checker")
                                            ('errored "Error")
                                            ('interrupted "Interrupted")
@@ -846,11 +846,11 @@ mouse-2: Show help for minor mode")
                                                                       'doom-modeline-warning)
                                           (doom-modeline-checker-text (number-to-string .info)
                                                                       'doom-modeline-info))))))
-                ('running     nil)
-                ('no-checker  nil)
-                ('errored     (doom-modeline-checker-text "Error" 'doom-modeline-urgent))
-                ('interrupted (doom-modeline-checker-text "Interrupted" 'doom-modeline-debug))
-                ('suspicious  (doom-modeline-checker-text "Suspicious" 'doom-modeline-urgent))
+                ;; ('running     nil)
+                ;; ('no-checker  nil)
+                ;; ('errored     (doom-modeline-checker-text "Error" 'doom-modeline-urgent))
+                ;; ('interrupted (doom-modeline-checker-text "Interrupted" 'doom-modeline-debug))
+                ;; ('suspicious  (doom-modeline-checker-text "Suspicious" 'doom-modeline-urgent))
                 (_ nil))))
           (propertize
            text
@@ -864,7 +864,7 @@ mouse-2: Show help for minor mode")
 mouse-3: Next error"
                           (if (featurep 'mwheel)
                               "\nwheel-up/wheel-down: Previous/next error")))
-                        ('running "Running...")
+                        ('running "Checking...")
                         ('no-checker "No Checker")
                         ('errored "Error")
                         ('interrupted "Interrupted")
@@ -914,9 +914,9 @@ mouse-3: Next error"
           (when-let
               ((icon
                 (cond
-                 (some-waiting (doom-modeline-checker-icon "access_time" "⏰" "*" 'doom-modeline-debug))
-                 ((null known) (doom-modeline-checker-icon "sim_card_alert" "❓" "?" 'doom-modeline-debug))
-                 (all-disabled (doom-modeline-checker-icon "sim_card_alert" "❗" "!" 'doom-modeline-urgent))
+                 (some-waiting (doom-modeline-checker-icon "hourglass_empty" "⏳" "*" 'doom-modeline-urgent))
+                 ((null known) (doom-modeline-checker-icon "sim_card_alert" "⚠" "-" 'doom-modeline-debug))
+                 (all-disabled (doom-modeline-checker-icon "sim_card_alert" "⚠" "-" 'doom-modeline-warning))
                  (t (let ((.error 0)
                           (.warning 0)
                           (.note 0))
@@ -934,7 +934,7 @@ mouse-3: Next error"
                                      ((> severity note-level)    (cl-incf .warning))
                                      (t                          (cl-incf .note))))))
                         (if (> (+ .error .warning .note) 0)
-                            (doom-modeline-checker-icon "do_not_disturb_alt" "🚫" "!"
+                            (doom-modeline-checker-icon "error_outline" "❗" "!"
                                                         (cond ((> .error 0) 'doom-modeline-urgent)
                                                               ((> .warning 0) 'doom-modeline-warning)
                                                               (t 'doom-modeline-info)))
@@ -943,7 +943,7 @@ mouse-3: Next error"
              icon
              'help-echo (concat "Flymake\n"
                                 (cond
-                                 (some-waiting "Running...")
+                                 (some-waiting "Checking...")
                                  ((null known) "No Checker")
                                  (all-disabled "All Checkers Disabled")
                                  (t (format "%d/%d backends running
@@ -1030,7 +1030,7 @@ mouse-2: Show help for minor mode"
             (propertize
              text
              'help-echo (cond
-                         (some-waiting "Running...")
+                         (some-waiting "Checking...")
                          ((null known) "No Checker")
                          (all-disabled "All Checkers Disabled")
                          (t (format "error: %d, warning: %d, note: %d
