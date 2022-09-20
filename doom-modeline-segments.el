@@ -771,12 +771,12 @@ level."
                 ('finished  (if flycheck-current-errors
                                 (let-alist (doom-modeline--flycheck-count-errors)
                                   (doom-modeline-checker-icon
-                                   "block" "🚫" "!"
+                                   "error_outline" "🚫" "!"
                                    (cond ((> .error 0) 'doom-modeline-urgent)
                                          ((> .warning 0) 'doom-modeline-warning)
                                          (t 'doom-modeline-info))))
                               (doom-modeline-checker-icon "check" "✓" "-" 'doom-modeline-info)))
-                ('running     (doom-modeline-checker-icon "access_time" "⏱" "*" 'doom-modeline-debug))
+                ('running     (doom-modeline-checker-icon "update" "⏳" "*" 'doom-modeline-debug))
                 ('no-checker  (doom-modeline-checker-icon "sim_card_alert" "⚠" "-" 'doom-modeline-debug))
                 ('errored     (doom-modeline-checker-icon "sim_card_alert" "⚠" "-" 'doom-modeline-urgent))
                 ('interrupted (doom-modeline-checker-icon "pause" "⏸" "=" 'doom-modeline-debug))
