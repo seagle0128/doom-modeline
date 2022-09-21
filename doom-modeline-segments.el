@@ -736,7 +736,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
 UNICODE and TEXT are fallbacks.
 Uses `all-the-icons-material' to fetch the icon."
   (doom-modeline-icon 'material icon unicode text
-                      :face face :height 1.1 :v-adjust -0.225))
+                      :face face :height 1.0 :v-adjust -0.225))
 
 (defun doom-modeline-checker-text (text &optional face)
   "Displays TEXT with FACE."
