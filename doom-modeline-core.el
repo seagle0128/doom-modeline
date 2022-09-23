@@ -958,19 +958,14 @@ If FRAME is nil, it means the current frame."
 See `shr-pixel-column'."
   (if (fboundp 'string-pixel-width)
       (string-pixel-width string)
-    (let ((pt (point)))
-      (prog1
-	      (with-temp-buffer
-	        (insert string)
-	        (if (not (get-buffer-window (current-buffer)))
-	            (save-window-excursion
-                  ;; Avoid errors if the selected window is a dedicated one,
-                  ;; and they just want to insert a document into it.
-                  (set-window-dedicated-p nil nil)
-	              (set-window-buffer nil (current-buffer))
-	              (car (window-text-pixel-size nil (line-beginning-position) (point))))
-              (car (window-text-pixel-size nil (line-beginning-position) (point)))))
-	    (goto-char pt)))))
+	;; Keeping a work buffer around is more efficient than creating a
+    ;; new temporary buffer.
+    (with-current-buffer (get-buffer-create " *string-pixel-width*")
+      (delete-region (point-min) (point-max))
+	  (insert string)
+	  (save-window-excursion
+	    (set-window-buffer nil (current-buffer))
+	    (car (window-text-pixel-size nil (line-beginning-position) (point)))))))
 
 (defun doom-modeline-def-modeline (name lhs &optional rhs)
   "Define a modeline format and byte-compiles it.
