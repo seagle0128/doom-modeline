@@ -50,10 +50,7 @@
 (when (eq system-type 'windows-nt)
   (setq inhibit-compacting-font-caches t))
 
-;; WORKAROUND: `string-pixel-width' is introduced in 29,
-;; and is able to calculate the accurate string width.
-;; Below is the workaround for backward compatibility
-;; since `window-font-width' consumes a lot.
+;; For better performance, because `window-font-width' consumes a lot.
 (defvar doom-modeline--font-width-cache nil)
 (defun doom-modeline--font-width ()
   "Cache the font width for better performance."
@@ -1002,19 +999,12 @@ Example:
                'display `(space
                           :align-to
                           (- (+ right right-fringe right-margin scroll-bar)
-                             ,(let ((rhs-str (format-mode-line (cons "" rhs-forms)))
-                                    (char-width (frame-char-width)))
+                             ,(let ((rhs-str (format-mode-line (cons "" rhs-forms))))
                                 (if (fboundp 'string-pixel-width)
-                                    ;; Accurate calculations in 29+
-                                    (/ (string-pixel-width
-                                        (propertize rhs-str 'face 'mode-line))
-                                       char-width
+                                    (/ (string-pixel-width rhs-str)
+                                       (doom-modeline--font-width)
                                        1.0)
-                                  ;; Backward compatibility
-                                  (* (/ (doom-modeline--font-width)
-                                        char-width
-                                        1.0)
-                                     (string-width rhs-str)))))))
+                                  (* (string-width rhs-str) 1.05))))))
               rhs-forms))
       (concat "Modeline:\n"
               (format "  %s\n  %s"
