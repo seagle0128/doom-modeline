@@ -50,6 +50,34 @@
 (when (eq system-type 'windows-nt)
   (setq inhibit-compacting-font-caches t))
 
+;; WORKAROUND: `string-pixel-width' is introduced in 29,
+;; and is able to calculate the accurate string width.
+;; Below is the workaround for backward compatibility
+;; since `window-font-width' consumes a lot.
+(defvar doom-modeline--font-width-cache nil)
+(defun doom-modeline--font-width ()
+  "Cache the font width for better performance."
+  (if (display-graphic-p)
+      (let ((attributes (face-all-attributes 'mode-line)))
+        (or (cdr (assoc attributes doom-modeline--font-width-cache))
+            (let ((width (window-font-width nil 'mode-line)))
+              (push (cons attributes width) doom-modeline--font-width-cache)
+              width)))
+    1))
+
+;; Refresh the font width after setting frame parameters
+;; to ensure the font width is correct.
+(defun doom-modeline-refresh-font-width-cache (&rest _)
+  "Refresh the font width cache."
+  (setq doom-modeline--font-width-cache nil)
+  (doom-modeline--font-width))
+
+(unless (fboundp 'string-pixel-width)
+  (add-hook 'window-setup-hook #'doom-modeline-refresh-font-width-cache)
+  (add-hook 'after-make-frame-functions #'doom-modeline-refresh-font-width-cache)
+  (add-hook 'after-setting-font-hook #'doom-modeline-refresh-font-width-cache)
+  (add-hook 'server-after-make-frame-hook #'doom-modeline-refresh-font-width-cache))
+
 
 ;;
 ;; Customization
@@ -952,21 +980,6 @@ If FRAME is nil, it means the current frame."
             ((error "%s is not a valid segment" seg))))
     (nreverse forms)))
 
-(defun doom-modeline--string-pixel-width (string)
-  "Return STRING pixel width.
-
-See `shr-pixel-column'."
-  (if (fboundp 'string-pixel-width)
-      (string-pixel-width string)
-	;; Keeping a work buffer around is more efficient than creating a
-    ;; new temporary buffer.
-    (with-current-buffer (get-buffer-create " *string-pixel-width*")
-      (delete-region (point-min) (point-max))
-	  (insert string)
-	  (save-window-excursion
-	    (set-window-buffer nil (current-buffer))
-	    (car (window-text-pixel-size nil (line-beginning-position) (point)))))))
-
 (defun doom-modeline-def-modeline (name lhs &optional rhs)
   "Define a modeline format and byte-compiles it.
 NAME is a symbol to identify it (used by `doom-modeline' for retrieval).
@@ -989,10 +1002,19 @@ Example:
                'display `(space
                           :align-to
                           (- (+ right right-fringe right-margin scroll-bar)
-                             ,(/ (doom-modeline--string-pixel-width
-                                  (format-mode-line (cons "" rhs-forms)))
-                                 (frame-char-width)
-                                 1.0))))
+                             ,(let ((rhs-str (format-mode-line (cons "" rhs-forms)))
+                                    (char-width (frame-char-width)))
+                                (if (fboundp 'string-pixel-width)
+                                    ;; Accurate calculations in 29+
+                                    (/ (string-pixel-width
+                                        (propertize rhs-str 'face 'mode-line))
+                                       char-width
+                                       1.0)
+                                  ;; Backward compatibility
+                                  (* (/ (doom-modeline--font-width)
+                                        char-width
+                                        1.0)
+                                     (string-width rhs-str)))))))
               rhs-forms))
       (concat "Modeline:\n"
               (format "  %s\n  %s"
