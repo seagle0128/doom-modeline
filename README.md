@@ -431,10 +431,16 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
        '(bar matches buffer-info remote-host buffer-position parrot selection-info)
        '(misc-info minor-modes input-method buffer-encoding major-mode process vcs checker))
 
-     ;; Add to `doom-modeline-mode-hook` or other hooks
-     (defun setup-custom-doom-modeline ()
-        (doom-modeline-set-modeline 'my-simple-line 'default))
-     (add-hook 'doom-modeline-mode-hook 'setup-custom-doom-modeline)
+     ;; Set default mode-line
+     (add-hook 'doom-modeline-mode-hook
+               (lambda ()
+                 (doom-modeline-set-modeline 'my-simple-line 'default)))
+
+     ;; Configure other mode-lines based on major modes
+     (add-to-list 'doom-modeline-mode-alist '(my-mode . my-simple-line))
+
+     ;; Or disable other mode-lines
+     (setq 'doom-modeline-mode-alist nil)
      ```
 
 1. How to specify font family and size in modeline?
