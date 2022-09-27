@@ -318,37 +318,6 @@ Uses `all-the-icons-material' to fetch the icon."
                (doom-modeline-buffer-file-state-icon
                 "vertical_align_center" "↕" "><" 'doom-modeline-warning)))))))
 
-(defvar-local doom-modeline--buffer-file-name nil)
-(defun doom-modeline-update-buffer-file-name (&rest _)
-  "Update buffer file name in mode-line."
-  (setq doom-modeline--buffer-file-name
-        (ignore-errors
-          (save-match-data
-            (if buffer-file-name
-                (doom-modeline-buffer-file-name)
-              (propertize "%b"
-                          'face 'doom-modeline-buffer-file
-                          'mouse-face 'doom-modeline-highlight
-                          'help-echo "Buffer name
-mouse-1: Previous buffer\nmouse-3: Next buffer"
-                          'local-map mode-line-buffer-identification-keymap))))))
-(add-hook 'find-file-hook #'doom-modeline-update-buffer-file-name)
-(add-hook 'after-save-hook #'doom-modeline-update-buffer-file-name)
-(add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-name)
-(add-hook 'evil-insert-state-exit-hook #'doom-modeline-update-buffer-file-name)
-(advice-add #'not-modified :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'rename-buffer :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'set-visited-file-name :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'pop-to-buffer :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'undo :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'undo-tree-undo-1 :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'undo-tree-redo-1 :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'fill-paragraph :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'popup-create :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'popup-delete :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'org-edit-src-save :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'symbol-overlay-rename :after #'doom-modeline-update-buffer-file-name)
-
 (with-no-warnings
   (if (boundp 'after-focus-change-function)
       (progn
@@ -393,15 +362,37 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 
 (defsubst doom-modeline--buffer-simple-name ()
   "The buffer simple name."
-  (propertize "%b"
+  (propertize (format-mode-line mode-line-buffer-identification)
               'face (doom-modeline-face
                      (if (and buffer-file-name (buffer-modified-p))
                          'doom-modeline-buffer-modified
-                       'doom-modeline-buffer-file))
-              'mouse-face 'doom-modeline-highlight
-              'help-echo "Buffer name
-mouse-1: Previous buffer\nmouse-3: Next buffer"
-              'local-map mode-line-buffer-identification-keymap))
+                       'doom-modeline-buffer-file))))
+
+(defvar-local doom-modeline--buffer-file-name nil)
+(defun doom-modeline-update-buffer-file-name (&rest _)
+  "Update buffer file name in mode-line."
+  (setq doom-modeline--buffer-file-name
+        (ignore-errors
+          (save-match-data
+            (if buffer-file-name
+                (doom-modeline-buffer-file-name)
+              (doom-modeline--buffer-simple-name))))))
+(add-hook 'find-file-hook #'doom-modeline-update-buffer-file-name)
+(add-hook 'after-save-hook #'doom-modeline-update-buffer-file-name)
+(add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-name)
+(add-hook 'evil-insert-state-exit-hook #'doom-modeline-update-buffer-file-name)
+(advice-add #'not-modified :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'rename-buffer :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'set-visited-file-name :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'pop-to-buffer :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'undo :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'undo-tree-undo-1 :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'undo-tree-redo-1 :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'fill-paragraph :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'popup-create :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'popup-delete :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'org-edit-src-save :after #'doom-modeline-update-buffer-file-name)
+(advice-add #'symbol-overlay-rename :after #'doom-modeline-update-buffer-file-name)
 
 (defsubst doom-modeline--buffer-name ()
   "The current buffer name."

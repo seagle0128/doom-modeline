@@ -215,7 +215,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         ;; Apply to all existing buffers.
         (dolist (buf (buffer-list))
           (with-current-buffer buf
-            (doom-modeline-set-main-modeline)))
+            (unless (doom-modeline-auto-set-modeline)
+              (doom-modeline-set-main-modeline))))
 
         ;; For two-column editing
         (setq 2C-mode-line-format (doom-modeline 'special))
