@@ -143,6 +143,10 @@
   '(bar window-number modals matches git-timemachine buffer-position word-count parrot selection-info)
   '(misc-info minor-modes indent-info buffer-encoding major-mode time))
 
+(doom-modeline-def-modeline 'calculator
+  '(window-number modals matches calc buffer-position)
+  '(misc-info minor-modes major-mode process))
+
 
 ;;
 ;; Interfaces
@@ -177,6 +181,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
     (paradox-menu-mode . package)
     (xwidget-webkit-mode . minimal)
     (git-timemachine-mode . timemachine)
+    (calc-mode . calculator)
+    (calc-trail-mode . calculator)
     (circe-mode . special)
     (erc-mode . special)
     (rcirc-mode . special))

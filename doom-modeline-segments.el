@@ -437,6 +437,17 @@ read-only or non-existent)."
    (doom-modeline--buffer-state-icon)
    (doom-modeline--buffer-simple-name)))
 
+(doom-modeline-def-segment calc
+  "Display calculator icons and info."
+  (concat
+   doom-modeline-spc
+   (when-let ((icon (doom-modeline-icon 'faicon "calculator" nil nil
+                                        :height 0.85 :v-adjust -0.05)))
+     (concat
+      (doom-modeline-display-icon icon)
+      doom-modeline-vspc))
+   (doom-modeline--buffer-simple-name)))
+
 (doom-modeline-def-segment buffer-default-directory
   "Displays `default-directory' with the icon and state.
 
