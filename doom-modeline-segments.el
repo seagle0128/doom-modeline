@@ -265,6 +265,7 @@
                         'display '(raise -0.135))))))
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-icon)
 (add-hook 'after-change-major-mode-hook #'doom-modeline-update-buffer-file-icon)
+(add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-icon)
 (add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-icon)
 
 (doom-modeline-add-variable-watcher
@@ -379,6 +380,7 @@ Uses `all-the-icons-material' to fetch the icon."
               (doom-modeline--buffer-simple-name))))))
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'after-save-hook #'doom-modeline-update-buffer-file-name)
+(add-hook 'after-revert-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'evil-insert-state-exit-hook #'doom-modeline-update-buffer-file-name)
 (advice-add #'not-modified :after #'doom-modeline-update-buffer-file-name)
