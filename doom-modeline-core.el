@@ -1006,7 +1006,7 @@ Example:
                                        1.0)
                                   (* (string-width rhs-str)
                                      (if (display-graphic-p)
-                                         (/ (doom-modeline--font-width) (frame-char-width) 0.945)
+                                         (/ (doom-modeline--font-width) (frame-char-width) 0.95)
                                        1.0)))))))
               rhs-forms))
       (concat "Modeline:\n"
