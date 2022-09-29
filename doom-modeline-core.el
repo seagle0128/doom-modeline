@@ -1004,7 +1004,10 @@ Example:
                                     (/ (string-pixel-width rhs-str)
                                        (doom-modeline--font-width)
                                        1.0)
-                                  (* (string-width rhs-str) 1.05))))))
+                                  (* (string-width rhs-str)
+                                     (if (display-graphic-p)
+                                         (/ (doom-modeline--font-width) (frame-char-width) 0.945)
+                                       1.0)))))))
               rhs-forms))
       (concat "Modeline:\n"
               (format "  %s\n  %s"
