@@ -69,11 +69,10 @@
   (setq doom-modeline--font-width-cache nil)
   (doom-modeline--font-width))
 
-(unless (fboundp 'string-pixel-width)
-  (add-hook 'window-setup-hook #'doom-modeline-refresh-font-width-cache)
-  (add-hook 'after-make-frame-functions #'doom-modeline-refresh-font-width-cache)
-  (add-hook 'after-setting-font-hook #'doom-modeline-refresh-font-width-cache)
-  (add-hook 'server-after-make-frame-hook #'doom-modeline-refresh-font-width-cache))
+(add-hook 'window-setup-hook #'doom-modeline-refresh-font-width-cache)
+(add-hook 'after-make-frame-functions #'doom-modeline-refresh-font-width-cache)
+(add-hook 'after-setting-font-hook #'doom-modeline-refresh-font-width-cache)
+(add-hook 'server-after-make-frame-hook #'doom-modeline-refresh-font-width-cache)
 
 
 ;;
