@@ -326,7 +326,10 @@ Uses `all-the-icons-material' to fetch the icon."
           (save-match-data
             (if buffer-file-name
                 (doom-modeline-buffer-file-name)
-              (format-mode-line mode-line-buffer-identification))))))
+              (propertize (format-mode-line mode-line-buffer-identification
+                                            nil nil (current-buffer))
+                          'face 'doom-modeline-buffer-file
+                          'mouse-face 'doom-modeline-highlight))))))
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'after-save-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-name)
