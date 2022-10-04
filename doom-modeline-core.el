@@ -775,6 +775,11 @@ Also see the face `doom-modeline-unread-number'."
   '((t (:inherit (mode-line-buffer-id bold))))
   "Face for display time."
   :group 'doom-modeline-faces)
+
+(defface doom-modeline-compilation
+  '((t (:inherit warning :slant italic :height 0.9)))
+  "Face for compilation progress."
+  :group 'doom-modeline-faces)
 
 ;;
 ;; Externals
@@ -1053,7 +1058,8 @@ If INACTIVE-FACE is nil, `mode-line-inactive' face will be used."
       (or (and (facep face) face)
           (and (facep 'mode-line-active) 'mode-line-active)
           'mode-line)
-    (or (and (facep inactive-face) inactive-face)
+    (or (and (facep face) `(:inherit (mode-line-inactive ,face)))
+        (and (facep inactive-face) inactive-face)
         'mode-line-inactive)))
 
 ;; Since 27, the calculation of char height was changed

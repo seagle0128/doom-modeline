@@ -125,6 +125,7 @@
 (declare-function cider-jack-in "ext:cider")
 (declare-function cider-quit "ext:cider")
 (declare-function citre-mode "ext:citre-basic-tools")
+(declare-function compilation-goto-in-progress-buffer "compile")
 (declare-function dap--cur-session "ext:dap-mode")
 (declare-function dap--debug-session-name "ext:dap-mode")
 (declare-function dap--debug-session-state "ext:dap-mode")
@@ -2541,11 +2542,12 @@ to be an icon and we don't want to remove that so we just return the original."
       'face '(:inherit (doom-modeline-unread-number doom-modeline-notification))
       'help-echo (format "IRC Notification: %s\nmouse-1: Switch to buffer" b)
       'mouse-face 'doom-modeline-highlight
-      'local-map (make-mode-line-mouse-map 'mouse-1
-                                           (lambda ()
-                                             (interactive)
-                                             (when (buffer-live-p (get-buffer b))
-                                               (switch-to-buffer b))))))
+      'local-map (make-mode-line-mouse-map
+                  'mouse-1
+                  (lambda ()
+                    (interactive)
+                    (when (buffer-live-p (get-buffer b))
+                      (switch-to-buffer b))))))
    buffers
    doom-modeline-vspc))
 
@@ -2963,6 +2965,21 @@ mouse-3: Restart preview"
     (setq global-mode-string (append global-mode-string '(display-time-string)))))
 (add-hook 'display-time-mode-hook #'doom-modeline-override-display-time-modeline)
 (add-hook 'doom-modeline-mode-hook #'doom-modeline-override-display-time-modeline)
+
+;;
+;; Compilation
+;;
+
+(doom-modeline-def-segment compilation
+  (and (bound-and-true-p compilation-in-progress)
+       (propertize "[Compiling] "
+                   'face (doom-modeline-face 'doom-modeline-compilation)
+	               'help-echo "Compiling; mouse-2: Goto Buffer"
+                   'mouse-face 'doom-modeline-highlight
+                   'local-map
+                   (make-mode-line-mouse-map
+                    'mouse-2
+			        #'compilation-goto-in-progress-buffer))))
 
 (provide 'doom-modeline-segments)
 
