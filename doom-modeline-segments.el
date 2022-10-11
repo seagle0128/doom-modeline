@@ -335,6 +335,7 @@ Uses `all-the-icons-material' to fetch the icon."
 (add-hook 'after-save-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'evil-insert-state-exit-hook #'doom-modeline-update-buffer-file-name)
+(add-hook 'Info-selection-hook #'doom-modeline-update-buffer-file-name)
 (advice-add #'not-modified :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'rename-buffer :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'set-visited-file-name :after #'doom-modeline-update-buffer-file-name)
