@@ -174,7 +174,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
     (git-commit-mode . message)
     (magit-mode . vcs)
     (dashboard-mode . dashboard)
-    (Info-mode .  project)
+    (Info-mode .  info)
     (image-mode . media)
     (pdf-view-mode . pdf)
     (org-src-mode . org-src)
