@@ -1168,7 +1168,7 @@ Use FACE for the bar, WIDTH and HEIGHT are the image size in pixels."
           (concat (format "P1\n%i %i\n" width height)
                   (make-string (* width height) ?1)
                   "\n")
-          'pbm t :foreground color :ascent 'center))))))
+          'pbm t :scale 1 :foreground color :ascent 'center))))))
 
 (defun doom-modeline--create-hud-image
     (face1 face2 width height top-margin bottom-margin)
