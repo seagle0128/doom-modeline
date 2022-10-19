@@ -395,11 +395,15 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 
 (defsubst doom-modeline--buffer-simple-name ()
   "The buffer simple name."
-  (propertize (format-mode-line mode-line-buffer-identification)
+  (propertize "%b"
               'face (doom-modeline-face
                      (if (and buffer-file-name (buffer-modified-p))
                          'doom-modeline-buffer-modified
-                       'doom-modeline-buffer-file))))
+                       'doom-modeline-buffer-file))
+              'mouse-face 'doom-modeline-highlight
+              'help-echo "Buffer name
+mouse-1: Previous buffer\nmouse-3: Next buffer"
+              'local-map mode-line-buffer-identification-keymap))
 
 (defsubst doom-modeline--buffer-name ()
   "The current buffer name."
