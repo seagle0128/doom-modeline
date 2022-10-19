@@ -298,6 +298,10 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; The interval of checking GitHub.
 (setq doom-modeline-github-interval (* 30 60))
 
+;; Whether display the modal state.
+;; Including `evil', `overwrite', `god', `ryo' and `xah-fly-keys', etc.
+(setq doom-modeline-modal t)
+
 ;; Whether display the modal state icon.
 ;; Including `evil', `overwrite', `god', `ryo' and `xah-fly-keys', etc.
 (setq doom-modeline-modal-icon t)
