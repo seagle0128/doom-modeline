@@ -165,6 +165,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
 ;; Suppress warnings
 (defvar 2C-mode-line-format)
+(defvar helm-ag-show-status-function)
 (declare-function helm-display-mode-line "ext:helm-core")
 
 (defvar doom-modeline-mode-map (make-sparse-keymap))
@@ -225,7 +226,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (add-hook 'after-change-major-mode-hook #'doom-modeline-auto-set-modeline)
 
         ;; Special handles
-        (advice-add #'helm-display-mode-line :after #'doom-modeline-set-helm-modeline))
+        (advice-add #'helm-display-mode-line :after #'doom-modeline-set-helm-modeline)
+        (setq helm-ag-show-status-function #'doom-modeline-set-helm-modeline))
     (progn
       ;; Restore mode-line
       (let ((original-format (doom-modeline--original-value 'mode-line-format)))
@@ -239,7 +241,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
       ;; Cleanup
       (remove-hook 'after-change-major-mode-hook #'doom-modeline-auto-set-modeline)
-      (advice-remove #'helm-display-mode-line #'doom-modeline-set-helm-modeline))))
+      (advice-remove #'helm-display-mode-line #'doom-modeline-set-helm-modeline)
+      (setq helm-ag-show-status-function (default-value 'helm-ag-show-status-function)))))
 
 (provide 'doom-modeline)
 
