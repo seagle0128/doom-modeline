@@ -354,6 +354,10 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; What to display as the version while a new one is being loaded
 (setq doom-modeline-env-load-string "...")
 
+;; By default, almost all segments are displayed only in the active window. To
+;; display such segments in all windows, specify e.g.
+(setq doom-modeline-always-visible-segments '(mu4e irc))
+
 ;; Hooks that run before/after the modeline version string is updated
 (setq doom-modeline-before-update-env-hook nil)
 (setq doom-modeline-after-update-env-hook nil)

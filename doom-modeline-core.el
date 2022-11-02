@@ -539,6 +539,12 @@ If nil, display only if the mode line is active."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-always-visible-segments nil
+  "A list of segments that should be visible even in
+inactive windows."
+  :type '(repeat symbol)
+  :group 'doom-modeline)
+
 
 ;;
 ;; Faces
@@ -887,6 +893,13 @@ If FRAME is nil, it means the current frame."
                     (frame-visible-p mini-frame-frame)))
     (and doom-modeline-current-window
          (eq (doom-modeline--get-current-window) doom-modeline-current-window))))
+
+(defun doom-modeline--segment-visible (name)
+  "Whether a segment should be displayed"
+  (and
+   (or (doom-modeline--active)
+       (member name doom-modeline-always-visible-segments))
+   (not doom-modeline--limited-width-p)))
 
 (defun doom-modeline-set-selected-window (&rest _)
   "Set `doom-modeline-current-window' appropriately."
