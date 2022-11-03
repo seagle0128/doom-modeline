@@ -939,6 +939,8 @@ If FRAME is nil, it means the current frame."
     (and doom-modeline-current-window
          (eq (doom-modeline--get-current-window) doom-modeline-current-window))))
 
+(defvar-local doom-modeline--limited-width-p nil)
+
 (defun doom-modeline--segment-visible (name)
   "Whether a segment should be displayed"
   (and
@@ -1266,7 +1268,6 @@ respectively."
         'pbm t :foreground color1 :background color2 :ascent 'center)))))
 
 ;; Check whether `window-total-width' is smaller than the limit
-(defvar-local doom-modeline--limited-width-p nil)
 (defun doom-modeline-window-size-change-function (&rest _)
   "Function for `window-size-change-functions'."
   (setq doom-modeline--limited-width-p
