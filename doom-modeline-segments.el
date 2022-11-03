@@ -1771,21 +1771,21 @@ TEXT is alternative if icon is not available."
   (when (and (bound-and-true-p overwrite-mode)
              (not (bound-and-true-p evil-local-mode)))
     (doom-modeline--modal-icon
-     "<O>" 'doom-modeline-urgent "Overwrite mode"
+     "<O>" 'doom-modeline-overwrite "Overwrite mode"
      "border_color" "🧷")))
 
 (defsubst doom-modeline--god ()
   "The current god state which is enabled by the command `god-mode'."
   (when (bound-and-true-p god-local-mode)
     (doom-modeline--modal-icon
-     "<G>" 'doom-modeline-evil-normal-state "God mode"
+     "<G>" 'doom-modeline-god "God mode"
      "account_circle" "🙇")))
 
 (defsubst doom-modeline--ryo ()
   "The current ryo-modal state which is enabled by the command `ryo-modal-mode'."
   (when (bound-and-true-p ryo-modal-mode)
     (doom-modeline--modal-icon
-     "<R>" 'doom-modeline-evil-normal-state "Ryo modal"
+     "<R>" 'doom-modeline-ryo "Ryo modal"
      "add_circle" "✪")))
 
 (defsubst doom-modeline--xah-fly-keys ()
@@ -1793,10 +1793,10 @@ TEXT is alternative if icon is not available."
   (when (bound-and-true-p xah-fly-keys)
     (if xah-fly-insert-state-p
         (doom-modeline--modal-icon
-         "<I>" 'doom-modeline-evil-insert-state "Xah-fly insert mode"
-         "airplanemode_active" "🛧")
+         "<I>" 'doom-modeline-fly-insert-state "Xah-fly insert mode"
+         "flight" "🛧")
       (doom-modeline--modal-icon
-       "<C>" 'doom-modeline-evil-normal-state "Xah-fly command mode"
+       "<C>" 'doom-modeline-fly-normal-state "Xah-fly command mode"
        "flight" "🛧"))))
 
 (defsubst doom-modeline--boon ()
@@ -1805,11 +1805,11 @@ TEXT is alternative if icon is not available."
     (doom-modeline--modal-icon
      (boon-state-string)
      (cond
-      (boon-command-state 'doom-modeline-evil-normal-state)
-      (boon-insert-state 'doom-modeline-evil-insert-state)
-      (boon-special-state 'doom-modeline-evil-emacs-state)
-      (boon-off-state 'doom-modeline-evil-operator-state)
-      (t 'doom-modeline-evil-operator-state))
+      (boon-command-state 'doom-modeline-boon-command-state)
+      (boon-insert-state 'doom-modeline-boon-insert-state)
+      (boon-special-state 'doom-modeline-boon-special-state)
+      (boon-off-state 'doom-modeline-boon-off-state)
+      (t 'doom-modeline-boon-off-state))
      (boon-modeline-string))
     "local_cafe" "🍵"))
 

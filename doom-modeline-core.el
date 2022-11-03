@@ -676,37 +676,82 @@ Also see the face `doom-modeline-unread-number'."
 
 (defface doom-modeline-evil-emacs-state
   '((t (:inherit (font-lock-builtin-face bold))))
-  "Face for the Emacs state tag in evil state indicator."
+  "Face for the Emacs state tag in evil indicator."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-evil-insert-state
   '((t (:inherit (font-lock-keyword-face bold))))
-  "Face for the insert state tag in evil state indicator."
+  "Face for the insert state tag in evil indicator."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-evil-motion-state
-  '((t :inherit (font-lock-doc-face bold) :slant normal))
-  "Face for the motion state tag in evil state indicator."
+  '((t (:inherit (font-lock-doc-face bold) :slant normal)))
+  "Face for the motion state tag in evil indicator."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-evil-normal-state
   '((t (:inherit doom-modeline-info)))
-  "Face for the normal state tag in evil state indicator."
+  "Face for the normal state tag in evil indicator."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-evil-operator-state
   '((t (:inherit doom-modeline-buffer-file)))
-  "Face for the operator state tag in evil state indicator."
+  "Face for the operator state tag in evil indicator."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-evil-visual-state
   '((t (:inherit doom-modeline-warning)))
-  "Face for the visual state tag in evil state indicator."
+  "Face for the visual state tag in evil indicator."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-evil-replace-state
   '((t (:inherit doom-modeline-urgent)))
-  "Face for the replace state tag in evil state indicator."
+  "Face for the replace state tag in evil indicator."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-overwrite
+  '((t (:inherit doom-modeline-urgent)))
+  "Face for overwrite indicator."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-god
+  '((t (:inherit doom-modeline-info)))
+  "Face for god-mode indicator."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-ryo
+  '((t (:inherit doom-modeline-ryo)))
+  "Face for RYO indicator."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-fly-insert-state
+  '((t (:inherit (font-lock-keyword-face bold))))
+  "Face for the insert state in xah-fly-keys indicator."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-fly-normal-state
+  '((t (:inherit doom-modeline-info)))
+  "Face for the normal state in xah-fly-keys indicator."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-boon-command-state
+  '((t (:inherit doom-modeline-info)))
+  "Face for the command state tag in boon indicator."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-boon-insert-state
+  '((t (:inherit (font-lock-keyword-face bold))))
+  "Face for the insert state tag in boon indicator."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-boon-special-state
+  '((t (:inherit (font-lock-builtin-face bold))))
+  "Face for the special state tag in boon indicator."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-boon-off-state
+  '((t (:inherit doom-modeline-buffer-file)))
+  "Face for the off state tag in boon indicator."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-persp-name
