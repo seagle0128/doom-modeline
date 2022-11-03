@@ -1737,13 +1737,13 @@ mouse-1: Display Line and Column Mode Menu"
 ;; Modals (evil, overwrite, god, ryo and xah-fly-keys, etc.)
 ;;
 
-(defun doom-modeline--modal-icon (text face help-echo)
+(defun doom-modeline--modal-icon (text face help-echo &optional icon unicode)
   "Display the model icon with FACE and HELP-ECHO.
 TEXT is alternative if icon is not available."
   (propertize (doom-modeline-icon
                'material
-               (when doom-modeline-modal-icon "fiber_manual_record")
-               "●"
+               (or icon "fiber_manual_record")
+               (or unicode "●")
                text
                :face (doom-modeline-face face)
                :v-adjust -0.225)
@@ -1770,28 +1770,34 @@ TEXT is alternative if icon is not available."
   "The current overwrite state which is enabled by command `overwrite-mode'."
   (when (and (bound-and-true-p overwrite-mode)
              (not (bound-and-true-p evil-local-mode)))
-    (doom-modeline--modal-icon " <O> " 'doom-modeline-urgent "Overwrite mode")))
+    (doom-modeline--modal-icon
+     "<O>" 'doom-modeline-urgent "Overwrite mode"
+     "border_color" "🧷")))
 
 (defsubst doom-modeline--god ()
   "The current god state which is enabled by the command `god-mode'."
   (when (bound-and-true-p god-local-mode)
-    (doom-modeline--modal-icon " <G> " 'doom-modeline-evil-normal-state "God mode")))
+    (doom-modeline--modal-icon
+     "<G>" 'doom-modeline-evil-normal-state "God mode"
+     "account_circle" "🙇")))
 
 (defsubst doom-modeline--ryo ()
   "The current ryo-modal state which is enabled by the command `ryo-modal-mode'."
   (when (bound-and-true-p ryo-modal-mode)
-    (doom-modeline--modal-icon "<R>" 'doom-modeline-evil-normal-state "Ryo modal")))
+    (doom-modeline--modal-icon
+     "<R>" 'doom-modeline-evil-normal-state "Ryo modal"
+     "add_circle" "✪")))
 
 (defsubst doom-modeline--xah-fly-keys ()
   "The current `xah-fly-keys' state."
   (when (bound-and-true-p xah-fly-keys)
     (if xah-fly-insert-state-p
-        (doom-modeline--modal-icon " <I> "
-                                   'doom-modeline-evil-insert-state
-                                   (format "Xah-fly insert mode"))
-      (doom-modeline--modal-icon " <C> "
-                                 'doom-modeline-evil-normal-state
-                                 (format "Xah-fly command mode")))))
+        (doom-modeline--modal-icon
+         "<I>" 'doom-modeline-evil-insert-state "Xah-fly insert mode"
+         "airplanemode_active" "🛧")
+      (doom-modeline--modal-icon
+       "<C>" 'doom-modeline-evil-normal-state "Xah-fly command mode"
+       "flight" "🛧"))))
 
 (defsubst doom-modeline--boon ()
   "The current Boon state. Requires `boon-mode' to be enabled."
@@ -1804,7 +1810,8 @@ TEXT is alternative if icon is not available."
       (boon-special-state 'doom-modeline-evil-emacs-state)
       (boon-off-state 'doom-modeline-evil-operator-state)
       (t 'doom-modeline-evil-operator-state))
-     (boon-modeline-string))))
+     (boon-modeline-string))
+    "local_cafe" "🍵"))
 
 (defsubst doom-modeline--meow ()
   "The current Meow state. Requires `meow-mode' to be enabled."
