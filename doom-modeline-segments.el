@@ -1742,7 +1742,8 @@ mouse-1: Display Line and Column Mode Menu"
 TEXT is alternative if icon is not available."
   (propertize (doom-modeline-icon
                'material
-               (or icon "fiber_manual_record")
+               (when doom-modeline-modal-icon
+                 (or icon "fiber_manual_record"))
                (or unicode "●")
                text
                :face (doom-modeline-face face)
