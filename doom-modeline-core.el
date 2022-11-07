@@ -965,6 +965,9 @@ If FRAME is nil, it means the current frame."
 ;; Ensure modeline is inactive when Emacs is unfocused
 (defvar doom-modeline--remap-faces '(mode-line
                                      mode-line-active
+                                     mode-line-emphasis
+                                     mode-line-highlight
+                                     mode-line-buffer-id
                                      solaire-mode-line-face
                                      solaire-mode-line-active-face
                                      paradox-mode-line-face
