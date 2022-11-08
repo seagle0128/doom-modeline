@@ -609,7 +609,8 @@ project directory is important."
 
 (doom-modeline-def-segment process
   "The process info."
-  (format-mode-line mode-line-process))
+  (doom-modeline-display-text
+   (format-mode-line mode-line-process)))
 
 
 ;;
