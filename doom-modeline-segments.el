@@ -1812,8 +1812,8 @@ TEXT is alternative if icon is not available."
       (boon-special-state 'doom-modeline-boon-special-state)
       (boon-off-state 'doom-modeline-boon-off-state)
       (t 'doom-modeline-boon-off-state))
-     (boon-modeline-string))
-    "local_cafe" "🍵"))
+     (boon-modeline-string)
+     "local_cafe" "🍵")))
 
 (defsubst doom-modeline--meow ()
   "The current Meow state. Requires `meow-mode' to be enabled."
