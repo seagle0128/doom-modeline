@@ -139,7 +139,6 @@
 (declare-function eglot "ext:eglot")
 (declare-function eglot--major-modes "ext:eglot" t t)
 (declare-function eglot--project-nickname "ext:eglot" t t)
-(declare-function eglot--spinner "ext:eglot" t t)
 (declare-function eglot-clear-status "ext:eglot")
 (declare-function eglot-current-server "ext:eglot")
 (declare-function eglot-events-buffer "ext:eglot")
@@ -2047,10 +2046,8 @@ mouse-1: Reload to start server")
                      (nick (and server (eglot--project-nickname server)))
                      (pending (and server (hash-table-count
                                            (jsonrpc--request-continuations server))))
-                     (`(,_id ,doing ,done-p ,detail) (and server (eglot--spinner server)))
                      (last-error (and server (jsonrpc-last-error server)))
                      (face (cond (last-error 'doom-modeline-lsp-error)
-                                 ((and doing (not done-p)) 'doom-modeline-lsp-running)
                                  ((and pending (cl-plusp pending)) 'doom-modeline-lsp-warning)
                                  (nick 'doom-modeline-lsp-success)
                                  (t 'doom-modeline-lsp-warning)))
@@ -2060,9 +2057,6 @@ mouse-1: Reload to start server")
                                   (last-error
                                    (format "EGLOT\nAn error occured: %s
 mouse-3: Clear this status" (plist-get last-error :message)))
-                                  ((and doing (not done-p))
-                                   (format "EGLOT\n%s%s" doing
-                                           (if detail (format "%s" detail) "")))
                                   ((and pending (cl-plusp pending))
                                    (format "EGLOT\n%d outstanding requests" pending))
                                   (nick (format "EGLOT Connected (%s/%s)
