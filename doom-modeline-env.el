@@ -118,13 +118,14 @@ Example:
      \\='(\"--version\")
      (lambda (line)
         (message (doom-modeline-parser--ruby line)))"
-  (let ((proc (apply 'start-process
-                     ;; Flaten process-args into a single list so we can handle
-                     ;; variadic length args
-                     (append
-                      (list "doom-modeline-env" nil prog)
-                      args)))
-        (parser callback))
+  (when-let ((proc (ignore-errors
+                     (apply 'start-process
+                            ;; Flaten process-args into a single list so we can handle
+                            ;; variadic length args
+                            (append
+                             (list "doom-modeline-env" nil prog)
+                             args))))
+             (parser callback))
     (set-process-filter proc
                         (lambda (_proc line)
                           (ignore-errors
