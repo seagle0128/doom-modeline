@@ -250,6 +250,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether display the buffer name.
 (setq doom-modeline-buffer-name t)
 
+;; Whether highlight the modified buffer name.
+(setq doom-modeline-highlight-modified-buffer-name t)
+
 ;; Whether display the minor modes in the mode-line.
 (setq doom-modeline-minor-modes nil)
 

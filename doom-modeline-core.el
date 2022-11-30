@@ -232,6 +232,11 @@ It respects variable `doom-modeline-icon'."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-highlight-modified-buffer-name t
+  "Whether highlight the modified buffer name."
+  :type 'boolean
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-minor-modes nil
   "Whether display the minor modes in the mode-line."
   :type 'boolean
