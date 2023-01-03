@@ -329,6 +329,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Function to stylize the irc buffer names.
 (setq doom-modeline-irc-stylize 'identity)
 
+;; Whether display the battery status. It respects `display-battery-mode'.
+(setq doom-modeline-battery t)
+
 ;; Whether display the time. It respects `display-time-mode'.
 (setq doom-modeline-time t)
 

@@ -530,6 +530,13 @@ It requires `circe' or `erc' package."
   :type 'function
   :group 'doom-modeline)
 
+(defcustom doom-modeline-battery t
+  "Whether display the battery status.
+
+It respects `display-battery-mode'."
+  :type 'boolean
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-time t
   "Whether display the time.
 
@@ -582,7 +589,7 @@ inactive windows."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-buffer-modified
-  '((t (:inherit (warning bold) :background unspecified)))
+  '((t (:inherit (error bold) :background unspecified)))
   "Face used for the \\='unsaved\\=' symbol in the mode-line."
   :group 'doom-modeline-faces)
 

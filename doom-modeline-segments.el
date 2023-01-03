@@ -1314,12 +1314,12 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
          (format " %d/%d " (1+ selection) total)
          'face (doom-modeline-face 'doom-modeline-panel))))))
 
-(defun doom-modeline--override-phi-search-mode-line (orig-fun &rest args)
+(defun doom-modeline--override-phi-search (orig-fun &rest args)
   "Override the mode-line of `phi-search' and `phi-replace'."
   (if (bound-and-true-p doom-modeline-mode)
       (apply orig-fun mode-line-format (cdr args))
     (apply orig-fun args)))
-(advice-add #'phi-search--initialize :around #'doom-modeline--override-phi-search-mode-line)
+(advice-add #'phi-search--initialize :around #'doom-modeline--override-phi-search)
 
 (defsubst doom-modeline--buffer-size ()
   "Show buffer size."
@@ -1628,7 +1628,7 @@ mouse-2: Show help for minor mode"
 (doom-modeline-def-segment misc-info
   "Mode line construct for miscellaneous information.
 By default, this shows the information specified by `global-mode-string'."
-  (when (and (not doom-modeline--limited-width-p)
+  (when (and (doom-modeline--segment-visible 'misc-info)
              (or doom-modeline-display-misc-in-all-mode-lines
                  (doom-modeline--active)))
     '("" mode-line-misc-info)))
@@ -2146,15 +2146,23 @@ mouse-1: Toggle citre mode"
          (doom-modeline-display-icon icon)
          doom-modeline-spc)))))
 
-(defun doom-modeline-override-eglot-modeline ()
+(defun doom-modeline-override-eglot ()
   "Override `eglot' mode-line."
-  (if (bound-and-true-p doom-modeline-mode)
+  (if (and doom-modeline-lsp
+           (bound-and-true-p doom-modeline-mode))
       (setq mode-line-misc-info
             (delq (assq 'eglot--managed-mode mode-line-misc-info) mode-line-misc-info))
     (add-to-list 'mode-line-misc-info
                  `(eglot--managed-mode (" [" eglot--mode-line-format "] ")))))
-(add-hook 'eglot-managed-mode-hook #'doom-modeline-override-eglot-modeline)
-(add-hook 'doom-modeline-mode-hook #'doom-modeline-override-eglot-modeline)
+(add-hook 'eglot-managed-mode-hook #'doom-modeline-override-eglot)
+(add-hook 'doom-modeline-mode-hook #'doom-modeline-override-eglot)
+
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-battery
+ (lambda (_sym val op _where)
+   (when (eq op 'set)
+     (setq doom-modeline-lsp val)
+     (doom-modeline-override-eglot))))
 
 
 ;;
@@ -2425,7 +2433,7 @@ mouse-1: Toggle Debug on Quit"
                          (if (= mu4e-alert-mode-line 1) "it" "them")))
      doom-modeline-spc)))
 
-(defun doom-modeline-override-mu4e-alert-modeline (&rest _)
+(defun doom-modeline-override-mu4e-alert (&rest _)
   "Delete `mu4e-alert-mode-line' from global modeline string."
   (when (featurep 'mu4e-alert)
     (if (and doom-modeline-mu4e
@@ -2438,8 +2446,15 @@ mouse-1: Toggle Debug on Quit"
       ;; Recover default settings
       (setq mu4e-alert-modeline-formatter #'mu4e-alert-default-mode-line-formatter))))
 (advice-add #'mu4e-alert-enable-mode-line-display
-            :after #'doom-modeline-override-mu4e-alert-modeline)
-(add-hook 'doom-modeline-mode-hook #'doom-modeline-override-mu4e-alert-modeline)
+            :after #'doom-modeline-override-mu4e-alert)
+(add-hook 'doom-modeline-mode-hook #'doom-modeline-override-mu4e-alert)
+
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-mu4e
+ (lambda (_sym val op _where)
+   (when (eq op 'set)
+     (setq doom-modeline-mu4e val)
+     (doom-modeline-override-mu4e-alert))))
 
 
 ;;
@@ -2657,17 +2672,25 @@ mouse-3: Switch to next unread buffer")))
 
          doom-modeline-spc)))))
 
-(defun doom-modeline-override-rcirc-modeline ()
+(defun doom-modeline-override-rcirc ()
   "Override default `rcirc' mode-line."
-  (if (bound-and-true-p doom-modeline-mode)
+  (if (and doom-modeline-irc
+           (bound-and-true-p doom-modeline-mode))
       (setq global-mode-string
 		    (delq 'rcirc-activity-string global-mode-string))
     (when (and rcirc-track-minor-mode
                (not (memq 'rcirc-activity-string global-mode-string)))
 	  (setq global-mode-string
 		    (append global-mode-string '(rcirc-activity-string))))))
-(add-hook 'rcirc-track-minor-mode-hook #'doom-modeline-override-rcirc-modeline)
-(add-hook 'doom-modeline-mode-hook #'doom-modeline-override-rcirc-modeline)
+(add-hook 'rcirc-track-minor-mode-hook #'doom-modeline-override-rcirc)
+(add-hook 'doom-modeline-mode-hook #'doom-modeline-override-rcirc)
+
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-irc
+ (lambda (_sym val op _where)
+   (when (eq op 'set)
+     (setq doom-modeline-irc val)
+     (doom-modeline-override-rcirc))))
 
 
 ;;
@@ -2678,7 +2701,8 @@ mouse-3: Switch to next unread buffer")))
 (defun doom-modeline-update-battery-status ()
   "Update battery status."
   (setq doom-modeline--battery-status
-        (when (bound-and-true-p display-battery-mode)
+        (when (and doom-modeline-battery
+                   (bound-and-true-p display-battery-mode))
           (let* ((data (and battery-status-function
                             (functionp battery-status-function)
                             (funcall battery-status-function)))
@@ -2726,23 +2750,20 @@ mouse-3: Switch to next unread buffer")))
  (lambda (_sym val op _where)
    (when (eq op 'set)
      (setq doom-modeline-icon val)
-     (dolist (buf (buffer-list))
-       (with-current-buffer buf
-         (doom-modeline-update-battery-status))))))
+     (doom-modeline-update-battery-status))))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-unicode-fallback
  (lambda (_sym val op _where)
    (when (eq op 'set)
      (setq doom-modeline-unicode-fallback val)
-     (dolist (buf (buffer-list))
-       (with-current-buffer buf
-         (doom-modeline-update-battery-status))))))
+     (doom-modeline-update-battery-status))))
 
 (doom-modeline-def-segment battery
   "Display battery status."
-  (when (and (doom-modeline--segment-visible 'battery)
-             (bound-and-true-p display-battery-mode))
+  (when (and doom-modeline-battery
+             (bound-and-true-p display-battery-mode)
+             (doom-modeline--segment-visible 'battery))
     (concat doom-modeline-spc
             (concat
              (car doom-modeline--battery-status)
@@ -2750,9 +2771,10 @@ mouse-3: Switch to next unread buffer")))
              (cdr doom-modeline--battery-status))
             doom-modeline-spc)))
 
-(defun doom-modeline-override-battery-modeline ()
+(defun doom-modeline-override-battery ()
   "Override default battery mode-line."
-  (if (bound-and-true-p doom-modeline-mode)
+  (if (and doom-modeline-battery
+           (bound-and-true-p doom-modeline-mode))
       (progn
         (advice-add #'battery-update :override #'doom-modeline-update-battery-status)
         (setq global-mode-string
@@ -2764,8 +2786,15 @@ mouse-3: Switch to next unread buffer")))
                  (not (memq 'battery-mode-line-string global-mode-string)))
         (setq global-mode-string
 		      (append global-mode-string '(battery-mode-line-string)))))))
-(add-hook 'display-battery-mode-hook #'doom-modeline-override-battery-modeline)
-(add-hook 'doom-modeline-mode-hook #'doom-modeline-override-battery-modeline)
+(add-hook 'display-battery-mode-hook #'doom-modeline-override-battery)
+(add-hook 'doom-modeline-mode-hook #'doom-modeline-override-battery)
+
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-battery
+ (lambda (_sym val op _where)
+   (when (eq op 'set)
+     (setq doom-modeline-battery val)
+     (doom-modeline-override-battery))))
 
 
 ;;
@@ -2947,7 +2976,7 @@ mouse-3: Restart preview"
 (doom-modeline-def-segment time
   (when (and doom-modeline-time
              (bound-and-true-p display-time-mode)
-             (not doom-modeline--limited-width-p))
+             (doom-modeline--segment-visible 'time))
     (concat
      doom-modeline-spc
      (when doom-modeline-time-icon
@@ -2960,13 +2989,21 @@ mouse-3: Restart preview"
      (propertize display-time-string
                  'face (doom-modeline-face 'doom-modeline-time)))))
 
-(defun doom-modeline-override-display-time-modeline ()
+(defun doom-modeline-override-time ()
   "Override default display-time mode-line."
-  (if (bound-and-true-p doom-modeline-mode)
+  (if (and doom-modeline-time
+           (bound-and-true-p doom-modeline-mode))
       (setq global-mode-string (delq 'display-time-string global-mode-string))
     (setq global-mode-string (append global-mode-string '(display-time-string)))))
-(add-hook 'display-time-mode-hook #'doom-modeline-override-display-time-modeline)
-(add-hook 'doom-modeline-mode-hook #'doom-modeline-override-display-time-modeline)
+(add-hook 'display-time-mode-hook #'doom-modeline-override-time)
+(add-hook 'doom-modeline-mode-hook #'doom-modeline-override-time)
+
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-time
+ (lambda (_sym val op _where)
+   (when (eq op 'set)
+     (setq doom-modeline-time val)
+     (doom-modeline-override-time))))
 
 ;;
 ;; Compilation
