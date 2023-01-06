@@ -975,51 +975,48 @@ If FRAME is nil, it means the current frame."
 (add-hook 'pre-redisplay-functions #'doom-modeline-set-selected-window)
 
 ;; Ensure modeline is inactive when Emacs is unfocused
-;; Emasc 29 support natively
-(unless (facep 'mode-line-active)
-  (defvar doom-modeline--remap-faces '(mode-line
-                                       mode-line-active
-                                       mode-line-emphasis
-                                       mode-line-highlight
-                                       mode-line-buffer-id
-                                       solaire-mode-line-face
-                                       solaire-mode-line-active-face
-                                       success warning error
-                                       paradox-mode-line-face
-                                       flycheck-color-mode-line-error-face
-                                       flycheck-color-mode-line-warning-face
-                                       flycheck-color-mode-line-info-face
-                                       flycheck-color-mode-line-success-face))
-  (dolist (face (face-list))
-    (let ((f (symbol-name face)))
-      (and
-       (string-match-p "^\\(doom-modeline\\|all-the-icons\\)" f)
-       (not (string-match-p "\\(-inactive\\|-dired\\|-ivy\\|-ibuffer\\)" f))
-       (add-to-list 'doom-modeline--remap-faces face))))
+(defvar doom-modeline--remap-faces '(mode-line
+                                     mode-line-active
+                                     mode-line-emphasis
+                                     mode-line-highlight
+                                     mode-line-buffer-id
+                                     solaire-mode-line-face
+                                     solaire-mode-line-active-face
+                                     paradox-mode-line-face
+                                     flycheck-color-mode-line-error-face
+                                     flycheck-color-mode-line-warning-face
+                                     flycheck-color-mode-line-info-face
+                                     flycheck-color-mode-line-success-face))
+(dolist (face (face-list))
+  (let ((f (symbol-name face)))
+    (and
+     (string-match-p "^\\(doom-modeline\\|all-the-icons\\)" f)
+     (not (string-match-p "\\(-inactive\\|-dired\\|-ivy\\|-ibuffer\\)" f))
+     (add-to-list 'doom-modeline--remap-faces face))))
 
-  (defvar doom-modeline--remap-face-cookie-alist nil)
-  (defun doom-modeline-focus ()
-    "Focus mode-line."
-    (mapc #'face-remap-remove-relative doom-modeline--remap-face-cookie-alist))
+(defvar doom-modeline--remap-face-cookie-alist nil)
+(defun doom-modeline-focus ()
+  "Focus mode-line."
+  (mapc #'face-remap-remove-relative doom-modeline--remap-face-cookie-alist))
 
-  (defun doom-modeline-unfocus ()
-    "Unfocus mode-line."
-    (dolist (face doom-modeline--remap-faces)
-      (add-to-list 'doom-modeline--remap-face-cookie-alist
-                   (face-remap-add-relative face 'mode-line-inactive))))
+(defun doom-modeline-unfocus ()
+  "Unfocus mode-line."
+  (dolist (face doom-modeline--remap-faces)
+    (add-to-list 'doom-modeline--remap-face-cookie-alist
+                 (face-remap-add-relative face 'mode-line-inactive))))
 
-  (with-no-warnings
-    (if (boundp 'after-focus-change-function)
-        (progn
-          (defun doom-modeline-focus-change (&rest _)
-            (if (frame-focus-state (frame-parent))
-                (doom-modeline-focus)
-              (doom-modeline-unfocus)))
-          (advice-add #'handle-switch-frame :after #'doom-modeline-focus-change)
-          (add-function :after after-focus-change-function #'doom-modeline-focus-change))
+(with-no-warnings
+  (if (boundp 'after-focus-change-function)
       (progn
-        (add-hook 'focus-in-hook #'doom-modeline-focus)
-        (add-hook 'focus-out-hook #'doom-modeline-unfocus)))))
+        (defun doom-modeline-focus-change (&rest _)
+          (if (frame-focus-state (frame-parent))
+              (doom-modeline-focus)
+            (doom-modeline-unfocus)))
+        (advice-add #'handle-switch-frame :after #'doom-modeline-focus-change)
+        (add-function :after after-focus-change-function #'doom-modeline-focus-change))
+    (progn
+      (add-hook 'focus-in-hook #'doom-modeline-focus)
+      (add-hook 'focus-out-hook #'doom-modeline-unfocus))))
 
 
 ;;
