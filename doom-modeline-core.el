@@ -1087,7 +1087,8 @@ Example:
                           :align-to
                           (- (+ right right-fringe right-margin scroll-bar)
                              ,(let ((rhs-str (format-mode-line (cons "" rhs-forms))))
-                                (if (fboundp 'string-pixel-width)
+                                (if (and (>= emacs-major-version 29)
+                                         (fboundp 'string-pixel-width))
                                     (/ (string-pixel-width rhs-str)
                                        (doom-modeline--font-width)
                                        1.0)
