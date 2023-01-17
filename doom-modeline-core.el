@@ -932,15 +932,11 @@ used as an advice to window creation functions."
        (featurep 'all-the-icons)))
 
 ;; Keep `doom-modeline-current-window' up-to-date
-(defun doom-modeline--get-current-window (&optional frame)
-  "Get the current window but should exclude the child windows.
+(defun doom-modeline--selected-window ()
+  "Get the selected window."
+  (frame-selected-window))
 
-If FRAME is nil, it means the current frame."
-  (if (and (fboundp 'frame-parent) (frame-parent frame))
-      (frame-selected-window (frame-parent frame))
-    (frame-selected-window frame)))
-
-(defvar doom-modeline-current-window (doom-modeline--get-current-window)
+(defvar doom-modeline-current-window (doom-modeline--selected-window)
   "Current window.")
 
 (defun doom-modeline--active ()
@@ -949,7 +945,7 @@ If FRAME is nil, it means the current frame."
                (and (frame-live-p mini-frame-frame)
                     (frame-visible-p mini-frame-frame)))
     (and doom-modeline-current-window
-         (eq (doom-modeline--get-current-window) doom-modeline-current-window))))
+         (eq (doom-modeline--selected-window) doom-modeline-current-window))))
 
 (defvar-local doom-modeline--limited-width-p nil)
 
@@ -962,7 +958,7 @@ If FRAME is nil, it means the current frame."
 
 (defun doom-modeline-set-selected-window (&rest _)
   "Set `doom-modeline-current-window' appropriately."
-  (let ((win (doom-modeline--get-current-window)))
+  (let ((win (doom-modeline--selected-window)))
     (setq doom-modeline-current-window
           (if (minibuffer-window-active-p win)
               (minibuffer-selected-window)
