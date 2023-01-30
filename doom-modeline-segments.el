@@ -2991,6 +2991,7 @@ mouse-3: Restart preview"
 
 (defun doom-modeline-override-time ()
   "Override default display-time mode-line."
+  (or global-mode-string (setq global-mode-string '("")))
   (if (and doom-modeline-time
            (bound-and-true-p doom-modeline-mode))
       (setq global-mode-string (delq 'display-time-string global-mode-string))
