@@ -1076,25 +1076,23 @@ Example:
         (rhs-forms (doom-modeline--prepare-segments rhs)))
     (defalias sym
       (lambda ()
-        (if rhs-forms
-            (let ((rhs-str (format-mode-line (cons "" rhs-forms))))
-              (list lhs-forms
-                    (propertize
-                     " "
-                     'display `(space
-                                :align-to
-                                (- (+ right right-fringe right-margin scroll-bar)
-                                   ,(if (and (>= emacs-major-version 29)
-                                             (fboundp 'string-pixel-width))
-                                        (/ (string-pixel-width rhs-str)
-                                           (doom-modeline--font-width)
-                                           1.0)
-                                      (* (string-width rhs-str)
-                                         (if (display-graphic-p)
-                                             (/ (doom-modeline--font-width) (frame-char-width) 0.95)
-                                           1.0))))))
-                    rhs-str))
-          lhs-forms))
+        (list lhs-forms
+              (propertize
+               " "
+               'display `(space
+                          :align-to
+                          (- (+ right right-fringe right-margin scroll-bar)
+                             ,(let ((rhs-str (format-mode-line (cons "" rhs-forms))))
+                                (if (and (>= emacs-major-version 29)
+                                         (fboundp 'string-pixel-width))
+                                    (/ (string-pixel-width rhs-str)
+                                       (doom-modeline--font-width)
+                                       1.0)
+                                  (* (string-width rhs-str)
+                                     (if (display-graphic-p)
+                                         (/ (doom-modeline--font-width) (frame-char-width) 0.95)
+                                       1.0)))))))
+              rhs-forms))
       (concat "Modeline:\n"
               (format "  %s\n  %s"
                       (prin1-to-string lhs)
