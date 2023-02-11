@@ -709,9 +709,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
         (when (and vc-mode buffer-file-name)
           (let* ((backend (vc-backend buffer-file-name))
                  (state (vc-state (file-local-name buffer-file-name) backend))
-                 (str (if vc-display-status
-                          (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
-                        "")))
+                 (str (if vc-display-status vc-mode "")))
             (propertize (if (length> str doom-modeline-vcs-max-length)
                             (concat
                              (substring str 0 (- doom-modeline-vcs-max-length 3))
