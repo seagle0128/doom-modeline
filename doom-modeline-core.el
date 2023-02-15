@@ -1079,6 +1079,7 @@ Example:
         (list lhs-forms
               (propertize
                " "
+               'face (doom-modeline-face)
                'display `(space
                           :align-to
                           (- (+ right right-fringe right-margin scroll-bar)
@@ -1120,15 +1121,24 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; Helpers
 ;;
 
-(defconst doom-modeline-spc " " "Whitespace.")
-(defconst doom-modeline-wspc "  " "Wide whitespace.")
-(defconst doom-modeline-vspc
-  (propertize " " 'display '((space :relative-width 0.5)))
-  "Thin whitespace.")
+(defsubst doom-modeline-spc ()
+  "Whitespace."
+  (propertize " " 'face (doom-modeline-face)))
 
-(defconst doom-modeline-ellipsis
-  (if (char-displayable-p ?…) "…" "...")
-  "Ellipsis.")
+(defsubst doom-modeline-wspc ()
+  "Wide Whitespace."
+  (propertize "  " 'face (doom-modeline-face)))
+
+(defsubst doom-modeline-vspc ()
+  "Thin whitespace."
+  (propertize " "
+              'face (doom-modeline-face)
+              'display '((space :relative-width 0.5))))
+
+(defsubst doom-modeline-ellipsis ()
+  "Ellipsis."
+  (propertize (if (char-displayable-p ?…) "…" "...")
+              'face (doom-modeline-face)))
 
 (defun doom-modeline-face (&optional face inactive-face)
   "Display FACE in active window, and INACTIVE-FACE in inactive window.
