@@ -1121,6 +1121,10 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 ;; Helpers
 ;;
 
+(defconst doom-modeline-ellipsis
+  (if (char-displayable-p ?…) "…" "...")
+  "Ellipsis.")
+
 (defsubst doom-modeline-spc ()
   "Whitespace."
   (propertize " " 'face (doom-modeline-face)))
@@ -1134,11 +1138,6 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
   (propertize " "
               'face (doom-modeline-face)
               'display '((space :relative-width 0.5))))
-
-(defsubst doom-modeline-ellipsis ()
-  "Ellipsis."
-  (propertize (if (char-displayable-p ?…) "…" "...")
-              'face (doom-modeline-face)))
 
 (defun doom-modeline-face (&optional face inactive-face)
   "Display FACE in active window, and INACTIVE-FACE in inactive window.
