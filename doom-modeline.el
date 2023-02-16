@@ -132,7 +132,7 @@
   '(compilation  misc-info major-mode process vcs time))
 
 (doom-modeline-def-modeline 'org-src
-  '(bar window-number modals matches buffer-info-simple buffer-position word-count parrot selection-info)
+  '(bar window-number modals matches buffer-info buffer-position word-count parrot selection-info)
   '(compilation objed-state misc-info debug lsp minor-modes input-method indent-info buffer-encoding major-mode process checker time))
 
 (doom-modeline-def-modeline 'helm

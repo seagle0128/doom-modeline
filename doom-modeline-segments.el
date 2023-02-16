@@ -337,18 +337,13 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 (add-hook 'clone-indirect-buffer-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'evil-insert-state-exit-hook #'doom-modeline-update-buffer-file-name)
 (add-hook 'Info-selection-hook #'doom-modeline-update-buffer-file-name)
-(advice-add #'not-modified :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'rename-buffer :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'set-visited-file-name :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'pop-to-buffer :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'undo :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'undo-tree-undo-1 :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'undo-tree-redo-1 :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'fill-paragraph :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'popup-create :after #'doom-modeline-update-buffer-file-name)
 (advice-add #'popup-delete :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'org-edit-src-save :after #'doom-modeline-update-buffer-file-name)
-(advice-add #'symbol-overlay-rename :after #'doom-modeline-update-buffer-file-name)
+;; (advice-add #'primitive-undo :after #'doom-modeline-update-buffer-file-name)
+;; (advice-add #'set-buffer-modified-p :after #'doom-modeline-update-buffer-file-name)
 
 (with-no-warnings
   (if (boundp 'after-focus-change-function)
@@ -396,8 +391,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
   "The buffer simple name."
   (propertize "%b"
               'face (doom-modeline-face
-                     (if (and buffer-file-name
-                              doom-modeline-highlight-modified-buffer-name
+                     (if (and doom-modeline-highlight-modified-buffer-name
                               (buffer-modified-p))
                          'doom-modeline-buffer-modified
                        'doom-modeline-buffer-file))
@@ -417,8 +411,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
       (when-let ((name (or doom-modeline--buffer-file-name
                            (doom-modeline-update-buffer-file-name))))
         ;; Check if the buffer is modified
-        (if (and buffer-file-name
-                 doom-modeline-highlight-modified-buffer-name
+        (if (and doom-modeline-highlight-modified-buffer-name
                  (buffer-modified-p))
             (propertize name 'face (doom-modeline-face 'doom-modeline-buffer-modified))
           (doom-modeline-display-text name))))))
