@@ -1011,7 +1011,7 @@ used as an advice to window creation functions."
                 (doom-modeline-focus)
                 ;; HACK: pulse after focusing in the frame to refresh the buffer name.
                 ;; @see https://github.com/seagle0128/doom-modeline/issues/591
-                (when (featurep 'pulse)
+                (when (fboundp 'pulse-momentary-highlight-region)
                   (pulse-momentary-highlight-region 0 0)))
             (doom-modeline-unfocus)))
         (advice-add #'handle-switch-frame :after #'doom-modeline-focus-change)
