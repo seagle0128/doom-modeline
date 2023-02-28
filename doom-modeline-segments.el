@@ -2739,7 +2739,7 @@ mouse-3: Switch to next unread buffer")))
                                                         :face face :v-adjust -0.0575)))
                          (doom-modeline-icon 'faicon "battery-empty" "⚠" "N/A"
                                              :face face :v-adjust -0.0575)))
-                 (text (if valid-percentage? (format "%d%s" percentage "%%%%") ""))
+                 (text (if valid-percentage? (format "%d%s" percentage "%%") ""))
                  (help-echo (if (and battery-echo-area-format data valid-percentage?)
                                 (battery-format battery-echo-area-format data)
                               "Battery status not available")))
