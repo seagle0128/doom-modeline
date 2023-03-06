@@ -976,7 +976,6 @@ used as an advice to window creation functions."
                                      mode-line-emphasis
                                      mode-line-highlight
                                      mode-line-buffer-id
-                                     success warning error
                                      solaire-mode-line-face
                                      solaire-mode-line-active-face
                                      paradox-mode-line-face
