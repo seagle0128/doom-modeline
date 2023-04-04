@@ -1325,9 +1325,11 @@ Return nil if no project was found."
              ((and (memq doom-modeline-project-detection '(auto project))
                    (fboundp 'project-current))
               (when-let ((project (project-current)))
-                (expand-file-name (if (fboundp 'project-root)
-                                      (project-root project)
-                                    (cdr project)))))))))
+                (expand-file-name
+                 (if (fboundp 'project-root)
+                     (project-root project)
+                   (car (with-no-warnings
+                          (project-roots project)))))))))))
 
 (defun doom-modeline-project-p ()
   "Check if the file is in a project."
