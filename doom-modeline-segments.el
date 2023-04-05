@@ -257,10 +257,10 @@
           (let ((icon (all-the-icons-icon-for-buffer)))
             (propertize (if (or (null icon) (symbolp icon))
                             (doom-modeline-icon 'faicon "file-o" nil nil
-                                                :face 'all-the-icons-dsilver
+                                                :face `(:inherirt (doom-modeline all-the-icons-dsilver))
                                                 :height 0.9
                                                 :v-adjust 0.0)
-                          icon)
+                          (doom-modeline-propertize-icon icon))
                         'help-echo (format "Major-mode: %s" (format-mode-line mode-name))
                         'display '(raise -0.135))))))
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-icon)
