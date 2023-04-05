@@ -936,6 +936,10 @@ used as an advice to window creation functions."
        (display-graphic-p)
        (featurep 'all-the-icons)))
 
+(defun doom-modeline-mwheel-available-p ()
+  "Whether mouse wheel is available."
+  (and (featurep 'mwheel) (bound-and-true-p mouse-wheel-mode)))
+
 ;; Keep `doom-modeline-current-window' up-to-date
 (defun doom-modeline--selected-window ()
   "Get the selected window."

@@ -875,7 +875,7 @@ mouse-2: Show help for minor mode")
                               (format "error: %d, warning: %d, info: %d\n" .error .warning .info)))
                           "mouse-1: Show all errors
 mouse-3: Next error"
-                          (if (featurep 'mwheel)
+                          (if (doom-modeline-mwheel-available-p)
                               "\nwheel-up/wheel-down: Previous/next error")))
                         ('running "Checking...")
                         ('no-checker "No Checker")
@@ -888,7 +888,7 @@ mouse-3: Next error"
                           #'flycheck-list-errors)
                         (define-key map [mode-line mouse-3]
                           #'flycheck-next-error)
-                        (when (featurep 'mwheel)
+                        (when (doom-modeline-mwheel-available-p)
                           (define-key map [mode-line mouse-wheel-down-event]
                             (lambda (event)
                               (interactive "e")
@@ -1049,13 +1049,13 @@ mouse-2: Show help for minor mode"
                          (t (format "error: %d, warning: %d, note: %d
 mouse-1: List all problems%s"
                                     .error .warning .note
-                                    (if (featurep 'mwheel)
+                                    (if (doom-modeline-mwheel-available-p)
                                         "\nwheel-up/wheel-down: Previous/next problem"))))
              'mouse-face 'doom-modeline-highlight
              'local-map (let ((map (make-sparse-keymap)))
                           (define-key map [mode-line mouse-1]
                             #'flymake-show-diagnostics-buffer)
-                          (when (featurep 'mwheel)
+                          (when (doom-modeline-mwheel-available-p)
                             (define-key map (vector 'mode-line
                                                     mouse-wheel-down-event)
                               (lambda (event)
