@@ -257,7 +257,7 @@
           (let ((icon (all-the-icons-icon-for-buffer)))
             (propertize (if (or (null icon) (symbolp icon))
                             (doom-modeline-icon 'faicon "file-o" nil nil
-                                                :face `(:inherirt (doom-modeline all-the-icons-dsilver))
+                                                :face 'all-the-icons-dsilver
                                                 :height 0.9
                                                 :v-adjust 0.0)
                           (doom-modeline-propertize-icon icon))
