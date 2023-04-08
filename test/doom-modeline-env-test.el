@@ -1,6 +1,6 @@
 ;;; doom-modeline-env-test.el --- Unit tests for doom-modeline-env -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2019 Justin Barclay
+;; Copyright (C) 2023 Vincent Zhang, Justin Barclay
 
 ;; This file is not part of GNU Emacs.
 
@@ -21,7 +21,7 @@
 
 ;;; Commentary:
 ;;
-;;  Unit tests for doom-modeline-env
+;;  Unit tests for doom-modeline-env.
 ;;
 
 ;;; Code:

@@ -146,22 +146,22 @@ or
   :hook (after-init . doom-modeline-mode))
 ```
 
-This package is able to display icons if `all-the-icons` package and required
-fonts are installed. Run `M-x all-the-icons-install-fonts` to install the
+This package is able to display icons if `nerd-icons` package and required
+fonts are installed. Run `M-x nerd-icons-install-fonts` to install the
 necessary fonts. Please refer to the
-[installation guide](https://github.com/domtronn/all-the-icons.el#installation).
+[installation guide](https://github.com/rainstormstudio/nerd-icons.el#installing-fonts).
 
 Add this to `init.el` if you want to use icons,
 
 ```elisp
-;; Install via `M-x package-install RET all-the-icons RET`
-(require 'all-the-icons)
+;; Install via `M-x package-install RET nerd-icons RET`
+(require nerd-icons)
 ```
 
 or
 
 ```elisp
-(use-package all-the-icons
+(use-package nerd-icons
   :ensure t)
 ```
 
@@ -231,7 +231,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 (setq doom-modeline-major-mode-icon t)
 
 ;; Whether display the colorful icon for `major-mode'.
-;; It respects `all-the-icons-color-icons'.
+;; It respects `nerdg-icons-color-icons'.
 (setq doom-modeline-major-mode-color-icon t)
 
 ;; Whether display the icon for the buffer state. It respects `doom-modeline-icon'.
@@ -373,25 +373,14 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
 1. How to display icons correctly?
 
-   [all-the-icons](https://github.com/domtronn/all-the-icons.el) are necessary.
-   Then run `M-x all-the-icons-install-fonts` to install the resource fonts.
-   On Windows, the fonts should be installed manually. `all-the-icons` only
-   support GUI. If you don't like color icons, `(setq all-the-icons-color-icons nil)`
-   to disable it. Please refer to [all-the-icons.el](https://github.com/domtronn/all-the-icons.el)
+   [nerd-icons](https://github.com/rainstormstudio/nerd-icons.el) are necessary.
+   Then run `M-x nerd-icons-install-fonts` to install the resource fonts.
+   On Windows, the fonts should be installed manually. `nerd-icons` supports both
+   GUI and TUI.
+
+   If you don't like color icons, `(setq nerd-icons-color-icons nil)`
+   to disable it. Please refer to [nerd-icons.el](https://github.com/rainstormstudio/nerd-icons.el)
    for details.
-
-   If the icons are not displayed correctly although `all-the-icons` fonts are
-   installed correctly, please install the
-   [non-free](http://users.teilar.gr/~g1951d/License.pdf) font
-   [Symbola](https://dn-works.com/wp-content/uploads/2020/UFAS-Fonts/Symbola.zip).
-   This issue usually occurs on Windows.
-
-   If you are using [cnfonts](https://github.com/tumashu/cnfonts), it will
-   conflict with `all-the-icons`. The workaround is
-   [here](https://github.com/seagle0128/doom-modeline/issues/278#issuecomment-569510336).
-
-   In terminal mode, no icons or bars will be displayed, even though `all-the-icons`
-   fonts are installed successfully, and `doom-modeline-icon` is non-nil.
 
 1. I am experiencing the laggy issue, how to resolve it?
 
@@ -485,7 +474,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
 1. The right side of the modeline is cut off. How to fix it?
 
-   - Tweak `all-the-icons-scale-factor`. e.g. `(setq all-the-icons-scale-factor 1.1)`
+   - Tweak `nerd-icons-scale-factor`. e.g. `(setq nerd-icons-scale-factor 1.1)`
    - Use another font family or size. See above.
 
 1. How to disable symbolic links expanding in mode-line?

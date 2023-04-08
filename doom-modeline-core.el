@@ -1,6 +1,6 @@
 ;;; doom-modeline-core.el --- The core libraries for doom-modeline -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2018-2020 Vincent Zhang
+;; Copyright (C) 2018-2023 Vincent Zhang
 
 ;; This file is not part of GNU Emacs.
 
@@ -32,14 +32,14 @@
 (require 'compat)
 (require 'shrink-path)
 
-(require 'all-the-icons nil t)
+(require 'nerd-icons nil t)
 
 
 ;;
 ;; Externals
 ;;
 
-(declare-function all-the-icons--function-name "ext:all-the-icons")
+(declare-function nerd-icons--function-name "ext:nerd-icons")
 
 
 ;;
@@ -197,7 +197,7 @@ It respects variable `doom-modeline-icon'."
 (defcustom doom-modeline-major-mode-color-icon t
   "Whether display the colorful icon for `major-mode'.
 
-It respects `all-the-icons-color-icons'."
+It respects `nerd-icons-color-icons'."
   :type 'boolean
   :group'doom-modeline)
 
@@ -932,9 +932,7 @@ used as an advice to window creation functions."
 
 (defun doom-modeline-icon-displayable-p ()
   "Return non-nil if icons are displayable."
-  (and doom-modeline-icon
-       (display-graphic-p)
-       (featurep 'all-the-icons)))
+  (and doom-modeline-icon (featurep 'nerd-icons)))
 
 (defun doom-modeline-mwheel-available-p ()
   "Whether mouse wheel is available."
@@ -1211,10 +1209,10 @@ See https://github.com/seagle0128/doom-modeline/issues/301."
 (defun doom-modeline-icon (icon-set icon-name unicode text &rest args)
   "Display icon of ICON-NAME with ARGS in mode-line.
 
-ICON-SET includes `octicon', `faicon', `material', `alltheicons' and `fileicon',
-etc.
+ICON-SET includes `ipsicon', `octicon', `pomicon', `powerline', `faicon',
+`wicon', `sucicon', `devicon', `codicon', `flicon' and `mdicon', etc.
 UNICODE is the unicode char fallback. TEXT is the ASCII char fallback.
-ARGS is same as `all-the-icons-octicon' and others."
+ARGS is same as `nerd-icons-octicon' and others."
   (let ((face `(:inherit (doom-modeline
                           ,(or (plist-get args :face) 'mode-line)))))
     (cond
@@ -1222,7 +1220,7 @@ ARGS is same as `all-the-icons-octicon' and others."
      ((and (doom-modeline-icon-displayable-p)
            icon-name
            (not (string-empty-p icon-name)))
-      (when-let* ((func (all-the-icons--function-name icon-set))
+      (when-let* ((func (nerd-icons--function-name icon-set))
                   (icon (and (fboundp func)
                              (apply func icon-name args))))
         (doom-modeline-propertize-icon icon face)))
