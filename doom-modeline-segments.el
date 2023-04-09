@@ -785,7 +785,7 @@ level."
                                          (t 'doom-modeline-info))))
                               (doom-modeline-checker-icon "nf-md-check" "✔" "-" 'doom-modeline-info)))
                 ('running     (doom-modeline-checker-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug))
-                ('no-checker  (doom-modeline-checker-icon "nf-md-sim_card_alert" "⚠" "-" 'doom-modeline-debug))
+                ('no-checker  (doom-modeline-checker-icon "nf-md-alert" "⚠" "-" 'doom-modeline-debug))
                 ('errored     (doom-modeline-checker-icon "nf-md-alert_box_outline" "⚠" "-" 'doom-modeline-urgent))
                 ('interrupted (doom-modeline-checker-icon "nf-md-pause_circle_outline" "⏸" "=" 'doom-modeline-debug))
                 ('suspicious  (doom-modeline-checker-icon "nf-md-information_outline" "❓" "?" 'doom-modeline-debug))
