@@ -1157,20 +1157,14 @@ If INACTIVE-FACE is nil, `mode-line-inactive' face will be used."
         (and (facep inactive-face) inactive-face)
         'mode-line-inactive)))
 
-;; Since 27, the calculation of char height was changed
-;; @see https://github.com/seagle0128/doom-modeline/issues/271
 (defun doom-modeline--font-height ()
   "Calculate the actual char height of the mode-line."
   (let ((height (face-attribute 'mode-line :height))
         (char-height (window-font-height nil 'mode-line)))
-    (round
-     (* (pcase system-type
-          ('darwin (if doom-modeline-icon 1.7 1.0))
-          ('windows-nt (if doom-modeline-icon 1.3 1.0))
-          (_ (if (and doom-modeline-icon (< emacs-major-version 27)) 1.4 1.0)))
-        (cond ((integerp height) (/ height 10))
-              ((floatp height) (* height char-height))
-              (t char-height))))))
+    (+ 2 (round
+          (* 1.0 (cond ((integerp height) (/ height 10))
+                       ((floatp height) (* height char-height))
+                       (t char-height)))))))
 
 (defun doom-modeline--original-value (sym)
   "Return the original value for SYM, if any.
@@ -1252,8 +1246,7 @@ ARGS is same as `nerd-icons-octicon' and others."
   "Create the bar image.
 
 Use FACE for the bar, WIDTH and HEIGHT are the image size in pixels."
-  (when (and (display-graphic-p)
-             (image-type-available-p 'pbm)
+  (when (and (image-type-available-p 'pbm)
              (numberp width) (> width 0)
              (numberp height) (> height 0))
     (propertize
