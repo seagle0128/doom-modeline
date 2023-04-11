@@ -97,7 +97,7 @@ Must be set before loading `doom-modeline'."
            (remove-hook 'emacs-lisp-mode-hook #'doom-modeline-add-imenu)))
   :group 'doom-modeline)
 
-(defcustom doom-modeline-height 25
+(defcustom doom-modeline-height 20
   "How tall the mode-line should be. It's only respected in GUI.
 If the actual char height is larger, it respects the actual char height."
   :type 'integer
@@ -1161,10 +1161,10 @@ If INACTIVE-FACE is nil, `mode-line-inactive' face will be used."
   "Calculate the actual char height of the mode-line."
   (let ((height (face-attribute 'mode-line :height))
         (char-height (window-font-height nil 'mode-line)))
-    (+ 2 (round
-          (* 1.0 (cond ((integerp height) (/ height 10))
-                       ((floatp height) (* height char-height))
-                       (t char-height)))))))
+    (round
+     (* 1.0 (cond ((integerp height) (/ height 10))
+                  ((floatp height) (* height char-height))
+                  (t char-height))))))
 
 (defun doom-modeline--original-value (sym)
   "Return the original value for SYM, if any.
