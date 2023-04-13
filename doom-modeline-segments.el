@@ -257,7 +257,7 @@
           (let ((icon (nerd-icons-icon-for-buffer)))
             (propertize (if (or (null icon) (symbolp icon))
                             (doom-modeline-icon 'faicon "nf-fa-file_o" nil nil
-                                                :face `(:inherirt (doom-modeline nerd-icons-dsilver)))
+                                                :face 'nerd-icons-dsilver)
                           (doom-modeline-propertize-icon icon))
                         'help-echo (format "Major-mode: %s" (format-mode-line mode-name)))))))
 (add-hook 'find-file-hook #'doom-modeline-update-buffer-file-icon)
