@@ -2718,52 +2718,52 @@ Uses `nerd-icons-mdicon' to fetch the icon."
                                                          "🔋" "-" face))
                             ((>= percentage 90)
                              (doom-modeline-battery-icon (if charging?
-                                                             "nf-md-battery_90"
-                                                           "nf-md-battery_charging_90")
+                                                             "nf-md-battery_charging_90"
+                                                           "nf-md-battery_90")
                                                          "🔋" "-" face))
                             ((>= percentage 80)
                              (doom-modeline-battery-icon (if charging?
-                                                             "nf-md-battery_80"
-                                                           "nf-md-battery_charging_80")
+                                                             "nf-md-battery_charging_80"
+                                                           "nf-md-battery_80")
                                                          "🔋" "-" face))
                             ((>= percentage 70)
                              (doom-modeline-battery-icon (if charging?
-                                                             "nf-md-battery_70"
-                                                           "nf-md-battery_charging_70")
+                                                             "nf-md-battery_charging_70"
+                                                           "nf-md-battery_70")
                                                          "🔋" "-" face))
                             ((>= percentage 60)
                              (doom-modeline-battery-icon (if charging?
-                                                             "nf-md-battery_60"
-                                                           "nf-md-battery_charging_60")
+                                                             "nf-md-battery_charging_60"
+                                                           "nf-md-battery_60")
                                                          "🔋" "-" face))
                             ((>= percentage 50)
                              (doom-modeline-battery-icon (if charging?
-                                                             "nf-md-battery_50"
-                                                           "nf-md-battery_charging_50")
+                                                             "nf-md-battery_charging_50"
+                                                           "nf-md-battery_50")
                                                          "🔋" "-" face))
                             ((>= percentage 40)
                              (doom-modeline-battery-icon (if charging?
-                                                             "nf-md-battery_40"
-                                                           "nf-md-battery_charging_40")
+                                                             "nf-md-battery_charging_40"
+                                                           "nf-md-battery_40")
                                                          "🔋" "-" face))
                             ((>= percentage 30)
                              (doom-modeline-battery-icon (if charging?
-                                                             "nf-md-battery_30"
-                                                           "nf-md-battery_charging_30")
+                                                             "nf-md-battery_charging_30"
+                                                           "nf-md-battery_30")
                                                          "🔋" "-" face))
                             ((>= percentage 20)
                              (doom-modeline-battery-icon (if charging?
-                                                             "nf-md-battery_20"
-                                                           "nf-md-battery_charging_20")
+                                                             "nf-md-battery_charging_20"
+                                                           "nf-md-battery_20")
                                                          "🔋" "-" face))
                             ((>= percentage 10)
                              (doom-modeline-battery-icon (if charging?
-                                                             "nf-md-battery_10"
-                                                           "nf-md-battery_charging_10")
+                                                             "nf-md-battery_charging_10"
+                                                           "nf-md-battery_10")
                                                          "🔋" "-" face))
                             (t (doom-modeline-battery-icon (if charging?
-                                                               "nf-md-battery_outline"
-                                                             "nf-md-battery_charging_outline")
+                                                               "nf-md-battery_charging_outline"
+                                                             "nf-md-battery_outline")
                                                            "🔋" "!" face)))
                          (doom-modeline-battery-icon "nf-md-battery_alert" "⚠" "N/A" face)))
                  (text (if valid-percentage? (format "%d%s" percentage "%%") ""))
