@@ -737,7 +737,7 @@ Also see the face `doom-modeline-unread-number'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-ryo
-  '((t (:inherit doom-modeline-ryo)))
+  '((t (:inherit doom-modeline-info)))
   "Face for RYO indicator."
   :group 'doom-modeline-faces)
 
