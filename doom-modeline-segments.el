@@ -667,7 +667,7 @@ Uses `nerd-icons-octicon' to fetch the icon."
                   ((eq state 'needs-merge)
                    (doom-modeline-vcs-icon "nf-oct-git_merge" "🔀" "?" 'doom-modeline-info))
                   ((eq state 'needs-update)
-                   (doom-modeline-vcs-icon "nf-oct-arrow_down" "⬇" "!" 'doom-modeline-warning))
+                   (doom-modeline-vcs-icon "nf-oct-git_pull_request" "⬇" "!" 'doom-modeline-warning))
                   ((memq state '(removed conflict unregistered))
                    (doom-modeline-vcs-icon "nf-oct-alert" "⚠" "!" 'doom-modeline-urgent))
                   (t
@@ -744,7 +744,7 @@ Uses `nerd-icons-octicon' to fetch the icon."
 
 UNICODE and TEXT are fallbacks.
 Uses `nerd-icons-mdicon' to fetch the icon."
-  (doom-modeline-icon 'mdicon icon unicode text :face face))
+  (doom-modeline-icon 'mdicon icon unicode text :face face :height 1.1))
 
 (defun doom-modeline-checker-text (text &optional face)
   "Displays TEXT with FACE."
@@ -779,15 +779,15 @@ level."
                 ('finished  (if flycheck-current-errors
                                 (let-alist (doom-modeline--flycheck-count-errors)
                                   (doom-modeline-checker-icon
-                                   "nf-md-alert" "❗" "!"
+                                   "nf-md-alert_circle_outline" "❗" "!"
                                    (cond ((> .error 0) 'doom-modeline-urgent)
                                          ((> .warning 0) 'doom-modeline-warning)
                                          (t 'doom-modeline-info))))
-                              (doom-modeline-checker-icon "nf-md-check" "✔" "-" 'doom-modeline-info)))
+                              (doom-modeline-checker-icon "nf-md-check_circle_outline" "✔" "" 'doom-modeline-info)))
                 ('running     (doom-modeline-checker-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug))
-                ('no-checker  (doom-modeline-checker-icon "nf-md-alert" "⚠" "-" 'doom-modeline-debug))
-                ('errored     (doom-modeline-checker-icon "nf-md-alert_box_outline" "⚠" "-" 'doom-modeline-urgent))
-                ('interrupted (doom-modeline-checker-icon "nf-md-pause_circle_outline" "⏸" "=" 'doom-modeline-debug))
+                ('no-checker  (doom-modeline-checker-icon "nf-md-alert_box_outline" "⚠" "-" 'doom-modeline-debug))
+                ('errored     (doom-modeline-checker-icon "nf-md-alert_circle_outline" "⚠" "!" 'doom-modeline-urgent))
+                ('interrupted (doom-modeline-checker-icon "nf-md-pause_circle_outline" "⦷" "." 'doom-modeline-debug))
                 ('suspicious  (doom-modeline-checker-icon "nf-md-information_outline" "❓" "?" 'doom-modeline-debug))
                 (_ nil))))
           (propertize icon
@@ -923,8 +923,8 @@ mouse-3: Next error"
               ((icon
                 (cond
                  (some-waiting (doom-modeline-checker-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-urgent))
-                 ((null known) (doom-modeline-checker-icon "nf-md-alert_box_outline" "⚠" "-" 'doom-modeline-debug))
-                 (all-disabled (doom-modeline-checker-icon "nf-md-alert_box_outline" "⚠" "-" 'doom-modeline-warning))
+                 ((null known) (doom-modeline-checker-icon "nf-md-alert_box_outline" "⚠" "?" 'doom-modeline-debug))
+                 (all-disabled (doom-modeline-checker-icon "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning))
                  (t (let ((.error 0)
                           (.warning 0)
                           (.note 0))
@@ -2216,7 +2216,7 @@ Example:
      (doom-modeline-spc)
      (propertize
       (concat
-       (doom-modeline-icon 'faicon "nf-fa-github" "🔔" "#"
+       (doom-modeline-icon 'faicon "nf-fa-github" "🔔" "&"
                            :face 'doom-modeline-notification)
        (doom-modeline-vspc)
        ;; GitHub API is paged, and the limit is 50
