@@ -671,7 +671,7 @@ Uses `all-the-icons-octicon' to fetch the icon."
                   ((eq state 'needs-merge)
                    (doom-modeline-vcs-icon "git-merge" "🔀" "?" 'doom-modeline-info))
                   ((eq state 'needs-update)
-                   (doom-modeline-vcs-icon "arrow-down" "⬇" "!" 'doom-modeline-warning))
+                   (doom-modeline-vcs-icon "git-pull-request" "⬇" "!" 'doom-modeline-warning))
                   ((memq state '(removed conflict unregistered))
                    (doom-modeline-vcs-icon "alert" "⚠" "!" 'doom-modeline-urgent))
                   (t
