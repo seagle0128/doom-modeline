@@ -2697,7 +2697,9 @@ Uses `nerd-icons-mdicon' to fetch the icon."
           (let* ((data (and battery-status-function
                             (functionp battery-status-function)
                             (funcall battery-status-function)))
-                 (charging? (string-equal "AC" (cdr (assoc ?L data))))
+                 (status (cdr (assoc ?L data)))
+                 (charging? (or (string-equal "AC" status)
+                                (string-equal "on-line" status)))
                  (percentage (car (read-from-string (or (cdr (assq ?p data)) "ERR"))))
                  (valid-percentage? (and (numberp percentage)
                                          (>= percentage 0)
