@@ -277,7 +277,7 @@
   "Displays an ICON of buffer state with FACE.
 UNICODE and TEXT are the alternatives if it is not applicable.
 Uses `nerd-icons-mdicon' to fetch the icon."
-  (doom-modeline-icon 'mdicon icon unicode text :face face))
+  (doom-modeline-icon 'mdicon icon unicode text :face face :height 1.1))
 
 (defvar-local doom-modeline--buffer-file-state-icon nil)
 (defun doom-modeline-update-buffer-file-state-icon (&rest _)
@@ -1578,7 +1578,7 @@ Requires `eyebrowse-mode' to be enabled or `tab-bar-mode' tabs to be created."
                            'doom-modeline-persp-buffer-not-in-persp
                          'doom-modeline-persp-name))
                  (icon (doom-modeline-icon 'mdicon "nf-md-folder" "🖿" "#"
-                                           :face `(:inherit ,face :slant normal))))
+                                           :face `(:inherit ,face :slant normal :height 1.1))))
             (when (or doom-modeline-display-default-persp-name
                       (not (string-equal persp-nil-name name)))
               (concat (doom-modeline-spc)
@@ -2957,28 +2957,26 @@ The cdr can also be a function that returns a name to use.")
      (let ((face (doom-modeline-face
                   (if grip--process
                       (pcase (process-status grip--process)
-                        ('run 'doom-modeline-buffer-path)
+                        ('run 'doom-modeline-info)
                         ('exit 'doom-modeline-warning)
                         (_ 'doom-modeline-urgent))
                     'doom-modeline-urgent))))
-       (propertize (doom-modeline-icon 'mdicon "nf-md-file_find" "🗐" "@"
-                                       :face (if doom-modeline-icon
-                                                 `(:inherit ,face :weight normal)
-                                               face))
-                   'help-echo (format "Preview on %s
+       (propertize
+        (doom-modeline-icon 'codicon "nf-cod-preview" "🗐" "@" :face face)
+        'help-echo (format "Preview on %s
 mouse-1: Preview in browser
 mouse-2: Stop preview
 mouse-3: Restart preview"
-                                      (grip--preview-url))
-                   'mouse-face 'doom-modeline-highlight
-                   'local-map (let ((map (make-sparse-keymap)))
-                                (define-key map [mode-line mouse-1]
-                                  #'grip-browse-preview)
-                                (define-key map [mode-line mouse-2]
-                                  #'grip-stop-preview)
-                                (define-key map [mode-line mouse-3]
-                                  #'grip-restart-preview)
-                                map)))
+                           (grip--preview-url))
+        'mouse-face 'doom-modeline-highlight
+        'local-map (let ((map (make-sparse-keymap)))
+                     (define-key map [mode-line mouse-1]
+                       #'grip-browse-preview)
+                     (define-key map [mode-line mouse-2]
+                       #'grip-stop-preview)
+                     (define-key map [mode-line mouse-3]
+                       #'grip-restart-preview)
+                     map)))
      (doom-modeline-spc))))
 
 ;;
