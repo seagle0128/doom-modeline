@@ -289,30 +289,27 @@ Uses `nerd-icons-mdicon' to fetch the icon."
              (cond (buffer-read-only
                     (doom-modeline-buffer-file-state-icon
                      "nf-md-lock" "🔒" "%1*"
-                     `(:inherit doom-modeline-warning
-                       :weight ,(if doom-modeline-icon
-                                    'normal
-                                  'bold))))
+                     'doom-modeline-warning))
                    ((and buffer-file-name (buffer-modified-p)
                          doom-modeline-buffer-modification-icon)
                     (doom-modeline-buffer-file-state-icon
                      "nf-md-content_save" "💾" "%1*"
-                     `(:inherit doom-modeline-buffer-modified
-                       :weight ,(if doom-modeline-icon
-                                    'normal
-                                  'bold))))
+                     'doom-modeline-buffer-modified))
                    ((and buffer-file-name
-                         (not (file-remote-p buffer-file-name)) ; Avoid freezing while connection is lost
+                         ;; Avoid freezing while connection is lost
+                         (not (file-remote-p buffer-file-name))
                          (not (file-exists-p buffer-file-name)))
                     (doom-modeline-buffer-file-state-icon
-                     "nf-md-cancel" "🚫" "!" 'doom-modeline-urgent))
+                     "nf-md-cancel" "🚫" "!"
+                     'doom-modeline-urgent))
                    (t ""))
              (when (or (buffer-narrowed-p)
                        (and (bound-and-true-p fancy-narrow-mode)
                             (fancy-narrow-active-p))
                        (bound-and-true-p dired-narrow-mode))
                (doom-modeline-buffer-file-state-icon
-                "nf-md-unfold_less_horizontal" "↕" "><" 'doom-modeline-warning)))))))
+                "nf-md-unfold_less_horizontal" "↕" "><"
+                'doom-modeline-warning)))))))
 
 (defvar-local doom-modeline--buffer-file-name nil)
 (defun doom-modeline-update-buffer-file-name (&rest _)
@@ -1577,7 +1574,7 @@ Requires `eyebrowse-mode' to be enabled or `tab-bar-mode' tabs to be created."
                                 (not (persp-contain-buffer-p (current-buffer) persp)))
                            'doom-modeline-persp-buffer-not-in-persp
                          'doom-modeline-persp-name))
-                 (icon (doom-modeline-icon 'mdicon "nf-md-folder" "🖿" "#"
+                 (icon (doom-modeline-icon 'octicon "nf-oct-repo" "🖿" "#"
                                            :face `(:inherit ,face :slant normal :height 1.1))))
             (when (or doom-modeline-display-default-persp-name
                       (not (string-equal persp-nil-name name)))
