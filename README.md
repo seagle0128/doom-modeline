@@ -126,7 +126,7 @@ In `init.el`,
 
 or
 
-```elisp
+```emacs-lisp
 (add-hook 'after-init-hook #'doom-modeline-mode)
 ```
 
@@ -140,7 +140,7 @@ or
 
 or
 
-```elisp
+```emacs-lisp
 (use-package doom-modeline
   :ensure t
   :hook (after-init . doom-modeline-mode))
@@ -153,14 +153,14 @@ necessary fonts. Please refer to the
 
 Add this to `init.el` if you want to use icons,
 
-```elisp
+```emacs-lisp
 ;; Install via `M-x package-install RET nerd-icons RET`
 (require nerd-icons)
 ```
 
 or
 
-```elisp
+```emacs-lisp
 (use-package nerd-icons
   :ensure t)
 ```
@@ -382,6 +382,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
    to disable it. Please refer to [nerd-icons.el](https://github.com/rainstormstudio/nerd-icons.el)
    for details.
 
+   If you prefer [all-the-icons](https://github.com/domtronn/all-the-icons.el), please
+   use release `3.4.0`. It doesn't been supported since `4.0.0`.
+
 1. I am experiencing the laggy issue, how to resolve it?
 
    Add this configuration into your init file:
@@ -485,7 +488,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
    please try this:
 
-   ```elisp
+   ```emacs-lisp
    ;; built-in `project' on 26+
    (setq doom-modeline-project-detection 'project)
    ;; or `find-in-project' if it's installed
@@ -506,7 +509,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
    To display the status in `doom-modeline`, you can add the status to `mode-line-process`
    or `global-mode-string` as below.
 
-   ```elisp
+   ```emacs-lisp
    (add-hook 'inferior-ess-mode-hook
          (lambda ()
            (add-to-list 'mode-line-process '(:eval (nth ess--busy-count ess-busy-strings)))))
@@ -521,7 +524,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
    Use [process](https://github.com/haji-ali/procress) package.
    Refer to [#387](https://github.com/seagle0128/doom-modeline/issues/387) for more details.
 
-   ```elisp
+   ```emacs-lisp
    (require 'procress)
    (procress-load-default-svg-images)
    (add-hook 'LaTeX-mode-hook #'procress-auctex-mode)
