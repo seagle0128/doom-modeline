@@ -1,6 +1,6 @@
 ;;; doom-modeline-core.el --- The core libraries for doom-modeline -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2018-2020 Vincent Zhang
+;; Copyright (C) 2018-2023 Vincent Zhang
 
 ;; This file is not part of GNU Emacs.
 
@@ -32,14 +32,14 @@
 (require 'compat)
 (require 'shrink-path)
 
-(require 'all-the-icons nil t)
+(require 'nerd-icons nil t)
 
 
 ;;
 ;; Externals
 ;;
 
-(declare-function all-the-icons--function-name "ext:all-the-icons")
+(declare-function nerd-icons--function-name "ext:nerd-icons")
 
 
 ;;
@@ -97,7 +97,7 @@ Must be set before loading `doom-modeline'."
            (remove-hook 'emacs-lisp-mode-hook #'doom-modeline-add-imenu)))
   :group 'doom-modeline)
 
-(defcustom doom-modeline-height 25
+(defcustom doom-modeline-height 23
   "How tall the mode-line should be. It's only respected in GUI.
 If the actual char height is larger, it respects the actual char height."
   :type 'integer
@@ -197,7 +197,7 @@ It respects variable `doom-modeline-icon'."
 (defcustom doom-modeline-major-mode-color-icon t
   "Whether display the colorful icon for `major-mode'.
 
-It respects `all-the-icons-color-icons'."
+It respects `nerd-icons-color-icons'."
   :type 'boolean
   :group'doom-modeline)
 
@@ -604,7 +604,7 @@ inactive windows."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-buffer-minor-mode
-  '((t (:inherit (doom-modeline font-lock-doc-face) :slant normal)))
+  '((t (:inherit (doom-modeline font-lock-doc-face) :weight normal :slant normal)))
   "Face used for the minor-modes segment in the mode-line."
   :group 'doom-modeline-faces)
 
@@ -635,32 +635,32 @@ This applies to `anzu', `evil-substitute', `iedit' etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-input-method
-  '((t (:inherit (doom-modeline-emphasis bold))))
+  '((t (:inherit (doom-modeline-emphasis))))
   "Face for input method in the mode-line."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-input-method-alt
-  '((t (:inherit (doom-modeline font-lock-doc-face bold) :slant normal)))
+  '((t (:inherit (doom-modeline font-lock-doc-face) :slant normal)))
   "Alternative face for input method in the mode-line."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-debug
-  '((t (:inherit (doom-modeline font-lock-doc-face bold) :slant normal)))
+  '((t (:inherit (doom-modeline font-lock-doc-face) :slant normal)))
   "Face for debug-level messages in the mode-line. Used by vcs, checker, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-info
-  '((t (:inherit (doom-modeline success bold))))
+  '((t (:inherit (doom-modeline success))))
   "Face for info-level messages in the mode-line. Used by vcs, checker, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-warning
-  '((t (:inherit (doom-modeline warning bold))))
+  '((t (:inherit (doom-modeline warning))))
   "Face for warnings in the mode-line. Used by vcs, checker, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-urgent
-  '((t (:inherit (doom-modeline error bold))))
+  '((t (:inherit (doom-modeline error))))
   "Face for errors in the mode-line. Used by vcs, checker, etc."
   :group 'doom-modeline-faces)
 
@@ -671,7 +671,7 @@ Also see the face `doom-modeline-unread-number'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-unread-number
-  '((t (:inherit doom-modeline :slant italic :weight normal)))
+  '((t (:inherit doom-modeline :slant italic)))
   "Face for unread number in the mode-line. Used by GitHub, mu4e, etc."
   :group 'doom-modeline-faces)
 
@@ -692,17 +692,17 @@ Also see the face `doom-modeline-unread-number'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-evil-emacs-state
-  '((t (:inherit (doom-modeline font-lock-builtin-face bold))))
+  '((t (:inherit (doom-modeline font-lock-builtin-face))))
   "Face for the Emacs state tag in evil indicator."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-evil-insert-state
-  '((t (:inherit (doom-modeline font-lock-keyword-face bold))))
+  '((t (:inherit (doom-modeline font-lock-keyword-face))))
   "Face for the insert state tag in evil indicator."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-evil-motion-state
-  '((t (:inherit (doom-modeline font-lock-doc-face bold) :slant normal)))
+  '((t (:inherit (doom-modeline font-lock-doc-face) :slant normal)))
   "Face for the motion state tag in evil indicator."
   :group 'doom-modeline-faces)
 
@@ -712,7 +712,7 @@ Also see the face `doom-modeline-unread-number'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-evil-operator-state
-  '((t (:inherit doom-modeline-buffer-file)))
+  '((t (:inherit (doom-modeline mode-line))))
   "Face for the operator state tag in evil indicator."
   :group 'doom-modeline-faces)
 
@@ -742,7 +742,7 @@ Also see the face `doom-modeline-unread-number'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-fly-insert-state
-  '((t (:inherit (font-lock-keyword-face bold))))
+  '((t (:inherit (doom-modeline font-lock-keyword-face))))
   "Face for the insert state in xah-fly-keys indicator."
   :group 'doom-modeline-faces)
 
@@ -757,17 +757,17 @@ Also see the face `doom-modeline-unread-number'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-boon-insert-state
-  '((t (:inherit (doom-modeline font-lock-keyword-face bold))))
+  '((t (:inherit (doom-modeline font-lock-keyword-face))))
   "Face for the insert state tag in boon indicator."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-boon-special-state
-  '((t (:inherit (doom-modeline font-lock-builtin-face bold))))
+  '((t (:inherit (doom-modeline font-lock-builtin-face))))
   "Face for the special state tag in boon indicator."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-boon-off-state
-  '((t (:inherit doom-modeline-buffer-file)))
+  '((t (:inherit (doom-modeline mode-line))))
   "Face for the off state tag in boon indicator."
   :group 'doom-modeline-faces)
 
@@ -777,32 +777,32 @@ Also see the face `doom-modeline-unread-number'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-persp-buffer-not-in-persp
-  '((t (:inherit (doom-modeline font-lock-doc-face bold italic))))
+  '((t (:inherit (doom-modeline font-lock-doc-face italic))))
   "Face for the buffers which are not in the persp."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-repl-success
-  '((t (:inherit doom-modeline-info :weight normal)))
+  '((t (:inherit doom-modeline-info)))
   "Face for REPL success state."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-repl-warning
-  '((t (:inherit doom-modeline-warning :weight normal)))
+  '((t (:inherit doom-modeline-warning)))
   "Face for REPL warning state."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-lsp-success
-  '((t (:inherit doom-modeline-info :weight normal)))
+  '((t (:inherit doom-modeline-info)))
   "Face for LSP success state."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-lsp-warning
-  '((t (:inherit doom-modeline-warning :weight normal)))
+  '((t (:inherit doom-modeline-warning)))
   "Face for LSP warning state."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-lsp-error
-  '((t (:inherit doom-modeline-urgent :weight normal)))
+  '((t (:inherit doom-modeline-urgent)))
   "Face for LSP error state."
   :group 'doom-modeline-faces)
 
@@ -812,32 +812,32 @@ Also see the face `doom-modeline-unread-number'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-battery-charging
-  '((t (:inherit doom-modeline-info :weight normal)))
+  '((t (:inherit doom-modeline-info)))
   "Face for battery charging status."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-battery-full
-  '((t (:inherit doom-modeline-info :weight normal)))
+  '((t (:inherit doom-modeline-info)))
   "Face for battery full status."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-battery-normal
-  '((t (:inherit (doom-modeline mode-line) :weight normal)))
+  '((t (:inherit (doom-modeline mode-line))))
   "Face for battery normal status."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-battery-warning
-  '((t (:inherit doom-modeline-warning :weight normal)))
+  '((t (:inherit doom-modeline-warning)))
   "Face for battery warning status."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-battery-critical
-  '((t (:inherit doom-modeline-urgent :weight normal)))
+  '((t (:inherit doom-modeline-urgent)))
   "Face for battery critical status."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-battery-error
-  '((t (:inherit doom-modeline-urgent :weight normal)))
+  '((t (:inherit doom-modeline-urgent)))
   "Face for battery error status."
   :group 'doom-modeline-faces)
 
@@ -852,7 +852,7 @@ Also see the face `doom-modeline-unread-number'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-compilation
-  '((t (:inherit doom-modeline-warning :weight normal :slant italic :height 0.9)))
+  '((t (:inherit doom-modeline-warning :slant italic :height 0.9)))
   "Face for compilation progress."
   :group 'doom-modeline-faces)
 
@@ -936,9 +936,7 @@ used as an advice to window creation functions."
 
 (defun doom-modeline-icon-displayable-p ()
   "Return non-nil if icons are displayable."
-  (and doom-modeline-icon
-       (display-graphic-p)
-       (featurep 'all-the-icons)))
+  (and doom-modeline-icon (featurep 'nerd-icons)))
 
 (defun doom-modeline-mwheel-available-p ()
   "Whether mouse wheel is available."
@@ -1163,20 +1161,14 @@ If INACTIVE-FACE is nil, `mode-line-inactive' face will be used."
         (and (facep inactive-face) inactive-face)
         'mode-line-inactive)))
 
-;; Since 27, the calculation of char height was changed
-;; @see https://github.com/seagle0128/doom-modeline/issues/271
 (defun doom-modeline--font-height ()
   "Calculate the actual char height of the mode-line."
   (let ((height (face-attribute 'mode-line :height))
         (char-height (window-font-height nil 'mode-line)))
     (round
-     (* (pcase system-type
-          ('darwin (if doom-modeline-icon 1.7 1.0))
-          ('windows-nt (if doom-modeline-icon 1.3 1.0))
-          (_ (if (and doom-modeline-icon (< emacs-major-version 27)) 1.4 1.0)))
-        (cond ((integerp height) (/ height 10))
-              ((floatp height) (* height char-height))
-              (t char-height))))))
+     (* 1.0 (cond ((integerp height) (/ height 10))
+                  ((floatp height) (* height char-height))
+                  (t char-height))))))
 
 (defun doom-modeline--original-value (sym)
   "Return the original value for SYM, if any.
@@ -1215,10 +1207,10 @@ See https://github.com/seagle0128/doom-modeline/issues/301."
 (defun doom-modeline-icon (icon-set icon-name unicode text &rest args)
   "Display icon of ICON-NAME with ARGS in mode-line.
 
-ICON-SET includes `octicon', `faicon', `material', `alltheicons' and `fileicon',
-etc.
+ICON-SET includes `ipsicon', `octicon', `pomicon', `powerline', `faicon',
+`wicon', `sucicon', `devicon', `codicon', `flicon' and `mdicon', etc.
 UNICODE is the unicode char fallback. TEXT is the ASCII char fallback.
-ARGS is same as `all-the-icons-octicon' and others."
+ARGS is same as `nerd-icons-octicon' and others."
   (let ((face `(:inherit (doom-modeline
                           ,(or (plist-get args :face) 'mode-line)))))
     (cond
@@ -1226,7 +1218,7 @@ ARGS is same as `all-the-icons-octicon' and others."
      ((and (doom-modeline-icon-displayable-p)
            icon-name
            (not (string-empty-p icon-name)))
-      (when-let* ((func (all-the-icons--function-name icon-set))
+      (when-let* ((func (nerd-icons--function-name icon-set))
                   (icon (and (fboundp func)
                              (apply func icon-name args))))
         (doom-modeline-propertize-icon icon face)))
@@ -1258,8 +1250,7 @@ ARGS is same as `all-the-icons-octicon' and others."
   "Create the bar image.
 
 Use FACE for the bar, WIDTH and HEIGHT are the image size in pixels."
-  (when (and (display-graphic-p)
-             (image-type-available-p 'pbm)
+  (when (and (image-type-available-p 'pbm)
              (numberp width) (> width 0)
              (numberp height) (> height 0))
     (propertize
