@@ -930,6 +930,10 @@ used as an advice to window creation functions."
 (unless (>= emacs-major-version 29)
   (advice-add #'fit-window-to-buffer :before #'doom-modeline-redisplay))
 
+;; For `flychecker-color-mode-line'
+(with-eval-after-load 'flychecker-color-mode-line
+  (setq flycheck-color-mode-line-face-to-color 'doom-modeline))
+
 (defun doom-modeline-icon-displayable-p ()
   "Return non-nil if icons are displayable."
   (and doom-modeline-icon
