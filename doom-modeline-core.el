@@ -30,9 +30,8 @@
 (require 'subr-x)
 
 (require 'compat)
+(require 'nerd-icons)
 (require 'shrink-path)
-
-(require 'nerd-icons nil t)
 
 
 ;;

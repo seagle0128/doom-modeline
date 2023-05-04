@@ -151,20 +151,6 @@ fonts are installed. Run `M-x nerd-icons-install-fonts` to install the
 necessary fonts. Please refer to the
 [installation guide](https://github.com/rainstormstudio/nerd-icons.el#installing-fonts).
 
-Add this to `init.el` if you want to use icons,
-
-```emacs-lisp
-;; Install via `M-x package-install RET nerd-icons RET`
-(require nerd-icons)
-```
-
-or
-
-```emacs-lisp
-(use-package nerd-icons
-  :ensure t)
-```
-
 Strongly recommend to use
 [doom-themes](https://github.com/hlissner/emacs-doom-themes) at the same time.
 
