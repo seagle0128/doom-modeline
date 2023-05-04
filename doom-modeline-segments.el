@@ -277,7 +277,7 @@
   "Displays an ICON of buffer state with FACE.
 UNICODE and TEXT are the alternatives if it is not applicable.
 Uses `nerd-icons-mdicon' to fetch the icon."
-  (doom-modeline-icon 'mdicon icon unicode text :face face :height 1.1))
+  (doom-modeline-icon 'mdicon icon unicode text :face face))
 
 (defvar-local doom-modeline--buffer-file-state-icon nil)
 (defun doom-modeline-update-buffer-file-state-icon (&rest _)
@@ -742,7 +742,7 @@ Uses `nerd-icons-octicon' to fetch the icon."
 
 UNICODE and TEXT are fallbacks.
 Uses `nerd-icons-mdicon' to fetch the icon."
-  (doom-modeline-icon 'mdicon icon unicode text :face face :height 1.1))
+  (doom-modeline-icon 'mdicon icon unicode text :face face))
 
 (defun doom-modeline-checker-text (text &optional face)
   "Displays TEXT with FACE."
