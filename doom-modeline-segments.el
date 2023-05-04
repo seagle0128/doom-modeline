@@ -2962,7 +2962,7 @@ The cdr can also be a function that returns a name to use.")
                         (_ 'doom-modeline-urgent))
                     'doom-modeline-urgent))))
        (propertize
-        (doom-modeline-icon 'codicon "nf-cod-preview" "🗐" "@" :face face)
+        (doom-modeline-icon 'codicon "nf-cod-open_preview" "🗐" "@" :face face)
         'help-echo (format "Preview on %s
 mouse-1: Preview in browser
 mouse-2: Stop preview
