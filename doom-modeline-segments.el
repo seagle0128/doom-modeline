@@ -1981,7 +1981,7 @@ mouse-3: Describe current input method")
 
 (defun doom-modeline-lsp-icon (text face)
   "Display LSP icon (or TEXT in terminal) with FACE."
-  (doom-modeline-icon 'mdicon "nf-md-rocket_launch" "🚀" text :face face))
+  (doom-modeline-icon 'octicon "nf-oct-rocket" "🚀" text :face face))
 
 (defvar-local doom-modeline--lsp nil)
 (defun doom-modeline-update-lsp (&rest _)
