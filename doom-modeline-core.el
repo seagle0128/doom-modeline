@@ -932,6 +932,7 @@ used as an advice to window creation functions."
 
 ;; For `flychecker-color-mode-line'
 (with-eval-after-load 'flychecker-color-mode-line
+  (defvar flycheck-color-mode-line-face-to-color)
   (setq flycheck-color-mode-line-face-to-color 'doom-modeline))
 
 (defun doom-modeline-icon-displayable-p ()
