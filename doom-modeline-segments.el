@@ -650,7 +650,7 @@ mouse-1: Display minor modes menu"
 
 UNICODE and TEXT are fallbacks.
 Uses `nerd-icons-octicon' to fetch the icon."
-  (doom-modeline-icon 'octicon icon unicode text :face face))
+  (doom-modeline-icon 'octicon icon unicode text :face `(:inherit (,face bold))))
 
 (defvar-local doom-modeline--vcs-icon nil)
 (defun doom-modeline-update-vcs-icon (&rest _)
@@ -702,17 +702,17 @@ Uses `nerd-icons-octicon' to fetch the icon."
                           (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
                         ""))
                  (face (cond ((eq state 'needs-update)
-                                     'doom-modeline-warning)
-                                    ((memq state '(removed conflict unregistered))
-                                     'doom-modeline-urgent)
-                                    (t 'doom-modeline-info))))
+                              'doom-modeline-warning)
+                             ((memq state '(removed conflict unregistered))
+                              'doom-modeline-urgent)
+                             (t 'doom-modeline-info))))
             (propertize (if (length> str doom-modeline-vcs-max-length)
                             (concat
                              (substring str 0 (- doom-modeline-vcs-max-length 3))
                              doom-modeline-ellipsis)
                           str)
                         'mouse-face 'doom-modeline-highlight
-                        'face `(:inherit (bold ,face)))))))
+                        'face `(:inherit (,face bold)))))))
 (add-hook 'find-file-hook #'doom-modeline-update-vcs-text)
 (add-hook 'after-save-hook #'doom-modeline-update-vcs-text)
 (advice-add #'vc-refresh-state :after #'doom-modeline-update-vcs-text)
