@@ -1575,12 +1575,15 @@ Requires `eyebrowse-mode' to be enabled or `tab-bar-mode' tabs to be created."
                            'doom-modeline-persp-buffer-not-in-persp
                          'doom-modeline-persp-name))
                  (icon (doom-modeline-icon 'octicon "nf-oct-repo" "🖿" "#"
-                                           :face `(:inherit ,face :slant normal :height 1.1))))
+                                           :face `(:inherit ,face :slant normal))))
             (when (or doom-modeline-display-default-persp-name
                       (not (string-equal persp-nil-name name)))
-              (concat (doom-modeline-spc)
+              (concat " "
                       (propertize (concat (and doom-modeline-persp-icon
-                                               (concat icon (doom-modeline-vspc)))
+                                               (concat icon
+                                                       (propertize
+                                                        " "
+                                                        'display '((space :relative-width 0.5)))))
                                           (propertize name 'face face))
                                   'help-echo "mouse-1: Switch perspective
 mouse-2: Show help for minor mode"
@@ -1593,7 +1596,7 @@ mouse-2: Show help for minor mode"
                                                    (interactive)
                                                    (describe-function 'persp-mode)))
                                                map))
-                      (doom-modeline-spc)))))))
+                      " "))))))
 
 (add-hook 'buffer-list-update-hook #'doom-modeline-update-persp-name)
 (add-hook 'find-file-hook #'doom-modeline-update-persp-name)
