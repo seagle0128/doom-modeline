@@ -650,7 +650,7 @@ mouse-1: Display minor modes menu"
 
 UNICODE and TEXT are fallbacks.
 Uses `nerd-icons-octicon' to fetch the icon."
-  (doom-modeline-icon 'octicon icon unicode text :face `(:inherit (,face bold))))
+  (doom-modeline-icon 'octicon icon unicode text :face face))
 
 (defvar-local doom-modeline--vcs-icon nil)
 (defun doom-modeline-update-vcs-icon (&rest _)
@@ -3005,7 +3005,8 @@ mouse-3: Restart preview"
      (doom-modeline-spc)
      (when doom-modeline-time-icon
        (concat
-        (doom-modeline-icon 'octicon "nf-oct-clock" "⏰" "" :face 'doom-modeline-time)
+        (doom-modeline-icon 'octicon "nf-oct-clock" "⏰" ""
+                            :face '(:inherit doom-modeline-time :weight normal))
         (and (or doom-modeline-icon doom-modeline-unicode-fallback)
              (doom-modeline-spc))))
      (propertize display-time-string
