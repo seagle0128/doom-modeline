@@ -1210,7 +1210,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
      'face (doom-modeline-face 'doom-modeline-panel))))
 
 (defsubst doom-modeline--evil-substitute ()
-  "Show number of matches for evil-ex substitutions and highlights in real time."
+  "Show number of matches for evil-ex substitutions and highlightings in real time."
   (when (and (bound-and-true-p evil-local-mode)
              (or (assq 'evil-ex-substitute evil-ex-active-highlights-alist)
                  (assq 'evil-ex-global-match evil-ex-active-highlights-alist)
@@ -1302,7 +1302,8 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
          'face (doom-modeline-face 'doom-modeline-panel))))))
 
 (defun doom-modeline--override-phi-search (orig-fun &rest args)
-  "Override the mode-line of `phi-search' and `phi-replace'."
+  "Override the mode-line of `phi-search' and `phi-replace'.
+Apply ORIG-FUN with ARGS."
   (if (bound-and-true-p doom-modeline-mode)
       (apply orig-fun mode-line-format (cdr args))
     (apply orig-fun args)))
@@ -3013,7 +3014,7 @@ mouse-3: Restart preview"
                  'face (doom-modeline-face 'doom-modeline-time)))))
 
 (defun doom-modeline-override-time ()
-  "Override default display-time mode-line."
+  "Override default `display-time' mode-line."
   (or global-mode-string (setq global-mode-string '("")))
   (if (and doom-modeline-time
            (bound-and-true-p doom-modeline-mode))
