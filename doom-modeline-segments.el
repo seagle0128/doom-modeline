@@ -288,13 +288,13 @@ Uses `nerd-icons-mdicon' to fetch the icon."
             (concat
              (cond (buffer-read-only
                     (doom-modeline-buffer-file-state-icon
-                     "nf-md-lock" "🔒" "%1*"
+                     "nf-md-lock_outline" "🔒" "%1*"
                      'doom-modeline-warning))
                    ((and buffer-file-name (buffer-modified-p)
                          doom-modeline-buffer-modification-icon)
                     (doom-modeline-buffer-file-state-icon
-                     "nf-md-content_save" "💾" "%1*"
-                     'doom-modeline-buffer-modified))
+                     "nf-md-content_save_edit_outline" "💾" "%1*"
+                     'doom-modeline-warning))
                    ((and buffer-file-name
                          ;; Avoid freezing while connection is lost
                          (not (file-remote-p buffer-file-name))
@@ -1095,8 +1095,8 @@ Displayed when in a major mode in `doom-modeline-continuous-word-count-modes'.
 Respects `doom-modeline-enable-word-count'."
   (when (and doom-modeline-enable-word-count
              (member major-mode doom-modeline-continuous-word-count-modes))
-  (propertize (format " %dW" (count-words (point-min) (point-max)))
-              'face (doom-modeline-face))))
+    (propertize (format " %dW" (count-words (point-min) (point-max)))
+                'face (doom-modeline-face))))
 
 
 ;;
@@ -1117,9 +1117,9 @@ block selection."
                                   (eq evil-state 'visual)))
              (doom-modeline--active))
     (cl-destructuring-bind (beg . end)
-        (if (and (bound-and-true-p evil-local-mode) (eq evil-state 'visual))
-            (cons evil-visual-beginning evil-visual-end)
-          (cons (region-beginning) (region-end)))
+      (if (and (bound-and-true-p evil-local-mode) (eq evil-state 'visual))
+          (cons evil-visual-beginning evil-visual-end)
+        (cons (region-beginning) (region-end)))
       (propertize
        (let ((lines (count-lines beg (min end (point-max)))))
          (concat (doom-modeline-spc)
@@ -1353,8 +1353,8 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
   ;; TODO: Include other information
   (cond ((eq major-mode 'image-mode)
          (cl-destructuring-bind (width . height)
-             (when (fboundp 'image-size)
-               (image-size (image-get-display-property) :pixels))
+           (when (fboundp 'image-size)
+             (image-size (image-get-display-property) :pixels))
            (format "  %dx%d  " width height)))))
 
 
