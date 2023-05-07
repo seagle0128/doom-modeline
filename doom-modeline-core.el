@@ -35,13 +35,6 @@
 
 
 ;;
-;; Externals
-;;
-
-(declare-function nerd-icons--function-name "ext:nerd-icons")
-
-
-;;
 ;; Optimization
 ;;
 
@@ -551,8 +544,7 @@ If nil, display only if the mode line is active."
   :group 'doom-modeline)
 
 (defcustom doom-modeline-always-visible-segments nil
-  "A list of segments that should be visible even in
-inactive windows."
+  "A list of segments that should be visible even in inactive windows."
   :type '(repeat symbol)
   :group 'doom-modeline)
 
@@ -904,8 +896,9 @@ Also see the face `doom-modeline-unread-number'."
 ;; FIXME #183: Force to calculate mode-line height
 ;; @see https://github.com/seagle0128/doom-modeline/issues/183
 ;; @see https://github.com/seagle0128/doom-modeline/issues/483
-(defun doom-modeline-redisplay (&rest _)
-  "Call `redisplay' to trigger mode-line height calculations.
+(unless (>= emacs-major-version 29)
+  (defun doom-modeline-redisplay (&rest _)
+    "Call `redisplay' to trigger mode-line height calculations.
 
 Certain functions, including e.g. `fit-window-to-buffer', base
 their size calculations on values which are incorrect if the
@@ -922,11 +915,10 @@ but it will only trigger a redisplay when there is a non nil
 `mode-line-format' and the height of the mode-line is different
 from that of the `default' face. This function is intended to be
 used as an advice to window creation functions."
-  (when (and (bound-and-true-p doom-modeline-mode)
-             mode-line-format
-             (/= (frame-char-height) (window-mode-line-height)))
-    (redisplay t)))
-(unless (>= emacs-major-version 29)
+    (when (and (bound-and-true-p doom-modeline-mode)
+               mode-line-format
+               (/= (frame-char-height) (window-mode-line-height)))
+      (redisplay t)))
   (advice-add #'fit-window-to-buffer :before #'doom-modeline-redisplay))
 
 ;; For `flychecker-color-mode-line'
@@ -961,11 +953,11 @@ used as an advice to window creation functions."
 (defvar-local doom-modeline--limited-width-p nil)
 
 (defun doom-modeline--segment-visible (name)
-  "Whether a segment should be displayed"
-  (and
-   (or (doom-modeline--active)
-       (member name doom-modeline-always-visible-segments))
-   (not doom-modeline--limited-width-p)))
+"Whether the segment NAME should be displayed."
+(and
+ (or (doom-modeline--active)
+     (member name doom-modeline-always-visible-segments))
+ (not doom-modeline--limited-width-p)))
 
 (defun doom-modeline-set-selected-window (&rest _)
   "Set `doom-modeline-current-window' appropriately."
@@ -1233,6 +1225,10 @@ ARGS is same as `nerd-icons-octicon' and others."
       (propertize text 'face face))
      ;; Fallback
      (t ""))))
+
+(defun doom-modeline-icon-for-buffer ()
+  "Get the formatted icon for the current buffer."
+  (nerd-icons-icon-for-buffer))
 
 (defun doom-modeline-display-icon (icon)
   "Display ICON in mode-line."

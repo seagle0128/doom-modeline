@@ -204,7 +204,6 @@
 (declare-function mlscroll-mode-line "ext:mlscroll")
 (declare-function mu4e-alert-default-mode-line-formatter "ext:mu4e-alert")
 (declare-function mu4e-alert-enable-mode-line-display "ext:mu4e-alert")
-(declare-function nerd-icons-icon-for-buffer "ext:nerd-icons")
 (declare-function nyan-create "ext:nyan-mode")
 (declare-function org-edit-src-save "ext:org-src")
 (declare-function parrot-create "ext:parrot")
@@ -254,7 +253,7 @@
   (setq doom-modeline--buffer-file-icon
         (when (and doom-modeline-major-mode-icon
                    (doom-modeline-icon-displayable-p))
-          (let ((icon (nerd-icons-icon-for-buffer)))
+          (let ((icon (doom-modeline-icon-for-buffer)))
             (propertize (if (or (null icon) (symbolp icon))
                             (doom-modeline-icon 'faicon "nf-fa-file_o" nil nil
                                                 :face 'nerd-icons-dsilver)
@@ -868,8 +867,8 @@ mouse-2: Show help for minor mode")
                               (format "error: %d, warning: %d, info: %d\n" .error .warning .info)))
                           "mouse-1: Show all errors
 mouse-3: Next error"
-                          (if (doom-modeline-mwheel-available-p)
-                              "\nwheel-up/wheel-down: Previous/next error")))
+                          (when (doom-modeline-mwheel-available-p)
+                            "\nwheel-up/wheel-down: Previous/next error")))
                         ('running "Checking...")
                         ('no-checker "No Checker")
                         ('errored "Error")
