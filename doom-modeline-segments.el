@@ -2217,7 +2217,7 @@ Example:
      (doom-modeline-spc)
      (propertize
       (concat
-       (doom-modeline-icon 'faicon "nf-fa-github" "🔔" "&"
+       (doom-modeline-icon 'octicon "nf-oct-mark_github" "🔔" "&"
                            :face 'doom-modeline-notification)
        (doom-modeline-vspc)
        ;; GitHub API is paged, and the limit is 50
