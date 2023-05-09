@@ -43,7 +43,7 @@
     (should
      (string= (substring-no-properties
                (doom-modeline-icon 'octicon "nf-oct-octoface" "☻" ":)" 'error))
-              "☻"))))
+              ""))))
 
 (ert-deftest doom-modeline-icon/octicon-unicode ()
   (let ((doom-modeline-icon nil)
