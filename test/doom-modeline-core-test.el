@@ -42,7 +42,7 @@
     ;; In TUI, fallback to unicode.
     (should
      (string= (substring-no-properties
-               (doom-modeline-icon 'octicon "octoface" "☻" ":)" 'error))
+               (doom-modeline-icon 'octicon "nf-oct-octoface" "☻" ":)" 'error))
               "☻"))))
 
 (ert-deftest doom-modeline-icon/octicon-unicode ()
@@ -50,7 +50,7 @@
         (doom-modeline-unicode-fallback t))
     (should
      (string= (substring-no-properties
-               (doom-modeline-icon 'octicon "octoface" "☻" ":)" 'error))
+               (doom-modeline-icon 'octicon "nf-oct-octoface" "☻" ":)" 'error))
               "☻"))))
 
 (ert-deftest doom-modeline-icon/octicon-text ()
@@ -58,7 +58,7 @@
         (doom-modeline-unicode-fallback nil))
     (should
      (string= (substring-no-properties
-               (doom-modeline-icon 'octicon "octoface" "☻" ":)" 'error))
+               (doom-modeline-icon 'octicon "nf-oct-octoface" "☻" ":)" 'error))
               ":)"))))
 
 (ert-deftest doom-modeline-project-root/auto ()
