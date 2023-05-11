@@ -1768,21 +1768,21 @@ TEXT is alternative if icon is not available."
              (not (bound-and-true-p evil-local-mode)))
     (doom-modeline--modal-icon
      "<O>" 'doom-modeline-overwrite "Overwrite mode"
-     "border_color" "🧷")))
+     "nf-md-note_edit" "🧷")))
 
 (defsubst doom-modeline--god ()
   "The current god state which is enabled by the command `god-mode'."
   (when (bound-and-true-p god-local-mode)
     (doom-modeline--modal-icon
      "<G>" 'doom-modeline-god "God mode"
-     "account_circle" "🙇")))
+     "nf-md-account_circle" "🙇")))
 
 (defsubst doom-modeline--ryo ()
   "The current ryo-modal state which is enabled by the command `ryo-modal-mode'."
   (when (bound-and-true-p ryo-modal-mode)
     (doom-modeline--modal-icon
      "<R>" 'doom-modeline-ryo "Ryo modal"
-     "add_circle" "✪")))
+     "nf-md-star_circle" "✪")))
 
 (defsubst doom-modeline--xah-fly-keys ()
   "The current `xah-fly-keys' state."
@@ -1790,10 +1790,10 @@ TEXT is alternative if icon is not available."
     (if xah-fly-insert-state-p
         (doom-modeline--modal-icon
          "<I>" 'doom-modeline-fly-insert-state "Xah-fly insert mode"
-         "flight" "🛧")
+         "nf-md-airplane_edit" "🛧")
       (doom-modeline--modal-icon
        "<C>" 'doom-modeline-fly-normal-state "Xah-fly command mode"
-       "flight" "🛧"))))
+       "nf-md-airplane_edit" "🛧"))))
 
 (defsubst doom-modeline--boon ()
   "The current Boon state. Requires `boon-mode' to be enabled."
@@ -1807,7 +1807,7 @@ TEXT is alternative if icon is not available."
       (boon-off-state 'doom-modeline-boon-off-state)
       (t 'doom-modeline-boon-off-state))
      (boon-modeline-string)
-     "local_cafe" "🍵")))
+     "nf-md-coffee" "🍵")))
 
 (defsubst doom-modeline--meow ()
   "The current Meow state. Requires `meow-mode' to be enabled."
