@@ -287,12 +287,12 @@ Uses `nerd-icons-mdicon' to fetch the icon."
             (concat
              (cond (buffer-read-only
                     (doom-modeline-buffer-file-state-icon
-                     "nf-md-lock_outline" "🔒" "%1*"
+                     "nf-md-lock" "🔒" "%1*"
                      'doom-modeline-warning))
                    ((and buffer-file-name (buffer-modified-p)
                          doom-modeline-buffer-modification-icon)
                     (doom-modeline-buffer-file-state-icon
-                     "nf-md-content_save_edit_outline" "💾" "%1*"
+                     "nf-md-content_save_edit" "💾" "%1*"
                      'doom-modeline-warning))
                    ((and buffer-file-name
                          ;; Avoid freezing while connection is lost
