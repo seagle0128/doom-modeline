@@ -649,7 +649,7 @@ mouse-1: Display minor modes menu"
 
 UNICODE and TEXT are fallbacks.
 Uses `nerd-icons-octicon' to fetch the icon."
-  (doom-modeline-icon 'octicon icon unicode text :face face))
+  (doom-modeline-icon 'devicon icon unicode text :face face))
 
 (defvar-local doom-modeline--vcs-icon nil)
 (defun doom-modeline-update-vcs-icon (&rest _)
@@ -659,15 +659,15 @@ Uses `nerd-icons-octicon' to fetch the icon."
           (let* ((backend (vc-backend buffer-file-name))
                  (state   (vc-state buffer-file-name backend)))
             (cond ((memq state '(edited added))
-                   (doom-modeline-vcs-icon "nf-oct-git_compare" "🔃" "*" 'doom-modeline-info))
+                   (doom-modeline-vcs-icon "nf-dev-git_compare" "🔃" "*" 'doom-modeline-info))
                   ((eq state 'needs-merge)
-                   (doom-modeline-vcs-icon "nf-oct-git_merge" "🔀" "?" 'doom-modeline-info))
+                   (doom-modeline-vcs-icon "nf-dev-git_merge" "🔀" "?" 'doom-modeline-info))
                   ((eq state 'needs-update)
-                   (doom-modeline-vcs-icon "nf-oct-git_pull_request" "⬇" "!" 'doom-modeline-warning))
+                   (doom-modeline-vcs-icon "nf-dev-git_pull_request" "⬇" "!" 'doom-modeline-warning))
                   ((memq state '(removed conflict unregistered))
-                   (doom-modeline-vcs-icon "nf-oct-alert" "⚠" "!" 'doom-modeline-urgent))
+                   (doom-modeline-icon 'octicon "nf-oct-alert" "⚠" "!" :face 'doom-modeline-urgent))
                   (t
-                   (doom-modeline-vcs-icon "nf-oct-git_branch" "" "@" 'doom-modeline-info)))))))
+                   (doom-modeline-vcs-icon "nf-dev-git_branch" "" "@" 'doom-modeline-info)))))))
 (add-hook 'find-file-hook #'doom-modeline-update-vcs-icon)
 (add-hook 'after-save-hook #'doom-modeline-update-vcs-icon)
 (advice-add #'vc-refresh-state :after #'doom-modeline-update-vcs-icon)
@@ -1209,7 +1209,7 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
      'face (doom-modeline-face 'doom-modeline-panel))))
 
 (defsubst doom-modeline--evil-substitute ()
-  "Show number of matches for evil-ex substitutions and highlightings in real time."
+  "Show number of matches for `evil-ex' substitutions and highlightings in real time."
   (when (and (bound-and-true-p evil-local-mode)
              (or (assq 'evil-ex-substitute evil-ex-active-highlights-alist)
                  (assq 'evil-ex-global-match evil-ex-active-highlights-alist)
