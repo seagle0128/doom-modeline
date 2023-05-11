@@ -1760,22 +1760,40 @@ TEXT is alternative if icon is not available."
       ((evil-operator-state-p) 'doom-modeline-evil-operator-state)
       ((evil-replace-state-p) 'doom-modeline-evil-replace-state)
       (t 'doom-modeline-evil-normal-state))
-     (evil-state-property evil-state :name t))))
+     (evil-state-property evil-state :name t)
+     (cond
+      ((evil-normal-state-p) "nf-md-alpha_n_circle")
+      ((evil-emacs-state-p) "nf-md-alpha_e_circle")
+      ((evil-insert-state-p) "nf-md-alpha_i_circle")
+      ((evil-motion-state-p) "nf-md-alpha_m_circle")
+      ((evil-visual-state-p) "nf-md-alpha_v_circle")
+      ((evil-operator-state-p) "nf-md-aplha_o_circle")
+      ((evil-replace-state-p) "nf-md-alpha_r_circle")
+      (t "nf-md-alpha_n_circle"))
+     (cond
+      ((evil-normal-state-p) "🅝")
+      ((evil-emacs-state-p) "🅔")
+      ((evil-insert-state-p) "🅘")
+      ((evil-motion-state-p) "🅜")
+      ((evil-visual-state-p) "🅥")
+      ((evil-operator-state-p) "🅞")
+      ((evil-replace-state-p) "🅡")
+      (t "🅝")))))
 
 (defsubst doom-modeline--overwrite ()
   "The current overwrite state which is enabled by command `overwrite-mode'."
   (when (and (bound-and-true-p overwrite-mode)
              (not (bound-and-true-p evil-local-mode)))
     (doom-modeline--modal-icon
-     "<O>" 'doom-modeline-overwrite "Overwrite mode"
-     "nf-md-note_edit" "🧷")))
+     "<W>" 'doom-modeline-overwrite "Overwrite mode"
+     "nf-md-note_edit" "🅦")))
 
 (defsubst doom-modeline--god ()
   "The current god state which is enabled by the command `god-mode'."
   (when (bound-and-true-p god-local-mode)
     (doom-modeline--modal-icon
      "<G>" 'doom-modeline-god "God mode"
-     "nf-md-account_circle" "🙇")))
+     "nf-md-account_circle" "🅖")))
 
 (defsubst doom-modeline--ryo ()
   "The current ryo-modal state which is enabled by the command `ryo-modal-mode'."
@@ -1793,7 +1811,7 @@ TEXT is alternative if icon is not available."
          "nf-md-airplane_edit" "🛧")
       (doom-modeline--modal-icon
        "<C>" 'doom-modeline-fly-normal-state "Xah-fly command mode"
-       "nf-md-airplane_edit" "🛧"))))
+       "nf-md-airplane_cog" "🛧"))))
 
 (defsubst doom-modeline--boon ()
   "The current Boon state. Requires `boon-mode' to be enabled."
