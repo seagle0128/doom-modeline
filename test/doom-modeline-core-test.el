@@ -40,10 +40,10 @@
   (let ((doom-modeline-icon t)
         (doom-modeline-unicode-fallback t))
     ;; In TUI, fallback to unicode.
-    (should-not
+    (should
      (string= (substring-no-properties
                (doom-modeline-icon 'octicon "nf-oct-octoface" "☻" ":)" :face 'error))
-              "☻"))))
+              (nerd-icons-octicon "nf-oct-octoface")))))
 
 (ert-deftest doom-modeline-icon/octicon-unicode ()
   (let ((doom-modeline-icon nil)
