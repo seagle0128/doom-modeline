@@ -1767,7 +1767,7 @@ TEXT is alternative if icon is not available."
       ((evil-insert-state-p) "nf-md-alpha_i_circle")
       ((evil-motion-state-p) "nf-md-alpha_m_circle")
       ((evil-visual-state-p) "nf-md-alpha_v_circle")
-      ((evil-operator-state-p) "nf-md-aplha_o_circle")
+      ((evil-operator-state-p) "nf-md-alpha_o_circle")
       ((evil-replace-state-p) "nf-md-alpha_r_circle")
       (t "nf-md-alpha_n_circle"))
      (cond
