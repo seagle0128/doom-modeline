@@ -58,8 +58,10 @@ body:
         - 27
         - 28
         - 28 (gccemacs)
-        - 29 (dev)
-        - 29 (gccemacs-dev)
+        - 29
+        - 29 (gccemacs)
+        - 30
+        - 30 (gccemacs)
     validations:
       required: true
   - type: input
