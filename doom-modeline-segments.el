@@ -57,6 +57,7 @@
 (defvar boon-insert-state)
 (defvar boon-off-state)
 (defvar boon-special-state)
+(defvar display-time-string)
 (defvar edebug-execution-mode)
 (defvar eglot--managed-mode)
 (defvar erc-modified-channels-alist)
@@ -84,8 +85,10 @@
 (defvar minions-mode-line-minor-modes-map)
 (defvar mlscroll-minimum-current-width)
 (defvar mlscroll-right-align)
+(defvar mu4e--modeline-item)
 (defvar mu4e-alert-mode-line)
 (defvar mu4e-alert-modeline-formatter)
+(defvar mu4e-modeline-mode)
 (defvar nyan-minimum-window-width)
 (defvar objed--obj-state)
 (defvar objed--object)
@@ -104,7 +107,6 @@
 (defvar tracking-buffers)
 (defvar winum-auto-setup-mode-line)
 (defvar xah-fly-insert-state-p)
-(defvar display-time-string)
 
 (declare-function anzu--reset-status "ext:anzu")
 (declare-function anzu--where-is-here "ext:anzu")
@@ -202,6 +204,7 @@
 (declare-function mc/num-cursors "ext:multiple-cursors-core")
 (declare-function minions--prominent-modes "ext:minions")
 (declare-function mlscroll-mode-line "ext:mlscroll")
+(declare-function mu4e--modeline-string "ext:mu4e-modeline")
 (declare-function mu4e-alert-default-mode-line-formatter "ext:mu4e-alert")
 (declare-function mu4e-alert-enable-mode-line-display "ext:mu4e-alert")
 (declare-function nyan-create "ext:nyan-mode")
@@ -2402,45 +2405,55 @@ mouse-1: Toggle Debug on Quit"
 
 
 ;;
-;; `mu4e-alert' notifications
+;; `mu4e' notifications
 ;;
 
 (doom-modeline-def-segment mu4e
   "Show notifications of any unread emails in `mu4e'."
   (when (and doom-modeline-mu4e
-             (doom-modeline--segment-visible 'mu4e)
-             (bound-and-true-p mu4e-alert-mode-line)
-             (numberp mu4e-alert-mode-line)
-             ;; don't display if the unread mails count is zero
-             (> mu4e-alert-mode-line 0))
-    (concat
-     (doom-modeline-spc)
-     (propertize
-      (concat
-       (doom-modeline-icon 'mdicon "nf-md-email" "📧" "#"
-                           :face 'doom-modeline-notification)
-       (doom-modeline-vspc)
-       (propertize
-        (if (> mu4e-alert-mode-line doom-modeline-number-limit)
-            (format "%d+" doom-modeline-number-limit)
-          (number-to-string mu4e-alert-mode-line))
-        'face '(:inherit
-                (doom-modeline-unread-number doom-modeline-notification))))
-      'mouse-face 'doom-modeline-highlight
-      'keymap '(mode-line keymap
-                          (mouse-1 . mu4e-alert-view-unread-mails)
-                          (mouse-2 . mu4e-alert-view-unread-mails)
-                          (mouse-3 . mu4e-alert-view-unread-mails))
-      'help-echo (concat (if (= mu4e-alert-mode-line 1)
-                             "You have an unread email"
-                           (format "You have %s unread emails" mu4e-alert-mode-line))
-                         "\nClick here to view "
-                         (if (= mu4e-alert-mode-line 1) "it" "them")))
-     (doom-modeline-spc))))
+             (doom-modeline--segment-visible 'mu4e))
+    (let ((icon (doom-modeline-icon 'mdicon "nf-md-email" "📧" "#"
+                                    :face 'doom-modeline-notification)))
+      (cond ((and (bound-and-true-p mu4e-alert-mode-line)
+                  (numberp mu4e-alert-mode-line)
+                  ;; don't display if the unread mails count is zero
+                  (> mu4e-alert-mode-line 0))
+             (concat
+              (doom-modeline-spc)
+              (propertize
+               (concat
+                icon
+                (doom-modeline-vspc)
+                (propertize
+                 (if (> mu4e-alert-mode-line doom-modeline-number-limit)
+                     (format "%d+" doom-modeline-number-limit)
+                   (number-to-string mu4e-alert-mode-line))
+                 'face '(:inherit
+                         (doom-modeline-unread-number doom-modeline-notification))))
+               'mouse-face 'doom-modeline-highlight
+               'keymap '(mode-line keymap
+                                   (mouse-1 . mu4e-alert-view-unread-mails)
+                                   (mouse-2 . mu4e-alert-view-unread-mails)
+                                   (mouse-3 . mu4e-alert-view-unread-mails))
+               'help-echo (concat (if (= mu4e-alert-mode-line 1)
+                                      "You have an unread email"
+                                    (format "You have %s unread emails" mu4e-alert-mode-line))
+                                  "\nClick here to view "
+                                  (if (= mu4e-alert-mode-line 1) "it" "them")))
+              (doom-modeline-spc)))
+            ((bound-and-true-p mu4e-modeline-mode)
+             (concat
+              (doom-modeline-spc)
+              icon
+              (doom-modeline-vspc)
+              (propertize (mu4e--modeline-string)
+                          'face 'doom-modeline-notification)
+              (doom-modeline-spc)))))))
 
 (defun doom-modeline-override-mu4e-alert (&rest _)
   "Delete `mu4e-alert-mode-line' from global modeline string."
-  (when (featurep 'mu4e-alert)
+  (when (and (featurep 'mu4e-alert)
+             (bound-and-true-p mu4e-alert-mode-line))
     (if (and doom-modeline-mu4e
              (bound-and-true-p doom-modeline-mode))
         ;; Delete original modeline
@@ -2454,12 +2467,26 @@ mouse-1: Toggle Debug on Quit"
             :after #'doom-modeline-override-mu4e-alert)
 (add-hook 'doom-modeline-mode-hook #'doom-modeline-override-mu4e-alert)
 
+(defun doom-modeline-override-mu4e-modeline (&rest _)
+  "Delete `mu4e-alert-mode-line' from global modeline string."
+  (when (bound-and-true-p mu4e-modeline-mode)
+    (if (and doom-modeline-mu4e
+             (bound-and-true-p doom-modeline-mode))
+        ;; Delete original modeline
+        (setq global-mode-string
+              (delete mu4e--modeline-item global-mode-string))
+      ;; Recover default settings
+      (add-to-list 'global-mode-string mu4e--modeline-item))))
+(add-hook mu4e-modeline-mode-hook #'doom-modeline-override-mu4e-modeline)
+(add-hook 'doom-modeline-mode-hook #'doom-modeline-override-mu4e-modeline)
+
 (doom-modeline-add-variable-watcher
  'doom-modeline-mu4e
  (lambda (_sym val op _where)
    (when (eq op 'set)
      (setq doom-modeline-mu4e val)
-     (doom-modeline-override-mu4e-alert))))
+     (doom-modeline-override-mu4e-alert)
+     (doom-modeline-override-mu4e-modeline))))
 
 
 ;;
