@@ -2477,7 +2477,8 @@ mouse-1: Toggle Debug on Quit"
               (delete mu4e--modeline-item global-mode-string))
       ;; Recover default settings
       (add-to-list 'global-mode-string mu4e--modeline-item))))
-(add-hook 'mu4e-modeline-mode-hook #'doom-modeline-override-mu4e-modeline)
+(when (boundp 'mu4e-modeline-mode-hook)
+  (add-hook 'mu4e-modeline-mode-hook #'doom-modeline-override-mu4e-modeline))
 (add-hook 'doom-modeline-mode-hook #'doom-modeline-override-mu4e-modeline)
 
 (doom-modeline-add-variable-watcher
