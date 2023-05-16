@@ -2808,11 +2808,11 @@ Uses `nerd-icons-mdicon' to fetch the icon."
                              (doom-modeline-battery-icon (if charging?
                                                              "nf-md-battery_charging_10"
                                                            "nf-md-battery_10")
-                                                         "🔋" "-" face))
+                                                         "🪫" "-" face))
                             (t (doom-modeline-battery-icon (if charging?
                                                                "nf-md-battery_charging_outline"
                                                              "nf-md-battery_outline")
-                                                           "🔋" "!" face)))
+                                                           "🪫" "!" face)))
                          (doom-modeline-battery-icon "nf-md-battery_alert" "⚠" "N/A" face)))
                  (text (if valid-percentage? (format "%d%s" percentage "%%") ""))
                  (help-echo (if (and battery-echo-area-format data valid-percentage?)
