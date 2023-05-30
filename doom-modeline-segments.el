@@ -2298,7 +2298,7 @@ mouse-3: Fetch notifications"
 
 (defun doom-modeline-debug-icon (face)
   "Display debug icon with FACE and ARGS."
-  (doom-modeline-icon 'codicon "nf-cod-debug_alt" "🐛" "!" :face face))
+  (doom-modeline-icon 'codicon "nf-cod-debug" "🐛" "!" :face face))
 
 (defun doom-modeline--debug-dap ()
   "The current `dap-mode' state."
