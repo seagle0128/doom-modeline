@@ -369,7 +369,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
    for details.
 
    If you prefer [all-the-icons](https://github.com/domtronn/all-the-icons.el), please
-   use release `3.4.0`. It doesn't been supported since `4.0.0`.
+   use release `3.4.0`. It hasn't been supported since `4.0.0`.
 
 1. I am experiencing the laggy issue, how to resolve it?
 
