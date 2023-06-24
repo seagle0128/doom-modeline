@@ -2198,11 +2198,14 @@ Example:
           (with-timeout (10)
             (ignore-errors
               (when-let* ((username (ghub--username ghub-default-host))
-                          (token (ghub--token ghub-default-host username 'ghub t)))
-                (ghub-get "/notifications" nil
-                          :query '((notifications . "true"))
+                          (token (or (ghub--token ghub-default-host username 'forge t)
+                                     (ghub--token ghub-default-host username 'ghub t))))
+                (ghub-get "/notifications"
+                          '((all . t))
+                          :host ghub-default-host
                           :username username
                           :auth token
+                          :unpaginate t
                           :noerror t))))))
      (lambda (result)
        (message "")                     ; suppress message
@@ -2232,20 +2235,19 @@ Example:
   "The GitHub notifications."
   (when (and doom-modeline-github
              (doom-modeline--segment-visible 'github)
-             (numberp doom-modeline--github-notification-number)
-             (> doom-modeline--github-notification-number 0))
+             (numberp doom-modeline--github-notification-number))
     (concat
      (doom-modeline-spc)
      (propertize
       (concat
        (doom-modeline-icon 'octicon "nf-oct-mark_github" "🔔" "&"
                            :face 'doom-modeline-notification)
-       (doom-modeline-vspc)
-       ;; GitHub API is paged, and the limit is 50
+       (and (> doom-modeline--github-notification-number 0) (doom-modeline-vspc))
        (propertize
-        (if (>= doom-modeline--github-notification-number 50)
-            "50+"
-          (number-to-string doom-modeline--github-notification-number))
+        (cond
+         ((<= doom-modeline--github-notification-number 0) "")
+         ((> doom-modeline--github-notification-number 99) "99+")
+         (t (number-to-string doom-modeline--github-notification-number)))
         'face '(:inherit
                 (doom-modeline-unread-number doom-modeline-notification))))
       'help-echo "Github Notifications
