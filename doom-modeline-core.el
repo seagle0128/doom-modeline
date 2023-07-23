@@ -1085,7 +1085,7 @@ Example:
                'display `(space
                           :align-to
                           (- (+ right right-fringe right-margin scroll-bar)
-                             ,(let ((rhs-str (format-mode-line (cons "" rhs-forms))))
+                             ,(let ((rhs-str (format-mode-line (cons "" rhs-forms) 'mode-line)))
                                 (if (and (>= emacs-major-version 29)
                                          (fboundp 'string-pixel-width))
                                     (/ (string-pixel-width rhs-str)
