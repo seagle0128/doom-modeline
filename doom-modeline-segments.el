@@ -922,8 +922,8 @@ mouse-3: Next error"
           (when-let
               ((icon
                 (cond
-                 (some-waiting (doom-modeline-checker-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-urgent))
-                 ((null known) (doom-modeline-checker-icon "nf-md-alert_box_outline" "⚠" "?" 'doom-modeline-debug))
+                 (some-waiting (doom-modeline-checker-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug))
+                 ((null known) (doom-modeline-checker-icon "nf-md-alert_box_outline" "⚠" "!" 'doom-modeline-urgent))
                  (all-disabled (doom-modeline-checker-icon "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning))
                  (t (let ((.error 0)
                           (.warning 0)
