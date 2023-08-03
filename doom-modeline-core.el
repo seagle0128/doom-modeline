@@ -172,6 +172,14 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
                  (const buffer-name))
   :group'doom-modeline)
 
+(defcustom doom-modeline-buffer-file-true-name nil
+  "Use `file-truename' on buffer file name.
+
+Project detection(projectile.el) may uses `file-truename' on directory path.
+Turn on this to provide right relative path for buffer file name."
+  :type 'boolean
+  :group'doom-modeline)
+
 (defcustom doom-modeline-icon t
   "Whether display the icons in the mode-line.
 
@@ -1412,7 +1420,7 @@ If INCLUDE-PROJECT is non-nil, the project path will be included."
                             'face 'doom-modeline-buffer-file))))))
 
 (defun doom-modeline--buffer-file-name (file-path
-                                        _true-file-path
+                                        true-file-path
                                         &optional
                                         truncate-project-root-parent
                                         truncate-project-relative-path
@@ -1455,7 +1463,10 @@ Example:
      ;; relative path
      (propertize
       (when-let (relative-path (file-relative-name
-                                (or (file-name-directory file-path) "./")
+                                (or (file-name-directory
+                                     (if doom-modeline-buffer-file-true-name
+                                         true-file-path file-path))
+                                    "./")
                                 project-root))
         (if (string= relative-path "./")
             ""
