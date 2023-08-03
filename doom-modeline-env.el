@@ -200,7 +200,7 @@ PARSER should be a function for parsing COMMAND's output line-by-line, to
 
 ;;;###autoload (autoload 'doom-modeline-env-setup-python "doom-modeline-env")
 (doom-modeline-def-env python
-  :hooks   'python-mode-hook
+  :hooks   '(python-mode-hook python-ts-mode-hook)
   :command (lambda () (cond ((and (fboundp 'pipenv-project-p)
                              (pipenv-project-p))
                         (list "pipenv" "run"
@@ -220,7 +220,7 @@ PARSER should be a function for parsing COMMAND's output line-by-line, to
 
 ;;;###autoload (autoload 'doom-modeline-env-setup-ruby "doom-modeline-env")
 (doom-modeline-def-env ruby
-  :hooks   '(ruby-mode-hook enh-ruby-mode-hook)
+  :hooks   '(ruby-mode-hook ruby-ts-mode-hook enh-ruby-mode-hook)
   :command (lambda () (list (or doom-modeline-env-ruby-executable "ruby") "--version"))
   :parser  (lambda (line)
              (car (split-string
@@ -244,7 +244,7 @@ PARSER should be a function for parsing COMMAND's output line-by-line, to
 
 ;;;###autoload (autoload 'doom-modeline-env-setup-go "doom-modeline-env")
 (doom-modeline-def-env go
-  :hooks   'go-mode-hook
+  :hooks   '(go-mode-hook go-ts-mode-hook)
   :command (lambda () (list (or doom-modeline-env-go-executable "go") "version"))
   :parser  (lambda (line)
              (cadr
@@ -262,7 +262,7 @@ PARSER should be a function for parsing COMMAND's output line-by-line, to
 
 ;;;###autoload (autoload 'doom-modeline-env-setup-rust "doom-modeline-env")
 (doom-modeline-def-env rust
-  :hooks   'rust-mode-hook
+  :hooks   '(rust-mode-hook rust-ts-mode-hook)
   :command (lambda () (list (or doom-modeline-env-rust-executable "rustc") "--version"))
   :parser  (lambda (line)
              (car
