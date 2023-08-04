@@ -129,7 +129,7 @@
 
 (doom-modeline-def-modeline 'pdf
   '(bar window-number matches buffer-info pdf-pages)
-  '(compilation  misc-info major-mode process vcs time))
+  '(compilation misc-info major-mode process vcs time))
 
 (doom-modeline-def-modeline 'org-src
   '(bar window-number modals matches buffer-info buffer-position word-count parrot selection-info)
@@ -171,22 +171,22 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 (defvar doom-modeline-mode-map (make-sparse-keymap))
 
 (defvar doom-modeline-mode-alist
-  '((message-mode . message)
-    (git-commit-mode . message)
-    (magit-mode . vcs)
-    (dashboard-mode . dashboard)
-    (Info-mode .  info)
-    (image-mode . media)
-    (pdf-view-mode . pdf)
-    (org-src-mode . org-src)
-    (paradox-menu-mode . package)
-    (xwidget-webkit-mode . minimal)
+  '((message-mode         . message)
+    (git-commit-mode      . message)
+    (magit-mode           . vcs)
+    (dashboard-mode       . dashboard)
+    (Info-mode            . info)
+    (image-mode           . media)
+    (pdf-view-mode        . pdf)
+    (org-src-mode         . org-src)
+    (paradox-menu-mode    . package)
+    (xwidget-webkit-mode  . minimal)
     (git-timemachine-mode . timemachine)
-    (calc-mode . calculator)
-    (calc-trail-mode . calculator)
-    (circe-mode . special)
-    (erc-mode . special)
-    (rcirc-mode . special))
+    (calc-mode            . calculator)
+    (calc-trail-mode      . calculator)
+    (circe-mode           . special)
+    (erc-mode             . special)
+    (rcirc-mode           . special))
   "Alist of major modes and mode-lines.")
 
 (defun doom-modeline-auto-set-modeline ()
