@@ -854,7 +854,7 @@ mouse-2: Show help for minor mode")
                                                                       'doom-modeline-warning)
                                           (doom-modeline-checker-text (number-to-string .info)
                                                                       'doom-modeline-info))))))
-                ;; ('running     nil)
+                ('running     (propertize doom-modeline--flycheck-text 'face 'doom-modeline-debug))
                 ;; ('no-checker  nil)
                 ;; ('errored     (doom-modeline-checker-text "Error" 'doom-modeline-urgent))
                 ;; ('interrupted (doom-modeline-checker-text "Interrupted" 'doom-modeline-debug))
@@ -1018,7 +1018,7 @@ mouse-2: Show help for minor mode"
           (when-let
               ((text
                 (cond
-                 (some-waiting doom-modeline--flymake-text)
+                 (some-waiting (propertize doom-modeline--flymake-text 'face 'doom-modeline-debug))
                  ((null known) nil)
                  (all-disabled nil)
                  (t (let ((num (+ .error .warning .note)))
