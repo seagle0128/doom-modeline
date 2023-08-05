@@ -56,6 +56,12 @@ Must be set to a symbol.  Acceptable values are:
                    (const window))
     :group 'mode-line)
 
+  ;; `string-pixel-width'is introduced in 29.1
+  (unless (fboundp 'string-pixel-width)
+    (defun string-pixel-width (str)
+      "Return the width of STR in pixels."
+      (* (string-width str) (window-font-width nil 'mode-line) 1.05)))
+
   (defun mode--line-format-right-align ()
     "Right-align all following mode-line constructs.
 
@@ -114,30 +120,6 @@ the symbol `mode-line-format-right-align' is processed by
 ;; Don’t compact font caches during GC.
 (when (eq system-type 'windows-nt)
   (setq inhibit-compacting-font-caches t))
-
-;; For better performance, because `window-font-width' consumes a lot.
-(defvar doom-modeline--font-width-cache nil)
-(defun doom-modeline--font-width ()
-  "Cache the font width for better performance."
-  (if (display-graphic-p)
-      (let ((attributes (face-all-attributes 'mode-line)))
-        (or (cdr (assoc attributes doom-modeline--font-width-cache))
-            (let ((width (window-font-width nil 'mode-line)))
-              (push (cons attributes width) doom-modeline--font-width-cache)
-              width)))
-    1))
-
-;; Refresh the font width after setting frame parameters
-;; to ensure the font width is correct.
-(defun doom-modeline-refresh-font-width-cache (&rest _)
-  "Refresh the font width cache."
-  (setq doom-modeline--font-width-cache nil)
-  (doom-modeline--font-width))
-
-(add-hook 'window-setup-hook #'doom-modeline-refresh-font-width-cache)
-(add-hook 'after-make-frame-functions #'doom-modeline-refresh-font-width-cache)
-(add-hook 'after-setting-font-hook #'doom-modeline-refresh-font-width-cache)
-(add-hook 'server-after-make-frame-hook #'doom-modeline-refresh-font-width-cache)
 
 
 ;;
