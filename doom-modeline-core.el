@@ -1484,7 +1484,7 @@ If INCLUDE-PROJECT is non-nil, the project path will be included."
                                         truncate-project-root-parent
                                         truncate-project-relative-path
                                         hide-project-root-parent)
-  "Propertize buffer name given by FILE-PATH.
+  "Propertize buffer name given by FILE-PATH or TRUE-FILE-PATH.
 
 If TRUNCATE-PROJECT-ROOT-PARENT is non-nil will be saved by truncating project
 root parent down fish-shell style.
