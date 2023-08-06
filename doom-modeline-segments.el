@@ -1212,7 +1212,8 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
      'face (doom-modeline-face 'doom-modeline-panel))))
 
 (defsubst doom-modeline--evil-substitute ()
-  "Show number of matches for `evil-ex' substitutions and highlightings in real time."
+  "Show number of matches for `evil-ex' in real time.
+The number of matches contains substitutions and highlightings."
   (when (and (bound-and-true-p evil-local-mode)
              (or (assq 'evil-ex-substitute evil-ex-active-highlights-alist)
                  (assq 'evil-ex-global-match evil-ex-active-highlights-alist)
@@ -1542,7 +1543,8 @@ Requires `eyebrowse-mode' to be enabled or `tab-bar-mode' tabs to be created."
         ((name (cond
                 ((and (bound-and-true-p eyebrowse-mode)
                       (length> (eyebrowse--get 'window-configs) 1))
-                 (assq-delete-all 'eyebrowse-mode mode-line-misc-info)
+                 (setq mode-line-misc-info
+                       (assq-delete-all 'eyebrowse-mode mode-line-misc-info))
                  (when-let*
                      ((num (eyebrowse--get 'current-slot))
                       (tag (nth 2 (assoc num (eyebrowse--get 'window-configs)))))
