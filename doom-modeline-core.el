@@ -56,10 +56,10 @@ Must be set to a symbol.  Acceptable values are:
                    (const window))
     :group 'mode-line)
 
-  ;; `string-pixel-width'is introduced in 29.1
-  (unless (fboundp 'string-pixel-width)
-    (defun string-pixel-width (str)
-      "Return the width of STR in pixels."
+  (defun doom-modeline-string-pixel-width (str)
+    "Return the width of STR in pixels."
+    (if (fboundp 'string-pixel-width)
+        (string-pixel-width str)
       (* (string-width str) (window-font-width nil 'mode-line) 1.05)))
 
   (defun mode--line-format-right-align ()
@@ -82,7 +82,7 @@ the symbol `mode-line-format-right-align' is processed by
 	       (rest-width (progn
                          (add-face-text-property
                           0 (length rest-str) 'mode-line t rest-str)
-                         (string-pixel-width rest-str))))
+                         (doom-modeline-string-pixel-width rest-str))))
       (propertize " " 'display
 		          ;; The `right' spec doesn't work on TTY frames
 		          ;; when windows are split horizontally (bug#59620)
