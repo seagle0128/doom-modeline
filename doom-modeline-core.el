@@ -960,8 +960,9 @@ Also see the face `doom-modeline-unread-number'."
 ;; @see https://github.com/seagle0128/doom-modeline/issues/183
 ;; @see https://github.com/seagle0128/doom-modeline/issues/483
 (unless (>= emacs-major-version 29)
-  (defun doom-modeline-redisplay (&rest _)
-    "Call `redisplay' to trigger mode-line height calculations.
+  (eval-and-compile
+    (defun doom-modeline-redisplay (&rest _)
+      "Call `redisplay' to trigger mode-line height calculations.
 
 Certain functions, including e.g. `fit-window-to-buffer', base
 their size calculations on values which are incorrect if the
@@ -978,10 +979,10 @@ but it will only trigger a redisplay when there is a non nil
 `mode-line-format' and the height of the mode-line is different
 from that of the `default' face. This function is intended to be
 used as an advice to window creation functions."
-    (when (and (bound-and-true-p doom-modeline-mode)
-               mode-line-format
-               (/= (frame-char-height) (window-mode-line-height)))
-      (redisplay t)))
+      (when (and (bound-and-true-p doom-modeline-mode)
+                 mode-line-format
+                 (/= (frame-char-height) (window-mode-line-height)))
+        (redisplay t))))
   (advice-add #'fit-window-to-buffer :before #'doom-modeline-redisplay))
 
 ;; For `flychecker-color-mode-line'
@@ -1117,9 +1118,9 @@ used as an advice to window creation functions."
       (cond ((stringp seg)
              (push seg forms))
             ((symbolp seg)
-             (cond ((setq it (cdr (assq seg doom-modeline-fn-alist)))
+             (cond ((setq it (alist-get seg doom-modeline-fn-alist))
                     (push (list :eval (list it)) forms))
-                   ((setq it (cdr (assq seg doom-modeline-var-alist)))
+                   ((setq it (alist-get seg doom-modeline-var-alist))
                     (push it forms))
                    ((error "%s is not a defined segment" seg))))
             ((error "%s is not a valid segment" seg))))

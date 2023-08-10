@@ -179,7 +179,7 @@
 (declare-function flymake-reporting-backends "ext:flymake")
 (declare-function flymake-running-backends "ext:flymake")
 (declare-function flymake-show-buffer-diagnostics "ext:flymake")
-(declare-function flymake-show-diagnostics-buffer "ext:flymake")
+(declare-function flymake-show-buffer-diagnostics "ext:flymake")
 (declare-function flymake-start "ext:flymake")
 (declare-function follow-all-followers "follow")
 (declare-function gnus-demon-add-handler "gnus-demon")
@@ -1051,7 +1051,7 @@ mouse-1: List all problems%s"
              'mouse-face 'doom-modeline-highlight
              'local-map (let ((map (make-sparse-keymap)))
                           (define-key map [mode-line mouse-1]
-                            #'flymake-show-diagnostics-buffer)
+                            #'flymake-show-buffer-diagnostics)
                           (when (doom-modeline-mwheel-available-p)
                             (define-key map (vector 'mode-line
                                                     mouse-wheel-down-event)
