@@ -60,7 +60,8 @@ Must be set to a symbol.  Acceptable values are:
     "Return the width of STR in pixels."
     (if (fboundp 'string-pixel-width)
         (string-pixel-width str)
-      (* (string-width str) (window-font-width nil 'mode-line) 1.05)))
+      (* (string-width str) (window-font-width nil 'mode-line)
+         (if (display-graphic-p) 1.05 1.0))))
 
   (defun mode--line-format-right-align ()
     "Right-align all following mode-line constructs.
