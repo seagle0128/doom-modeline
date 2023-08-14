@@ -165,6 +165,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
 ;; Suppress warnings
 (defvar 2C-mode-line-format)
+(defvar flymake-mode-line-format)
 (defvar helm-ag-show-status-function)
 (declare-function helm-display-mode-line "ext:helm-core")
 
@@ -219,6 +220,9 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
             (unless (doom-modeline-auto-set-modeline)
               (doom-modeline-set-main-modeline))))
 
+        ;; For flymake
+        (setq flymake-mode-line-format nil) ; remove the lighter of minor mode
+
         ;; For two-column editing
         (setq 2C-mode-line-format (doom-modeline 'special))
 
@@ -235,6 +239,9 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (dolist (buf (buffer-list))
           (with-current-buffer buf
             (setq mode-line-format original-format))))
+
+      ;; For flymake
+      (setq flymake-mode-line-format (doom-modeline--original-value 'flymake-mode-line-format))
 
       ;; For two-column editing
       (setq 2C-mode-line-format (doom-modeline--original-value '2C-mode-line-format))

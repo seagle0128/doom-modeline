@@ -820,7 +820,7 @@ mouse-2: Show help for minor mode")
      (dolist (buf (buffer-list))
        (with-current-buffer buf
          (when (bound-and-true-p flycheck-mode)
-           (flycheck-buffer)))))))
+           (doom-modeline-update-flycheck-icon)))))))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-unicode-fallback
@@ -830,7 +830,7 @@ mouse-2: Show help for minor mode")
      (dolist (buf (buffer-list))
        (with-current-buffer buf
          (when (bound-and-true-p flycheck-mode)
-           (flycheck-buffer)))))))
+           (doom-modeline-update-flycheck-icon)))))))
 
 (defvar-local doom-modeline--flycheck-text nil)
 (defun doom-modeline-update-flycheck-text (&optional status)
@@ -898,6 +898,16 @@ mouse-3: Next error"
                           map))))))
 (add-hook 'flycheck-status-changed-functions #'doom-modeline-update-flycheck-text)
 (add-hook 'flycheck-mode-hook #'doom-modeline-update-flycheck-text)
+
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-checker-simple-format
+ (lambda (_sym val op _where)
+   (when (eq op 'set)
+     (setq doom-modeline-checker-simple-format val)
+     (dolist (buf (buffer-list))
+       (with-current-buffer buf
+         (when (bound-and-true-p flycheck-mode)
+           (doom-modeline-update-flycheck-text)))))))
 
 ;; Flymake
 
@@ -978,7 +988,7 @@ mouse-2: Show help for minor mode"
      (dolist (buf (buffer-list))
        (with-current-buffer buf
          (when (bound-and-true-p flymake-mode)
-           (flymake-start)))))))
+           (doom-modeline-update-flymake-icon)))))))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-unicode-fallback
@@ -988,12 +998,11 @@ mouse-2: Show help for minor mode"
      (dolist (buf (buffer-list))
        (with-current-buffer buf
          (when (bound-and-true-p flymake-mode)
-           (flymake-start)))))))
+           (doom-modeline-update-flymake-icon)))))))
 
 (defvar-local doom-modeline--flymake-text nil)
 (defun doom-modeline-update-flymake-text (&rest _)
   "Update flymake text."
-  (setq flymake--mode-line-format nil) ; remove the lighter of minor mode
   (setq doom-modeline--flymake-text
         (let* ((known (hash-table-keys flymake--state))
                (running (flymake-running-backends))
@@ -1067,6 +1076,16 @@ mouse-1: List all problems%s"
                                   (flymake-goto-next-error 1 nil t))))
                             map)))))))
 (advice-add #'flymake--handle-report :after #'doom-modeline-update-flymake-text)
+
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-checker-simple-format
+ (lambda (_sym val op _where)
+   (when (eq op 'set)
+     (setq doom-modeline-checker-simple-format val)
+     (dolist (buf (buffer-list))
+       (with-current-buffer buf
+         (when (bound-and-true-p flymake-mode)
+           (doom-modeline-update-flymake-text)))))))
 
 (doom-modeline-def-segment checker
   "Displays color-coded error status in the current buffer with pretty icons."
