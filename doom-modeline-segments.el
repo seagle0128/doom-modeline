@@ -3137,7 +3137,8 @@ Otherwise, it displays the message like `message' would."
 		          nil t)
 	    (with-current-buffer
 	        (window-buffer
-	         (or (minibuffer-selected-window)
+	         (or (window-in-direction 'above (minibuffer-window))
+                 (minibuffer-selected-window)
 		         (get-largest-window)))
           (setq eldoc-mode-line-string
                 (when (stringp format-string)
