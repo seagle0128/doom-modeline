@@ -217,7 +217,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 (setq doom-modeline-major-mode-icon t)
 
 ;; Whether display the colorful icon for `major-mode'.
-;; It respects `nerdg-icons-color-icons'.
+;; It respects `nerd-icons-color-icons'.
 (setq doom-modeline-major-mode-color-icon t)
 
 ;; Whether display the icon for the buffer state. It respects `doom-modeline-icon'.
