@@ -25,8 +25,9 @@
 
 ;;; Code:
 
-(require 'subr-x)
 (require 'doom-modeline-core)
+(eval-when-compile
+  (require 'subr-x))
 
 
 ;; Externals

@@ -27,11 +27,12 @@
 
 ;;; Code:
 
-(require 'cl-lib)
-(require 'seq)
-(require 'subr-x)
 (require 'doom-modeline-core)
 (require 'doom-modeline-env)
+(eval-when-compile
+  (require 'cl-lib)
+  (require 'seq)
+  (require 'subr-x))
 
 
 ;;
