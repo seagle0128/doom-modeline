@@ -1231,10 +1231,12 @@ ARGS is same as `nerd-icons-octicon' and others."
      ((and (doom-modeline-icon-displayable-p)
            icon-name
            (not (string-empty-p icon-name)))
-      (when-let* ((func (nerd-icons--function-name icon-set))
-                  (icon (and (fboundp func)
-                             (apply func icon-name args))))
-        (doom-modeline-propertize-icon icon face)))
+      (let* ((func (nerd-icons--function-name icon-set))
+             (icon (and (fboundp func)
+                        (apply func icon-name args))))
+        (if icon
+            (doom-modeline-propertize-icon icon face)
+          "")))
      ;; Unicode fallback
      ((and doom-modeline-unicode-fallback
            unicode
