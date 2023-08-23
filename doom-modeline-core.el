@@ -1209,14 +1209,14 @@ So convert the face \":family XXX :height XXX :inherit XXX\" to
 \":inherit XXX :family XXX :height XXX\".
 See https://github.com/seagle0128/doom-modeline/issues/301."
   (when icon
-      (if (doom-modeline-icon-displayable-p)
-      (when-let ((props (get-text-property 0 'face icon)))
-        (when (listp props)
-          (cl-destructuring-bind (&key family height inherit &allow-other-keys) props
-            (propertize icon 'face `(:inherit (doom-modeline ,(or face inherit props))
-                                     :family  ,(or family "")
-                                     :height  ,(or height 1.0))))))
-    (propertize icon 'face `(:inherit (doom-modeline ,face))))))
+    (if (doom-modeline-icon-displayable-p)
+        (when-let ((props (get-text-property 0 'face icon)))
+          (when (listp props)
+            (cl-destructuring-bind (&key family height inherit &allow-other-keys) props
+              (propertize icon 'face `(:inherit (doom-modeline ,(or face inherit props))
+                                       :family  ,(or family "")
+                                       :height  ,(or height 1.0))))))
+      (propertize icon 'face `(:inherit (doom-modeline ,face))))))
 
 (defun doom-modeline-icon (icon-set icon-name unicode text &rest args)
   "Display icon of ICON-NAME with ARGS in mode-line.
