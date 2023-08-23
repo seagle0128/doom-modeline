@@ -2225,7 +2225,7 @@ Example:
                           (token (or (ghub--token ghub-default-host username 'forge t)
                                      (ghub--token ghub-default-host username 'ghub t))))
                 (ghub-get "/notifications"
-                          '((all . t))
+                          '((notifications . t))
                           :host ghub-default-host
                           :username username
                           :auth token
