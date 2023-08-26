@@ -455,7 +455,7 @@ project directory is important."
      (and doom-modeline-major-mode-icon
           (concat
            (doom-modeline-icon
-            'octicon "nf-oct-file_directory" "🖿" "" :face face)
+            'octicon "nf-oct-file_directory_fill" "🖿" "" :face face)
            (doom-modeline-vspc)))
      (doom-modeline--buffer-state-icon)
      (propertize (abbreviate-file-name default-directory) 'face face))))
@@ -471,7 +471,7 @@ project directory is important."
      (and doom-modeline-major-mode-icon
           (concat
            (doom-modeline-icon
-            'octicon "nf-oct-file_directory" "🖿" "" :face face)
+            'octicon "nf-oct-file_directory_fill" "🖿" "" :face face)
            (doom-modeline-vspc)))
      (propertize (abbreviate-file-name default-directory) 'face face))))
 
