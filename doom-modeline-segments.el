@@ -1765,9 +1765,10 @@ mouse-1: Display Line and Column Mode Menu"
 TEXT is alternative if icon is not available."
   (propertize (doom-modeline-icon
                'mdicon
-               (when doom-modeline-modal-icon
-                 (or icon "nf-md-record"))
-               (or unicode "●")
+               (and doom-modeline-modal-icon
+                    (or (and doom-modeline-modal-modern-icon icon)
+                        "nf-md-record"))
+               (or (and doom-modeline-modal-modern-icon unicode) "●")
                text
                :face (doom-modeline-face face))
               'help-echo help-echo))

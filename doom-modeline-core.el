@@ -472,6 +472,11 @@ Including `evil', `overwrite', `god', `ryo' and `xah-fly-keys', etc."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-modal-modern-icon t
+  "Whether display the modern icons for modals."
+  :type 'boolean
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-mu4e nil
   "Whether display the mu4e notifications.
 

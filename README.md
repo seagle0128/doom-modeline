@@ -295,6 +295,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Including `evil', `overwrite', `god', `ryo' and `xah-fly-keys', etc.
 (setq doom-modeline-modal-icon t)
 
+;; Whether display the modern icons for modals.
+(setq doom-modeline-modal-modern-icon t)
+
 ;; Whether display the mu4e notifications. It requires `mu4e-alert' package.
 (setq doom-modeline-mu4e nil)
 ;; also enable the start of mu4e-alert
