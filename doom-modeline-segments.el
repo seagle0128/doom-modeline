@@ -1696,7 +1696,9 @@ See `mode-line-percent-position'.")
      (doom-modeline-wspc)
 
      ;; Line and column
-     (propertize (format-mode-line lc)
+     (propertize (concat (format-mode-line lc)
+                         (and doom-modeline-total-line-number
+                              (format "/%d" (line-number-at-pos (point-max)))))
                  'face (doom-modeline-face)
                  'help-echo "Buffer position\n\
 mouse-1: Display Line and Column Mode Menu"

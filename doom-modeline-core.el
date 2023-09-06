@@ -277,6 +277,11 @@ It respects `doom-modeline-enable-word-count'."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-total-line-number nil
+  "Whether display the total line number."
+  :type 'boolean
+  :group 'doom-modeline)
+
 ;; It is based upon `editorconfig-indentation-alist' but is used to read indentation levels instead
 ;; of setting them. (https://github.com/editorconfig/editorconfig-emacs)
 (defcustom doom-modeline-indent-alist

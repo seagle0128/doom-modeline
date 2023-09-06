@@ -257,6 +257,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether display the indentation information.
 (setq doom-modeline-indent-info nil)
 
+;; Whether display the total line number。
+(setq doom-modeline-total-line-number nil)
+
 ;; If non-nil, only display one number for checker information if applicable.
 (setq doom-modeline-checker-simple-format t)
 
