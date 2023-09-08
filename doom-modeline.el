@@ -92,7 +92,7 @@
   '(compilation objed-state misc-info persp-name battery grip irc mu4e gnus github debug repl lsp minor-modes input-method indent-info buffer-encoding major-mode process vcs checker time))
 
 (doom-modeline-def-modeline 'minimal
-  '(bar matches buffer-info-simple)
+  '(bar window-number modals matches buffer-info-simple)
   '(media-info major-mode time))
 
 (doom-modeline-def-modeline 'special
@@ -104,7 +104,7 @@
   '(compilation misc-info battery irc mu4e gnus github debug minor-modes input-method major-mode process time))
 
 (doom-modeline-def-modeline 'dashboard
-  '(bar window-number buffer-default-directory-simple remote-host)
+  '(bar window-number modals buffer-default-directory-simple remote-host)
   '(compilation misc-info battery irc mu4e gnus github debug minor-modes input-method major-mode process time))
 
 (doom-modeline-def-modeline 'vcs
@@ -112,15 +112,15 @@
   '(compilation misc-info battery irc mu4e gnus github debug minor-modes buffer-encoding major-mode process time))
 
 (doom-modeline-def-modeline 'package
-  '(bar window-number package)
+  '(bar window-number modals package)
   '(compilation misc-info major-mode process time))
 
 (doom-modeline-def-modeline 'info
-  '(bar window-number buffer-info info-nodes buffer-position parrot selection-info)
+  '(bar window-number modals buffer-info info-nodes buffer-position parrot selection-info)
   '(compilation misc-info buffer-encoding major-mode time))
 
 (doom-modeline-def-modeline 'media
-  '(bar window-number buffer-size buffer-info)
+  '(bar window-number modals buffer-size buffer-info)
   '(compilation misc-info media-info major-mode process vcs time))
 
 (doom-modeline-def-modeline 'message
@@ -128,7 +128,7 @@
   '(compilation objed-state misc-info battery debug minor-modes input-method indent-info buffer-encoding major-mode time))
 
 (doom-modeline-def-modeline 'pdf
-  '(bar window-number matches buffer-info pdf-pages)
+  '(bar window-number modals matches buffer-info pdf-pages)
   '(compilation misc-info major-mode process vcs time))
 
 (doom-modeline-def-modeline 'org-src
