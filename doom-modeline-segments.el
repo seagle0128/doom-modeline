@@ -1185,7 +1185,7 @@ block selection."
                              "Macro")
                            :face 'doom-modeline-panel)
        vsep
-       (doom-modeline-icon 'octicon "nf-oct-triangle_right" "▶" ">"
+       (doom-modeline-icon 'mdicon "nf-md-menu_right" "▶" ">"
                            :face 'doom-modeline-panel)
        sep))))
 
