@@ -1170,24 +1170,33 @@ block selection."
 ;; Matches (macro, anzu, evil-substitute, iedit, symbol-overlay and multi-cursors)
 ;;
 
+(defvar doom-modeline-always-show-macro-register t
+  "When non-nil, always show the register name when recording an evil macro.")
+
 (defsubst doom-modeline--macro-recording ()
   "Display current Emacs or evil macro being recorded."
   (when (and (doom-modeline--active)
              (or defining-kbd-macro executing-kbd-macro))
-    (let ((sep (propertize " " 'face 'doom-modeline-panel ))
+    (let ((sep (propertize " " 'face 'doom-modeline-panel))
           (vsep (propertize " " 'face
-                            '(:inherit (doom-modeline-panel variable-pitch)))))
-      (concat
-       sep
-       (doom-modeline-icon 'mdicon "nf-md-record" "●"
-                           (if (bound-and-true-p evil-this-macro)
-                               (char-to-string evil-this-macro)
-                             "Macro")
-                           :face 'doom-modeline-panel)
-       vsep
-       (doom-modeline-icon 'mdicon "nf-md-menu_right" "▶" ">"
-                           :face 'doom-modeline-panel)
-       sep))))
+                            '(:inherit (doom-modeline-panel variable-pitch))))
+          (macro-name (if (bound-and-true-p evil-this-macro)
+                          (format " @%s "
+                                  (char-to-string evil-this-macro))
+                        "Macro")))
+      (if doom-modeline-always-show-macro-register
+          (propertize
+           macro-name
+           'face 'doom-modeline-panel)
+        (concat
+         sep
+         (doom-modeline-icon 'mdicon "nf-md-record" "●"
+                             macro-name
+                             :face '(:inherit (error doom-modeline-panel)))
+         vsep
+         (doom-modeline-icon 'mdicon "nf-md-menu_right" "▶" ">"
+                             :face 'doom-modeline-panel)
+         sep)))))
 
 ;; `anzu' and `evil-anzu' expose current/total state that can be displayed in the
 ;; mode-line.
