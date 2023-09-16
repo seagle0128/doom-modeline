@@ -482,6 +482,11 @@ Including `evil', `overwrite', `god', `ryo' and `xah-fly-keys', etc."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-always-show-macro-register nil
+  "When non-nil, always show the register name when recording an evil macro."
+  :type 'boolean
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-mu4e nil
   "Whether display the mu4e notifications.
 

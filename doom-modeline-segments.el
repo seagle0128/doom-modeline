@@ -1170,9 +1170,6 @@ block selection."
 ;; Matches (macro, anzu, evil-substitute, iedit, symbol-overlay and multi-cursors)
 ;;
 
-(defvar doom-modeline-always-show-macro-register t
-  "When non-nil, always show the register name when recording an evil macro.")
-
 (defsubst doom-modeline--macro-recording ()
   "Display current Emacs or evil macro being recorded."
   (when (and (doom-modeline--active)
@@ -1184,19 +1181,18 @@ block selection."
                           (format " @%s "
                                   (char-to-string evil-this-macro))
                         "Macro")))
-      (if doom-modeline-always-show-macro-register
-          (propertize
-           macro-name
-           'face 'doom-modeline-panel)
-        (concat
-         sep
-         (doom-modeline-icon 'mdicon "nf-md-record" "●"
-                             macro-name
-                             :face '(:inherit (error doom-modeline-panel)))
-         vsep
-         (doom-modeline-icon 'mdicon "nf-md-menu_right" "▶" ">"
-                             :face 'doom-modeline-panel)
-         sep)))))
+      (concat
+       sep
+       (if doom-modeline-always-show-macro-register
+           (propertize macro-name 'face 'doom-modeline-panel)
+         (concat
+          (doom-modeline-icon 'mdicon "nf-md-record" "●"
+                              macro-name
+                              :face '(:inherit (doom-modeline-urgent doom-modeline-panel)))
+          vsep
+          (doom-modeline-icon 'mdicon "nf-md-menu_right" "▶" ">"
+                              :face 'doom-modeline-panel)))
+       sep))))
 
 ;; `anzu' and `evil-anzu' expose current/total state that can be displayed in the
 ;; mode-line.

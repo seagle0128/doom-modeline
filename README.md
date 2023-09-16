@@ -301,6 +301,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether display the modern icons for modals.
 (setq doom-modeline-modal-modern-icon t)
 
+;; When non-nil, always show the register name when recording an evil macro.
+(setq doom-modeline-always-show-macro-register nil)
+
 ;; Whether display the mu4e notifications. It requires `mu4e-alert' package.
 (setq doom-modeline-mu4e nil)
 ;; also enable the start of mu4e-alert
