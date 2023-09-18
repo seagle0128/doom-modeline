@@ -1188,10 +1188,12 @@ block selection."
          (concat
           (doom-modeline-icon 'mdicon "nf-md-record" "●"
                               macro-name
-                              :face '(:inherit (doom-modeline-urgent doom-modeline-panel)))
+                              :face '(:inherit (doom-modeline-urgent doom-modeline-panel))
+                              :v-adjust 0.15)
           vsep
           (doom-modeline-icon 'mdicon "nf-md-menu_right" "▶" ">"
-                              :face 'doom-modeline-panel)))
+                              :face 'doom-modeline-panel
+                              :v-adjust 0.15)))
        sep))))
 
 ;; `anzu' and `evil-anzu' expose current/total state that can be displayed in the
