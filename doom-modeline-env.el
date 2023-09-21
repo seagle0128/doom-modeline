@@ -202,14 +202,25 @@ PARSER should be a function for parsing COMMAND's output line-by-line, to
 ;;;###autoload (autoload 'doom-modeline-env-setup-python "doom-modeline-env")
 (doom-modeline-def-env python
   :hooks   '(python-mode-hook python-ts-mode-hook)
-  :command (lambda () (cond ((and (fboundp 'pipenv-project-p)
-                             (pipenv-project-p))
+  :command (lambda () (cond ((and (executable-find "pipenv")
+                                  (locate-dominating-file default-directory "Pipfile"))
                         (list "pipenv" "run"
                               (or doom-modeline-env-python-executable
                                   python-shell-interpreter
                                   "python")
                               "--version"))
                        ((executable-find "pyenv") (list "pyenv" "version-name"))
+                       ((and (executable-find "direnv")
+                                  (locate-dominating-file default-directory ".envrc"))
+                             (list "bash"
+                                   "-c"
+                                   ;; Direnv unfortunately writes crao on stderr
+                                   ;; so we need to pipe that to /dev/null
+                                   (format "'direnv exec %s %s --version 2>/dev/null'"
+                                           default-directory
+                                           (or doom-modeline-env-python-executable
+                                               python-shell-interpreter
+                                               "python"))))
                        ((list (or doom-modeline-env-python-executable
                                   python-shell-interpreter
                                   "python")
