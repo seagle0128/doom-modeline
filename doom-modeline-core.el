@@ -157,7 +157,6 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
   buffer-name => comint.el<2> (uniquify buffer name)"
   :type '(choice (const auto)
                  (const truncate-upto-project)
-                 (const truncate-upto-project)
                  (const truncate-from-project)
                  (const truncate-with-project)
                  (const truncate-except-project)
