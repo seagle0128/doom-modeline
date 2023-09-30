@@ -1662,41 +1662,21 @@ By default, this shows the information specified by `global-mode-string'."
 ;; Position
 ;;
 
-;; Be compatible with Emacs 25.
-(defvar doom-modeline-column-zero-based
-  (if (boundp 'column-number-indicator-zero-based)
-      column-number-indicator-zero-based
-    t)
-  "When non-nil, mode line displays column numbers zero-based.
-See `column-number-indicator-zero-based'.")
-
-(defvar doom-modeline-percent-position
-  (if (boundp 'mode-line-percent-position)
-      mode-line-percent-position
-    '(-3 "%p"))
-  "Specification of \"percentage offset\" of window through buffer.
-See `mode-line-percent-position'.")
-
-(doom-modeline-add-variable-watcher
- 'column-number-indicator-zero-based
- (lambda (_sym val op _where)
-   (when (eq op 'set)
-     (setq doom-modeline-column-zero-based val))))
-
-(doom-modeline-add-variable-watcher
- 'mode-line-percent-position
- (lambda (_sym val op _where)
-   (when (eq op 'set)
-     (setq doom-modeline-percent-position val))))
-
 (doom-modeline-def-segment buffer-position
   "The buffer position information."
   (let ((visible (doom-modeline--segment-visible 'buffer-position))
-        (lc '(line-number-mode
+        (lc `(line-number-mode
               (column-number-mode
-               (doom-modeline-column-zero-based "%l:%c" "%l:%C")
-               "%l")
-              (column-number-mode (doom-modeline-column-zero-based ":%c" ":%C"))))
+               (doom-modeline-column-zero-based
+                doom-modeline-position-column-line-format
+                ,(string-replace
+                  "%c" "%C" (car doom-modeline-position-column-line-format)))
+               doom-modeline-position-line-format)
+              (column-number-mode
+               (doom-modeline-column-zero-based
+                doom-modeline-position-column-format
+                ,(string-replace
+                  "%c" "%C" (car doom-modeline-position-column-format))))))
         (mouse-face 'doom-modeline-highlight)
         (local-map mode-line-column-line-number-mode-map))
     (concat

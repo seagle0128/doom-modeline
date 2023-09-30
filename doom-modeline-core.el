@@ -234,6 +234,45 @@ It respects variable `doom-modeline-icon'."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-column-zero-based t
+  "When non-nil, mode line displays column numbers zero-based.
+See `column-number-indicator-zero-based'."
+  :type 'boolean
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-percent-position '(-3 "%p")
+  "Specification of \"percentage offset\" of window through buffer.
+See `mode-line-percent-position'."
+  :type '(radio
+          (const :tag "nil:  No offset is displayed" nil)
+          (const :tag "\"%o\": Proportion of \"travel\" of the window through the buffer"
+            (-3 "%o"))
+          (const :tag "\"%p\": Percentage offset of top of window"
+            (-3 "%p"))
+          (const :tag "\"%P\": Percentage offset of bottom of window"
+            (-3 "%P"))
+          (const :tag "\"%q\": Offsets of both top and bottom of window"
+            (6 "%q")))
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-position-line-format '("L%l")
+  "Format used to display line numbers in the mode line.
+See `mode-line-position-line-format'."
+  :type '(list string)
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-position-column-format '("C%c")
+  "Format used to display column numbers in the mode line.
+See `mode-line-position-column-format'."
+  :type '(list string)
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-position-column-line-format '("%l:%c")
+  "Format used to display combined line/column numbers in the mode line.
+See `mode-line-position-column-line-format'."
+  :type '(list string)
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-minor-modes nil
   "Whether display the minor modes in the mode-line."
   :type 'boolean

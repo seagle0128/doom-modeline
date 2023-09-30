@@ -239,6 +239,25 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether highlight the modified buffer name.
 (setq doom-modeline-highlight-modified-buffer-name t)
 
+;; When non-nil, mode line displays column numbers zero-based.
+;; See `column-number-indicator-zero-based'.
+(setq doom-modeline-column-zero-based t)
+
+;; Specification of \"percentage offset\" of window through buffer.
+;; See `mode-line-percent-position'.
+(setq doom-modeline-percent-position '(-3 "%p"))
+
+;; Format used to display line numbers in the mode line.
+;; See `mode-line-position-line-format'.
+(setq doom-modeline-position-line-format '("L%l"))
+
+;; Format used to display column numbers in the mode line.
+;; See `mode-line-position-column-format'.
+(setq doom-modeline-position-column-format '("C%c"))
+
+;; Format used to display combined line/column numbers in the mode line. See `mode-line-position-column-line-format'.
+(setq doom-modeline-position-column-line-format '("%l:%c"))
+
 ;; Whether display the minor modes in the mode-line.
 (setq doom-modeline-minor-modes nil)
 
