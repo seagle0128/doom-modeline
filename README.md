@@ -513,7 +513,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
    [#209](https://github.com/seagle0128/doom-modeline/issues/209) and
    [#224](https://github.com/seagle0128/doom-modeline/issues/224).
 
-1. Can `doom-modeline` show match count while search with `evil-search`?
+1. Is `doom-modeline` able to show match count while search with `evil-search`?
 
    Yes. For better experience, should enable `anzu-mode` and load `evil-anzu`.
 
@@ -536,7 +536,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 1. How to display LaTeX compilation information in the mode line?
 
    Use [process](https://github.com/haji-ali/procress) package.
-   Refer to [#387](https://github.com/seagle0128/doom-modeline/issues/387) for more details.
+   Please refer to [#387](https://github.com/seagle0128/doom-modeline/issues/387) for more details.
 
    ```emacs-lisp
    (require 'procress)
@@ -547,7 +547,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 1. How to prevent mode-line aligning with fill column in `visual-fill-column-mode`?
 
    Use `(setq mode-line-right-align-edge 'right-fringe)`.
-   Refer to [#672](https://github.com/seagle0128/doom-modeline/issues/672) fro more details.
+   Please refer to [#672](https://github.com/seagle0128/doom-modeline/issues/672) for more details.
 
 ## Donate
 
