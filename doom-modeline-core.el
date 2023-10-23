@@ -607,6 +607,16 @@ If nil, display only if the mode line is active."
   :type '(repeat symbol)
   :group 'doom-modeline)
 
+(defcustom doom-modeline-buffer-file-name-function #'identity
+  "The function to handle `buffer-file-name'."
+  :type 'function
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-buffer-file-truename-function #'identity
+  "The function to handle `buffer-file-truename'."
+  :type 'function
+  :group 'doom-modeline)
+
 
 ;;
 ;; Faces
@@ -1412,11 +1422,26 @@ Return nil if no project was found."
 Return `default-directory' if no project was found."
   (or (doom-modeline--project-root) default-directory))
 
+(defun doom-modeline--format-buffer-file-name ()
+  "Format `buffer-file-name'."
+  (let ((buffer-file-name (file-local-name
+                           (or (buffer-file-name (buffer-base-buffer)) ""))))
+    (or (and doom-modeline-buffer-file-name-function
+             (funcall doom-modeline-buffer-file-name-function buffer-file-name))
+        buffer-file-name)))
+
+(defun doom-modeline--format-buffer-file-truename ()
+  "Format `buffer-file-truename'."
+  (let ((buffer-file-truename (file-local-name
+                               (or (file-truename buffer-file-name) ""))))
+    (or (and doom-modeline-buffer-file-truename-function
+             (funcall doom-modeline-buffer-file-truename-function buffer-file-truename))
+        buffer-file-truename)))
+
 (defun doom-modeline-buffer-file-name ()
   "Propertize file name based on `doom-modeline-buffer-file-name-style'."
-  (let* ((buffer-file-name (file-local-name (or (buffer-file-name (buffer-base-buffer)) "")))
-         (buffer-file-truename (file-local-name
-                                (or buffer-file-truename (file-truename buffer-file-name) "")))
+  (let* ((buffer-file-name (doom-modeline--format-buffer-file-name))
+         (buffer-file-truename (doom-modeline--format-buffer-file-truename))
          (file-name
           (pcase doom-modeline-buffer-file-name-style
             ('auto

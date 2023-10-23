@@ -353,6 +353,12 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; If nil, display only if the mode line is active.
 (setq doom-modeline-display-misc-in-all-mode-lines t)
 
+;; The function to handle `buffer-file-name'.
+(setq doom-modeline-buffer-file-name-function #'identity)
+
+;; The function to handle `buffer-file-truename'.
+(setq doom-modeline-buffer-file-truename-function #'identity)
+
 ;; Whether display the environment version.
 (setq doom-modeline-env-version t)
 ;; Or for individual languages
