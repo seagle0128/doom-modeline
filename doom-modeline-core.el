@@ -1423,15 +1423,15 @@ Return `default-directory' if no project was found."
   (or (doom-modeline--project-root) default-directory))
 
 (defun doom-modeline--format-buffer-file-name ()
-  "Format `buffer-file-name'."
+  "Get and format the buffer file name."
   (let ((buffer-file-name (file-local-name
                            (or (buffer-file-name (buffer-base-buffer)) ""))))
     (or (and doom-modeline-buffer-file-name-function
              (funcall doom-modeline-buffer-file-name-function buffer-file-name))
         buffer-file-name)))
 
-(defun doom-modeline--format-buffer-file-truename ()
-  "Format `buffer-file-truename'."
+(defun doom-modeline--format-buffer-file-truename (buffer-file-name)
+  "Get and format buffer file truename' via BUFFER-FILE-NAME."
   (let ((buffer-file-truename (file-local-name
                                (or (file-truename buffer-file-name) ""))))
     (or (and doom-modeline-buffer-file-truename-function
@@ -1441,7 +1441,7 @@ Return `default-directory' if no project was found."
 (defun doom-modeline-buffer-file-name ()
   "Propertize file name based on `doom-modeline-buffer-file-name-style'."
   (let* ((buffer-file-name (doom-modeline--format-buffer-file-name))
-         (buffer-file-truename (doom-modeline--format-buffer-file-truename))
+         (buffer-file-truename (doom-modeline--format-buffer-file-truename buffer-file-name))
          (file-name
           (pcase doom-modeline-buffer-file-name-style
             ('auto
