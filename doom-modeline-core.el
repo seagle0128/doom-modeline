@@ -1444,10 +1444,10 @@ Return `default-directory' if no project was found."
              (funcall doom-modeline-buffer-file-name-function buffer-file-name))
         buffer-file-name)))
 
-(defun doom-modeline--format-buffer-file-truename (buffer-file-name)
-  "Get and format buffer file truename' via BUFFER-FILE-NAME."
+(defun doom-modeline--format-buffer-file-truename (b-f-n)
+  "Get and format buffer file truename' via B-F-N."
   (let ((buffer-file-truename (file-local-name
-                               (or (file-truename buffer-file-name) ""))))
+                               (or (file-truename b-f-n) ""))))
     (or (and doom-modeline-buffer-file-truename-function
              (funcall doom-modeline-buffer-file-truename-function buffer-file-truename))
         buffer-file-truename)))
