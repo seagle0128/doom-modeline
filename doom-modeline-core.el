@@ -212,6 +212,13 @@ It respects variable `doom-modeline-icon' and `doom-modeline-buffer-state-icon'.
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-lsp-icon t
+  "Whether display the lsp icon.
+
+It respects variable `doom-modeline-icon'."
+  :type 'boolean
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-time-icon t
   "Whether display the time icon.
 

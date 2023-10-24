@@ -2019,7 +2019,9 @@ mouse-3: Describe current input method")
 
 (defun doom-modeline-lsp-icon (text face)
   "Display LSP icon (or TEXT in terminal) with FACE."
-  (doom-modeline-icon 'octicon "nf-oct-rocket" "🚀" text :face face))
+  (if doom-modeline-lsp-icon
+      (doom-modeline-icon 'octicon "nf-oct-rocket" "🚀" text :face face)
+    (propertize text 'face face)))
 
 (defvar-local doom-modeline--lsp nil)
 (defun doom-modeline-update-lsp (&rest _)
@@ -2121,7 +2123,7 @@ mouse-1: Start server"))
   "Update tags state."
   (setq doom-modeline--tags
         (propertize
-         (doom-modeline-lsp-icon "LSP" 'doom-modeline-lsp-success)
+         (doom-modeline-lsp-icon "TAGS" 'doom-modeline-lsp-success)
          'help-echo "TAGS: Citre mode
 mouse-1: Toggle citre mode"
          'mouse-face 'doom-modeline-highlight
@@ -2136,6 +2138,15 @@ mouse-1: Toggle citre mode"
          (doom-modeline-update-eglot))
         ((bound-and-true-p citre-mode)
          (doom-modeline-update-tags))))
+
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-lsp-icon
+ (lambda (_sym val op _where)
+   (when (eq op 'set)
+     (setq doom-modeline-lsp-icon val)
+     (dolist (buf (buffer-list))
+       (with-current-buffer buf
+         (doom-modeline-update-lsp-icon))))))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-icon

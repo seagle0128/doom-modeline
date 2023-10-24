@@ -227,6 +227,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'.
 (setq doom-modeline-buffer-modification-icon t)
 
+;; Whether display the lsp icon. It respects variable `doom-modeline-icon'.
+(setq doom-modeline-lsp-icon t)
+
 ;; Whether display the time icon. It respects variable `doom-modeline-icon'.
 (setq doom-modeline-time-icon t)
 
