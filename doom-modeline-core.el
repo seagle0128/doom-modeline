@@ -921,7 +921,7 @@ Also see the face `doom-modeline-unread-number'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-time
-  '((t (:inherit doom-modeline-buffer-file)))
+  '((t (:inherit doom-modeline)))
   "Face for display time."
   :group 'doom-modeline-faces)
 
@@ -1037,11 +1037,11 @@ used as an advice to window creation functions."
 (defvar-local doom-modeline--limited-width-p nil)
 
 (defun doom-modeline--segment-visible (name)
-"Whether the segment NAME should be displayed."
-(and
- (or (doom-modeline--active)
-     (member name doom-modeline-always-visible-segments))
- (not doom-modeline--limited-width-p)))
+  "Whether the segment NAME should be displayed."
+  (and
+   (or (doom-modeline--active)
+       (member name doom-modeline-always-visible-segments))
+   (not doom-modeline--limited-width-p)))
 
 (defun doom-modeline-set-selected-window (&rest _)
   "Set `doom-modeline-current-window' appropriately."
