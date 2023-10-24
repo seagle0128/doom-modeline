@@ -213,25 +213,29 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; While using the server mode in GUI, should set the value explicitly.
 (setq doom-modeline-icon t)
 
-;; Whether display the icon for `major-mode'. It respects `doom-modeline-icon'.
+;; Whether display the icon for `major-mode'. It respects option `doom-modeline-icon'.
 (setq doom-modeline-major-mode-icon t)
 
 ;; Whether display the colorful icon for `major-mode'.
 ;; It respects `nerd-icons-color-icons'.
 (setq doom-modeline-major-mode-color-icon t)
 
-;; Whether display the icon for the buffer state. It respects `doom-modeline-icon'.
+;; Whether display the icon for the buffer state. It respects option `doom-modeline-icon'.
 (setq doom-modeline-buffer-state-icon t)
 
 ;; Whether display the modification icon for the buffer.
-;; It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'.
+;; It respects option `doom-modeline-icon' and option `doom-modeline-buffer-state-icon'.
 (setq doom-modeline-buffer-modification-icon t)
 
-;; Whether display the lsp icon. It respects variable `doom-modeline-icon'.
+;; Whether display the lsp icon. It respects option `doom-modeline-icon'.
 (setq doom-modeline-lsp-icon t)
 
-;; Whether display the time icon. It respects variable `doom-modeline-icon'.
+;; Whether display the time icon. It respects option `doom-modeline-icon'.
 (setq doom-modeline-time-icon t)
+
+;; Whether display the live icons of time.
+;; It respects option `doom-modeline-icon' and option `doom-modeline-time-icon'.
+(setq doom-modeline-time-live-icon t)
 
 ;; Whether to use unicode as a fallback (instead of ASCII) when not using icons.
 (setq doom-modeline-unicode-fallback nil)

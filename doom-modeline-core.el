@@ -187,42 +187,49 @@ While using the server mode in GUI, should set the value explicitly."
 (defcustom doom-modeline-major-mode-icon t
   "Whether display the icon for `major-mode'.
 
-It respects variable `doom-modeline-icon'."
+It respects option `doom-modeline-icon'."
   :type 'boolean
   :group'doom-modeline)
 
 (defcustom doom-modeline-major-mode-color-icon t
   "Whether display the colorful icon for `major-mode'.
 
-It respects `nerd-icons-color-icons'."
+It respects option `nerd-icons-color-icons'."
   :type 'boolean
   :group'doom-modeline)
 
 (defcustom doom-modeline-buffer-state-icon t
   "Whether display the icon for the buffer state.
 
-It respects variable `doom-modeline-icon'."
+It respects option `doom-modeline-icon'."
   :type 'boolean
   :group 'doom-modeline)
 
 (defcustom doom-modeline-buffer-modification-icon t
   "Whether display the modification icon for the buffer.
 
-It respects variable `doom-modeline-icon' and `doom-modeline-buffer-state-icon'."
+It respects option `doom-modeline-icon' and `doom-modeline-buffer-state-icon'."
   :type 'boolean
   :group 'doom-modeline)
 
 (defcustom doom-modeline-lsp-icon t
-  "Whether display the lsp icon.
+  "Whether display the icon of lsp client.
 
-It respects variable `doom-modeline-icon'."
+It respects option `doom-modeline-icon'."
   :type 'boolean
   :group 'doom-modeline)
 
 (defcustom doom-modeline-time-icon t
-  "Whether display the time icon.
+  "Whether display the icon of time.
 
-It respects variable `doom-modeline-icon'."
+It respects option `doom-modeline-icon'."
+  :type 'boolean
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-time-live-icon t
+  "Whether display the live icons of time.
+
+It respects option `doom-modeline-icon' and option `doom-modeline-time-icon'."
   :type 'boolean
   :group 'doom-modeline)
 

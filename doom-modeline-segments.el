@@ -3069,6 +3069,29 @@ mouse-3: Restart preview"
 ;; Display time
 ;;
 
+(defun doom-modeline-time-icon ()
+  "Displays the time icon."
+  (doom-modeline-icon
+   'mdicon
+   (if doom-modeline-time-live-icon
+       (pcase (% (caddr (decode-time)) 12)
+         (0 "nf-md-clock_time_tweleve_outline")
+         (1 "nf-md-clock_time_one_outline")
+         (2 "nf-md-clock_time_two_outline")
+         (3 "nf-md-clock_time_three_outline")
+         (4 "nf-md-clock_time_four_outline")
+         (5 "nf-md-clock_time_five_outline")
+         (6 "nf-md-clock_time_six_outline")
+         (7 "nf-md-clock_time_seven_outline")
+         (8 "nf-md-clock_time_eight_outline")
+         (9 "nf-md-clock_time_nine_outline")
+         (10 "nf-md-clock_time_ten_outline")
+         (11 "nf-md-clock_time_eleven_outline"))
+     "nf-md-clock_outline")
+   "⏰"
+   ""
+   :face '(:inherit doom-modeline-time :weight normal)))
+
 (doom-modeline-def-segment time
   (when (and doom-modeline-time
              (bound-and-true-p display-time-mode)
@@ -3077,8 +3100,7 @@ mouse-3: Restart preview"
      (doom-modeline-spc)
      (when doom-modeline-time-icon
        (concat
-        (doom-modeline-icon 'octicon "nf-oct-clock" "⏰" ""
-                            :face '(:inherit doom-modeline-time :weight normal))
+        (doom-modeline-time-icon)
         (and (or doom-modeline-icon doom-modeline-unicode-fallback)
              (doom-modeline-spc))))
      (propertize display-time-string
@@ -3110,11 +3132,11 @@ mouse-3: Restart preview"
        (propertize "[Compiling] "
                    'face (doom-modeline-face 'doom-modeline-compilation)
 	               'help-echo "Compiling; mouse-2: Goto Buffer"
-                   'mouse-face 'doom-modeline-highlight
-                   'local-map
-                   (make-mode-line-mouse-map
-                    'mouse-2
-			        #'compilation-goto-in-progress-buffer))))
+  'mouse-face 'doom-modeline-highlight
+  'local-map
+  (make-mode-line-mouse-map
+   'mouse-2
+   #'compilation-goto-in-progress-buffer))))
 
 ;;
 ;; Eldoc
