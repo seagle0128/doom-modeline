@@ -3102,7 +3102,7 @@ mouse-3: Restart preview"
        (concat
         (doom-modeline-time-icon)
         (and (or doom-modeline-icon doom-modeline-unicode-fallback)
-             (doom-modeline-spc))))
+             (doom-modeline-vspc))))
      (propertize display-time-string
                  'face (doom-modeline-face 'doom-modeline-time)))))
 
