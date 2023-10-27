@@ -1493,12 +1493,14 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
 
 (doom-modeline-def-segment bar
   "The bar regulates the height of the `doom-modeline' in GUI."
-  (if doom-modeline-hud
-      (doom-modeline--hud)
-    (doom-modeline--bar)))
+  (concat
+   (if doom-modeline-hud
+       (doom-modeline--hud)
+     (doom-modeline--bar))
+   (doom-modeline-spc)))
 
 (doom-modeline-def-segment hud
-  "Powerline's hud segment reimplemented in the style of Doom's bar segment."
+  "Powerline's hud segment reimplemented in the style of bar segment."
   (doom-modeline--hud))
 
 
@@ -1546,18 +1548,17 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
               ((bound-and-true-p window-numbering-mode)
                (window-numbering-get-number-string))
               (t ""))))
-    (if (and (length> num 0)
-             (length> (cl-mapcan
-                       (lambda (frame)
-                         ;; Exclude minibuffer and child frames
-                         (unless (and (fboundp 'frame-parent)
-                                      (frame-parent frame))
-                           (window-list frame 'never)))
-                       (visible-frame-list))
-                      1))
-        (propertize (format " %s " num)
-                    'face (doom-modeline-face 'doom-modeline-buffer-major-mode))
-      (doom-modeline-spc))))
+    (when (and (length> num 0)
+               (length> (cl-mapcan
+                         (lambda (frame)
+                           ;; Exclude minibuffer and child frames
+                           (unless (and (fboundp 'frame-parent)
+                                        (frame-parent frame))
+                             (window-list frame 'never)))
+                         (visible-frame-list))
+                        1))
+      (propertize (format " %s " num)
+                  'face (doom-modeline-face 'doom-modeline-buffer-major-mode)))))
 
 
 ;;
