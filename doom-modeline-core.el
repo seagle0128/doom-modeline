@@ -622,7 +622,7 @@ If nil, display only if the mode line is active."
   :group 'doom-modeline)
 
 (defcustom doom-modeline-buffer-file-name-function #'identity
-  "The function to handle `buffer-file-name'."
+  "The function to handle variable `buffer-file-name'."
   :type 'function
   :group 'doom-modeline)
 
