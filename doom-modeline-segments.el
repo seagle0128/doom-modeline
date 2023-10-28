@@ -3076,7 +3076,7 @@ mouse-3: Restart preview"
    'mdicon
    (if doom-modeline-time-live-icon
        (pcase (% (caddr (decode-time)) 12)
-         (0 "nf-md-clock_time_tweleve_outline")
+         (0 "nf-md-clock_time_twelve_outline")
          (1 "nf-md-clock_time_one_outline")
          (2 "nf-md-clock_time_two_outline")
          (3 "nf-md-clock_time_three_outline")
