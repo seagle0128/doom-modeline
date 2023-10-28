@@ -3,6 +3,7 @@
 *.tmp
 
 # Compiled
+*autoloads.el
 *.elc
 
 # Packaging
