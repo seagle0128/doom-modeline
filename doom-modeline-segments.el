@@ -2235,7 +2235,12 @@ Example:
                           :noerror t))))))
      (lambda (result)
        (message "")                     ; suppress message
-       (setq doom-modeline--github-notification-number (length result))))))
+       (let ((count (length result)))
+	 (when (and (featurep 'forge)
+		    doom-modeline-github-update-forge
+		    (not (eq doom-modeline--github-notification-number count)))
+	   (forge-pull-notifications))
+	 (setq doom-modeline--github-notification-number count))))))
 
 (defvar doom-modeline--github-timer nil)
 (defun doom-modeline-github-timer ()

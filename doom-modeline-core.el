@@ -510,6 +510,15 @@ It requires `ghub' and `async' packages."
   :type 'integer
   :group 'doom-modeline)
 
+(defcustom doom-modeline-github-update-forge nil
+  "Whether to update the GitHub notifications in `forge'.
+
+When both this variable and `doom-modeline-github' are non-nil,
+`forge-pull-notifications' will run every time the notification count is
+updated."
+  :type 'boolean
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-env-version t
   "Whether display the environment version."
   :type 'boolean
