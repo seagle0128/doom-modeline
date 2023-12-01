@@ -2211,6 +2211,10 @@ mouse-1: Toggle citre mode"
 Example:
   (add-hook \\='doom-modeline-before-github-fetch-notification-hook
             #\\='auth-source-pass-enable)")
+
+(defvar doom-modeline-after-github-fetch-notification-hook nil
+  "Hooks after fetching GitHub notifications.")
+
 (defun doom-modeline--github-fetch-notifications ()
   "Fetch GitHub notifications."
   (when (and doom-modeline-github
@@ -2235,7 +2239,8 @@ Example:
                           :noerror t))))))
      (lambda (result)
        (message "")                     ; suppress message
-       (setq doom-modeline--github-notification-number (length result))))))
+       (setq doom-modeline--github-notification-number (length result))
+       (run-hooks 'doom-modeline-after-github-fetch-notification-hook)))))
 
 (defvar doom-modeline--github-timer nil)
 (defun doom-modeline-github-timer ()
