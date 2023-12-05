@@ -1442,7 +1442,8 @@ Return nil if no project was found."
 (defun doom-modeline-project-root ()
   "Get the path to the root of your project.
 Return `default-directory' if no project was found."
-  (or (doom-modeline--project-root) default-directory))
+  (abbreviate-file-name
+   (or (doom-modeline--project-root) default-directory)))
 
 (defun doom-modeline--format-buffer-file-name ()
   "Get and format the buffer file name."
