@@ -506,8 +506,8 @@ access token must have `notifications' permissions.
 
 If you use `pass' to manage your secrets, you also need to add this hook:
 
-`(add-hook 'doom-modeline-before-github-fetch-notification-hook
-	   #'auth-source-pass-enable)'"
+\(add-hook \\='doom-modeline-before-github-fetch-notification-hook
+	   #\\='auth-source-pass-enable)"
   :type 'boolean
   :group 'doom-modeline)
 
