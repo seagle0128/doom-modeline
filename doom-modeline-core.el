@@ -1475,9 +1475,9 @@ Return `default-directory' if no project was found."
             ('truncate-from-project
              (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename nil 'shrink))
             ('truncate-with-project
-             (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink 'shink 'hide))
+             (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink 'shrink 'hide))
             ('truncate-except-project
-             (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink 'shink))
+             (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink 'shrink))
             ('truncate-upto-root
              (doom-modeline--buffer-file-name-truncate buffer-file-name buffer-file-truename))
             ('truncate-all
