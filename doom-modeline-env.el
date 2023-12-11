@@ -216,7 +216,7 @@ PARSER should be a function for parsing COMMAND's output line-by-line, to
                                    "-c"
                                    ;; Direnv unfortunately writes crao on stderr
                                    ;; so we need to pipe that to /dev/null
-                                   (format "'direnv exec %s %s --version 2>/dev/null'"
+                                   (format "direnv exec %s %s --version 2>/dev/null"
                                            default-directory
                                            (or doom-modeline-env-python-executable
                                                python-shell-interpreter
