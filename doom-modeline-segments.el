@@ -193,7 +193,7 @@
 (declare-function iedit-find-current-occurrence-overlay "ext:iedit-lib")
 (declare-function iedit-prev-occurrence "ext:iedit-lib")
 (declare-function image-get-display-property "image-mode")
-(declare-function jsonrpc--continuations "ext:jsonrpc" t t)
+(declare-function jsonrpc--request-continuations "ext:jsonrpc" t t)
 (declare-function jsonrpc-last-error "ext:jsonrpc" t t)
 (declare-function lsp--workspace-print "ext:lsp-mode")
 (declare-function lsp-describe-session "ext:lsp-mode")
@@ -2073,7 +2073,7 @@ mouse-1: Reload to start server")
   "Get count of pending eglot requests to SERVER."
   (if (fboundp 'jsonrpc-continuation-count)
       (jsonrpc-continuation-count server)
-    (hash-table-count (jsonrpc--continuations server))))
+    (hash-table-count (jsonrpc--request-continuations server))))
 
 (defvar-local doom-modeline--eglot nil)
 (defun doom-modeline-update-eglot ()
