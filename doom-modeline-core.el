@@ -1227,16 +1227,16 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
 (defsubst doom-modeline-spc ()
   "Whitespace."
-  (propertize " " 'face 'doom-modeline-face))
+  (propertize " " 'face (doom-modeline-face)))
 
 (defsubst doom-modeline-wspc ()
   "Wide Whitespace."
-  (propertize "  " 'face 'doom-modeline-face))
+  (propertize "  " 'face (doom-modeline-face)))
 
 (defsubst doom-modeline-vspc ()
   "Thin whitespace."
   (propertize " "
-              'face 'doom-modeline-face
+              'face (doom-modeline-face)
               'display '((space :relative-width 0.5))))
 
 (defun doom-modeline-face (&optional face inactive-face)
