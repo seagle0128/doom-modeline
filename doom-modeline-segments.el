@@ -737,18 +737,18 @@ Uses `nerd-icons-octicon' to fetch the icon."
 
 
 ;;
-;; Checker
+;; Check
 ;;
 
-(defun doom-modeline-checker-icon (icon unicode text face)
-  "Displays the checker ICON with FACE.
+(defun doom-modeline-check-icon (icon unicode text face)
+  "Displays the check ICON with FACE.
 
 UNICODE and TEXT are fallbacks.
 Uses `nerd-icons-mdicon' to fetch the icon."
   (doom-modeline-icon 'mdicon icon unicode text :face face))
 
-(defun doom-modeline-checker-text (text &optional face)
-  "Displays TEXT with FACE."
+(defun doom-modeline-check-text (text &optional face)
+  "Displays the check TEXT with FACE."
   (propertize text 'face (or face 'mode-line)))
 
 ;; Flycheck
@@ -779,17 +779,17 @@ level."
               (pcase status
                 ('finished  (if flycheck-current-errors
                                 (let-alist (doom-modeline--flycheck-count-errors)
-                                  (doom-modeline-checker-icon
+                                  (doom-modeline-check-icon
                                    "nf-md-alert_circle_outline" "❗" "!"
                                    (cond ((> .error 0) 'doom-modeline-urgent)
                                          ((> .warning 0) 'doom-modeline-warning)
                                          (t 'doom-modeline-info))))
-                              (doom-modeline-checker-icon "nf-md-check_circle_outline" "✔" "" 'doom-modeline-info)))
-                ('running     (doom-modeline-checker-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug))
-                ('no-checker  (doom-modeline-checker-icon "nf-md-alert_box_outline" "⚠" "-" 'doom-modeline-debug))
-                ('errored     (doom-modeline-checker-icon "nf-md-alert_circle_outline" "⚠" "!" 'doom-modeline-urgent))
-                ('interrupted (doom-modeline-checker-icon "nf-md-pause_circle_outline" "⦷" "." 'doom-modeline-debug))
-                ('suspicious  (doom-modeline-checker-icon "nf-md-information_outline" "❓" "?" 'doom-modeline-debug))
+                              (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "" 'doom-modeline-info)))
+                ('running     (doom-modeline-check-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug))
+                ('no-checker  (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "-" 'doom-modeline-debug))
+                ('errored     (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" 'doom-modeline-urgent))
+                ('interrupted (doom-modeline-check-icon "nf-md-pause_circle_outline" "⦷" "." 'doom-modeline-debug))
+                ('suspicious  (doom-modeline-check-icon "nf-md-information_outline" "❓" "?" 'doom-modeline-debug))
                 (_ nil))))
           (propertize icon
                       'help-echo (concat "Flycheck\n"
@@ -842,25 +842,25 @@ mouse-2: Show help for minor mode")
               (pcase status
                 ('finished  (when flycheck-current-errors
                               (let-alist (doom-modeline--flycheck-count-errors)
-                                (if doom-modeline-checker-simple-format
-                                    (doom-modeline-checker-text
+                                (if doom-modeline-check-simple-format
+                                    (doom-modeline-check-text
                                      (number-to-string (+ .error .warning .info))
                                      (cond ((> .error 0) 'doom-modeline-urgent)
                                            ((> .warning 0) 'doom-modeline-warning)
                                            (t 'doom-modeline-info)))
                                   (format "%s/%s/%s"
-                                          (doom-modeline-checker-text (number-to-string .error)
+                                          (doom-modeline-check-text (number-to-string .error)
                                                                       'doom-modeline-urgent)
-                                          (doom-modeline-checker-text (number-to-string .warning)
+                                          (doom-modeline-check-text (number-to-string .warning)
                                                                       'doom-modeline-warning)
-                                          (doom-modeline-checker-text (number-to-string .info)
+                                          (doom-modeline-check-text (number-to-string .info)
                                                                       'doom-modeline-info))))))
                 ('running     (and doom-modeline--flycheck-text
                                    (propertize doom-modeline--flycheck-text 'face 'doom-modeline-debug)))
                 ;; ('no-checker  nil)
-                ;; ('errored     (doom-modeline-checker-text "Error" 'doom-modeline-urgent))
-                ;; ('interrupted (doom-modeline-checker-text "Interrupted" 'doom-modeline-debug))
-                ;; ('suspicious  (doom-modeline-checker-text "Suspicious" 'doom-modeline-urgent))
+                ;; ('errored     (doom-modeline-check-text "Error" 'doom-modeline-urgent))
+                ;; ('interrupted (doom-modeline-check-text "Interrupted" 'doom-modeline-debug))
+                ;; ('suspicious  (doom-modeline-check-text "Suspicious" 'doom-modeline-urgent))
                 (_ nil))))
           (propertize
            text
@@ -901,10 +901,10 @@ mouse-3: Next error"
 (add-hook 'flycheck-mode-hook #'doom-modeline-update-flycheck-text)
 
 (doom-modeline-add-variable-watcher
- 'doom-modeline-checker-simple-format
+ 'doom-modeline-check-simple-format
  (lambda (_sym val op _where)
    (when (eq op 'set)
-     (setq doom-modeline-checker-simple-format val)
+     (setq doom-modeline-check-simple-format val)
      (dolist (buf (buffer-list))
        (with-current-buffer buf
          (when (bound-and-true-p flycheck-mode)
@@ -934,9 +934,9 @@ mouse-3: Next error"
           (when-let
               ((icon
                 (cond
-                 (some-waiting (doom-modeline-checker-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug))
-                 ((null known) (doom-modeline-checker-icon "nf-md-alert_box_outline" "⚠" "!" 'doom-modeline-urgent))
-                 (all-disabled (doom-modeline-checker-icon "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning))
+                 (some-waiting (doom-modeline-check-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug))
+                 ((null known) (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "!" 'doom-modeline-urgent))
+                 (all-disabled (doom-modeline-check-icon "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning))
                  (t (let ((.error 0)
                           (.warning 0)
                           (.note 0))
@@ -954,11 +954,11 @@ mouse-3: Next error"
                                      ((> severity note-level)    (cl-incf .warning))
                                      (t                          (cl-incf .note))))))
                         (if (> (+ .error .warning .note) 0)
-                            (doom-modeline-checker-icon "nf-md-alert_circle_outline" "❗" "!"
+                            (doom-modeline-check-icon "nf-md-alert_circle_outline" "❗" "!"
                                                         (cond ((> .error 0) 'doom-modeline-urgent)
                                                               ((> .warning 0) 'doom-modeline-warning)
                                                               (t 'doom-modeline-info)))
-                          (doom-modeline-checker-icon "nf-md-check_circle_outline" "✔" "-" 'doom-modeline-info))))))))
+                          (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "-" 'doom-modeline-info))))))))
             (propertize
              icon
              'help-echo (concat "Flymake\n"
@@ -1035,17 +1035,17 @@ mouse-2: Show help for minor mode"
                  (all-disabled nil)
                  (t (let ((num (+ .error .warning .note)))
                       (when (> num 0)
-                        (if doom-modeline-checker-simple-format
-                            (doom-modeline-checker-text (number-to-string num)
+                        (if doom-modeline-check-simple-format
+                            (doom-modeline-check-text (number-to-string num)
                                                         (cond ((> .error 0) 'doom-modeline-urgent)
                                                               ((> .warning 0) 'doom-modeline-warning)
                                                               (t 'doom-modeline-info)))
                           (format "%s/%s/%s"
-                                  (doom-modeline-checker-text (number-to-string .error)
+                                  (doom-modeline-check-text (number-to-string .error)
                                                               'doom-modeline-urgent)
-                                  (doom-modeline-checker-text (number-to-string .warning)
+                                  (doom-modeline-check-text (number-to-string .warning)
                                                               'doom-modeline-warning)
-                                  (doom-modeline-checker-text (number-to-string .note)
+                                  (doom-modeline-check-text (number-to-string .note)
                                                               'doom-modeline-info)))))))))
             (propertize
              text
@@ -1079,16 +1079,16 @@ mouse-1: List all problems%s"
 (advice-add #'flymake--handle-report :after #'doom-modeline-update-flymake-text)
 
 (doom-modeline-add-variable-watcher
- 'doom-modeline-checker-simple-format
+ 'doom-modeline-check-simple-format
  (lambda (_sym val op _where)
    (when (eq op 'set)
-     (setq doom-modeline-checker-simple-format val)
+     (setq doom-modeline-check-simple-format val)
      (dolist (buf (buffer-list))
        (with-current-buffer buf
          (when (bound-and-true-p flymake-mode)
            (doom-modeline-update-flymake-text)))))))
 
-(doom-modeline-def-segment checker
+(doom-modeline-def-segment check
   "Displays color-coded error status in the current buffer with pretty icons."
   (let* ((seg (cond
                ((and (bound-and-true-p flymake-mode)

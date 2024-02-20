@@ -445,10 +445,15 @@ in the given order."
   :type '(alist :key-type symbol :value-type sexp)
   :group 'doom-modeline)
 
-(defcustom doom-modeline-checker-simple-format t
-  "If non-nil, only display one number for checker information if applicable."
+(defcustom doom-modeline-check-simple-format t
+  "If non-nil, only display one number for check information if applicable."
   :type 'boolean
   :group 'doom-modeline)
+
+(define-obsolete-variable-alias
+  'doom-modeline-checker-simple-format
+  'doom-modeline-check-simple-format
+  "4.2.0")
 
 (defcustom doom-modeline-number-limit 99
   "The maximum number displayed for notifications."
@@ -725,22 +730,22 @@ This applies to `anzu', `evil-substitute', `iedit' etc."
 
 (defface doom-modeline-debug
   '((t (:inherit (doom-modeline font-lock-doc-face) :slant normal)))
-  "Face for debug-level messages in the mode-line. Used by vcs, checker, etc."
+  "Face for debug-level messages in the mode-line. Used by vcs, check, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-info
   '((t (:inherit (doom-modeline success))))
-  "Face for info-level messages in the mode-line. Used by vcs, checker, etc."
+  "Face for info-level messages in the mode-line. Used by vcs, check, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-warning
   '((t (:inherit (doom-modeline warning))))
-  "Face for warnings in the mode-line. Used by vcs, checker, etc."
+  "Face for warnings in the mode-line. Used by vcs, check, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-urgent
   '((t (:inherit (doom-modeline error))))
-  "Face for errors in the mode-line. Used by vcs, checker, etc."
+  "Face for errors in the mode-line. Used by vcs, check, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-notification
@@ -1012,8 +1017,8 @@ used as an advice to window creation functions."
         (redisplay t))))
   (advice-add #'fit-window-to-buffer :before #'doom-modeline-redisplay))
 
-;; For `flychecker-color-mode-line'
-(with-eval-after-load 'flychecker-color-mode-line
+;; For `flycheck-color-mode-line'
+(with-eval-after-load 'flycheck-color-mode-line
   (defvar flycheck-color-mode-line-face-to-color)
   (setq flycheck-color-mode-line-face-to-color 'doom-modeline))
 
