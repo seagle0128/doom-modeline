@@ -445,15 +445,15 @@ in the given order."
   :type '(alist :key-type symbol :value-type sexp)
   :group 'doom-modeline)
 
-(defcustom doom-modeline-check-simple-format t
-  "If non-nil, only display one number for check information if applicable."
-  :type 'boolean
-  :group 'doom-modeline)
-
 (define-obsolete-variable-alias
   'doom-modeline-checker-simple-format
   'doom-modeline-check-simple-format
   "4.2.0")
+
+(defcustom doom-modeline-check-simple-format t
+  "If non-nil, only display one number for check information if applicable."
+  :type 'boolean
+  :group 'doom-modeline)
 
 (defcustom doom-modeline-number-limit 99
   "The maximum number displayed for notifications."
