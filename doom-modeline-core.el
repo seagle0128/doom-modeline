@@ -233,6 +233,20 @@ It respects option `doom-modeline-icon' and option `doom-modeline-time-icon'."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-time-analogue-clock t
+  "Whether to draw an analogue clock SVG as the live time icon.
+
+It respects options `doom-modeline-icon', `doom-modeline-time-icon', and
+`doom-modeline-time-live-icon'."
+  :type 'boolean
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-time-clock-minute-resolution 1
+  "The clock will be updated every this many minutes, truncated.
+See `doom-modeline-time-analogue-clock'."
+  :type 'number
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-unicode-fallback nil
   "Whether to use unicode as a fallback (instead of ASCII) when not using icons."
   :type 'boolean
