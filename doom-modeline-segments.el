@@ -3080,28 +3080,93 @@ mouse-3: Restart preview"
 ;; Display time
 ;;
 
+(defconst doom-modeline--clock-hour-hand-ratio 0.45
+  "Length of the hour hand as a proportion of the radius.")
+
+(defconst doom-modeline--clock-minute-hand-ratio 0.7
+  "Length of the minute hand as a proportion of the radius.")
+
+(defun doom-modeline--create-clock-svg (hour minute radius color)
+  "Construct an SVG clock showing the time HOUR:MINUTE.
+The clock will be of the specified RADIUS and COLOR."
+  (let ((thickness-factor (image-compute-scaling-factor 'auto))
+        (hour-x (* radius (sin (* (- 6 hour (/ minute 60.0)) (/ float-pi 6)))
+                   doom-modeline--clock-hour-hand-ratio))
+        (hour-y (* radius (cos (* (- 6 hour (/ minute 60.0)) (/ float-pi 6)))
+                   doom-modeline--clock-hour-hand-ratio))
+        (minute-x (* radius (sin (* (- 30 minute) (/ float-pi 30)))
+                     doom-modeline--clock-minute-hand-ratio))
+        (minute-y (* radius (cos (* (- 30 minute) (/ float-pi 30)))
+                     doom-modeline--clock-minute-hand-ratio))
+        (svg (svg-create (* 2 radius) (* 2 radius) :stroke color)))
+    (svg-circle svg radius radius (- radius thickness-factor)
+                :fill "none" :stroke-width (* 2 thickness-factor))
+    (svg-circle svg radius radius thickness-factor
+                :fill color :stroke "none")
+    (svg-line svg radius radius (+ radius hour-x) (+ radius hour-y)
+              :stroke-width (* 2 thickness-factor))
+    (svg-line svg radius radius (+ radius minute-x) (+ radius minute-y)
+              :stroke-width (* 1.5 thickness-factor))
+    svg))
+
+(defvar doom-modeline--clock-cache nil
+  "The last result of `doom-modeline--generate-clock'.")
+
+(defun doom-modeline--generate-clock ()
+  "Return a string containing the current time as an analogue clock svg.
+When the svg library is not availible, return nil."
+  (cdr
+   (or (and (equal (truncate (float-time)
+                             (* doom-modeline-time-clock-minute-resolution 60))
+                   doom-modeline--clock-cache))
+       (and (require 'svg nil t)
+            (setq doom-modeline--clock-cache
+                  (cons (truncate (float-time)
+                                  (* doom-modeline-time-clock-minute-resolution 60))
+                        (propertize
+                         " "
+                         'display
+                         (svg-image
+                          (doom-modeline--create-clock-svg
+                           (string-to-number (format-time-string "%-I")) ; hour
+                           (* (truncate (string-to-number (format-time-string "%-M"))
+                                        doom-modeline-time-clock-minute-resolution)
+                              doom-modeline-time-clock-minute-resolution) ; minute
+                           (if (integerp doom-modeline-time-clock-size) ; radius
+                               doom-modeline-time-clock-size
+                             (* doom-modeline-height 0.5 doom-modeline-time-clock-size))
+                           "currentColor")
+                          :scale 1 :ascent 'center)
+                         'face 'doom-modeline-time
+                         'help-echo (lambda (_window _object _pos)
+                                      (format-time-string "%c")))))))))
+
 (defun doom-modeline-time-icon ()
   "Displays the time icon."
-  (doom-modeline-icon
-   'mdicon
-   (if doom-modeline-time-live-icon
-       (pcase (% (caddr (decode-time)) 12)
-         (0 "nf-md-clock_time_twelve_outline")
-         (1 "nf-md-clock_time_one_outline")
-         (2 "nf-md-clock_time_two_outline")
-         (3 "nf-md-clock_time_three_outline")
-         (4 "nf-md-clock_time_four_outline")
-         (5 "nf-md-clock_time_five_outline")
-         (6 "nf-md-clock_time_six_outline")
-         (7 "nf-md-clock_time_seven_outline")
-         (8 "nf-md-clock_time_eight_outline")
-         (9 "nf-md-clock_time_nine_outline")
-         (10 "nf-md-clock_time_ten_outline")
-         (11 "nf-md-clock_time_eleven_outline"))
-     "nf-md-clock_outline")
-   "⏰"
-   ""
-   :face '(:inherit doom-modeline-time :weight normal)))
+  (or (and doom-modeline-time-live-icon
+           doom-modeline-time-analogue-clock
+           (display-graphic-p)
+           (doom-modeline--generate-clock))
+      (doom-modeline-icon
+       'mdicon
+       (if doom-modeline-time-live-icon
+           (pcase (% (caddr (decode-time)) 12)
+             (0 "nf-md-clock_time_twelve_outline")
+             (1 "nf-md-clock_time_one_outline")
+             (2 "nf-md-clock_time_two_outline")
+             (3 "nf-md-clock_time_three_outline")
+             (4 "nf-md-clock_time_four_outline")
+             (5 "nf-md-clock_time_five_outline")
+             (6 "nf-md-clock_time_six_outline")
+             (7 "nf-md-clock_time_seven_outline")
+             (8 "nf-md-clock_time_eight_outline")
+             (9 "nf-md-clock_time_nine_outline")
+             (10 "nf-md-clock_time_ten_outline")
+             (11 "nf-md-clock_time_eleven_outline"))
+         "nf-md-clock_outline")
+       "⏰"
+       ""
+       :face '(:inherit doom-modeline-time :weight normal))))
 
 (doom-modeline-def-segment time
   (when (and doom-modeline-time
