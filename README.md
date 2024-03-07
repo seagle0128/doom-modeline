@@ -237,6 +237,13 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; It respects option `doom-modeline-icon' and option `doom-modeline-time-icon'.
 (setq doom-modeline-time-live-icon t)
 
+;; Whether to use an analogue clock svg as the live time icon.
+;; It respects options `doom-modeline-icon', `doom-modeline-time-icon', and `doom-modeline-time-live-icon'.
+(setq doom-modeline-time-analogue-clock t)
+
+;; The scaling factor used when drawing the analogue clock.
+(setq doom-modeline-time-clock-size 0.7)
+
 ;; Whether to use unicode as a fallback (instead of ASCII) when not using icons.
 (setq doom-modeline-unicode-fallback nil)
 
