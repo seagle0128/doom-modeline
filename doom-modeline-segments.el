@@ -3118,7 +3118,8 @@ When the svg library is not availible, return nil."
   (cdr
    (or (and (equal (truncate (float-time)
                              (* doom-modeline-time-clock-minute-resolution 60))
-                   doom-modeline--clock-cache))
+                   (car doom-modeline--clock-cache))
+            doom-modeline--clock-cache)
        (and (require 'svg nil t)
             (setq doom-modeline--clock-cache
                   (cons (truncate (float-time)
