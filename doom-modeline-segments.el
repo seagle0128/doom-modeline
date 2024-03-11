@@ -3114,7 +3114,7 @@ The clock will be of the specified RADIUS and COLOR."
 
 (defun doom-modeline--generate-clock ()
   "Return a string containing the current time as an analogue clock svg.
-When the svg library is not availible, return nil."
+When the svg library is not available, return nil."
   (cdr
    (or (and (equal (truncate (float-time)
                              (* doom-modeline-time-clock-minute-resolution 60))

@@ -252,7 +252,7 @@ An integer value is used as the diameter of clock in pixels.
 A floating point value sets the diameter of the clock realtive to
 `doom-modeline-height'.
 
-Only relevant when `doom-modeline-time-analogue-clock' is non-nill, which see."
+Only relevant when `doom-modeline-time-analogue-clock' is non-nil, which see."
   :type 'number
   :group 'doom-modeline)
 
