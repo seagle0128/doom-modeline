@@ -1272,19 +1272,19 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 IF FACE is nil, `mode-line' face will be used.
 If INACTIVE-FACE is nil, `mode-line-inactive' face will be used."
   (if (doom-modeline--active)
-      (or (and (facep face) face)
-          (and (facep 'mode-line-active) 'mode-line-active)
-          'mode-line)
-    (or (and (facep face) `(:inherit (mode-line-inactive ,face)))
-        (and (facep inactive-face) inactive-face)
-        'mode-line-inactive)))
+      (or (and (facep face) `(:inherit (doom-modeline ,face)))
+          (and (facep 'mode-line-active) '(:inherit (doom-modeline mode-line-active)))
+          '(:inherit (doom-modeline mode-line)))
+    (or (and (facep face) `(:inherit (doom-modeline mode-line-inactive ,face)))
+        (and (facep inactive-face) `(:inherit (doom-modeline ,inactive-face)))
+        '(:inherit (doom-modeline mode-line-inactive)))))
 
 (defun doom-modeline-string-pixel-width (str)
-    "Return the width of STR in pixels."
-    (if (fboundp 'string-pixel-width)
-        (string-pixel-width str)
-      (* (string-width str) (window-font-width nil 'mode-line)
-         (if (display-graphic-p) 1.05 1.0))))
+  "Return the width of STR in pixels."
+  (if (fboundp 'string-pixel-width)
+      (string-pixel-width str)
+    (* (string-width str) (window-font-width nil 'mode-line)
+       (if (display-graphic-p) 1.05 1.0))))
 
 (defun doom-modeline--font-height ()
   "Calculate the actual char height of the mode-line."
