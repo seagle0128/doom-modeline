@@ -1698,32 +1698,29 @@ mouse-1: Display Line and Column Mode Menu"
                  'local-map local-map)
 
      ;; Position
-     (cond ((and visible
-                 (bound-and-true-p nyan-mode)
-                 (>= (window-width) nyan-minimum-window-width))
-            (concat
-             (doom-modeline-wspc)
-             (propertize (nyan-create) 'mouse-face mouse-face)))
-           ((and visible
-                 (bound-and-true-p poke-line-mode)
-                 (>= (window-width) poke-line-minimum-window-width))
-            (concat
-             (doom-modeline-wspc)
-             (propertize (poke-line-create) 'mouse-face mouse-face)))
-           ((and visible
-                 (bound-and-true-p mlscroll-mode)
-                 (>= (window-width) mlscroll-minimum-current-width))
-            (concat
-             (doom-modeline-wspc)
-             (let ((mlscroll-right-align nil))
-               (format-mode-line (mlscroll-mode-line)))))
-           ((and visible
-                 (bound-and-true-p sml-modeline-mode)
-                 (>= (window-width) sml-modeline-len))
-            (concat
-             (doom-modeline-wspc)
-             (propertize (sml-modeline-create) 'mouse-face mouse-face)))
-           (t ""))
+     (when visible
+       (cond ((and (bound-and-true-p nyan-mode)
+                   (>= (window-width) nyan-minimum-window-width))
+              (concat
+               (doom-modeline-wspc)
+               (propertize (nyan-create) 'mouse-face mouse-face)))
+             ((and (bound-and-true-p poke-line-mode)
+                   (>= (window-width) poke-line-minimum-window-width))
+              (concat
+               (doom-modeline-wspc)
+               (propertize (poke-line-create) 'mouse-face mouse-face)))
+             ((and (bound-and-true-p mlscroll-mode)
+                   (>= (window-width) mlscroll-minimum-current-width))
+              (concat
+               (doom-modeline-wspc)
+               (let ((mlscroll-right-align nil))
+                 (format-mode-line (mlscroll-mode-line)))))
+             ((and (bound-and-true-p sml-modeline-mode)
+                   (>= (window-width) sml-modeline-len))
+              (concat
+               (doom-modeline-wspc)
+               (propertize (sml-modeline-create) 'mouse-face mouse-face)))
+             (t "")))
 
      ;; Percent position
      (when doom-modeline-percent-position
