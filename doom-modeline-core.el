@@ -480,22 +480,6 @@ If set to icons, display check information with icons."
                  (const :tag "simple icons" icons))
   :group 'doom-modeline)
 
-(defcustom doom-modeline-check-warning-icon
-  (doom-modeline-check-icon
-   "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning)
-  "Icon to be using in check segment.
-Only works if `doom-modeline-check-simple-format' is set to icons."
-  :type '(string)
-  :group 'doom-modeline)
-
-(defcustom doom-modeline-check-note-icon
-  (doom-modeline-check-icon
-   "nf-md-information_outline" "i" "i" 'doom-modeline-info)
-  "Icon to be using in check segment.
-Only works if `doom-modeline-check-simple-format' is set to icons."
-  :type '(string)
-  :group 'doom-modeline)
-
 (defcustom doom-modeline-number-limit 99
   "The maximum number displayed for notifications."
   :type 'integer
