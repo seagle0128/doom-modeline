@@ -865,12 +865,10 @@ mouse-2: Show help for minor mode")
                                   ('icons (format "%s %s%s %s%s"
                                                   (doom-modeline-check-text (number-to-string .error)
                                                                             'doom-modeline-urgent)
-                                                  (doom-modeline-check-text doom-modeline-check-warning-icon
-                                                                            'doom-modeline-warning)
+                                                  doom-modeline-check-warning-icon
                                                   (doom-modeline-check-text (number-to-string .warning)
                                                                             'doom-modeline-warning)
-                                                  (doom-modeline-check-text doom-modeline-check-note-icon
-                                                                            'doom-modeline-info)
+                                                  doom-modeline-check-note-icon
                                                   (doom-modeline-check-text (number-to-string .info)
                                                                             'doom-modeline-info)))))))
                 ('running     (and doom-modeline--flycheck-text
@@ -1070,12 +1068,10 @@ mouse-2: Show help for minor mode"
                           ('icons (format "%s %s%s %s%s"
                                           (doom-modeline-check-text (number-to-string .error)
                                                                     'doom-modeline-urgent)
-                                          (doom-modeline-check-text doom-modeline-check-warning-icon
-                                                                    'doom-modeline-warning)
+                                          doom-modeline-check-warning-icon
                                           (doom-modeline-check-text (number-to-string .warning)
                                                                     'doom-modeline-warning)
-                                          (doom-modeline-check-text doom-modeline-check-note-icon
-                                                                    'doom-modeline-info)
+                                          doom-modeline-check-note-icon
                                           (doom-modeline-check-text (number-to-string .note)
                                                                     'doom-modeline-info))))))))))
             (propertize
