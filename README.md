@@ -294,6 +294,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 (setq doom-modeline-total-line-number nil)
 
 ;; If non-nil, only display one number for check information if applicable.
+;; If set to icons, display check information with icons.
 (setq doom-modeline-check-simple-format t)
 
 ;; The maximum number displayed for notifications.
