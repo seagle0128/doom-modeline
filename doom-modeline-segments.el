@@ -898,20 +898,20 @@ mouse-3: Next error"
            'mouse-face 'doom-modeline-highlight
            'local-map (let ((map (make-sparse-keymap)))
                         (define-key map [mode-line mouse-1]
-                                    #'flycheck-list-errors)
+                          #'flycheck-list-errors)
                         (define-key map [mode-line mouse-3]
-                                    #'flycheck-next-error)
+                          #'flycheck-next-error)
                         (when (doom-modeline-mwheel-available-p)
                           (define-key map [mode-line mouse-wheel-down-event]
-                                      (lambda (event)
-                                        (interactive "e")
-                                        (with-selected-window (posn-window (event-start event))
-                                          (flycheck-previous-error 1))))
+                            (lambda (event)
+                              (interactive "e")
+                              (with-selected-window (posn-window (event-start event))
+                                (flycheck-previous-error 1))))
                           (define-key map [mode-line mouse-wheel-up-event]
-                                      (lambda (event)
-                                        (interactive "e")
-                                        (with-selected-window (posn-window (event-start event))
-                                          (flycheck-next-error 1))))
+                            (lambda (event)
+                              (interactive "e")
+                              (with-selected-window (posn-window (event-start event))
+                                (flycheck-next-error 1))))
                           map))))))
 (add-hook 'flycheck-status-changed-functions #'doom-modeline-update-flycheck-text)
 (add-hook 'flycheck-mode-hook #'doom-modeline-update-flycheck-text)
