@@ -475,7 +475,24 @@ in the given order."
 
 (defcustom doom-modeline-check-simple-format t
   "If non-nil, only display one number for check information if applicable."
-  :type 'boolean
+  :type '(choice boolean
+                 (const :tag "simple icons" icons))
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-check-warning-icon
+  (doom-modeline-check-icon
+   "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning)
+  "Icon to be using in check segment.
+Only works if `doom-modeline-check-simple-format' is set to icons."
+  :type '(string)
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-check-note-icon
+  (doom-modeline-check-icon
+   "nf-md-information_outline" "i" "i" 'doom-modeline-info)
+  "Icon to be using in check segment.
+Only works if `doom-modeline-check-simple-format' is set to icons."
+  :type '(string)
   :group 'doom-modeline)
 
 (defcustom doom-modeline-number-limit 99
