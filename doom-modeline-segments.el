@@ -862,7 +862,7 @@ mouse-2: Show help for minor mode")
                                                                           'doom-modeline-warning)
                                                 (doom-modeline-check-text (number-to-string .info)
                                                                           'doom-modeline-info)))
-                                  ('icons (format "%s %s%s %s%s"
+                                  ('icons (format "%s %s %s %s %s"
                                                   (doom-modeline-check-text (number-to-string .error)
                                                                             'doom-modeline-urgent)
                                                   doom-modeline-check-warning-icon
@@ -1065,7 +1065,7 @@ mouse-2: Show help for minor mode"
                                                                   'doom-modeline-warning)
                                         (doom-modeline-check-text (number-to-string .note)
                                                                   'doom-modeline-info)))
-                          ('icons (format "%s %s%s %s%s"
+                          ('icons (format "%s %s %s %s %s"
                                           (doom-modeline-check-text (number-to-string .error)
                                                                     'doom-modeline-urgent)
                                           doom-modeline-check-warning-icon
