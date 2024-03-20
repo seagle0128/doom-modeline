@@ -474,7 +474,8 @@ in the given order."
   "4.2.0")
 
 (defcustom doom-modeline-check-simple-format t
-  "If non-nil, only display one number for check information if applicable."
+  "If non-nil, only display one number for check information if applicable.
+If set to icons, display check information with icons."
   :type '(choice boolean
                  (const :tag "simple icons" icons))
   :group 'doom-modeline)
