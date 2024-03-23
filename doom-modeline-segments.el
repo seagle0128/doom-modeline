@@ -762,16 +762,21 @@ Uses `nerd-icons-mdicon' to fetch the icon."
 Only works if `doom-modeline-check-simple-format' is set to the symbol
 `icons'.")
 
+;; NOTE: Nerd icons bugs with error numbers,
+;; adding a space to warning and note icon should fix this.
 (defvar doom-modeline-check-warning-icon
-  (doom-modeline-check-icon
-   "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning)
+  (concat 
+   (doom-modeline-check-icon "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning)
+   " ")
   "Icon to be using in check segment.
 Only works if `doom-modeline-check-simple-format' is set to the symbol
 `icons'.")
 
 (defvar doom-modeline-check-note-icon
-  (doom-modeline-check-icon
+  (concat
+   (doom-modeline-check-icon
    "nf-md-information_outline" "❔" "i" 'doom-modeline-info)
+   " ")
   "Icon to be using in check segment.
 Only works if `doom-modeline-check-simple-format' is set to the symbol
 `icons'.")
@@ -882,8 +887,8 @@ mouse-2: Show help for minor mode")
                                                                           'doom-modeline-warning)
                                                 (doom-modeline-check-text (number-to-string .info)
                                                                           'doom-modeline-info)))
-                                  ('icons (format "%s %s %s %s %s"
-                                                  doom-modeline-check-error- icon
+                                  ('icons (format "%s%s %s%s %s%s"
+                                                  doom-modeline-check-error-icon
                                                   (doom-modeline-check-text (number-to-string .error)
                                                                             'doom-modeline-urgent)
                                                   doom-modeline-check-warning-icon
@@ -1086,7 +1091,7 @@ mouse-2: Show help for minor mode"
                                                                   'doom-modeline-warning)
                                         (doom-modeline-check-text (number-to-string .note)
                                                                   'doom-modeline-info)))
-                          ('icons (format "%s %s %s %s %s"
+                          ('icons (format "%s%s %s%s %s%s"
                                           doom-modeline-check-error-icon
                                           (doom-modeline-check-text (number-to-string .error)
                                                                     'doom-modeline-urgent)
