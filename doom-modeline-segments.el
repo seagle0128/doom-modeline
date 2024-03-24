@@ -109,6 +109,30 @@
 (defvar winum-auto-setup-mode-line)
 (defvar xah-fly-insert-state-p)
 
+(defcustom doom-modeline-check-error-icon
+  (doom-modeline-check-icon
+   "nf-md-alert_circle_outline" "❗" "!" 'doom-modeline-urgent)
+  "Icon to be using in check segment.
+Only works if `doom-modeline-check-simple-format' is set to icons."
+  :type '(string)
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-check-warning-icon
+  (doom-modeline-check-icon
+   "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning)
+  "Icon to be using in check segment.
+Only works if `doom-modeline-check-simple-format' is set to icons."
+  :type '(string)
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-check-note-icon
+  (doom-modeline-check-icon
+   "nf-md-information_outline" "❔" "i" 'doom-modeline-info)
+  "Icon to be using in check segment.
+Only works if `doom-modeline-check-simple-format' is set to icons."
+  :type '(string)
+  :group 'doom-modeline)
+
 (declare-function anzu--reset-status "ext:anzu")
 (declare-function anzu--where-is-here "ext:anzu")
 (declare-function async-inject-variables "ext:async")
@@ -754,33 +778,6 @@ Uses `nerd-icons-mdicon' to fetch the icon."
 (defun doom-modeline-check-text (text &optional face)
   "Displays the check TEXT with FACE."
   (propertize text 'face (or face 'mode-line)))
-
-(defcustom doom-modeline-check-error-icon
-  (doom-modeline-check-icon
-   "nf-md-alert_circle_outline" "❗" "!" 'doom-modeline-urgent)
-  "Icon to be using in check segment.
-Only works if `doom-modeline-check-simple-format' is set to the symbol
-`icons'."
-  :type '(string)
-  :group 'doom-modeline)
-
-(defcustom doom-modeline-check-warning-icon
-  (doom-modeline-check-icon
-   "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning)
-  "Icon to be using in check segment.
-Only works if `doom-modeline-check-simple-format' is set to the symbol
-`icons'."
-  :type '(string)
-  :group 'doom-modeline)
-
-(defcustom doom-modeline-check-note-icon
-  (doom-modeline-check-icon
-   "nf-md-information_outline" "❔" "i" 'doom-modeline-info)
-  "Icon to be using in check segment.
-Only works if `doom-modeline-check-simple-format' is set to the symbol
-`icons'."
-  :type '(string)
-  :group 'doom-modeline)
 
 ;; Flycheck
 
