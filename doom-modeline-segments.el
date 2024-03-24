@@ -755,26 +755,32 @@ Uses `nerd-icons-mdicon' to fetch the icon."
   "Displays the check TEXT with FACE."
   (propertize text 'face (or face 'mode-line)))
 
-(defvar doom-modeline-check-error-icon
+(defcustom doom-modeline-check-error-icon
   (doom-modeline-check-icon
    "nf-md-alert_circle_outline" "❗" "!" 'doom-modeline-urgent)
   "Icon to be using in check segment.
 Only works if `doom-modeline-check-simple-format' is set to the symbol
-`icons'.")
+`icons'."
+  :type '(string)
+  :group 'doom-modeline)
 
-(defvar doom-modeline-check-warning-icon
+(defcustom doom-modeline-check-warning-icon
   (doom-modeline-check-icon
    "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning)
   "Icon to be using in check segment.
 Only works if `doom-modeline-check-simple-format' is set to the symbol
-`icons'.")
+`icons'."
+  :type '(string)
+  :group 'doom-modeline)
 
-(defvar doom-modeline-check-note-icon
+(defcustom doom-modeline-check-note-icon
   (doom-modeline-check-icon
    "nf-md-information_outline" "❔" "i" 'doom-modeline-info)
   "Icon to be using in check segment.
 Only works if `doom-modeline-check-simple-format' is set to the symbol
-`icons'.")
+`icons'."
+  :type '(string)
+  :group 'doom-modeline)
 
 ;; Flycheck
 
@@ -883,7 +889,6 @@ mouse-2: Show help for minor mode")
                                                 (doom-modeline-check-text (number-to-string .info)
                                                                           'doom-modeline-info)))
                                   ('icons (format "%s %s %s %s %s"
-                                                  doom-modeline-check-error- icon
                                                   (doom-modeline-check-text (number-to-string .error)
                                                                             'doom-modeline-urgent)
                                                   doom-modeline-check-warning-icon
@@ -1087,7 +1092,6 @@ mouse-2: Show help for minor mode"
                                         (doom-modeline-check-text (number-to-string .note)
                                                                   'doom-modeline-info)))
                           ('icons (format "%s %s %s %s %s"
-                                          doom-modeline-check-error-icon
                                           (doom-modeline-check-text (number-to-string .error)
                                                                     'doom-modeline-urgent)
                                           doom-modeline-check-warning-icon
@@ -1135,7 +1139,6 @@ mouse-1: List all problems%s"
      (dolist (buf (buffer-list))
        (with-current-buffer buf
          (when (bound-and-true-p flymake-mode)
-           (doom-modeline-update-flymake-icon)
            (doom-modeline-update-flymake-text)))))))
 
 (doom-modeline-def-segment check
@@ -1147,7 +1150,7 @@ mouse-1: List all problems%s"
                ((and (bound-and-true-p flycheck-mode)
                      (bound-and-true-p flycheck--automatically-enabled-checkers))
                 `(,doom-modeline--flycheck-icon . ,doom-modeline--flycheck-text))))
-         (icon (and (eq doom-modeline-check-simple-format t) (car seg)))
+         (icon (car seg))
          (text (cdr seg)))
     (concat
      (and (or icon text) (doom-modeline-spc))
