@@ -806,7 +806,7 @@ level."
                                    (nth 1 doom-modeline-check-error-icons)
                                    (nth 2 doom-modeline-check-error-icons)
                                    (cond ((eq doom-modeline-check-simple-format 'icons)
-                                                 'doom-modeline-urgent)
+                                           'doom-modeline-urgent)
                                          ((> .error 0) 'doom-modeline-urgent)
                                          ((> .warning 0) 'doom-modeline-warning)
                                          (t 'doom-modeline-info))))
@@ -1085,7 +1085,7 @@ mouse-2: Show help for minor mode"
                           ('t (doom-modeline-check-text (number-to-string num)
                                                         (cond ((> .error 0) 'doom-modeline-urgent)
                                                               ((> .warning 0) 'doom-modeline-warning)
-                                                              (t 'doom-modeline-info))))
+                                                              (t 'doom-modeline-info)))))
                           ('nil (format "%s/%s/%s"
                                         (doom-modeline-check-text (number-to-string .error)
                                                                   'doom-modeline-urgent)
