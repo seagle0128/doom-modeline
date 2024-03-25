@@ -111,21 +111,18 @@
 
 (defvar doom-modeline-check-error-icons
   '("nf-md-alert_circle_outline" "❗" "!")
-  "List of strings where specify an icon name, unicode string and a text string.
-Only works if `doom-modeline-check-simple-format' is set to the symbol
-`icons'.")
+  "Error icon list to use in check segment.
+List must contain an icon name, an unicode string and a text string.")
 
 (defvar doom-modeline-check-warning-icons
   '("nf-md-alert_outline" "⚠" "!")
-  "List of strings where specify an icon name, unicode string and a text string.
-Only works if `doom-modeline-check-simple-format' is set to the symbol
-`icons'.")
+  "Warning icon list to use in check segment.
+List must contain an icon name, an unicode string and a text string.")
 
 (defvar doom-modeline-check-note-icons
   '("nf-md-information_outline" "❔" "i")
-  "List of strings where specify an icon name, unicode string and a text string.
-Only works if `doom-modeline-check-simple-format' is set to the symbol
-`icons'.")
+  "Note/Info icon list to use in check segment.
+List must contain an icon name, an unicode string and a text string.")
 
 (declare-function anzu--reset-status "ext:anzu")
 (declare-function anzu--where-is-here "ext:anzu")
