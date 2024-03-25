@@ -109,6 +109,24 @@
 (defvar winum-auto-setup-mode-line)
 (defvar xah-fly-insert-state-p)
 
+(defvar doom-modeline-check-error-icons
+  '("nf-md-alert_circle_outline" "❗" "!")
+  "List of strings where specify an icon name, unicode string and a text string.
+Only works if `doom-modeline-check-simple-format' is set to the symbol
+`icons'.")
+
+(defvar doom-modeline-check-warning-icons
+  '("nf-md-alert_outline" "⚠" "!")
+  "List of strings where specify an icon name, unicode string and a text string.
+Only works if `doom-modeline-check-simple-format' is set to the symbol
+`icons'.")
+
+(defvar doom-modeline-check-note-icons
+  '("nf-md-information_outline" "❔" "i")
+  "List of strings where specify an icon name, unicode string and a text string.
+Only works if `doom-modeline-check-simple-format' is set to the symbol
+`icons'.")
+
 (declare-function anzu--reset-status "ext:anzu")
 (declare-function anzu--where-is-here "ext:anzu")
 (declare-function async-inject-variables "ext:async")
@@ -755,30 +773,6 @@ Uses `nerd-icons-mdicon' to fetch the icon."
   "Displays the check TEXT with FACE."
   (propertize text 'face (or face 'mode-line)))
 
-(defvar doom-modeline-check-error-icon
-  (concat (doom-modeline-check-icon
-           "nf-md-alert_circle_outline" "❗" "!" 'doom-modeline-urgent)
-          " ")
-  "Icon to be using in check segment.
-Only works if `doom-modeline-check-simple-format' is set to the symbol
-`icons'.")
-
-(defvar doom-modeline-check-warning-icon
-  (concat (doom-modeline-check-icon
-           "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning)
-          " ")
-  "Icon to be using in check segment.
-Only works if `doom-modeline-check-simple-format' is set to the symbol
-`icons'.")
-
-(defvar doom-modeline-check-note-icon
-  (concat (doom-modeline-check-icon
-           "nf-md-information_outline" "❔" "i" 'doom-modeline-info)
-          " ")
-  "Icon to be using in check segment.
-Only works if `doom-modeline-check-simple-format' is set to the symbol
-`icons'.")
-
 ;; Flycheck
 
 (defun doom-modeline--flycheck-count-errors ()
@@ -808,7 +802,9 @@ level."
                 ('finished  (if flycheck-current-errors
                                 (let-alist (doom-modeline--flycheck-count-errors)
                                   (doom-modeline-check-icon
-                                   "nf-md-alert_circle_outline" "❗" "!"
+                                   (nth 0 doom-modeline-check-error-icons)
+                                   (nth 1 doom-modeline-check-error-icons)
+                                   (nth 2 doom-modeline-check-error-icons)
                                    (cond ((eq doom-modeline-check-simple-format 'icons)
                                                  'doom-modeline-urgent)
                                          ((> .error 0) 'doom-modeline-urgent)
@@ -884,16 +880,21 @@ mouse-2: Show help for minor mode")
                                                                           'doom-modeline-warning)
                                                 (doom-modeline-check-text (number-to-string .info)
                                                                           'doom-modeline-info)))
-                                  ('icons (format "%s %s%s %s%s"
+                                  ('icons (format "%s %s %s %s %s"
                                                   (doom-modeline-check-text (number-to-string .error)
                                                                             'doom-modeline-urgent)
-                                                  doom-modeline-check-warning-icon
+                                                  (doom-modeline-check-icon (nth 0 doom-modeline-check-warning-icons)
+                                                                            (nth 1 doom-modeline-check-warning-icons)
+                                                                            (nth 2 doom-modeline-check-warning-icons)
+                                                                            'doom-modeline-warning)
                                                   (doom-modeline-check-text (number-to-string .warning)
                                                                             'doom-modeline-warning)
-                                                  doom-modeline-check-note-icon
+                                                  (doom-modeline-check-icon (nth 0 doom-modeline-check-note-icons)
+                                                                            (nth 1 doom-modeline-check-note-icons)
+                                                                            (nth 2 doom-modeline-check-note-icons)
+                                                                            'doom-modeline-info)
                                                   (doom-modeline-check-text (number-to-string .info)
-                                                                            'doom-modeline-info)))
-                                  ))))
+                                                                            'doom-modeline-info)))))))
                 ('running     (and doom-modeline--flycheck-text
                                    (propertize doom-modeline--flycheck-text 'face 'doom-modeline-debug)))
                 ;; ('no-checker  nil)
@@ -993,10 +994,12 @@ mouse-3: Next error"
                                      ((> severity note-level)    (cl-incf .warning))
                                      (t                          (cl-incf .note))))))
                         (if (> (+ .error .warning .note) 0)
-                            (doom-modeline-check-icon "nf-md-alert_circle_outline" "❗" "!"
+                            (doom-modeline-check-icon (nth 0 doom-modeline-check-error-icons)
+                                                      (nth 1 doom-modeline-check-error-icons)
+                                                      (nth 2 doom-modeline-check-error-icons)
                                                         (cond ((eq doom-modeline-check-simple-format 'icons)
-                                                 'doom-modeline-urgent)
-                                                         ((> .error 0) 'doom-modeline-urgent)
+                                                                'doom-modeline-urgent)
+                                                              ((> .error 0) 'doom-modeline-urgent)
                                                               ((> .warning 0) 'doom-modeline-warning)
                                                               (t 'doom-modeline-info)))
                           (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "-" 'doom-modeline-info))))))))
@@ -1090,13 +1093,19 @@ mouse-2: Show help for minor mode"
                                                                   'doom-modeline-warning)
                                         (doom-modeline-check-text (number-to-string .note)
                                                                   'doom-modeline-info)))
-                          ('icons (format "%s %s%s %s%s"
+                          ('icons (format "%s %s %s %s %s"
                                           (doom-modeline-check-text (number-to-string .error)
                                                                     'doom-modeline-urgent)
-                                          doom-modeline-check-warning-icon
+                                          (doom-modeline-check-icon (nth 0 doom-modeline-check-warning-icons)
+                                                                    (nth 1 doom-modeline-check-warning-icons)
+                                                                    (nth 2 doom-modeline-check-warning-icons)
+                                                                    'doom-modeline-warning)
                                           (doom-modeline-check-text (number-to-string .warning)
                                                                     'doom-modeline-warning)
-                                          doom-modeline-check-note-icon
+                                          (doom-modeline-check-icon (nth 0 doom-modeline-check-note-icons)
+                                                                    (nth 1 doom-modeline-check-note-icons)
+                                                                    (nth 2 doom-modeline-check-note-icons)
+                                                                    'doom-modeline-info)
                                           (doom-modeline-check-text (number-to-string .note)
                                                                     'doom-modeline-info))))))))))
             (propertize
@@ -1113,20 +1122,20 @@ mouse-1: List all problems%s"
              'mouse-face 'doom-modeline-highlight
              'local-map (let ((map (make-sparse-keymap)))
                           (define-key map [mode-line mouse-1]
-                                      #'flymake-show-buffer-diagnostics)
+                            #'flymake-show-buffer-diagnostics)
                           (when (doom-modeline-mwheel-available-p)
                             (define-key map (vector 'mode-line
                                                     mouse-wheel-down-event)
-                                        (lambda (event)
-                                          (interactive "e")
-                                          (with-selected-window (posn-window (event-start event))
-                                            (flymake-goto-prev-error 1 nil t))))
+                              (lambda (event)
+                                (interactive "e")
+                                (with-selected-window (posn-window (event-start event))
+                                  (flymake-goto-prev-error 1 nil t))))
                             (define-key map (vector 'mode-line
                                                     mouse-wheel-up-event)
-                                        (lambda (event)
-                                          (interactive "e")
-                                          (with-selected-window (posn-window (event-start event))
-                                            (flymake-goto-next-error 1 nil t))))
+                              (lambda (event)
+                                (interactive "e")
+                                (with-selected-window (posn-window (event-start event))
+                                  (flymake-goto-next-error 1 nil t))))
                             map)))))))
 (advice-add #'flymake--handle-report :after #'doom-modeline-update-flymake-text)
 
