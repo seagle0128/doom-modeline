@@ -1094,10 +1094,12 @@ mouse-2: Show help for minor mode"
                                                               ((> .warning 0) 'doom-modeline-warning)
                                                               (t 'doom-modeline-info))))
                           ('nil (format "%s/%s/%s" error-counter warning-counter note-counter))
-                          ('icons (format "%s %s %s %s %s"
-                                          error-counter
-                                          warning-icon warning-counter
-                                          note-icon note-counter)))))))))
+                          ('icons (format "%s%s%s%s%s%s%s%s%s"
+                                          error-counter (doom-modeline-vspc)
+                                          warning-icon (doom-modeline-vspc)
+                                          warning-counter (doom-modeline-vspc)
+                                          note-icon (doom-modeline-vspc)
+                                          note-counter)))))))))
             (propertize
              text
              'help-echo (cond
