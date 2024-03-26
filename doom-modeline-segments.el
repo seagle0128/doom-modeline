@@ -1158,7 +1158,14 @@ mouse-1: List all problems%s"
      (and text
           (concat
            (and icon (doom-modeline-vspc))
-           (doom-modeline-display-text text)))
+           (if (eq doom-modeline-check-simple-format 'icons)
+               (let ((string))
+                 (dolist (s (split-string text ""))
+                   (if (string-match-p "^[0-9]+$" s)
+                       (setq string (concat string (doom-modeline-display-text s)))
+                     (setq string (concat string (doom-modeline-display-icon s)))))
+                 string)
+             (doom-modeline-display-text text))))
      (and (or icon text) (doom-modeline-spc)))))
 
 
