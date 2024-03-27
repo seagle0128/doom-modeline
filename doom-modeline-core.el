@@ -473,7 +473,7 @@ in the given order."
   'doom-modeline-check-simple-format
   "4.2.0")
 
-(defcustom doom-modeline-check-simple-format t
+(defcustom doom-modeline-check-simple-format nil
   "If non-nil, only display one number for check information if applicable."
   :type 'boolean
   :group 'doom-modeline)
@@ -1375,7 +1375,8 @@ ARGS is same as `nerd-icons-octicon' and others."
   "Display TEXT in mode-line."
   (if (doom-modeline--active)
       text
-    (propertize text 'face 'mode-line-inactive)))
+    (propertize text 'face `(:inherit (mode-line-inactive
+                                       ,(get-text-property 0 'face text))))))
 
 (defun doom-modeline--create-bar-image (face width height)
   "Create the bar image.
