@@ -749,7 +749,8 @@ Uses `nerd-icons-octicon' to fetch the icon."
 
 UNICODE and TEXT are fallbacks.
 Uses `nerd-icons-mdicon' to fetch the icon."
-  (doom-modeline-icon 'mdicon icon unicode text :face face))
+  (doom-modeline-icon 'mdicon (and doom-modeline-check-icon icon)
+                      unicode text :face face))
 
 (defun doom-modeline-check-text (text &optional face)
   "Displays the check TEXT with FACE."
@@ -787,7 +788,7 @@ level."
                             (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" face)
                             (doom-modeline-vspc)
                             (doom-modeline-check-text (number-to-string (+ .error .warning .info)) face)))
-                       (concat (doom-modeline-check-icon "nf-md-close_circle_outline" "⮾" "x" 'doom-modeline-urgent)
+                       (concat (doom-modeline-check-icon "nf-md-close_circle_outline" "⮾" "!" 'doom-modeline-urgent)
                                (doom-modeline-vspc)
                                (doom-modeline-check-text (number-to-string .error) 'doom-modeline-urgent)
                                (doom-modeline-vspc)
@@ -795,7 +796,7 @@ level."
                                (doom-modeline-vspc)
                                (doom-modeline-check-text (number-to-string .warning) 'doom-modeline-warning)
                                (doom-modeline-vspc)
-                               (doom-modeline-check-icon "nf-md-information_outline" "🛈" "i" 'doom-modeline-info)
+                               (doom-modeline-check-icon "nf-md-information_outline" "🛈" "!" 'doom-modeline-info)
                                (doom-modeline-vspc)
                                (doom-modeline-check-text (number-to-string .info) 'doom-modeline-info)))))
             (propertize seg
@@ -825,6 +826,16 @@ mouse-2: Show help for minor mode")
  (lambda (_sym val op _where)
    (when (eq op 'set)
      (setq doom-modeline-icon val)
+     (dolist (buf (buffer-list))
+       (with-current-buffer buf
+         (when (bound-and-true-p flycheck-mode)
+           (doom-modeline-update-flycheck)))))))
+
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-check-icon
+ (lambda (_sym val op _where)
+   (when (eq op 'set)
+     (setq doom-modeline-check-icon val)
      (dolist (buf (buffer-list))
        (with-current-buffer buf
          (when (bound-and-true-p flycheck-mode)
@@ -896,7 +907,7 @@ mouse-2: Show help for minor mode")
                               (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" face)
                               (doom-modeline-vspc)
                               (doom-modeline-check-text (number-to-string (+ .error .warning .note)) face)))
-                         (concat (doom-modeline-check-icon "nf-md-close_circle_outline" "⮾" "x" 'doom-modeline-urgent)
+                         (concat (doom-modeline-check-icon "nf-md-close_circle_outline" "⮾" "!" 'doom-modeline-urgent)
                                  (doom-modeline-vspc)
                                  (doom-modeline-check-text (number-to-string .error) 'doom-modeline-urgent)
                                  (doom-modeline-vspc)
@@ -904,7 +915,7 @@ mouse-2: Show help for minor mode")
                                  (doom-modeline-vspc)
                                  (doom-modeline-check-text (number-to-string .warning) 'doom-modeline-warning)
                                  (doom-modeline-vspc)
-                                 (doom-modeline-check-icon "nf-md-information_outline" "🛈" "i" 'doom-modeline-info)
+                                 (doom-modeline-check-icon "nf-md-information_outline" "🛈" "!" 'doom-modeline-info)
                                  (doom-modeline-vspc)
                                  (doom-modeline-check-text (number-to-string .note) 'doom-modeline-info)))))
               (propertize
@@ -934,6 +945,16 @@ mouse-2: Show help for minor mode")
  (lambda (_sym val op _where)
    (when (eq op 'set)
      (setq doom-modeline-icon val)
+     (dolist (buf (buffer-list))
+       (with-current-buffer buf
+         (when (bound-and-true-p flymake-mode)
+           (doom-modeline-update-flymake)))))))
+
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-check-icon
+ (lambda (_sym val op _where)
+   (when (eq op 'set)
+     (setq doom-modeline-check-icon val)
      (dolist (buf (buffer-list))
        (with-current-buffer buf
          (when (bound-and-true-p flymake-mode)

@@ -468,6 +468,13 @@ in the given order."
   :type '(alist :key-type symbol :value-type sexp)
   :group 'doom-modeline)
 
+(defcustom doom-modeline-check-icon t
+  "Whether display the icon of check segment.
+
+It respects option `doom-modeline-icon'."
+  :type 'boolean
+  :group 'doom-modeline)
+
 (define-obsolete-variable-alias
   'doom-modeline-checker-simple-format
   'doom-modeline-check-simple-format
