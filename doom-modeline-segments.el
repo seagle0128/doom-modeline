@@ -109,6 +109,21 @@
 (defvar winum-auto-setup-mode-line)
 (defvar xah-fly-insert-state-p)
 
+(defvar doom-modeline-check-error-icons
+  '("nf-md-alert_circle_outline" "❗" "!")
+  "Error icon list to use in check segment.
+List must contain an icon name, an unicode string and a text string.")
+
+(defvar doom-modeline-check-warning-icons
+  '("nf-md-alert_outline" "⚠" "!")
+  "Warning icon list to use in check segment.
+List must contain an icon name, an unicode string and a text string.")
+
+(defvar doom-modeline-check-note-icons
+  '("nf-md-information_outline" "❔" "i")
+  "Note/Info icon list to use in check segment.
+List must contain an icon name, an unicode string and a text string.")
+
 (declare-function anzu--reset-status "ext:anzu")
 (declare-function anzu--where-is-here "ext:anzu")
 (declare-function async-inject-variables "ext:async")
@@ -784,8 +799,12 @@ level."
                 ('finished  (if flycheck-current-errors
                                 (let-alist (doom-modeline--flycheck-count-errors)
                                   (doom-modeline-check-icon
-                                   "nf-md-alert_circle_outline" "❗" "!"
-                                   (cond ((> .error 0) 'doom-modeline-urgent)
+                                   (nth 0 doom-modeline-check-error-icons)
+                                   (nth 1 doom-modeline-check-error-icons)
+                                   (nth 2 doom-modeline-check-error-icons)
+                                   (cond ((eq doom-modeline-check-simple-format 'icons)
+                                           'doom-modeline-urgent)
+                                         ((> .error 0) 'doom-modeline-urgent)
                                          ((> .warning 0) 'doom-modeline-warning)
                                          (t 'doom-modeline-info))))
                               (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "" 'doom-modeline-info)))
@@ -846,19 +865,29 @@ mouse-2: Show help for minor mode")
               (pcase status
                 ('finished  (when flycheck-current-errors
                               (let-alist (doom-modeline--flycheck-count-errors)
-                                (if doom-modeline-check-simple-format
-                                    (doom-modeline-check-text
-                                     (number-to-string (+ .error .warning .info))
-                                     (cond ((> .error 0) 'doom-modeline-urgent)
-                                           ((> .warning 0) 'doom-modeline-warning)
-                                           (t 'doom-modeline-info)))
-                                  (format "%s/%s/%s"
-                                          (doom-modeline-check-text (number-to-string .error)
-                                                                      'doom-modeline-urgent)
-                                          (doom-modeline-check-text (number-to-string .warning)
-                                                                      'doom-modeline-warning)
-                                          (doom-modeline-check-text (number-to-string .info)
-                                                                      'doom-modeline-info))))))
+                                (let ((error-counter (doom-modeline-check-text (number-to-string .error)
+                                                                               'doom-modeline-urgent))
+                                      (warning-counter (doom-modeline-check-text (number-to-string .warning)
+                                                                                 'doom-modeline-warning))
+                                      (info-counter (doom-modeline-check-text (number-to-string .info)
+                                                                              'doom-modeline-info))
+                                      (warning-icon (doom-modeline-check-icon (nth 0 doom-modeline-check-warning-icons)
+                                                                              (nth 1 doom-modeline-check-warning-icons)
+                                                                              (nth 2 doom-modeline-check-warning-icons)
+                                                                              'doom-modeline-warning))
+                                      (info-icon (doom-modeline-check-icon (nth 0 doom-modeline-check-note-icons)
+                                                                           (nth 1 doom-modeline-check-note-icons)
+                                                                           (nth 2 doom-modeline-check-note-icons)
+                                                                           'doom-modeline-info)))
+                                  (pcase doom-modeline-check-simple-format
+                                    ('t (doom-modeline-check-text (number-to-string (+ .error .warning .info))
+                                                                  (cond ((> .error 0) 'doom-modeline-urgent)
+                                                                        ((> .warning 0) 'doom-modeline-warning)
+                                                                        (t 'doom-modeline-info))))
+                                    ('nil (format "%s/%s/%s" error-counter warning-counter info-counter))
+                                    ('icons (format "%s %s %s %s %s"
+                                                    error-counter warning-icon warning-counter
+                                                    info-icon info-counter)))))))
                 ('running     (and doom-modeline--flycheck-text
                                    (propertize doom-modeline--flycheck-text 'face 'doom-modeline-debug)))
                 ;; ('no-checker  nil)
@@ -958,8 +987,12 @@ mouse-3: Next error"
                                      ((> severity note-level)    (cl-incf .warning))
                                      (t                          (cl-incf .note))))))
                         (if (> (+ .error .warning .note) 0)
-                            (doom-modeline-check-icon "nf-md-alert_circle_outline" "❗" "!"
-                                                        (cond ((> .error 0) 'doom-modeline-urgent)
+                            (doom-modeline-check-icon (nth 0 doom-modeline-check-error-icons)
+                                                      (nth 1 doom-modeline-check-error-icons)
+                                                      (nth 2 doom-modeline-check-error-icons)
+                                                        (cond ((eq doom-modeline-check-simple-format 'icons)
+                                                                'doom-modeline-urgent)
+                                                              ((> .error 0) 'doom-modeline-urgent)
                                                               ((> .warning 0) 'doom-modeline-warning)
                                                               (t 'doom-modeline-info)))
                           (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "-" 'doom-modeline-info))))))))
@@ -1033,24 +1066,40 @@ mouse-2: Show help for minor mode"
           (when-let
               ((text
                 (cond
-                 (some-waiting (and doom-modeline--flymake-text
-                                    (propertize doom-modeline--flymake-text 'face 'doom-modeline-debug)))
+                 (some-waiting
+                  (unless (eq doom-modeline-check-simple-format 'icons)
+                    (and doom-modeline--flymake-text
+                         (propertize doom-modeline--flymake-text 'face 'doom-modeline-debug))))
                  ((null known) nil)
                  (all-disabled nil)
-                 (t (let ((num (+ .error .warning .note)))
+                 (t (let ((num (+ .error .warning .note))
+                          (error-counter (doom-modeline-check-text (number-to-string .error)
+                                                                   'doom-modeline-urgent))
+                          (warning-counter (doom-modeline-check-text (number-to-string .warning)
+                                                                     'doom-modeline-warning))
+                          (note-counter (doom-modeline-check-text (number-to-string .note)
+                                                                  'doom-modeline-info))
+                          (warning-icon (doom-modeline-check-icon (nth 0 doom-modeline-check-warning-icons)
+                                                                  (nth 1 doom-modeline-check-warning-icons)
+                                                                  (nth 2 doom-modeline-check-warning-icons)
+                                                                  'doom-modeline-warning))
+                          (note-icon (doom-modeline-check-icon (nth 0 doom-modeline-check-note-icons)
+                                                               (nth 1 doom-modeline-check-note-icons)
+                                                               (nth 2 doom-modeline-check-note-icons)
+                                                               'doom-modeline-info)))
                       (when (> num 0)
-                        (if doom-modeline-check-simple-format
-                            (doom-modeline-check-text (number-to-string num)
+                        (pcase doom-modeline-check-simple-format
+                          ('t (doom-modeline-check-text (number-to-string num)
                                                         (cond ((> .error 0) 'doom-modeline-urgent)
                                                               ((> .warning 0) 'doom-modeline-warning)
-                                                              (t 'doom-modeline-info)))
-                          (format "%s/%s/%s"
-                                  (doom-modeline-check-text (number-to-string .error)
-                                                              'doom-modeline-urgent)
-                                  (doom-modeline-check-text (number-to-string .warning)
-                                                              'doom-modeline-warning)
-                                  (doom-modeline-check-text (number-to-string .note)
-                                                              'doom-modeline-info)))))))))
+                                                              (t 'doom-modeline-info))))
+                          ('nil (format "%s/%s/%s" error-counter warning-counter note-counter))
+                          ('icons (format "%s%s%s%s%s%s%s%s%s"
+                                          error-counter (doom-modeline-vspc)
+                                          warning-icon (doom-modeline-vspc)
+                                          warning-counter (doom-modeline-vspc)
+                                          note-icon (doom-modeline-vspc)
+                                          note-counter)))))))))
             (propertize
              text
              'help-echo (cond
@@ -1109,7 +1158,14 @@ mouse-1: List all problems%s"
      (and text
           (concat
            (and icon (doom-modeline-vspc))
-           (doom-modeline-display-text text)))
+           (if (eq doom-modeline-check-simple-format 'icons)
+               (let ((string))
+                 (dolist (s (split-string text ""))
+                   (if (string-match-p "^[0-9]+$" s)
+                       (setq string (concat string (doom-modeline-display-text s)))
+                     (setq string (concat string (doom-modeline-display-icon s)))))
+                 string)
+             (doom-modeline-display-text text))))
      (and (or icon text) (doom-modeline-spc)))))
 
 
