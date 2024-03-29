@@ -585,9 +585,9 @@ project directory is important."
                           (cadr (assq major-mode delighted-modes)))
                      mode-name))
                 'help-echo "Major mode\n\
-  mouse-1: Display major mode menu\n\
-  mouse-2: Show help for major mode\n\
-  mouse-3: Toggle minor modes"
+mouse-1: Display major mode menu\n\
+mouse-2: Show help for major mode\n\
+mouse-3: Toggle minor modes"
                 'mouse-face 'doom-modeline-highlight
                 'local-map mode-line-major-mode-keymap)
     (when (and doom-modeline-env-version doom-modeline-env--version)
@@ -749,7 +749,8 @@ Uses `nerd-icons-octicon' to fetch the icon."
 
 UNICODE and TEXT are fallbacks.
 Uses `nerd-icons-mdicon' to fetch the icon."
-  (doom-modeline-icon 'mdicon icon unicode text :face face))
+  (doom-modeline-icon 'mdicon (and doom-modeline-check-icon icon)
+                      unicode text :face face))
 
 (defun doom-modeline-check-text (text &optional face)
   "Displays the check TEXT with FACE."
@@ -774,48 +775,61 @@ level."
      (flycheck-count-errors flycheck-current-errors))
     `((info . ,info) (warning . ,warning) (error . ,error))))
 
-(defvar-local doom-modeline--flycheck-icon nil)
-(defun doom-modeline-update-flycheck-icon (&optional status)
-  "Update flycheck icon via STATUS."
-  (setq doom-modeline--flycheck-icon
-        (when-let
-            ((icon
-              (pcase status
-                ('finished  (if flycheck-current-errors
-                                (let-alist (doom-modeline--flycheck-count-errors)
-                                  (doom-modeline-check-icon
-                                   "nf-md-alert_circle_outline" "❗" "!"
-                                   (cond ((> .error 0) 'doom-modeline-urgent)
-                                         ((> .warning 0) 'doom-modeline-warning)
-                                         (t 'doom-modeline-info))))
-                              (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "" 'doom-modeline-info)))
-                ('running     (doom-modeline-check-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug))
-                ('no-checker  (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "-" 'doom-modeline-debug))
-                ('errored     (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" 'doom-modeline-urgent))
-                ('interrupted (doom-modeline-check-icon "nf-md-pause_circle_outline" "⦷" "." 'doom-modeline-debug))
-                ('suspicious  (doom-modeline-check-icon "nf-md-information_outline" "❓" "?" 'doom-modeline-debug))
-                (_ nil))))
-          (propertize icon
-                      'help-echo (concat "Flycheck\n"
-                                         (pcase status
-                                           ('finished "mouse-1: Display minor mode menu
-mouse-2: Show help for minor mode")
-                                           ('running "Checking...")
-                                           ('no-checker "No Checker")
-                                           ('errored "Error")
-                                           ('interrupted "Interrupted")
-                                           ('suspicious "Suspicious")))
-                      'mouse-face 'doom-modeline-highlight
-                      'local-map (let ((map (make-sparse-keymap)))
-                                   (define-key map [mode-line down-mouse-1]
-                                     flycheck-mode-menu-map)
-                                   (define-key map [mode-line mouse-2]
-                                     (lambda ()
-                                       (interactive)
-                                       (describe-function 'flycheck-mode)))
-                                   map)))))
-(add-hook 'flycheck-status-changed-functions #'doom-modeline-update-flycheck-icon)
-(add-hook 'flycheck-mode-hook #'doom-modeline-update-flycheck-icon)
+(defvar-local doom-modeline--flycheck nil)
+(defun doom-modeline-update-flycheck (&optional status)
+  "Update flycheck via STATUS."
+  (setq doom-modeline--flycheck
+        (let-alist (doom-modeline--flycheck-count-errors)
+          (let ((seg (if doom-modeline-check-simple-format
+                         (let ((count (+ .error .warning .info))
+                               (face (cond ((> .error 0) 'doom-modeline-urgent)
+                                           ((> .warning 0) 'doom-modeline-warning)
+                                           (t 'doom-modeline-info))))
+                           (pcase status
+                             ('finished    (if (> count 0)
+                                               (concat
+                                                (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" face)
+                                                (doom-modeline-vspc)
+                                                (doom-modeline-check-text (number-to-string count) face))
+                                             (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "" 'doom-modeline-info)))
+                             ('running     (doom-modeline-check-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug))
+                             ('no-checker  (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "-" 'doom-modeline-debug))
+                             ('errored     (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" 'doom-modeline-urgent))
+                             ('interrupted (doom-modeline-check-icon "nf-md-pause_circle_outline" "⦷" "." 'doom-modeline-debug))
+                             ('suspicious  (doom-modeline-check-icon "nf-md-file_question_outline" "❓" "?" 'doom-modeline-debug))
+                             (_ "")))
+                       (concat (doom-modeline-check-icon "nf-md-close_circle_outline" "⮾" "!" 'doom-modeline-urgent)
+                               (doom-modeline-vspc)
+                               (doom-modeline-check-text (number-to-string .error) 'doom-modeline-urgent)
+                               (doom-modeline-vspc)
+                               (doom-modeline-check-icon "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning)
+                               (doom-modeline-vspc)
+                               (doom-modeline-check-text (number-to-string .warning) 'doom-modeline-warning)
+                               (doom-modeline-vspc)
+                               (doom-modeline-check-icon "nf-md-information_outline" "🛈" "!" 'doom-modeline-info)
+                               (doom-modeline-vspc)
+                               (doom-modeline-check-text (number-to-string .info) 'doom-modeline-info)))))
+            (propertize seg
+                        'help-echo (concat "Flycheck\n"
+                                           (pcase status
+                                             ('finished (format "error: %d, warning: %d, info: %d" .error .warning .info))
+                                             ('running "Checking...")
+                                             ('no-checker "No Checker")
+                                             ('errored "Error")
+                                             ('interrupted "Interrupted")
+                                             ('suspicious "Suspicious"))
+                                           "\nmouse-1: Display minor mode menu\nmouse-2: Show help for minor mode")
+                        'mouse-face 'doom-modeline-highlight
+                        'local-map (let ((map (make-sparse-keymap)))
+                                     (define-key map [mode-line down-mouse-1]
+                                       flycheck-mode-menu-map)
+                                     (define-key map [mode-line mouse-2]
+                                       (lambda ()
+                                         (interactive)
+                                         (describe-function 'flycheck-mode)))
+                                     map))))))
+(add-hook 'flycheck-status-changed-functions #'doom-modeline-update-flycheck)
+(add-hook 'flycheck-mode-hook #'doom-modeline-update-flycheck)
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-icon
@@ -825,7 +839,17 @@ mouse-2: Show help for minor mode")
      (dolist (buf (buffer-list))
        (with-current-buffer buf
          (when (bound-and-true-p flycheck-mode)
-           (doom-modeline-update-flycheck-icon)))))))
+           (doom-modeline-update-flycheck)))))))
+
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-check-icon
+ (lambda (_sym val op _where)
+   (when (eq op 'set)
+     (setq doom-modeline-check-icon val)
+     (dolist (buf (buffer-list))
+       (with-current-buffer buf
+         (when (bound-and-true-p flycheck-mode)
+           (doom-modeline-update-flycheck)))))))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-unicode-fallback
@@ -835,74 +859,7 @@ mouse-2: Show help for minor mode")
      (dolist (buf (buffer-list))
        (with-current-buffer buf
          (when (bound-and-true-p flycheck-mode)
-           (doom-modeline-update-flycheck-icon)))))))
-
-(defvar-local doom-modeline--flycheck-text nil)
-(defun doom-modeline-update-flycheck-text (&optional status)
-  "Update flycheck text via STATUS."
-  (setq doom-modeline--flycheck-text
-        (when-let
-            ((text
-              (pcase status
-                ('finished  (when flycheck-current-errors
-                              (let-alist (doom-modeline--flycheck-count-errors)
-                                (if doom-modeline-check-simple-format
-                                    (doom-modeline-check-text
-                                     (number-to-string (+ .error .warning .info))
-                                     (cond ((> .error 0) 'doom-modeline-urgent)
-                                           ((> .warning 0) 'doom-modeline-warning)
-                                           (t 'doom-modeline-info)))
-                                  (format "%s/%s/%s"
-                                          (doom-modeline-check-text (number-to-string .error)
-                                                                      'doom-modeline-urgent)
-                                          (doom-modeline-check-text (number-to-string .warning)
-                                                                      'doom-modeline-warning)
-                                          (doom-modeline-check-text (number-to-string .info)
-                                                                      'doom-modeline-info))))))
-                ('running     (and doom-modeline--flycheck-text
-                                   (propertize doom-modeline--flycheck-text 'face 'doom-modeline-debug)))
-                ;; ('no-checker  nil)
-                ;; ('errored     (doom-modeline-check-text "Error" 'doom-modeline-urgent))
-                ;; ('interrupted (doom-modeline-check-text "Interrupted" 'doom-modeline-debug))
-                ;; ('suspicious  (doom-modeline-check-text "Suspicious" 'doom-modeline-urgent))
-                (_ nil))))
-          (propertize
-           text
-           'help-echo (pcase status
-                        ('finished
-                         (concat
-                          (when flycheck-current-errors
-                            (let-alist (doom-modeline--flycheck-count-errors)
-                              (format "error: %d, warning: %d, info: %d\n" .error .warning .info)))
-                          "mouse-1: Show all errors
-mouse-3: Next error"
-                          (when (doom-modeline-mwheel-available-p)
-                            "\nwheel-up/wheel-down: Previous/next error")))
-                        ('running "Checking...")
-                        ('no-checker "No Checker")
-                        ('errored "Error")
-                        ('interrupted "Interrupted")
-                        ('suspicious "Suspicious"))
-           'mouse-face 'doom-modeline-highlight
-           'local-map (let ((map (make-sparse-keymap)))
-                        (define-key map [mode-line mouse-1]
-                          #'flycheck-list-errors)
-                        (define-key map [mode-line mouse-3]
-                          #'flycheck-next-error)
-                        (when (doom-modeline-mwheel-available-p)
-                          (define-key map [mode-line mouse-wheel-down-event]
-                            (lambda (event)
-                              (interactive "e")
-                              (with-selected-window (posn-window (event-start event))
-                                (flycheck-previous-error 1))))
-                          (define-key map [mode-line mouse-wheel-up-event]
-                            (lambda (event)
-                              (interactive "e")
-                              (with-selected-window (posn-window (event-start event))
-                                (flycheck-next-error 1))))
-                          map))))))
-(add-hook 'flycheck-status-changed-functions #'doom-modeline-update-flycheck-text)
-(add-hook 'flycheck-mode-hook #'doom-modeline-update-flycheck-text)
+           (doom-modeline-update-flycheck)))))))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-check-simple-format
@@ -912,7 +869,7 @@ mouse-3: Next error"
      (dolist (buf (buffer-list))
        (with-current-buffer buf
          (when (bound-and-true-p flycheck-mode)
-           (doom-modeline-update-flycheck-text)))))))
+           (doom-modeline-update-flycheck)))))))
 
 ;; Flymake
 
@@ -924,66 +881,85 @@ mouse-3: Next error"
   (unless (fboundp 'flymake--state-diags)
     (defalias 'flymake--state-diags 'flymake--backend-state-diags)))
 
-(defvar-local doom-modeline--flymake-icon nil)
-(defun doom-modeline-update-flymake-icon (&rest _)
-  "Update flymake icon."
-  (setq flymake--mode-line-format nil) ; remove the lighter of minor mode
-  (setq doom-modeline--flymake-icon
+(defun doom-modeline--flymake-count-errors ()
+  "Count the number of ERRORS, grouped by level."
+  (let ((warning-level (warning-numeric-level :warning))
+        (note-level (warning-numeric-level :debug))
+        (note 0) (warning 0) (error 0))
+    (maphash (lambda (_b state)
+               (cl-loop
+                with diags = (flymake--state-diags state)
+                for diag in diags do
+                (let ((severity (flymake--lookup-type-property (flymake--diag-type diag) 'severity
+                                                               (warning-numeric-level :error))))
+                  (cond ((> severity warning-level) (cl-incf error))
+                        ((> severity note-level) (cl-incf warning))
+                        (t (cl-incf note))))))
+             flymake--state)
+    `((note . ,note) (warning . ,warning) (error . ,error))))
+
+(defvar-local doom-modeline--flymake nil)
+(defun doom-modeline-update-flymake (&rest _)
+  "Update flymake."
+  (setq doom-modeline--flymake
         (let* ((known (hash-table-keys flymake--state))
                (running (flymake-running-backends))
                (disabled (flymake-disabled-backends))
                (reported (flymake-reporting-backends))
                (all-disabled (and disabled (null running)))
                (some-waiting (cl-set-difference running reported)))
-          (when-let
-              ((icon
-                (cond
-                 (some-waiting (doom-modeline-check-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug))
-                 ((null known) (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "!" 'doom-modeline-urgent))
-                 (all-disabled (doom-modeline-check-icon "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning))
-                 (t (let ((.error 0)
-                          (.warning 0)
-                          (.note 0))
-                      (progn
-                        (cl-loop
-                         with warning-level = (warning-numeric-level :warning)
-                         with note-level = (warning-numeric-level :debug)
-                         for state being the hash-values of flymake--state
-                         do (cl-loop
-                             with diags = (flymake--state-diags state)
-                             for diag in diags do
-                             (let ((severity (flymake--lookup-type-property (flymake--diag-type diag) 'severity
-                                                                            (warning-numeric-level :error))))
-                               (cond ((> severity warning-level) (cl-incf .error))
-                                     ((> severity note-level)    (cl-incf .warning))
-                                     (t                          (cl-incf .note))))))
-                        (if (> (+ .error .warning .note) 0)
-                            (doom-modeline-check-icon "nf-md-alert_circle_outline" "❗" "!"
-                                                        (cond ((> .error 0) 'doom-modeline-urgent)
-                                                              ((> .warning 0) 'doom-modeline-warning)
-                                                              (t 'doom-modeline-info)))
-                          (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "-" 'doom-modeline-info))))))))
-            (propertize
-             icon
-             'help-echo (concat "Flymake\n"
-                                (cond
-                                 (some-waiting "Checking...")
-                                 ((null known) "No Checker")
-                                 (all-disabled "All Checkers Disabled")
-                                 (t (format "%d/%d backends running
-mouse-1: Display minor mode menu
-mouse-2: Show help for minor mode"
-                                            (length running) (length known)))))
-             'mouse-face 'doom-modeline-highlight
-             'local-map (let ((map (make-sparse-keymap)))
-                          (define-key map [mode-line down-mouse-1]
-                            flymake-menu)
-                          (define-key map [mode-line mouse-2]
-                            (lambda ()
-                              (interactive)
-                              (describe-function 'flymake-mode)))
-                          map))))))
-(advice-add #'flymake--handle-report :after #'doom-modeline-update-flymake-icon)
+          (let-alist (doom-modeline--flymake-count-errors)
+            (let ((seg (if doom-modeline-check-simple-format
+                           (let ((count (+ .error .warning .note))
+                                 (face (cond ((> .error 0) 'doom-modeline-urgent)
+                                             ((> .warning 0) 'doom-modeline-warning)
+                                             (t 'doom-modeline-info))))
+                             (cond
+                              (some-waiting (concat
+                                             (doom-modeline-check-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug)
+                                             (when (> count 0)
+                                               (concat
+                                                (doom-modeline-vspc)
+                                                (doom-modeline-check-text (number-to-string count) 'doom-modeline-debug)))))
+                              ((null known) (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "!" 'doom-modeline-urgent))
+                              (all-disabled (doom-modeline-check-icon "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning))
+                              (t (if (> count 0)
+                                     (concat
+                                      (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" face)
+                                      (doom-modeline-vspc)
+                                      (doom-modeline-check-text (number-to-string count) face))
+                                   (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "" 'doom-modeline-info)))))
+                         (concat (doom-modeline-check-icon "nf-md-close_circle_outline" "⮾" "!" 'doom-modeline-urgent)
+                                 (doom-modeline-vspc)
+                                 (doom-modeline-check-text (number-to-string .error) 'doom-modeline-urgent)
+                                 (doom-modeline-vspc)
+                                 (doom-modeline-check-icon "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning)
+                                 (doom-modeline-vspc)
+                                 (doom-modeline-check-text (number-to-string .warning) 'doom-modeline-warning)
+                                 (doom-modeline-vspc)
+                                 (doom-modeline-check-icon "nf-md-information_outline" "🛈" "!" 'doom-modeline-info)
+                                 (doom-modeline-vspc)
+                                 (doom-modeline-check-text (number-to-string .note) 'doom-modeline-info)))))
+              (propertize
+               seg
+               'help-echo (concat "Flymake\n"
+                                  (cond
+                                   (some-waiting "Checking...")
+                                   ((null known) "No Checker")
+                                   (all-disabled "All Checkers Disabled")
+                                   (t (format "%d/%d backends running\nerror: %d, warning: %d, note: %d"
+                                              (length running) (length known) .error .warning .note)))
+                                  "\nmouse-1: Display minor mode menu\nmouse-2: Show help for minor mode")
+               'mouse-face 'doom-modeline-highlight
+               'local-map (let ((map (make-sparse-keymap)))
+                            (define-key map [mode-line down-mouse-1]
+                              flymake-menu)
+                            (define-key map [mode-line mouse-2]
+                              (lambda ()
+                                (interactive)
+                                (describe-function 'flymake-mode)))
+                            map)))))))
+(advice-add #'flymake--handle-report :after #'doom-modeline-update-flymake)
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-icon
@@ -993,7 +969,17 @@ mouse-2: Show help for minor mode"
      (dolist (buf (buffer-list))
        (with-current-buffer buf
          (when (bound-and-true-p flymake-mode)
-           (doom-modeline-update-flymake-icon)))))))
+           (doom-modeline-update-flymake)))))))
+
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-check-icon
+ (lambda (_sym val op _where)
+   (when (eq op 'set)
+     (setq doom-modeline-check-icon val)
+     (dolist (buf (buffer-list))
+       (with-current-buffer buf
+         (when (bound-and-true-p flymake-mode)
+           (doom-modeline-update-flymake)))))))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-unicode-fallback
@@ -1003,84 +989,7 @@ mouse-2: Show help for minor mode"
      (dolist (buf (buffer-list))
        (with-current-buffer buf
          (when (bound-and-true-p flymake-mode)
-           (doom-modeline-update-flymake-icon)))))))
-
-(defvar-local doom-modeline--flymake-text nil)
-(defun doom-modeline-update-flymake-text (&rest _)
-  "Update flymake text."
-  (setq doom-modeline--flymake-text
-        (let* ((known (hash-table-keys flymake--state))
-               (running (flymake-running-backends))
-               (disabled (flymake-disabled-backends))
-               (reported (flymake-reporting-backends))
-               (all-disabled (and disabled (null running)))
-               (some-waiting (cl-set-difference running reported))
-               (warning-level (warning-numeric-level :warning))
-               (note-level (warning-numeric-level :debug))
-               (.error 0)
-               (.warning 0)
-               (.note 0))
-          (maphash (lambda (_b state)
-                     (cl-loop
-                      with diags = (flymake--state-diags state)
-                      for diag in diags do
-                      (let ((severity (flymake--lookup-type-property (flymake--diag-type diag) 'severity
-                                                                     (warning-numeric-level :error))))
-                        (cond ((> severity warning-level) (cl-incf .error))
-                              ((> severity note-level) (cl-incf .warning))
-                              (t (cl-incf .note))))))
-                   flymake--state)
-          (when-let
-              ((text
-                (cond
-                 (some-waiting (and doom-modeline--flymake-text
-                                    (propertize doom-modeline--flymake-text 'face 'doom-modeline-debug)))
-                 ((null known) nil)
-                 (all-disabled nil)
-                 (t (let ((num (+ .error .warning .note)))
-                      (when (> num 0)
-                        (if doom-modeline-check-simple-format
-                            (doom-modeline-check-text (number-to-string num)
-                                                        (cond ((> .error 0) 'doom-modeline-urgent)
-                                                              ((> .warning 0) 'doom-modeline-warning)
-                                                              (t 'doom-modeline-info)))
-                          (format "%s/%s/%s"
-                                  (doom-modeline-check-text (number-to-string .error)
-                                                              'doom-modeline-urgent)
-                                  (doom-modeline-check-text (number-to-string .warning)
-                                                              'doom-modeline-warning)
-                                  (doom-modeline-check-text (number-to-string .note)
-                                                              'doom-modeline-info)))))))))
-            (propertize
-             text
-             'help-echo (cond
-                         (some-waiting "Checking...")
-                         ((null known) "No Checker")
-                         (all-disabled "All Checkers Disabled")
-                         (t (format "error: %d, warning: %d, note: %d
-mouse-1: List all problems%s"
-                                    .error .warning .note
-                                    (if (doom-modeline-mwheel-available-p)
-                                        "\nwheel-up/wheel-down: Previous/next problem"))))
-             'mouse-face 'doom-modeline-highlight
-             'local-map (let ((map (make-sparse-keymap)))
-                          (define-key map [mode-line mouse-1]
-                            #'flymake-show-buffer-diagnostics)
-                          (when (doom-modeline-mwheel-available-p)
-                            (define-key map (vector 'mode-line
-                                                    mouse-wheel-down-event)
-                              (lambda (event)
-                                (interactive "e")
-                                (with-selected-window (posn-window (event-start event))
-                                  (flymake-goto-prev-error 1 nil t))))
-                            (define-key map (vector 'mode-line
-                                                    mouse-wheel-up-event)
-                              (lambda (event)
-                                (interactive "e")
-                                (with-selected-window (posn-window (event-start event))
-                                  (flymake-goto-next-error 1 nil t))))
-                            map)))))))
-(advice-add #'flymake--handle-report :after #'doom-modeline-update-flymake-text)
+           (doom-modeline-update-flymake)))))))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-check-simple-format
@@ -1090,27 +999,26 @@ mouse-1: List all problems%s"
      (dolist (buf (buffer-list))
        (with-current-buffer buf
          (when (bound-and-true-p flymake-mode)
-           (doom-modeline-update-flymake-text)))))))
+           (doom-modeline-update-flymake)))))))
 
 (doom-modeline-def-segment check
   "Displays color-coded error status in the current buffer with pretty icons."
-  (let* ((seg (cond
-               ((and (bound-and-true-p flymake-mode)
-                     (bound-and-true-p flymake--state)) ; only support 26+
-                `(,doom-modeline--flymake-icon . ,doom-modeline--flymake-text))
-               ((and (bound-and-true-p flycheck-mode)
-                     (bound-and-true-p flycheck--automatically-enabled-checkers))
-                `(,doom-modeline--flycheck-icon . ,doom-modeline--flycheck-text))))
-         (icon (car seg))
-         (text (cdr seg)))
+  (when-let ((seg (cond
+                   ((and (bound-and-true-p flymake-mode)
+                         (bound-and-true-p flymake--state)) ; only support 26+
+                    doom-modeline--flymake)
+                   ((and (bound-and-true-p flycheck-mode)
+                         (bound-and-true-p flycheck--automatically-enabled-checkers))
+                    doom-modeline--flycheck))))
     (concat
-     (and (or icon text) (doom-modeline-spc))
-     (and icon (doom-modeline-display-icon icon))
-     (and text
-          (concat
-           (and icon (doom-modeline-vspc))
-           (doom-modeline-display-text text)))
-     (and (or icon text) (doom-modeline-spc)))))
+     (doom-modeline-spc)
+     (let ((str))
+       (dolist (s (split-string seg ""))
+         (if (string-match-p "^[0-9]+$" s)
+             (setq str (concat str (doom-modeline-display-text s)))
+           (setq str (concat str (doom-modeline-display-icon s)))))
+       str)
+     (doom-modeline-spc))))
 
 
 ;;
@@ -3210,11 +3118,11 @@ When the svg library is not available, return nil."
        (propertize "[Compiling] "
                    'face (doom-modeline-face 'doom-modeline-compilation)
 	               'help-echo "Compiling; mouse-2: Goto Buffer"
-  'mouse-face 'doom-modeline-highlight
-  'local-map
-  (make-mode-line-mouse-map
-   'mouse-2
-   #'compilation-goto-in-progress-buffer))))
+                   'mouse-face 'doom-modeline-highlight
+                   'local-map
+                   (make-mode-line-mouse-map
+                    'mouse-2
+                    #'compilation-goto-in-progress-buffer))))
 
 ;;
 ;; Eldoc
