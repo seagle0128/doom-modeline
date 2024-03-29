@@ -727,7 +727,8 @@ Uses `nerd-icons-octicon' to fetch the icon."
 
 (doom-modeline-def-segment vcs
   "Displays the current branch, colored based on its state."
-  (when-let ((str (split-string doom-modeline--vcs " ")))
+  (when-let ((seg doom-modeline--vcs)
+             (str (split-string seg " ")))
     (concat
      (doom-modeline-spc)
      (doom-modeline-display-icon (nth 0 str))
