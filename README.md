@@ -293,6 +293,12 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether display the total line number。
 (setq doom-modeline-total-line-number nil)
 
+;; Whether display the icon of vcs segment. It respects option `doom-modeline-icon'."
+(setq doom-modeline-vcs-icon t)
+
+;; Whether display the icon of check segment. It respects option `doom-modeline-icon'.
+(setq doom-modeline-check-icon t)
+
 ;; If non-nil, only display one number for check information if applicable.
 (setq doom-modeline-check-simple-format nil)
 

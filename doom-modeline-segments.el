@@ -657,28 +657,46 @@ mouse-1: Display minor modes menu"
 
 UNICODE and TEXT are fallbacks.
 Uses `nerd-icons-octicon' to fetch the icon."
-  (doom-modeline-icon 'devicon icon unicode text :face face))
+  (doom-modeline-icon 'devicon (and doom-modeline-vcs-icon icon)
+                      unicode text :face face))
 
-(defvar-local doom-modeline--vcs-icon nil)
-(defun doom-modeline-update-vcs-icon (&rest _)
-  "Update icon of vcs state in mode-line."
-  (setq doom-modeline--vcs-icon
+(defvar-local doom-modeline--vcs nil)
+(defun doom-modeline-update-vcs (&rest _)
+  "Update vcs state in mode-line."
+  (setq doom-modeline--vcs
         (when (and vc-mode buffer-file-name)
           (let* ((backend (vc-backend buffer-file-name))
-                 (state   (vc-state buffer-file-name backend)))
-            (cond ((memq state '(edited added))
-                   (doom-modeline-vcs-icon "nf-dev-git_compare" "🔃" "*" 'doom-modeline-info))
-                  ((eq state 'needs-merge)
-                   (doom-modeline-vcs-icon "nf-dev-git_merge" "🔀" "?" 'doom-modeline-info))
-                  ((eq state 'needs-update)
-                   (doom-modeline-vcs-icon "nf-dev-git_pull_request" "⬇" "!" 'doom-modeline-warning))
-                  ((memq state '(removed conflict unregistered))
-                   (doom-modeline-icon 'octicon "nf-oct-alert" "⚠" "!" :face 'doom-modeline-urgent))
-                  (t
-                   (doom-modeline-vcs-icon "nf-dev-git_branch" "" "@" 'doom-modeline-info)))))))
-(add-hook 'find-file-hook #'doom-modeline-update-vcs-icon)
-(add-hook 'after-save-hook #'doom-modeline-update-vcs-icon)
-(advice-add #'vc-refresh-state :after #'doom-modeline-update-vcs-icon)
+                 (state (vc-state buffer-file-name backend))
+                 (icon (cond ((memq state '(edited added))
+                              (doom-modeline-vcs-icon "nf-dev-git_compare" "🔃" "*" 'doom-modeline-info))
+                             ((eq state 'needs-merge)
+                              (doom-modeline-vcs-icon "nf-dev-git_merge" "🔀" "?" 'doom-modeline-info))
+                             ((eq state 'needs-update)
+                              (doom-modeline-vcs-icon "nf-dev-git_pull_request" "⬇" "!" 'doom-modeline-warning))
+                             ((memq state '(removed conflict unregistered))
+                              (doom-modeline-icon 'octicon "nf-oct-alert" "⚠" "!" :face 'doom-modeline-urgent))
+                             (t (doom-modeline-vcs-icon "nf-dev-git_branch" "" "@" 'doom-modeline-info))))
+                 (str (if vc-display-status
+                          (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
+                        ""))
+                 (face (cond ((eq state 'needs-update)
+                              '(doom-modeline-warning bold))
+                             ((memq state '(removed conflict unregistered))
+                              '(doom-modeline-urgent bold))
+                             (t '(doom-modeline-info bold))))
+                 (text (propertize (if (length> str doom-modeline-vcs-max-length)
+                                       (concat
+                                        (substring str 0 (- doom-modeline-vcs-max-length 3))
+                                        doom-modeline-ellipsis)
+                                     str)
+                                   'face face)))
+            (propertize (concat icon (doom-modeline-vspc) text)
+                        'mouse-face 'doom-modeline-highlight
+                        'help-echo (get-text-property 1 'help-echo vc-mode)
+                        'local-map (get-text-property 1 'local-map vc-mode))))))
+(add-hook 'find-file-hook #'doom-modeline-update-vcs)
+(add-hook 'after-save-hook #'doom-modeline-update-vcs)
+(advice-add #'vc-refresh-state :after #'doom-modeline-update-vcs)
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-icon
@@ -687,7 +705,7 @@ Uses `nerd-icons-octicon' to fetch the icon."
      (setq doom-modeline-icon val)
      (dolist (buf (buffer-list))
        (with-current-buffer buf
-         (doom-modeline-update-vcs-icon))))))
+         (doom-modeline-update-vcs))))))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-unicode-fallback
@@ -696,47 +714,25 @@ Uses `nerd-icons-octicon' to fetch the icon."
      (setq doom-modeline-unicode-fallback val)
      (dolist (buf (buffer-list))
        (with-current-buffer buf
-         (doom-modeline-update-vcs-icon))))))
+         (doom-modeline-update-vcs))))))
 
-(defvar-local doom-modeline--vcs-text nil)
-(defun doom-modeline-update-vcs-text (&rest _)
-  "Update text of vcs state in mode-line."
-  (setq doom-modeline--vcs-text
-        (when (and vc-mode buffer-file-name)
-          (let* ((backend (vc-backend buffer-file-name))
-                 (state (vc-state buffer-file-name backend))
-                 (str (if vc-display-status
-                          (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
-                        ""))
-                 (face (cond ((eq state 'needs-update)
-                              'doom-modeline-warning)
-                             ((memq state '(removed conflict unregistered))
-                              'doom-modeline-urgent)
-                             (t 'doom-modeline-info))))
-            (propertize (if (length> str doom-modeline-vcs-max-length)
-                            (concat
-                             (substring str 0 (- doom-modeline-vcs-max-length 3))
-                             doom-modeline-ellipsis)
-                          str)
-                        'mouse-face 'doom-modeline-highlight
-                        'face `(:inherit (,face bold)))))))
-(add-hook 'find-file-hook #'doom-modeline-update-vcs-text)
-(add-hook 'after-save-hook #'doom-modeline-update-vcs-text)
-(advice-add #'vc-refresh-state :after #'doom-modeline-update-vcs-text)
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-vcs-icon
+ (lambda (_sym val op _where)
+   (when (eq op 'set)
+     (setq doom-modeline-vcs-icon val)
+     (dolist (buf (buffer-list))
+       (with-current-buffer buf
+         (doom-modeline-update-vcs))))))
 
 (doom-modeline-def-segment vcs
   "Displays the current branch, colored based on its state."
-  (when-let ((icon doom-modeline--vcs-icon)
-             (text doom-modeline--vcs-text))
+  (when-let ((str (split-string doom-modeline--vcs " ")))
     (concat
      (doom-modeline-spc)
-     (propertize (concat
-                  (doom-modeline-display-icon icon)
-                  (doom-modeline-vspc)
-                  (doom-modeline-display-text text))
-                 'mouse-face 'doom-modeline-highlight
-                 'help-echo (get-text-property 1 'help-echo vc-mode)
-                 'local-map (get-text-property 1 'local-map vc-mode))
+     (doom-modeline-display-icon (nth 0 str))
+     (doom-modeline-vspc)
+     (doom-modeline-display-text (nth 1 str))
      (doom-modeline-spc))))
 
 
@@ -2123,8 +2119,8 @@ mouse-1: Toggle citre mode"
 (defvar doom-modeline-before-github-fetch-notification-hook nil
   "Hooks before fetching GitHub notifications.
 Example:
-  (add-hook \\='doom-modeline-before-github-fetch-notification-hook
-            #\\='auth-source-pass-enable)")
+(add-hook \\='doom-modeline-before-github-fetch-notification-hook
+          #\\='auth-source-pass-enable)")
 
 (defvar doom-modeline-after-github-fetch-notification-hook nil
   "Hooks after fetching GitHub notifications.")
@@ -3118,11 +3114,11 @@ When the svg library is not available, return nil."
        (propertize "[Compiling] "
                    'face (doom-modeline-face 'doom-modeline-compilation)
 	               'help-echo "Compiling; mouse-2: Goto Buffer"
-                   'mouse-face 'doom-modeline-highlight
-                   'local-map
-                   (make-mode-line-mouse-map
-                    'mouse-2
-                    #'compilation-goto-in-progress-buffer))))
+'mouse-face 'doom-modeline-highlight
+'local-map
+(make-mode-line-mouse-map
+ 'mouse-2
+ #'compilation-goto-in-progress-buffer))))
 
 ;;
 ;; Eldoc
