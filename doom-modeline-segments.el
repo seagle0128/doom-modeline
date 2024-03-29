@@ -585,9 +585,9 @@ project directory is important."
                           (cadr (assq major-mode delighted-modes)))
                      mode-name))
                 'help-echo "Major mode\n\
-  mouse-1: Display major mode menu\n\
-  mouse-2: Show help for major mode\n\
-  mouse-3: Toggle minor modes"
+mouse-1: Display major mode menu\n\
+mouse-2: Show help for major mode\n\
+mouse-3: Toggle minor modes"
                 'mouse-face 'doom-modeline-highlight
                 'local-map mode-line-major-mode-keymap)
     (when (and doom-modeline-env-version doom-modeline-env--version)
@@ -777,17 +777,27 @@ level."
 
 (defvar-local doom-modeline--flycheck nil)
 (defun doom-modeline-update-flycheck (&optional status)
-  "Update flycheck text via STATUS."
+  "Update flycheck via STATUS."
   (setq doom-modeline--flycheck
         (let-alist (doom-modeline--flycheck-count-errors)
           (let ((seg (if doom-modeline-check-simple-format
-                         (let ((face (cond ((> .error 0) 'doom-modeline-urgent)
+                         (let ((count (+ .error .warning .info))
+                               (face (cond ((> .error 0) 'doom-modeline-urgent)
                                            ((> .warning 0) 'doom-modeline-warning)
                                            (t 'doom-modeline-info))))
-                           (concat
-                            (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" face)
-                            (doom-modeline-vspc)
-                            (doom-modeline-check-text (number-to-string (+ .error .warning .info)) face)))
+                           (pcase status
+                             ('finished    (if (> count 0)
+                                               (concat
+                                                (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" face)
+                                                (doom-modeline-vspc)
+                                                (doom-modeline-check-text (number-to-string count) face))
+                                             (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "" 'doom-modeline-info)))
+                             ('running     (doom-modeline-check-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug))
+                             ('no-checker  (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "-" 'doom-modeline-debug))
+                             ('errored     (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" 'doom-modeline-urgent))
+                             ('interrupted (doom-modeline-check-icon "nf-md-pause_circle_outline" "⦷" "." 'doom-modeline-debug))
+                             ('suspicious  (doom-modeline-check-icon "nf-md-file_question_outline" "❓" "?" 'doom-modeline-debug))
+                             (_ "")))
                        (concat (doom-modeline-check-icon "nf-md-close_circle_outline" "⮾" "!" 'doom-modeline-urgent)
                                (doom-modeline-vspc)
                                (doom-modeline-check-text (number-to-string .error) 'doom-modeline-urgent)
@@ -802,13 +812,13 @@ level."
             (propertize seg
                         'help-echo (concat "Flycheck\n"
                                            (pcase status
-                                             ('finished "mouse-1: Display minor mode menu
-mouse-2: Show help for minor mode")
+                                             ('finished (format "error: %d, warning: %d, info: %d" .error .warning .info))
                                              ('running "Checking...")
                                              ('no-checker "No Checker")
                                              ('errored "Error")
                                              ('interrupted "Interrupted")
-                                             ('suspicious "Suspicious")))
+                                             ('suspicious "Suspicious"))
+                                           "\nmouse-1: Display minor mode menu\nmouse-2: Show help for minor mode")
                         'mouse-face 'doom-modeline-highlight
                         'local-map (let ((map (make-sparse-keymap)))
                                      (define-key map [mode-line down-mouse-1]
@@ -890,7 +900,7 @@ mouse-2: Show help for minor mode")
 
 (defvar-local doom-modeline--flymake nil)
 (defun doom-modeline-update-flymake (&rest _)
-  "Update flymake text."
+  "Update flymake."
   (setq doom-modeline--flymake
         (let* ((known (hash-table-keys flymake--state))
                (running (flymake-running-backends))
@@ -900,13 +910,25 @@ mouse-2: Show help for minor mode")
                (some-waiting (cl-set-difference running reported)))
           (let-alist (doom-modeline--flymake-count-errors)
             (let ((seg (if doom-modeline-check-simple-format
-                           (let ((face (cond ((> .error 0) 'doom-modeline-urgent)
+                           (let ((count (+ .error .warning .note))
+                                 (face (cond ((> .error 0) 'doom-modeline-urgent)
                                              ((> .warning 0) 'doom-modeline-warning)
                                              (t 'doom-modeline-info))))
-                             (concat
-                              (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" face)
-                              (doom-modeline-vspc)
-                              (doom-modeline-check-text (number-to-string (+ .error .warning .note)) face)))
+                             (cond
+                              (some-waiting (concat
+                                             (doom-modeline-check-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug)
+                                             (when (> count 0)
+                                               (concat
+                                                (doom-modeline-vspc)
+                                                (doom-modeline-check-text (number-to-string count) 'doom-modeline-debug)))))
+                              ((null known) (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "!" 'doom-modeline-urgent))
+                              (all-disabled (doom-modeline-check-icon "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning))
+                              (t (if (> count 0)
+                                     (concat
+                                      (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" face)
+                                      (doom-modeline-vspc)
+                                      (doom-modeline-check-text (number-to-string count) face))
+                                   (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "" 'doom-modeline-info)))))
                          (concat (doom-modeline-check-icon "nf-md-close_circle_outline" "⮾" "!" 'doom-modeline-urgent)
                                  (doom-modeline-vspc)
                                  (doom-modeline-check-text (number-to-string .error) 'doom-modeline-urgent)
@@ -925,10 +947,9 @@ mouse-2: Show help for minor mode")
                                    (some-waiting "Checking...")
                                    ((null known) "No Checker")
                                    (all-disabled "All Checkers Disabled")
-                                   (t (format "%d/%d backends running
-  mouse-1: Display minor mode menu
-  mouse-2: Show help for minor mode"
-                                              (length running) (length known)))))
+                                   (t (format "%d/%d backends running\nerror: %d, warning: %d, note: %d"
+                                              (length running) (length known) .error .warning .note)))
+                                  "\nmouse-1: Display minor mode menu\nmouse-2: Show help for minor mode")
                'mouse-face 'doom-modeline-highlight
                'local-map (let ((map (make-sparse-keymap)))
                             (define-key map [mode-line down-mouse-1]
