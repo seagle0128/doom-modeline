@@ -1010,10 +1010,14 @@ level."
     (concat
      (doom-modeline-spc)
      (let ((str))
-       (dolist (s (split-string seg ""))
-         (if (string-match-p "^[0-9]+$" s)
-             (setq str (concat str (doom-modeline-display-text s)))
-           (setq str (concat str (doom-modeline-display-icon s)))))
+       (dolist (s (split-string seg " "))
+         (setq str
+               (concat str
+                       (if (string-match-p "^[0-9]+$" s)
+                           (concat (doom-modeline-vspc)
+                                   (doom-modeline-display-text s)
+                                   (doom-modeline-vspc))
+                         (doom-modeline-display-icon s)))))
        str)
      (doom-modeline-spc))))
 
