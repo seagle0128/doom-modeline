@@ -730,8 +730,8 @@ Uses `nerd-icons-octicon' to fetch the icon."
                          (doom-modeline-display-icon .icon)
                          (doom-modeline-vspc)
                          (doom-modeline-display-text .text))
-                        'mouse-face 'doom-modeline-highlight
                         'help-echo (get-text-property 1 'help-echo vc-mode)
+                        'mouse-face 'doom-modeline-highlight
                         'local-map (get-text-property 1 'local-map vc-mode))
             (doom-modeline-spc))))
 
@@ -1019,7 +1019,7 @@ level."
                          (doom-modeline-display-icon s)))))
        (propertize str
                    'help-echo (get-text-property 1 'help-echo seg)
-                   'mouse-face (get-text-property 1 'mouse-face seg)
+                   'mouse-face 'doom-modeline-highlight
                    'local-map (get-text-property 1 'local-map seg)))
      (doom-modeline-spc))))
 
