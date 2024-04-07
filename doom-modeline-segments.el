@@ -1009,12 +1009,18 @@ level."
     (concat
      (doom-modeline-spc)
      (let ((str))
-       (dolist (s (split-string seg ""))
+       (dolist (s (split-string seg " "))
          (setq str
-               (concat str (if (string-match-p "^[0-9]+$" s)
-                               (doom-modeline-display-text s)
-                             (doom-modeline-display-icon s)))))
-       str)
+               (concat str
+                       (if (string-match-p "^[0-9]+$" s)
+                           (concat (doom-modeline-vspc)
+                                   (doom-modeline-display-text s)
+                                   (doom-modeline-vspc))
+                         (doom-modeline-display-icon s)))))
+       (propertize str
+                   'help-echo (get-text-property 1 'help-echo seg)
+                   'mouse-face (get-text-property 1 'mouse-face seg)
+                   'local-map (get-text-property 1 'local-map seg)))
      (doom-modeline-spc))))
 
 
