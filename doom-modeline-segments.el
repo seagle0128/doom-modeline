@@ -1466,9 +1466,10 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
     (when (and (length> num 0)
                (length> (cl-mapcan
                          (lambda (frame)
-                           ;; Exclude minibuffer and child frames
-                           (unless (and (fboundp 'frame-parent)
-                                        (frame-parent frame))
+                           ;; Exclude minibuffer, tooltip and child frames
+                           (unless (or (and (fboundp 'frame-parent) (frame-parent frame))
+                                       (string= (frame-parameter frame 'name)
+                                                (alist-get 'name tooltip-frame-parameters)))
                              (window-list frame 'never)))
                          (visible-frame-list))
                         1))
