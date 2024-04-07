@@ -690,10 +690,7 @@ Uses `nerd-icons-octicon' to fetch the icon."
                                         doom-modeline-ellipsis)
                                      str)
                                    'face face)))
-            (propertize (concat icon (doom-modeline-vspc) text)
-                        'mouse-face 'doom-modeline-highlight
-                        'help-echo (get-text-property 1 'help-echo vc-mode)
-                        'local-map (get-text-property 1 'local-map vc-mode))))))
+            `((icon . ,icon) (text . ,text))))))
 (add-hook 'find-file-hook #'doom-modeline-update-vcs)
 (add-hook 'after-save-hook #'doom-modeline-update-vcs)
 (advice-add #'vc-refresh-state :after #'doom-modeline-update-vcs)
@@ -727,14 +724,16 @@ Uses `nerd-icons-octicon' to fetch the icon."
 
 (doom-modeline-def-segment vcs
   "Displays the current branch, colored based on its state."
-  (when-let ((seg doom-modeline--vcs)
-             (str (split-string seg " ")))
-    (concat
-     (doom-modeline-spc)
-     (doom-modeline-display-icon (nth 0 str))
-     (doom-modeline-vspc)
-     (doom-modeline-display-text (nth 1 str))
-     (doom-modeline-spc))))
+  (let-alist doom-modeline--vcs
+    (concat (doom-modeline-spc)
+            (propertize (concat
+                         (doom-modeline-display-icon .icon)
+                         (doom-modeline-vspc)
+                         (doom-modeline-display-text .text))
+                        'mouse-face 'doom-modeline-highlight
+                        'help-echo (get-text-property 1 'help-echo vc-mode)
+                        'local-map (get-text-property 1 'local-map vc-mode))
+            (doom-modeline-spc))))
 
 
 ;;
@@ -1010,14 +1009,11 @@ level."
     (concat
      (doom-modeline-spc)
      (let ((str))
-       (dolist (s (split-string seg " "))
+       (dolist (s (split-string seg ""))
          (setq str
-               (concat str
-                       (if (string-match-p "^[0-9]+$" s)
-                           (concat (doom-modeline-vspc)
-                                   (doom-modeline-display-text s)
-                                   (doom-modeline-vspc))
-                         (doom-modeline-display-icon s)))))
+               (concat str (if (string-match-p "^[0-9]+$" s)
+                               (doom-modeline-display-text s)
+                             (doom-modeline-display-icon s)))))
        str)
      (doom-modeline-spc))))
 
