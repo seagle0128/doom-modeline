@@ -1469,7 +1469,7 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
                            ;; Exclude minibuffer, tooltip and child frames
                            (unless (or (and (fboundp 'frame-parent) (frame-parent frame))
                                        (string= (frame-parameter frame 'name)
-                                                (alist-get 'name tooltip-frame-parameters)))
+                                                (alist-get 'name (bound-and-true-p tooltip-frame-parameters))))
                              (window-list frame 'never)))
                          (visible-frame-list))
                         1))
