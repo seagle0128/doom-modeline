@@ -20,9 +20,6 @@ jobs:
           - os: ubuntu-latest
             emacs-version: snapshot
             experimental: true
-          - os: macos-latest
-            emacs-version: snapshot
-            experimental: true
           - os: windows-latest
             emacs-version: snapshot
             experimental: true
