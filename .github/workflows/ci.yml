@@ -37,7 +37,7 @@ jobs:
         with:
           version: ${{ matrix.emacs-version }}
 
-      - uses: emacs-eask/setup-cask@master
+      - uses: conao3/setup-cask@master
         with:
           version: snapshot
 
