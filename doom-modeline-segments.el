@@ -724,16 +724,17 @@ Uses `nerd-icons-octicon' to fetch the icon."
 
 (doom-modeline-def-segment vcs
   "Displays the current branch, colored based on its state."
-  (let-alist doom-modeline--vcs
-    (concat (doom-modeline-spc)
-            (propertize (concat
-                         (doom-modeline-display-icon .icon)
-                         (doom-modeline-vspc)
-                         (doom-modeline-display-text .text))
-                        'help-echo (get-text-property 1 'help-echo vc-mode)
-                        'mouse-face 'doom-modeline-highlight
-                        'local-map (get-text-property 1 'local-map vc-mode))
-            (doom-modeline-spc))))
+  (when doom-modeline--vcs
+    (let-alist doom-modeline--vcs
+      (concat (doom-modeline-spc)
+              (propertize (concat
+                           (doom-modeline-display-icon .icon)
+                           (doom-modeline-vspc)
+                           (doom-modeline-display-text .text))
+                          'help-echo (get-text-property 1 'help-echo vc-mode)
+                          'mouse-face 'doom-modeline-highlight
+                          'local-map (get-text-property 1 'local-map vc-mode))
+              (doom-modeline-spc)))))
 
 
 ;;
