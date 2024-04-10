@@ -1418,12 +1418,10 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
 
 (doom-modeline-def-segment hud
   "Powerline's hud segment reimplemented in the style of bar segment."
-  (doom-modeline-def-segment bar
-    "The bar regulates the height of the `doom-modeline' in GUI."
-    (when (display-graphic-p)
-      (concat
-       (doom-modeline--hud)
-       (doom-modeline-spc)))))
+  (when (display-graphic-p)
+    (concat
+     (doom-modeline--hud)
+     (doom-modeline-spc))))
 
 
 ;;
