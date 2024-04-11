@@ -47,6 +47,7 @@ The `doom-modeline` was designed for minimalism, and offers:
 - An indicator for current input method
 - An indicator for debug state
 - An indicator for remote host
+- An indicator for Kubernetes state with [`kele.el`](https://github.com/jinnovation/kele.el)
 - An indicator for LSP state with `lsp-mode` or `eglot`
 - An indicator for GitHub notifications
 - An indicator for unread emails with `mu4e-alert` and `gnus`
