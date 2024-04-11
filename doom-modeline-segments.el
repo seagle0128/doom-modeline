@@ -3174,8 +3174,8 @@ Otherwise, it displays the message like `message' would."
 
 (doom-modeline-def-segment k8s
   (when (and (bound-and-true-p kele-mode) (doom-modeline--active))
-    (let* ((ctx (kele-current-context-name))
-           (ns (kele-current-namespace))
+    (let* ((ctx (kele-current-context-name :wait nil))
+           (ns (kele-current-namespace :wait nil))
            (icon (doom-modeline-icon 'mdicon "nf-md-kubernetes" "K8s:" "K8s:"))
            (help-msg (let* ((msgs (list (format "Current context: %s" ctx))))
                        (when ns
