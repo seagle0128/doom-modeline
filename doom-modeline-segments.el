@@ -778,18 +778,21 @@ level."
   (setq doom-modeline--flycheck
         (let-alist (doom-modeline--flycheck-count-errors)
           (let ((seg (if doom-modeline-check-simple-format
-                         (let ((count (+ .error .warning .info))
-                               (face (cond ((> .error 0) 'doom-modeline-urgent)
-                                           ((> .warning 0) 'doom-modeline-warning)
-                                           (t 'doom-modeline-info))))
+                         (let ((count (+ .error .warning .info)))
                            (pcase status
                              ('finished    (if (> count 0)
-                                               (concat
-                                                (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" face)
-                                                (doom-modeline-vspc)
-                                                (doom-modeline-check-text (number-to-string count) face))
+                                               (let ((face (if (> .error 0) 'doom-modeline-urgent 'doom-modeline-warning)))
+                                                 (concat
+                                                  (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" face)
+                                                  (doom-modeline-vspc)
+                                                  (doom-modeline-check-text (number-to-string count) face)))
                                              (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "" 'doom-modeline-info)))
-                             ('running     (doom-modeline-check-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug))
+                             ('running     (concat
+                                            (doom-modeline-check-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug)
+                                            (when (> count 0)
+                                              (concat
+                                               (doom-modeline-vspc)
+                                               (doom-modeline-check-text (number-to-string count) 'doom-modeline-debug)))))
                              ('no-checker  (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "-" 'doom-modeline-debug))
                              ('errored     (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "!" 'doom-modeline-urgent))
                              ('interrupted (doom-modeline-check-icon "nf-md-pause_circle_outline" "⦷" "." 'doom-modeline-debug))
@@ -907,10 +910,7 @@ level."
                (some-waiting (cl-set-difference running reported)))
           (let-alist (doom-modeline--flymake-count-errors)
             (let ((seg (if doom-modeline-check-simple-format
-                           (let ((count (+ .error .warning .note))
-                                 (face (cond ((> .error 0) 'doom-modeline-urgent)
-                                             ((> .warning 0) 'doom-modeline-warning)
-                                             (t 'doom-modeline-info))))
+                           (let ((count (+ .error .warning .note)))
                              (cond
                               (some-waiting (concat
                                              (doom-modeline-check-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug)
@@ -921,10 +921,11 @@ level."
                               ((null known) (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "!" 'doom-modeline-urgent))
                               (all-disabled (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "!" 'doom-modeline-warning))
                               (t (if (> count 0)
-                                     (concat
-                                      (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" face)
-                                      (doom-modeline-vspc)
-                                      (doom-modeline-check-text (number-to-string count) face))
+                                     (let ((face (if (> .error 0) 'doom-modeline-urgent 'doom-modeline-warning)))
+                                       (concat
+                                        (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" face)
+                                        (doom-modeline-vspc)
+                                        (doom-modeline-check-text (number-to-string count) face)))
                                    (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "" 'doom-modeline-info)))))
                          (concat (doom-modeline-check-icon "nf-md-close_circle_outline" "⮾" "!" 'doom-modeline-urgent)
                                  (doom-modeline-vspc)
