@@ -3187,6 +3187,10 @@ Otherwise, it displays the message like `message' would."
                    ctx
                    (when (and doom-modeline-k8s-show-namespace ns) (format "(%s)" ns))
                    (doom-modeline-spc))
+                  'local-map (let ((map (make-sparse-keymap)))
+                               (define-key map [mode-line down-mouse-1] kele-menu-map)
+                               map)
+                  'mouse-face 'doom-modeline-highlight
                   'help-echo help-msg))))
 
 (provide 'doom-modeline-segments)
