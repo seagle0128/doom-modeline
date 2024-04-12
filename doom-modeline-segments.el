@@ -3177,7 +3177,7 @@ Otherwise, it displays the message like `message' would."
     (let* ((ctx (kele-current-context-name :wait nil))
            (ns (kele-current-namespace :wait nil))
            (icon (doom-modeline-icon 'mdicon "nf-md-kubernetes" "K8s:" "K8s:"))
-           (help-msg (let* ((msgs (list (format "Current context: %s" ctx))))
+           (help-msg (let ((msgs (list (format "Current context: %s" ctx))))
                        (when ns
                          (setq msgs (append msgs (list (format "Current namespace: %s" ns)))))
                        (string-join msgs "\n"))))
