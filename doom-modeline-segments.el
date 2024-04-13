@@ -195,6 +195,8 @@
 (declare-function image-get-display-property "image-mode")
 (declare-function jsonrpc--request-continuations "ext:jsonrpc" t t)
 (declare-function jsonrpc-last-error "ext:jsonrpc" t t)
+(declare-function kele-current-context-name "ext:kele")
+(declare-function kele-current-namespace "ext:kele")
 (declare-function lsp--workspace-print "ext:lsp-mode")
 (declare-function lsp-describe-session "ext:lsp-mode")
 (declare-function lsp-workspace-folders-open "ext:lsp-mode")
@@ -3165,6 +3167,31 @@ Otherwise, it displays the message like `message' would."
                   (apply #'format-message format-string args)))
           (force-mode-line-update)))
     (apply #'message format-string args)))
+
+;;
+;; Kubernetes
+;;
+
+(doom-modeline-def-segment k8s
+  (when (and (bound-and-true-p kele-mode) (doom-modeline--active))
+    (let* ((ctx (kele-current-context-name :wait nil))
+           (ns (kele-current-namespace :wait nil))
+           (icon (doom-modeline-icon 'mdicon "nf-md-kubernetes" "K8s:" "K8s:"))
+           (help-msg (let ((msgs (list (format "Current context: %s" ctx))))
+                       (when ns
+                         (setq msgs (append msgs (list (format "Current namespace: %s" ns)))))
+                       (string-join msgs "\n"))))
+      (propertize (concat
+                   icon
+                   (doom-modeline-spc)
+                   ctx
+                   (when (and doom-modeline-k8s-show-namespace ns) (format "(%s)" ns))
+                   (doom-modeline-spc))
+                  'local-map (let ((map (make-sparse-keymap)))
+                               (define-key map [mode-line down-mouse-1] kele-menu-map)
+                               map)
+                  'mouse-face 'doom-modeline-highlight
+                  'help-echo help-msg))))
 
 (provide 'doom-modeline-segments)
 

@@ -678,6 +678,11 @@ If nil, display only if the mode line is active."
   :type 'function
   :group 'doom-modeline)
 
+(defcustom doom-modeline-k8s-show-namespace t
+  "Whether to show the current Kubernetes context's default namespace."
+  :type 'boolean
+  :group 'doom-modeline)
+
 
 ;;
 ;; Faces
