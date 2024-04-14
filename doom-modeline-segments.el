@@ -81,6 +81,7 @@
 (defvar grip--process)
 (defvar helm--mode-line-display-prefarg)
 (defvar iedit-occurrences-overlays)
+(defvar kele-menu-map)
 (defvar meow--indicator)
 (defvar minions-mode-line-lighter)
 (defvar minions-mode-line-minor-modes-map)
@@ -2135,7 +2136,7 @@ mouse-1: Toggle citre mode"
 (defvar doom-modeline-before-github-fetch-notification-hook nil
   "Hooks before fetching GitHub notifications.
 Example:
-(add-hook \\='doom-modeline-before-github-fetch-notification-hook
+  (add-hook \\='doom-modeline-before-github-fetch-notification-hook
           #\\='auth-source-pass-enable)")
 
 (defvar doom-modeline-after-github-fetch-notification-hook nil
