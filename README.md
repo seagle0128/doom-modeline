@@ -476,7 +476,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
      ;; Define your custom doom-modeline
      (doom-modeline-def-modeline 'my-simple-line
        '(bar matches buffer-info remote-host buffer-position parrot selection-info)
-       '(misc-info minor-modes input-method buffer-encoding major-mode process vcs checker))
+       '(misc-info minor-modes input-method buffer-encoding major-mode process vcs check))
 
      ;; Set default mode-line
      (add-hook 'doom-modeline-mode-hook
