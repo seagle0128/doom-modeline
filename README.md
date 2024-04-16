@@ -203,6 +203,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;;   relative-from-project => emacs/lisp/comint.el
 ;;   relative-to-project => lisp/comint.el
 ;;   file-name => comint.el
+;;   file-name-with-project => FOSS|comint.el
 ;;   buffer-name => comint.el<2> (uniquify buffer name)
 ;;
 ;; If you are experiencing the laggy issue, especially while editing remote files

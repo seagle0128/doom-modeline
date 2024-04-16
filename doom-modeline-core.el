@@ -154,6 +154,7 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
   relative-from-project => emacs/lisp/comint.el
   relative-to-project => lisp/comint.el
   file-name => comint.el
+  file-name-with-project => FOSS|comint.el
   buffer-name => comint.el<2> (uniquify buffer name)"
   :type '(choice (const auto)
                  (const truncate-upto-project)
@@ -166,6 +167,7 @@ Given ~/Projects/FOSS/emacs/lisp/comint.el
                  (const relative-from-project)
                  (const relative-to-project)
                  (const file-name)
+                 (const file-name-with-project)
                  (const buffer-name))
   :group'doom-modeline)
 
@@ -1539,6 +1541,13 @@ Return `default-directory' if no project was found."
             ('file-name
              (propertize (file-name-nondirectory buffer-file-name)
                          'face 'doom-modeline-buffer-file))
+            ('file-name-with-project
+             (format "%s|%s"
+                     (propertize (file-name-nondirectory
+                                  (directory-file-name (file-local-name (doom-modeline-project-root))))
+                                 'face 'doom-modeline-project-dir)
+                     (propertize (file-name-nondirectory buffer-file-name)
+                                 'face 'doom-modeline-buffer-file)))
             ((or 'buffer-name _)
              (propertize "%b" 'face 'doom-modeline-buffer-file)))))
     (propertize (if (string-empty-p file-name)
