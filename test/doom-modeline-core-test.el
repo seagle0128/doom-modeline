@@ -32,7 +32,7 @@
 (require 'cl-lib)
 (require 'doom-modeline-core)
 
-;; ;; XXX: This is a precaution for older Emacsen that may ship with
+;; XXX: This is a precaution for older Emacsen that may ship with
 ;; outdated versions of `project'.
 (load "project")
 

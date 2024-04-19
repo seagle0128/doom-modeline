@@ -237,8 +237,8 @@ It respects option `doom-modeline-icon' and option `doom-modeline-time-icon'."
 
 (defcustom doom-modeline-time-analogue-clock t
   "Whether to draw an analogue clock SVG as the live time icon.
-It respects options `doom-modeline-icon', `doom-modeline-time-icon', and
-`doom-modeline-time-live-icon'."
+It respects the option `doom-modeline-icon', option `doom-modeline-time-icon',
+and option `doom-modeline-time-live-icon'."
   :type 'boolean
   :group 'doom-modeline)
 
