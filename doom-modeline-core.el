@@ -1484,6 +1484,16 @@ Return nil if no project was found."
                    (car (with-no-warnings
                           (project-roots project)))))))))))
 
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-project-detection
+ (lambda (_sym val op _where)
+   (when (eq op 'set)
+     (setq doom-modeline-project-detection val)
+     (dolist (buf (buffer-list))
+       (with-current-buffer buf
+         (setq doom-modeline--project-root nil)
+         (and buffer-file-name (revert-buffer t t)))))))
+
 (defun doom-modeline-project-p ()
   "Check if the file is in a project."
   (doom-modeline--project-root))
