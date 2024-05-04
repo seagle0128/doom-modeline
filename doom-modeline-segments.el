@@ -1591,71 +1591,71 @@ By default, this shows the information specified by `global-mode-string'."
 (doom-modeline-def-segment buffer-position
   "The buffer position information."
   (let ((visible (doom-modeline--segment-visible 'buffer-position))
-        (lc `(line-number-mode
-              (column-number-mode
-               (doom-modeline-column-zero-based
-                doom-modeline-position-column-line-format
-                ,(string-replace
-                  "%c" "%C" (car doom-modeline-position-column-line-format)))
-               doom-modeline-position-line-format)
-              (column-number-mode
-               (doom-modeline-column-zero-based
-                doom-modeline-position-column-format
-                ,(string-replace
-                  "%c" "%C" (car doom-modeline-position-column-format))))))
+        (spc (doom-modeline-spc))
+        (wspc (doom-modeline-wspc))
+        (face (doom-modeline-face))
+        (help-echo "Buffer percentage\n\
+mouse-1: Display Line and Column Mode Menu")
         (mouse-face 'doom-modeline-highlight)
         (local-map mode-line-column-line-number-mode-map))
-    (concat
-     (doom-modeline-wspc)
+    `(,wspc
 
-     ;; Line and column
-     (propertize (concat (format-mode-line lc)
-                         (and doom-modeline-total-line-number
-                              (format "/%d" (line-number-at-pos (point-max)))))
-                 'face (doom-modeline-face)
-                 'help-echo "Buffer position\n\
-mouse-1: Display Line and Column Mode Menu"
-                 'mouse-face mouse-face
-                 'local-map local-map)
+      ;; Line and column
+      (:propertize ((line-number-mode
+                     (column-number-mode
+                      (doom-modeline-column-zero-based
+                       doom-modeline-position-column-line-format
+                       ,(string-replace
+                         "%c" "%C" (car doom-modeline-position-column-line-format)))
+                      doom-modeline-position-line-format)
+                     (column-number-mode
+                      (doom-modeline-column-zero-based
+                       doom-modeline-position-column-format
+                       ,(string-replace
+                         "%c" "%C" (car doom-modeline-position-column-format)))))
+                    (doom-modeline-total-line-number
+                     ,(format "/%d" (line-number-at-pos (point-max)))))
+       face ,face
+       help-echo ,help-echo
+       mouse-face ,mouse-face
+       local-map ,local-map)
 
-     ;; Position
-     (when visible
-       (cond ((and (bound-and-true-p nyan-mode)
-                   (>= (window-width) nyan-minimum-window-width))
-              (concat
-               (doom-modeline-wspc)
-               (propertize (nyan-create) 'mouse-face mouse-face)))
-             ((and (bound-and-true-p poke-line-mode)
-                   (>= (window-width) poke-line-minimum-window-width))
-              (concat
-               (doom-modeline-wspc)
-               (propertize (poke-line-create) 'mouse-face mouse-face)))
-             ((and (bound-and-true-p mlscroll-mode)
-                   (>= (window-width) mlscroll-minimum-current-width))
-              (concat
-               (doom-modeline-wspc)
-               (let ((mlscroll-right-align nil))
-                 (format-mode-line (mlscroll-mode-line)))))
-             ((and (bound-and-true-p sml-modeline-mode)
-                   (>= (window-width) sml-modeline-len))
-              (concat
-               (doom-modeline-wspc)
-               (propertize (sml-modeline-create) 'mouse-face mouse-face)))
-             (t "")))
+      ;; Position
+      (,visible
+       ,(cond ((and (bound-and-true-p nyan-mode)
+                    (>= (window-width) nyan-minimum-window-width))
+               (concat
+                (doom-modeline-wspc)
+                (propertize (nyan-create) 'mouse-face 'mouse-face)))
+              ((and (bound-and-true-p poke-line-mode)
+                    (>= (window-width) poke-line-minimum-window-width))
+               (concat
+                (doom-modeline-wspc)
+                (propertize (poke-line-create) 'mouse-face 'mouse-face)))
+              ((and (bound-and-true-p mlscroll-mode)
+                    (>= (window-width) mlscroll-minimum-current-width))
+               (concat
+                (doom-modeline-wspc)
+                (let ((mlscroll-right-align nil))
+                  (format-mode-line (mlscroll-mode-line)))))
+              ((and (bound-and-true-p sml-modeline-mode)
+                    (>= (window-width) sml-modeline-len))
+               (concat
+                (doom-modeline-wspc)
+                (propertize (sml-modeline-create) 'mouse-face 'mouse-face)))
+              (t "")))
 
-     ;; Percent position
-     (when doom-modeline-percent-position
-       (concat
-        (doom-modeline-spc)
-        (propertize (format-mode-line '("" doom-modeline-percent-position "%%"))
-                    'face (doom-modeline-face)
-                    'help-echo "Buffer percentage\n\
-mouse-1: Display Line and Column Mode Menu"
-                    'mouse-face mouse-face
-                    'local-map local-map)))
+      ;; Percent position
+      (doom-modeline-percent-position
+       (,spc
+        (:propertize ("" doom-modeline-percent-position)
+         face ,face
+         help-echo ,help-echo
+         mouse-face ,mouse-face
+         local-map ,local-map)))
 
-     (when (or line-number-mode column-number-mode doom-modeline-percent-position)
-       (doom-modeline-spc)))))
+      (,(or line-number-mode column-number-mode doom-modeline-percent-position)
+       ,spc))))
 
 ;;
 ;; Party parrot
@@ -3131,11 +3131,11 @@ When the svg library is not available, return nil."
        (propertize "[Compiling] "
                    'face (doom-modeline-face 'doom-modeline-compilation)
 	               'help-echo "Compiling; mouse-2: Goto Buffer"
-'mouse-face 'doom-modeline-highlight
-'local-map
-(make-mode-line-mouse-map
- 'mouse-2
- #'compilation-goto-in-progress-buffer))))
+                   'mouse-face 'doom-modeline-highlight
+                   'local-map
+                   (make-mode-line-mouse-map
+                    'mouse-2
+                    #'compilation-goto-in-progress-buffer))))
 
 ;;
 ;; Eldoc
