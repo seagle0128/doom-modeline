@@ -1601,20 +1601,21 @@ mouse-1: Display Line and Column Mode Menu")
     `(,wspc
 
       ;; Line and column
-      (:propertize ((line-number-mode
-                     (column-number-mode
-                      (doom-modeline-column-zero-based
-                       doom-modeline-position-column-line-format
-                       ,(string-replace
-                         "%c" "%C" (car doom-modeline-position-column-line-format)))
-                      doom-modeline-position-line-format)
-                     (column-number-mode
-                      (doom-modeline-column-zero-based
-                       doom-modeline-position-column-format
-                       ,(string-replace
-                         "%c" "%C" (car doom-modeline-position-column-format)))))
-                    (doom-modeline-total-line-number
-                     ,(format "/%d" (line-number-at-pos (point-max)))))
+      (:propertize
+       ((line-number-mode
+         (column-number-mode
+          (doom-modeline-column-zero-based
+           doom-modeline-position-column-line-format
+           ,(string-replace
+             "%c" "%C" (car doom-modeline-position-column-line-format)))
+          doom-modeline-position-line-format)
+         (column-number-mode
+          (doom-modeline-column-zero-based
+           doom-modeline-position-column-format
+           ,(string-replace
+             "%c" "%C" (car doom-modeline-position-column-format)))))
+        (doom-modeline-total-line-number
+         ,(format "/%d" (line-number-at-pos (point-max)))))
        face ,face
        help-echo ,help-echo
        mouse-face ,mouse-face
@@ -1622,28 +1623,29 @@ mouse-1: Display Line and Column Mode Menu")
 
       ;; Position
       (,visible
-       ,(cond ((and (bound-and-true-p nyan-mode)
-                    (>= (window-width) nyan-minimum-window-width))
-               (concat
-                (doom-modeline-wspc)
-                (propertize (nyan-create) 'mouse-face 'mouse-face)))
-              ((and (bound-and-true-p poke-line-mode)
-                    (>= (window-width) poke-line-minimum-window-width))
-               (concat
-                (doom-modeline-wspc)
-                (propertize (poke-line-create) 'mouse-face 'mouse-face)))
-              ((and (bound-and-true-p mlscroll-mode)
-                    (>= (window-width) mlscroll-minimum-current-width))
-               (concat
-                (doom-modeline-wspc)
-                (let ((mlscroll-right-align nil))
-                  (format-mode-line (mlscroll-mode-line)))))
-              ((and (bound-and-true-p sml-modeline-mode)
-                    (>= (window-width) sml-modeline-len))
-               (concat
-                (doom-modeline-wspc)
-                (propertize (sml-modeline-create) 'mouse-face 'mouse-face)))
-              (t "")))
+       ,(cond
+         ((and (bound-and-true-p nyan-mode)
+               (>= (window-width) nyan-minimum-window-width))
+          (concat
+           wspc
+           (propertize (nyan-create) 'mouse-face 'mouse-face)))
+         ((and (bound-and-true-p poke-line-mode)
+               (>= (window-width) poke-line-minimum-window-width))
+          (concat
+           wspc
+           (propertize (poke-line-create) 'mouse-face 'mouse-face)))
+         ((and (bound-and-true-p mlscroll-mode)
+               (>= (window-width) mlscroll-minimum-current-width))
+          (concat
+           wspc
+           (let ((mlscroll-right-align nil))
+             (format-mode-line (mlscroll-mode-line)))))
+         ((and (bound-and-true-p sml-modeline-mode)
+               (>= (window-width) sml-modeline-len))
+          (concat
+           wspc
+           (propertize (sml-modeline-create) 'mouse-face 'mouse-face)))
+         (t "")))
 
       ;; Percent position
       (doom-modeline-percent-position
