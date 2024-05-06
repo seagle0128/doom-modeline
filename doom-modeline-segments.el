@@ -600,13 +600,13 @@ mouse-3: Toggle minor modes"
                  'face face
                  'mouse-face 'doom-modeline-highlight
                  'local-map mode-line-major-mode-keymap)
-     (propertize
-      (and (boundp 'text-scale-mode-amount)
-           (/= text-scale-mode-amount 0)
+     (and (boundp 'text-scale-mode-amount)
+          (/= text-scale-mode-amount 0)
+          (propertize
            (format
             (if (> text-scale-mode-amount 0) " (%+d)" " (%-d)")
-            text-scale-mode-amount))
-      'face face)
+            text-scale-mode-amount)
+           'face face))
      sep)))
 
 
