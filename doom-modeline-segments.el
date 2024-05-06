@@ -1670,7 +1670,7 @@ mouse-1: Display Line and Column Mode Menu")
          mouse-face ,mouse-face
          local-map ,local-map)))
 
-      (,(or line-number-mode column-number-mode doom-modeline-percent-position)
+      ((or line-number-mode column-number-mode doom-modeline-percent-position)
        ,sep))))
 
 ;;
