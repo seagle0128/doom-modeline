@@ -1737,7 +1737,7 @@ TEXT is alternative if icon is not available."
              (not (bound-and-true-p evil-local-mode)))
     (doom-modeline--modal-icon
      "<W>" 'doom-modeline-overwrite "Overwrite mode"
-     "nf-md-note_edit" "🅦")))
+     "nf-md-marker" "🅦")))
 
 (defsubst doom-modeline--god ()
   "The current god state which is enabled by the command `god-mode'."
