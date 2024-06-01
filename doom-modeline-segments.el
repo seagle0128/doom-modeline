@@ -1781,11 +1781,30 @@ TEXT is alternative if icon is not available."
 (defsubst doom-modeline--meow ()
   "The current Meow state. Requires `meow-mode' to be enabled."
   (when (bound-and-true-p meow-mode)
-    (if (doom-modeline--active)
-	    meow--indicator
-	  (propertize (substring-no-properties meow--indicator)
-		          'face
-		          'mode-line-inactive))))
+    (doom-modeline--modal-icon
+     (symbol-name (meow--current-state))
+     (cond
+      ((meow-normal-mode-p) 'doom-modeline-evil-normal-state)
+      ((meow-insert-mode-p) 'doom-modeline-evil-insert-state)
+      ((meow-beacon-mode-p) 'doom-modeline-evil-visual-state)
+      ((meow-motion-mode-p) 'doom-modeline-evil-motion-state)
+      ((meow-keypad-mode-p) 'doom-modeline-evil-operator-state)
+      (t 'doom-modeline-evil-normal-state))
+     (symbol-name (meow--current-state))
+     (cond
+      ((meow-normal-mode-p) "nf-md-alpha_n_circle")
+      ((meow-insert-mode-p) "nf-md-alpha_i_circle")
+      ((meow-beacon-mode-p) "nf-md-alpha_b_circle")
+      ((meow-motion-mode-p) "nf-md-alpha_m_circle")
+      ((meow-keypad-mode-p) "nf-md-alpha_k_circle")
+      (t "nf-md-alpha_n_circle"))
+     (cond
+      ((meow-normal-mode-p) "🅝")
+      ((meow-insert-mode-p) "🅘")
+      ((meow-beacon-mode-p) "🅑")
+      ((meow-motion-mode-p) "🅜")
+      ((meow-keypad-mode-p) "🅚")
+      (t "🅝")))))
 
 (doom-modeline-def-segment modals
   "Displays modal editing states.
