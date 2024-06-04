@@ -38,14 +38,18 @@ jobs:
         with:
           version: snapshot
 
+      - name: import gog
+        run: cask eval "(package-install 'gnu-elpa-keyring-update)"
+
       - name: install
-        run: "cask install"
+        run: cask install
 
       - name: test
-        run: "cask exec ert-runner"
+        run: cask exec ert-runner
 
       - name: build
-        run: "cask build"
+        run: cask build
 
       - name: package
-        run: "cask package"
+        run: cask package
+

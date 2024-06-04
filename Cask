@@ -8,6 +8,5 @@
 (files "*.el")
 
 (development
- (depends-on "gnu-elpa-keyring-update")
  (depends-on "project")
  (depends-on "ert-runner"))
