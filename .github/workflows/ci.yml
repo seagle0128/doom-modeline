@@ -38,6 +38,11 @@ jobs:
         with:
           version: snapshot
 
+      - name: import gpg
+        run: |
+          export HOME="/home/runner/work/.emacs.d"; \
+          mkdir -p $HOME/.emacs.d/elpa/gnupg && gpg --homedir $HOME/.emacs.d/elpa/gnupg --receive-keys 066DAFCB81E42C40;
+
       - name: install
         run: "cask install"
 
