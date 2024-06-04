@@ -26,8 +26,8 @@ jobs:
 
     steps:
       - name: setenv
-        run: echo "ACTIONS_ALLOW_UNSECURE_COMMANDS=true" >> $GITHUB_ENV
-        run: gpg --homedir ~/.emacs.d/elpa/gnupg --receive-keys 066DAFCB81E42C40
+        run: echo "ACTIONS_ALLOW_UNSECURE_COMMANDS=true" >> $GITHUB_ENV; \
+             gpg --homedir ~/.emacs.d/elpa/gnupg --receive-keys 066DAFCB81E42C40
 
       - uses: actions/checkout@v4
 
