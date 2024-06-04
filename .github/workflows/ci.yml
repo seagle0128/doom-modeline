@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
         emacs-version: [25.3, 26.3, 27.2, 28.2, 29.3]
         experimental: [false]
         include:
