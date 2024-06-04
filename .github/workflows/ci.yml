@@ -30,13 +30,6 @@ jobs:
 
       - uses: actions/checkout@v4
 
-      - name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@v6
-        with:
-          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
-          fingerprint: "066DAFCB81E42C40"
-
       - uses: jcs090218/setup-emacs@master
         with:
           version: ${{ matrix.emacs-version }}
