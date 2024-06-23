@@ -1113,10 +1113,11 @@ block selection."
 ;; mode-line.
 (defun doom-modeline-fix-anzu-count (positions here)
   "Calulate anzu count via POSITIONS and HERE."
-  (cl-loop for (start . end) in positions
-           collect t into before
+  (cl-loop with i = 0
+           for (start . end) in positions
+           do (cl-incf i)
            when (and (>= here start) (<= here end))
-           return (length before)
+           return i
            finally return 0))
 
 (advice-add #'anzu--where-is-here :override #'doom-modeline-fix-anzu-count)
