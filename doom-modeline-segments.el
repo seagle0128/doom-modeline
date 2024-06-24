@@ -939,33 +939,36 @@ level."
                                ((null known) (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "!" 'doom-modeline-urgent))
                                (all-disabled (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "!" 'doom-modeline-warning))
                                (t (if (> count 0)
-                                      (let ((face (if (> .error 0) 'doom-modeline-urgent 'doom-modeline-warning)))
+                                      (let ((face (cond ((> .error 0) 'doom-modeline-urgent)
+                                                        ((> .warning 0) 'doom-modeline-warning)
+                                                        (t 'doom-modeline-info))))
                                         (concat
                                          (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" face)
                                          vsep
                                          (doom-modeline-check-text (number-to-string count) face)))
                                     (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "" 'doom-modeline-info)))))
-                          (concat (doom-modeline-check-icon "nf-md-close_circle_outline" "⮾" "!" 'doom-modeline-urgent)
-                                  vsep
-                                  (doom-modeline-check-text (number-to-string .error) 'doom-modeline-urgent)
-                                  vsep
-                                  (doom-modeline-check-icon "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning)
-                                  vsep
-                                  (doom-modeline-check-text (number-to-string .warning) 'doom-modeline-warning)
-                                  vsep
-                                  (doom-modeline-check-icon "nf-md-information_outline" "🛈" "!" 'doom-modeline-info)
-                                  vsep
-                                  (doom-modeline-check-text (number-to-string .note) 'doom-modeline-info)))))
+                          (concat
+                           (doom-modeline-check-icon "nf-md-close_circle_outline" "⮾" "!" 'doom-modeline-urgent)
+                           vsep
+                           (doom-modeline-check-text (number-to-string .error) 'doom-modeline-urgent)
+                           vsep
+                           (doom-modeline-check-icon "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning)
+                           vsep
+                           (doom-modeline-check-text (number-to-string .warning) 'doom-modeline-warning)
+                           vsep
+                           (doom-modeline-check-icon "nf-md-information_outline" "🛈" "!" 'doom-modeline-info)
+                           vsep
+                           (doom-modeline-check-text (number-to-string .note) 'doom-modeline-info)))))
               (propertize
                seg
-               'help-echo (concat "Flymake\n"
-                                  (cond
-                                   (some-waiting "Checking...")
-                                   ((null known) "No Checker")
-                                   (all-disabled "All Checkers Disabled")
-                                   (t (format "%d/%d backends running\nerror: %d, warning: %d, note: %d"
-                                              (length running) (length known) .error .warning .note)))
-                                  "\nmouse-1: Display minor mode menu\nmouse-2: Show help for minor mode")
+               'help-echo (concat
+                           "Flymake\n"
+                           (cond (some-waiting "Checking...")
+                                 ((null known) "No Checker")
+                                 (all-disabled "All Checkers Disabled")
+                                 (t (format "%d/%d backends running\nerror: %d, warning: %d, note: %d"
+                                            (length running) (length known) .error .warning .note)))
+                           "\nmouse-1: Display minor mode menu\nmouse-2: Show help for minor mode")
                'mouse-face 'doom-modeline-highlight
                'local-map (let ((map (make-sparse-keymap)))
                             (define-key map [mode-line down-mouse-1]
@@ -1040,9 +1043,9 @@ level."
                                    vsep)
                          (doom-modeline-display-icon s)))))
        (propertize str
-                   'help-echo (get-text-property 1 'help-echo seg)
+                   'help-echo (get-text-property 0 'help-echo seg)
                    'mouse-face 'doom-modeline-highlight
-                   'local-map (get-text-property 1 'local-map seg)))
+                   'local-map (get-text-property 0 'local-map seg)))
      sep)))
 
 
