@@ -803,7 +803,7 @@ level."
                                                    (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" face)
                                                    vsep
                                                    (doom-modeline-check-text (number-to-string count) face)))
-                                              (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "" 'doom-modeline-info)))
+                                              (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "*" 'doom-modeline-info)))
                               ('running     (concat
                                              (doom-modeline-check-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug)
                                              (when (> count 0)
@@ -946,7 +946,7 @@ level."
                                          (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" face)
                                          vsep
                                          (doom-modeline-check-text (number-to-string count) face)))
-                                    (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "" 'doom-modeline-info)))))
+                                    (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "*" 'doom-modeline-info)))))
                           (concat
                            (doom-modeline-check-icon "nf-md-close_circle_outline" "⮾" "!" 'doom-modeline-urgent)
                            vsep
