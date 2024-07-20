@@ -899,6 +899,31 @@ Also see the face `doom-modeline-unread-number'."
   "Face for the off state tag in boon indicator."
   :group 'doom-modeline-faces)
 
+(defface doom-modeline-meow-normal-state
+  '((t (:inherit doom-modeline-evil-normal-state)))
+  "Face for the normal state in meow-edit indicator."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-meow-insert-state
+  '((t (:inherit doom-modeline-evil-insert-state)))
+  "Face for the insert state in meow-edit indicator."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-meow-beacon-state
+  '((t (:inherit doom-modeline-evil-visual-state)))
+  "Face for the beacon state in meow-edit indicator."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-meow-motion-state
+  '((t (:inherit doom-modeline-evil-motion-state)))
+  "Face for the motion state in meow-edit indicator."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-meow-keypad-state
+  '((t (:inherit doom-modeline-evil-operator-state)))
+  "Face for the keypad state in meow-edit indicator."
+  :group 'doom-modeline-faces)
+
 (defface doom-modeline-persp-name
   '((t (:inherit (doom-modeline font-lock-comment-face italic))))
   "Face for the persp name."

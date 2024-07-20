@@ -1792,14 +1792,14 @@ TEXT is alternative if icon is not available."
   "The current Meow state. Requires `meow-mode' to be enabled."
   (when (bound-and-true-p meow-mode)
     (doom-modeline--modal-icon
-     (symbol-name (meow--current-state))
+     (substring-no-properties meow--indicator)
      (cond
-      ((meow-normal-mode-p) 'doom-modeline-evil-normal-state)
-      ((meow-insert-mode-p) 'doom-modeline-evil-insert-state)
-      ((meow-beacon-mode-p) 'doom-modeline-evil-visual-state)
-      ((meow-motion-mode-p) 'doom-modeline-evil-motion-state)
-      ((meow-keypad-mode-p) 'doom-modeline-evil-operator-state)
-      (t 'doom-modeline-evil-normal-state))
+      ((meow-normal-mode-p) 'doom-modeline-meow-normal-state)
+      ((meow-insert-mode-p) 'doom-modeline-meow-insert-state)
+      ((meow-beacon-mode-p) 'doom-modeline-meow-beacon-state)
+      ((meow-motion-mode-p) 'doom-modeline-meow-motion-state)
+      ((meow-keypad-mode-p) 'doom-modeline-meow-keypad-state)
+      (t 'doom-modeline-meow-normal-state))
      (symbol-name (meow--current-state))
      (cond
       ((meow-normal-mode-p) "nf-md-alpha_n_circle")
