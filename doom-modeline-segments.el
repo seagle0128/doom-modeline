@@ -2579,12 +2579,12 @@ One key difference is that when `tracking-shorten' and
 `erc-track-shorten-function' returns nil we will instead return the original
 value of name. This is necessary in cases where the user has stylized the name
 to be an icon and we don't want to remove that so we just return the original."
-  (or (and (boundp 'tracking-shorten)
+  (or (and (fboundp 'tracking-shorten)
            (car (tracking-shorten (list name))))
       (and (boundp 'erc-track-shorten-function)
            (functionp erc-track-shorten-function)
 	       (car (funcall erc-track-shorten-function (list name))))
-      (and (boundp 'rcirc-short-buffer-name)
+      (and (fboundp 'rcirc-short-buffer-name)
            (rcirc-short-buffer-name name))
       name))
 
