@@ -18,10 +18,22 @@ jobs:
         experimental: [false]
         include:
           - os: ubuntu-latest
-            emacs-version: [25.3, 26.3, snapshot]
+            emacs-version: 25.3
+            experimental: true
+          - os: ubuntu-latest
+            emacs-version: 26.3
+            experimental: true
+          - os: ubuntu-latest
+            emacs-version: snapshot
             experimental: true
           - os: windows-latest
-            emacs-version: [25.3, 26.3, snapshot]
+            emacs-version: 25.3
+            experimental: true
+          - os: windows-latest
+            emacs-version: 26.3
+            experimental: true
+          - os: windows-latest
+            emacs-version: snapshot
             experimental: true
 
     steps:
