@@ -39,10 +39,10 @@ jobs:
         env:
           EMACS-VERSION: ${{ matrix.emacs-version }}
         run: |
-          echo $(pwd); echo ${EMACS-VERSION}; \
-          export GPG_HOME="$(pwd)/.cask/${EMACS-VERSION}/elpa/gnupg"; \
+          echo $(pwd); echo ${env.EMACS-VERSION}; \
+          export GPG_HOME="$(pwd)/.cask/${env.EMACS-VERSION}/elpa/gnupg"; \
           mkdir -p $GPG_HOME && gpg --homedir $GPG_HOME --receive-keys 066DAFCB81E42C40; \
-          cask install; ls -la; ls -la .cask/
+          cask install; ls -la .cask
 
       - name: test
         run: cask exec ert-runner
