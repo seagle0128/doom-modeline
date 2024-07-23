@@ -14,15 +14,9 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        emacs-version: [27.2, 28.2, 29.4]
+        emacs-version: [25.3, 26.3, 27.2, 28.2, 29.4]
         experimental: [false]
         include:
-          - os: ubuntu-latest
-            emacs-version: 25.3
-            experimental: true
-          - os: ubuntu-latest
-            emacs-version: 26.3
-            experimental: true
           - os: ubuntu-latest
             emacs-version: snapshot
             experimental: true
@@ -42,7 +36,12 @@ jobs:
           version: snapshot
 
       - name: install
-        run: cask install
+        env:
+          EMACS-VERSION: ${{ matrix.emacs-version }}
+        run: |
+          export PGP_HOME="/home/runner/work/doom-modeline/.cask/${EMACS-VERSION}/elpa/gnupgp"; \
+          mkdir -p $PGP_HOME && gpg --homedir $PGP_HOME --receive-keys 066DAFCB81E42C40; \
+          cask install
 
       - name: test
         run: cask exec ert-runner
