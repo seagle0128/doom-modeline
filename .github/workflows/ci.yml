@@ -14,14 +14,14 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        emacs-version: [25.3, 26.3, 27.2, 28.2, 29.4]
+        emacs-version: [27.2, 28.2, 29.4]
         experimental: [false]
         include:
           - os: ubuntu-latest
-            emacs-version: snapshot
+            emacs-version: [25.3, 26.3, snapshot]
             experimental: true
           - os: windows-latest
-            emacs-version: snapshot
+            emacs-version: [25.3, 26.3, snapshot]
             experimental: true
 
     steps:
@@ -39,8 +39,7 @@ jobs:
           version: snapshot
 
       - name: install
-        run: cask eval "(setq package-check-signature nil)";
-             cask install
+        run: cask install
 
       - name: test
         run: cask exec ert-runner
