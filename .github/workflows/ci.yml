@@ -39,7 +39,7 @@ jobs:
           version: snapshot
 
       - name: install
-        run: cask eval "(setq package-check-signature nil); \
+        run: cask eval "(setq package-check-signature nil)";
              cask install
 
       - name: test
