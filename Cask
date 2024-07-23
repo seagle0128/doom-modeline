@@ -1,8 +1,6 @@
 (source gnu)
 (source melpa)
 
-(depends-on "gnu-elpa-keyring-update")
-
 (package "doom-modeline" "1.0.0" "A minimal and modern mode-line")
 
 (package-file "doom-modeline.el")

@@ -39,7 +39,8 @@ jobs:
           version: snapshot
 
       - name: install
-        run: cask install
+        run: cask eval "(setq package-check-signature nil); \
+             cask install
 
       - name: test
         run: cask exec ert-runner
