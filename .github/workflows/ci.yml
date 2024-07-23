@@ -39,9 +39,10 @@ jobs:
         env:
           EMACS-VERSION: ${{ matrix.emacs-version }}
         run: |
-          export PGP_HOME="/home/runner/work/doom-modeline/.cask/${EMACS-VERSION}/elpa/gnupgp"; \
+          echo $(pwd)
+          export PGP_HOME="/home/runner/work/doom-modeline/doom-modeline/elpa/gnupgp"; \
           mkdir -p $PGP_HOME && gpg --homedir $PGP_HOME --receive-keys 066DAFCB81E42C40; \
-          cask install; echo $(pwd)
+          cask install; ls -la
 
       - name: test
         run: cask exec ert-runner
