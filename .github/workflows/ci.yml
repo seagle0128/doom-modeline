@@ -39,7 +39,8 @@ jobs:
         env:
           EMACS-VERSION: ${{ matrix.emacs-version }}
         run: |
-          export GPG_HOME="/home/runner/work/doom-modeline/doom-modeline/.cask/elpa/gnupg"; \
+          echo $(pwd); echo ${EMACS-VERSION}; \
+          export GPG_HOME="$(pwd)/.cask/${EMACS-VERSION}/elpa/gnupg"; \
           mkdir -p $GPG_HOME && gpg --homedir $GPG_HOME --receive-keys 066DAFCB81E42C40; \
           cask install; ls -la; ls -la .cask/
 
