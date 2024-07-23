@@ -41,7 +41,7 @@ jobs:
         run: |
           export PGP_HOME="/home/runner/work/doom-modeline/.cask/${EMACS-VERSION}/elpa/gnupgp"; \
           mkdir -p $PGP_HOME && gpg --homedir $PGP_HOME --receive-keys 066DAFCB81E42C40; \
-          cask install
+          cask install; echo $(pwd)
 
       - name: test
         run: cask exec ert-runner
