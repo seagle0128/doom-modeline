@@ -41,7 +41,7 @@ jobs:
         run: |
           export GPG_HOME="/home/runner/work/doom-modeline/doom-modeline/.cask/elpa/gnupg"; \
           mkdir -p $GPG_HOME && gpg --homedir $GPG_HOME --receive-keys 066DAFCB81E42C40; \
-          cask install
+          cask install; ls -la; ls -la .cask/
 
       - name: test
         run: cask exec ert-runner
