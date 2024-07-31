@@ -1720,7 +1720,7 @@ TEXT is alternative if icon is not available."
       ((evil-visual-state-p) 'doom-modeline-evil-visual-state)
       ((evil-operator-state-p) 'doom-modeline-evil-operator-state)
       ((evil-replace-state-p) 'doom-modeline-evil-replace-state)
-      (t 'doom-modeline-evil-normal-state))
+      (t 'doom-modeline-evil-user-state))
      (evil-state-property evil-state :name t)
      (cond
       ((evil-normal-state-p) "nf-md-alpha_n_circle")
@@ -1730,7 +1730,7 @@ TEXT is alternative if icon is not available."
       ((evil-visual-state-p) "nf-md-alpha_v_circle")
       ((evil-operator-state-p) "nf-md-alpha_o_circle")
       ((evil-replace-state-p) "nf-md-alpha_r_circle")
-      (t "nf-md-alpha_n_circle"))
+      (t "nf-md-alpha_u_circle"))
      (cond
       ((evil-normal-state-p) "🅝")
       ((evil-emacs-state-p) "🅔")
@@ -1739,7 +1739,7 @@ TEXT is alternative if icon is not available."
       ((evil-visual-state-p) "🅥")
       ((evil-operator-state-p) "🅞")
       ((evil-replace-state-p) "🅡")
-      (t "🅝")))))
+      (t "🅤")))))
 
 (defsubst doom-modeline--overwrite ()
   "The current overwrite state which is enabled by command `overwrite-mode'."

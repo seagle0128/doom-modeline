@@ -854,6 +854,11 @@ Also see the face `doom-modeline-unread-number'."
   "Face for the replace state tag in evil indicator."
   :group 'doom-modeline-faces)
 
+(defface doom-modeline-evil-user-state
+  '((t (:inherit doom-modeline-warning)))
+  "Face for the replace state tag in evil indicator."
+  :group 'doom-modeline-faces)
+
 (defface doom-modeline-overwrite
   '((t (:inherit doom-modeline-urgent)))
   "Face for overwrite indicator."
