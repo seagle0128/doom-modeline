@@ -298,6 +298,12 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether display the icon of vcs segment. It respects option `doom-modeline-icon'."
 (setq doom-modeline-vcs-icon t)
 
+;; The maximum displayed length of the branch name of version control.
+(setq doom-modeline-vcs-max-length 12)
+
+;; The function to display the branch name.
+(setq doom-modeline-vcs-display-function #'doom-modeline-vcs-name)
+
 ;; Whether display the icon of check segment. It respects option `doom-modeline-icon'.
 (setq doom-modeline-check-icon t)
 
@@ -306,9 +312,6 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
 ;; The maximum number displayed for notifications.
 (setq doom-modeline-number-limit 99)
-
-;; The maximum displayed length of the branch name of version control.
-(setq doom-modeline-vcs-max-length 12)
 
 ;; Whether display the workspace name. Non-nil to display in the mode-line.
 (setq doom-modeline-workspace-name t)
