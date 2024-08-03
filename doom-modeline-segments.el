@@ -690,9 +690,10 @@ Uses `nerd-icons-octicon' to fetch the icon."
                              ((memq state '(removed conflict unregistered))
                               (doom-modeline-icon 'octicon "nf-oct-alert" "⚠" "!" :face 'doom-modeline-urgent))
                              (t (doom-modeline-vcs-icon "nf-dev-git_branch" "" "@" 'doom-modeline-info))))
-                 (str (if vc-display-status
-                          (substring vc-mode (+ (if (eq backend 'Hg) 2 3) 2))
-                        ""))
+                 (str (or (and vc-display-status
+                               (functionp #'doom-modeline-vcs-name)
+                               (funcall #'doom-modeline-vcs-name))
+                          ""))
                  (face (cond ((eq state 'needs-update)
                               '(doom-modeline-warning bold))
                              ((memq state '(removed conflict unregistered))
@@ -732,6 +733,15 @@ Uses `nerd-icons-octicon' to fetch the icon."
  (lambda (_sym val op _where)
    (when (eq op 'set)
      (setq doom-modeline-vcs-icon val)
+     (dolist (buf (buffer-list))
+       (with-current-buffer buf
+         (doom-modeline-update-vcs))))))
+
+(doom-modeline-add-variable-watcher
+ 'vc-display-status
+ (lambda (_sym val op _where)
+   (when (eq op 'set)
+     (setq vc-display-status val)
      (dolist (buf (buffer-list))
        (with-current-buffer buf
          (doom-modeline-update-vcs))))))

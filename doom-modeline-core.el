@@ -477,6 +477,16 @@ It respects option `doom-modeline-icon'."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-vcs-max-length 12
+  "The maximum displayed length of the branch name of version control."
+  :type 'integer
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-vcs-display-function #'doom-modeline-vcs-name
+  "The function to display the branch name."
+  :type 'function
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-check-icon t
   "Whether display the icon of check segment.
 
@@ -496,11 +506,6 @@ It respects option `doom-modeline-icon'."
 
 (defcustom doom-modeline-number-limit 99
   "The maximum number displayed for notifications."
-  :type 'integer
-  :group 'doom-modeline)
-
-(defcustom doom-modeline-vcs-max-length 12
-  "The maximum displayed length of the branch name of version control."
   :type 'integer
   :group 'doom-modeline)
 
@@ -1428,6 +1433,12 @@ ARGS is same as `nerd-icons-octicon' and others."
       text
     (propertize text 'face `(:inherit (mode-line-inactive
                                        ,(get-text-property 0 'face text))))))
+
+(defun doom-modeline-vcs-name ()
+  "Display the vcs name."
+  (if vc-mode
+      (or (cadr (split-string vc-mode ":")) "")
+    ""))
 
 (defun doom-modeline--create-bar-image (face width height)
   "Create the bar image.
