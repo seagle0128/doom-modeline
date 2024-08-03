@@ -1436,7 +1436,7 @@ ARGS is same as `nerd-icons-octicon' and others."
 
 (defun doom-modeline-vcs-name ()
   "Display the vcs name."
-  (or (and vc-mode (cadr (split-string vc-mode ":"))) ""))
+  (and vc-mode (cadr (split-string vc-mode ":"))))
 
 (defun doom-modeline--create-bar-image (face width height)
   "Create the bar image.
