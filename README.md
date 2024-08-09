@@ -299,7 +299,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 (setq doom-modeline-vcs-icon t)
 
 ;; The maximum displayed length of the branch name of version control.
-(setq doom-modeline-vcs-max-length 12)
+(setq doom-modeline-vcs-max-length 15)
 
 ;; The function to display the branch name.
 (setq doom-modeline-vcs-display-function #'doom-modeline-vcs-name)
