@@ -644,7 +644,7 @@ It requires `circe' or `erc' package."
   :type 'boolean
   :group 'doom-modeline)
 
-(defcustom doom-modeline-irc-stylize 'identity
+(defcustom doom-modeline-irc-stylize #'doom-modeline-shorten-irc
   "Function to stylize the irc buffer names."
   :type 'function
   :group 'doom-modeline)

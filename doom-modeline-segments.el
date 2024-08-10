@@ -2582,7 +2582,7 @@ mouse-1: Toggle Debug on Quit"
 ;; IRC notifications
 ;;
 
-(defun doom-modeline--shorten-irc (name)
+(defun doom-modeline-shorten-irc (name)
   "Wrapper for `tracking-shorten' and `erc-track-shorten-function' with NAME.
 
 One key difference is that when `tracking-shorten' and
@@ -2603,7 +2603,7 @@ to be an icon and we don't want to remove that so we just return the original."
   (mapconcat
    (lambda (b)
      (propertize
-      (doom-modeline--shorten-irc (funcall doom-modeline-irc-stylize b))
+      (funcall doom-modeline-irc-stylize b)
       'face '(:inherit (doom-modeline-unread-number doom-modeline-notification))
       'help-echo (format "IRC Notification: %s\nmouse-1: Switch to buffer" b)
       'mouse-face 'doom-modeline-highlight
