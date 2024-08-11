@@ -1029,6 +1029,7 @@ Also see the face `doom-modeline-unread-number'."
 (declare-function ffip-project-root "ext:find-file-in-project")
 (declare-function project-root "project")
 (declare-function projectile-project-root "ext:projectile")
+(declare-function doom-modeline-shorten-irc "ext:doom-modeline-segments")
 
 
 ;;
