@@ -2583,12 +2583,16 @@ mouse-1: Toggle Debug on Quit"
 ;;
 
 (defun doom-modeline-shorten-irc (name)
-  "Wrapper for `tracking-shorten' and `erc-track-shorten-function' with NAME.
+  "Shorten IRC buffer `name' according to IRC mode.
 
-One key difference is that when `tracking-shorten' and
-`erc-track-shorten-function' returns nil we will instead return the original
-value of name. This is necessary in cases where the user has stylized the name
-to be an icon and we don't want to remove that so we just return the original."
+Calls the mode specific function to return the shortened
+version of `NAME' if applicable:
+- Circe: `tracking-shorten'
+- ERC: `erc-track-shorten-function'
+- rcirc: `rcirc-shorten-buffer-name'
+
+The specific function will decide how to stylize the buffer name,
+read the individual functions documentation for more."
   (or (and (fboundp 'tracking-shorten)
            (car (tracking-shorten (list name))))
       (and (boundp 'erc-track-shorten-function)
