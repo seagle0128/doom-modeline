@@ -635,7 +635,7 @@ Groups' names list in `gnus-newsrc-alist'`"
 (defcustom doom-modeline-irc t
   "Whether display the irc notifications.
 
-It requires `circe' or `erc' package."
+It requires either `circe' , `erc' or `rcirc' package."
   :type 'boolean
   :group 'doom-modeline)
 
