@@ -2163,10 +2163,10 @@ mouse-1: Toggle citre mode"
 
 (defun doom-modeline-override-eglot ()
   "Override `eglot' mode-line."
-  (if (and doom-modeline-lsp
-           (bound-and-true-p doom-modeline-mode))
-      (setq mode-line-misc-info
-            (delq (assq 'eglot--managed-mode mode-line-misc-info) mode-line-misc-info))
+  (when (and doom-modeline-lsp
+             (bound-and-true-p doom-modeline-mode))
+    (setq mode-line-misc-info
+          (delq (assq 'eglot--managed-mode mode-line-misc-info) mode-line-misc-info))
     (add-to-list 'mode-line-misc-info
                  `(eglot--managed-mode (" [" eglot--mode-line-format "] ")))))
 (add-hook 'eglot-managed-mode-hook #'doom-modeline-override-eglot)
