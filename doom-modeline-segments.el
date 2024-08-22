@@ -61,7 +61,9 @@
 (defvar display-time-string)
 (defvar edebug-execution-mode)
 (defvar eglot--managed-mode)
+(defvar eglot-menu)
 (defvar eglot-menu-string)
+(defvar eglot-server-menu)
 (defvar erc-modified-channels-alist)
 (defvar evil-ex-active-highlights-alist)
 (defvar evil-ex-argument)
@@ -144,9 +146,7 @@
 (declare-function eglot--major-modes "ext:eglot" t t)
 (declare-function eglot-current-server "ext:eglot")
 (declare-function eglot-managed-p "ext:glot")
-(declare-function eglot-menu "ext:eglot" t t)
 (declare-function eglot-project-nickname "ext:eglot" t t)
-(declare-function eglot-server-menu "ext:eglot" t t)
 (declare-function erc-switch-to-buffer "erc")
 (declare-function erc-track-switch-buffer "erc-track")
 (declare-function evil-delimited-arguments "ext:evil-common")
@@ -2066,10 +2066,8 @@ mouse-3: Reconnect to server"
                                          nick)
                       'mouse-face 'doom-modeline-highlight
                       'local-map (let ((map (make-sparse-keymap)))
-                                   (define-key map [mode-line mouse-1]
-                                     #'eglot-menu)
-                                   (define-key map [mode-line mouse-3]
-                                     #'eglot-server-menu)
+                                   (define-key map [mode-line mouse-1] eglot-menu)
+                                   (define-key map [mode-line mouse-3] eglot-server-menu)
                                    map)))))
 (add-hook 'eglot-managed-mode-hook #'doom-modeline-update-eglot)
 
