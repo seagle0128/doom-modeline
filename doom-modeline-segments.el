@@ -2062,7 +2062,7 @@ mouse-1: Reload to start server")
           (propertize icon
                       'help-echo (format "Eglot connected [%s]
 mouse-1: Display minor mode menu
-mouse-3: Reconnect to server"
+mouse-3: LSP server control menu"
                                          nick)
                       'mouse-face 'doom-modeline-highlight
                       'local-map (let ((map (make-sparse-keymap)))
