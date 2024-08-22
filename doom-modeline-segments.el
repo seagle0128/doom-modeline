@@ -61,6 +61,7 @@
 (defvar display-time-string)
 (defvar edebug-execution-mode)
 (defvar eglot--managed-mode)
+(defvar eglot-menu-string)
 (defvar erc-modified-channels-alist)
 (defvar evil-ex-active-highlights-alist)
 (defvar evil-ex-argument)
@@ -141,15 +142,11 @@
 (declare-function edebug-stop "edebug")
 (declare-function eglot "ext:eglot")
 (declare-function eglot--major-modes "ext:eglot" t t)
-(declare-function eglot--project-nickname "ext:eglot" t t)
-(declare-function eglot-clear-status "ext:eglot")
 (declare-function eglot-current-server "ext:eglot")
-(declare-function eglot-events-buffer "ext:eglot")
-(declare-function eglot-forget-pending-continuations "ext:eglot")
 (declare-function eglot-managed-p "ext:glot")
-(declare-function eglot-reconnect "ext:eglot")
-(declare-function eglot-shutdown "ext:eglot")
-(declare-function eglot-stderr-buffer "ext:eglot")
+(declare-function eglot-menu "ext:eglot" t t)
+(declare-function eglot-project-nickname "ext:eglot" t t)
+(declare-function eglot-server-menu "ext:eglot" t t)
 (declare-function erc-switch-to-buffer "erc")
 (declare-function erc-track-switch-buffer "erc-track")
 (declare-function evil-delimited-arguments "ext:evil-common")
@@ -2008,7 +2005,7 @@ mouse-3: Describe current input method")
           (propertize icon
                       'help-echo
                       (if workspaces
-                          (concat "LSP Connected "
+                          (concat "LSP connected "
                                   (string-join
                                    (mapcar (lambda (w)
                                              (format "[%s]\n" (lsp--workspace-print w)))
@@ -2053,48 +2050,26 @@ mouse-1: Reload to start server")
 (defun doom-modeline-update-eglot ()
   "Update `eglot' state."
   (setq doom-modeline--eglot
-        (pcase-let* ((server (and (eglot-managed-p) (eglot-current-server)))
-                     (nick (and server (eglot--project-nickname server)))
-                     (pending (and server (doom-modeline--eglot-pending-count server)))
-                     (last-error (and server (jsonrpc-last-error server)))
-                     (face (cond (last-error 'doom-modeline-lsp-error)
-                                 ((and pending (cl-plusp pending)) 'doom-modeline-lsp-warning)
-                                 (nick 'doom-modeline-lsp-success)
-                                 (t 'doom-modeline-lsp-warning)))
-                     (icon (doom-modeline-lsp-icon "EGLOT" face)))
+        (let* ((server (and (eglot-managed-p) (eglot-current-server)))
+               (nick (and server (eglot-project-nickname server)))
+               (pending (and server (doom-modeline--eglot-pending-count server)))
+               (last-error (and server (jsonrpc-last-error server)))
+               (face (cond (last-error 'doom-modeline-lsp-error)
+                           ((and pending (cl-plusp pending)) 'doom-modeline-lsp-warning)
+                           (nick 'doom-modeline-lsp-success)
+                           (t 'doom-modeline-lsp-warning)))
+               (icon (doom-modeline-lsp-icon eglot-menu-string face)))
           (propertize icon
-                      'help-echo (cond
-                                  (last-error
-                                   (format "EGLOT\nAn error occured: %s
-mouse-3: Clear this status" (plist-get last-error :message)))
-                                  ((and pending (cl-plusp pending))
-                                   (format "EGLOT\n%d outstanding requests" pending))
-                                  (nick (format "EGLOT Connected (%s/%s)
-C-mouse-1: Go to server errors
-mouse-1: Go to server events
-mouse-2: Quit server
-mouse-3: Reconnect to server" nick (eglot--major-modes server)))
-                                  (t "EGLOT Disconnected
-mouse-1: Start server"))
+                      'help-echo (format "Eglot connected [%s]
+mouse-1: Display minor mode menu
+mouse-3: Reconnect to server"
+                                         nick)
                       'mouse-face 'doom-modeline-highlight
                       'local-map (let ((map (make-sparse-keymap)))
-                                   (cond (last-error
-                                          (define-key map [mode-line mouse-3]
-                                            #'eglot-clear-status))
-                                         ((and pending (cl-plusp pending))
-                                          (define-key map [mode-line mouse-3]
-                                            #'eglot-forget-pending-continuations))
-                                         (nick
-                                          (define-key map [mode-line C-mouse-1]
-                                            #'eglot-stderr-buffer)
-                                          (define-key map [mode-line mouse-1]
-                                            #'eglot-events-buffer)
-                                          (define-key map [mode-line mouse-2]
-                                            #'eglot-shutdown)
-                                          (define-key map [mode-line mouse-3]
-                                            #'eglot-reconnect))
-                                         (t (define-key map [mode-line mouse-1]
-                                              #'eglot)))
+                                   (define-key map [mode-line mouse-1]
+                                     #'eglot-menu)
+                                   (define-key map [mode-line mouse-3]
+                                     #'eglot-server-menu)
                                    map)))))
 (add-hook 'eglot-managed-mode-hook #'doom-modeline-update-eglot)
 
@@ -2103,8 +2078,8 @@ mouse-1: Start server"))
   "Update tags state."
   (setq doom-modeline--tags
         (propertize
-         (doom-modeline-lsp-icon "TAGS" 'doom-modeline-lsp-success)
-         'help-echo "TAGS: Citre mode
+         (doom-modeline-lsp-icon "Tags" 'doom-modeline-lsp-success)
+         'help-echo "Tags: Citre mode
 mouse-1: Toggle citre mode"
          'mouse-face 'doom-modeline-highlight
          'local-map (make-mode-line-mouse-map 'mouse-1 #'citre-mode))))
