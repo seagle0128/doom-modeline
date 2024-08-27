@@ -142,8 +142,8 @@
 (declare-function edebug-help "edebug")
 (declare-function edebug-next-mode "edebug")
 (declare-function edebug-stop "edebug")
-(declare-function eglot "ext:eglot")
-(declare-function eglot--major-modes "ext:eglot" t t)
+(declare-function eglot--major-modes "ext:eglot")
+(declare-function eglot--server-info "ext:eglot" t t)
 (declare-function eglot-current-server "ext:eglot")
 (declare-function eglot-managed-p "ext:glot")
 (declare-function eglot-project-nickname "ext:eglot" t t)
@@ -2048,7 +2048,7 @@ mouse-1: Reload to start server")
 
 (defvar-local doom-modeline--eglot nil)
 (defun doom-modeline-update-eglot ()
-  "Update `eglot' state."
+  "Update eglot state."
   (setq doom-modeline--eglot
         (let* ((server (and (eglot-managed-p) (eglot-current-server)))
                (nick (and server (eglot-project-nickname server)))
@@ -2058,12 +2058,17 @@ mouse-1: Reload to start server")
                            ((and pending (cl-plusp pending)) 'doom-modeline-lsp-warning)
                            (nick 'doom-modeline-lsp-success)
                            (t 'doom-modeline-lsp-warning)))
+               (major-modes (and server (eglot--major-modes server)))
+               (server-info (and server (eglot--server-info server)))
+               (server-name (plist-get server-info :name))
+               (server-version (plist-get server-info :version))
                (icon (doom-modeline-lsp-icon eglot-menu-string face)))
           (propertize icon
                       'help-echo (format "Eglot connected [%s]
+%s %s %s
 mouse-1: Display minor mode menu
 mouse-3: LSP server control menu"
-                                         nick)
+                                         nick server-name server-version major-modes)
                       'mouse-face 'doom-modeline-highlight
                       'local-map (let ((map (make-sparse-keymap)))
                                    (define-key map [mode-line mouse-1] eglot-menu)
