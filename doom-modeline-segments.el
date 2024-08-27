@@ -2064,8 +2064,7 @@ mouse-1: Reload to start server")
                (server-version (plist-get server-info :version))
                (icon (doom-modeline-lsp-icon eglot-menu-string face)))
           (propertize icon
-                      'help-echo (format "Eglot connected [%s]
-%s %s %s
+                      'help-echo (format "Eglot connected [%s]\n%s %s %s
 mouse-1: Display minor mode menu
 mouse-3: LSP server control menu"
                                          nick server-name server-version major-modes)
