@@ -2060,14 +2060,13 @@ mouse-1: Reload to start server")
                (server-info (and server (eglot--server-info server)))
                (server-name (or (plist-get server-info :name)
                                 (jsonrpc-name server) ""))
-               (server-version (or (plist-get server-info :version) ""))
                (major-modes (or (and server-info (eglot--major-modes server)) ""))
                (icon (doom-modeline-lsp-icon eglot-menu-string face)))
           (propertize icon
-                      'help-echo (format "Eglot connected [%s]\n%s %s %s
+                      'help-echo (format "Eglot connected [%s]\n%s %s
 mouse-1: Display minor mode menu
 mouse-3: LSP server control menu"
-                                         nick server-name server-version major-modes)
+                                         nick server-name major-modes)
                       'mouse-face 'doom-modeline-highlight
                       'local-map (let ((map (make-sparse-keymap)))
                                    (define-key map [mode-line mouse-1] eglot-menu)
