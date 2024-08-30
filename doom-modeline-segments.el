@@ -687,8 +687,8 @@ Uses `nerd-icons-octicon' to fetch the icon."
                               (doom-modeline-icon 'octicon "nf-oct-alert" "⚠" "!" :face 'doom-modeline-urgent))
                              (t (doom-modeline-vcs-icon "nf-dev-git_branch" "" "@" 'doom-modeline-info))))
                  (str (or (and vc-display-status
-                               (functionp #'doom-modeline-vcs-name)
-                               (funcall #'doom-modeline-vcs-name))
+                               (functionp doom-modeline-vcs-display-function)
+                               (funcall doom-modeline-vcs-display-function))
                           ""))
                  (face (cond ((eq state 'needs-update)
                               '(doom-modeline-warning bold))
