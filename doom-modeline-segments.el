@@ -298,7 +298,12 @@ Uses `nerd-icons-mdicon' to fetch the icon."
         (when doom-modeline-buffer-state-icon
           (ignore-errors
             (concat
-             (cond (buffer-read-only
+             (cond ((not (or (and (buffer-file-name) (file-remote-p buffer-file-name))
+                             (verify-visited-file-modtime (current-buffer))))
+                    (doom-modeline-buffer-file-state-icon
+                     "nf-md-reload_alert" "⟳" "%1*"
+                     'doom-modeline-warning))
+                   (buffer-read-only
                     (doom-modeline-buffer-file-state-icon
                      "nf-md-lock" "🔒" "%1*"
                      'doom-modeline-warning))
