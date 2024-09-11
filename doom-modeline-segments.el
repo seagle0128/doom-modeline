@@ -1621,7 +1621,8 @@ By default, this shows the information specified by `global-mode-string'."
 
 (doom-modeline-def-segment buffer-position
   "The buffer position information."
-  (let ((sep (doom-modeline-spc))
+  (let ((visible (doom-modeline--segment-visible 'buffer-position))
+        (sep (doom-modeline-spc))
         (wsep (doom-modeline-wspc))
         (face (doom-modeline-face))
         (help-echo "Buffer percentage\n\
@@ -1645,7 +1646,8 @@ mouse-1: Display Line and Column Mode Menu")
            ,(string-replace
              "%c" "%C" (car doom-modeline-position-column-format)))))
         (doom-modeline-total-line-number
-         ,(format "/%d" (line-number-at-pos (point-max)))))
+         ,(and doom-modeline-total-line-number
+               (format "/%d" (line-number-at-pos (point-max))))))
        face ,face
        help-echo ,help-echo
        mouse-face ,mouse-face
@@ -1655,19 +1657,20 @@ mouse-1: Display Line and Column Mode Menu")
        ,sep)
 
       ;; Position
-      ,(cond
-        ((bound-and-true-p nyan-mode)
-         (concat sep (nyan-create) sep))
-        ((bound-and-true-p poke-line-mode)
-         (concat sep (poke-line-create) sep))
-        ((bound-and-true-p mlscroll-mode)
-         (concat sep
-                 (let ((mlscroll-right-align nil))
-                   (format-mode-line (mlscroll-mode-line)))
-                 sep))
-        ((bound-and-true-p sml-modeline-mode)
-         (concat sep (sml-modeline-create) sep))
-        (t ""))
+      (,visible
+       ,(cond
+         ((bound-and-true-p nyan-mode)
+          (concat sep (nyan-create) sep))
+         ((bound-and-true-p poke-line-mode)
+          (concat sep (poke-line-create) sep))
+         ((bound-and-true-p mlscroll-mode)
+          (concat sep
+                  (let ((mlscroll-right-align nil))
+                    (format-mode-line (mlscroll-mode-line)))
+                  sep))
+         ((bound-and-true-p sml-modeline-mode)
+          (concat sep (sml-modeline-create) sep))
+         (t "")))
 
       ;; Percent position
       (doom-modeline-percent-position
