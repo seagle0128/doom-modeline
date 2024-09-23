@@ -1345,8 +1345,7 @@ If INACTIVE-FACE is nil, `mode-line-inactive' face will be used."
       (or (and (facep face) `(:inherit (doom-modeline ,face)))
           (and (facep 'mode-line-active) '(:inherit (doom-modeline mode-line-active)))
           '(:inherit (doom-modeline mode-line)))
-    (or (and (facep face) `(:inherit (doom-modeline mode-line-inactive ,face)))
-        (and (facep inactive-face) `(:inherit (doom-modeline ,inactive-face)))
+    (or (and (facep inactive-face) `(:inherit (doom-modeline ,inactive-face)))
         '(:inherit (doom-modeline mode-line-inactive)))))
 
 (defun doom-modeline-string-pixel-width (str)
