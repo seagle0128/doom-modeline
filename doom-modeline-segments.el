@@ -1608,11 +1608,10 @@ mouse-2: Show help for minor mode"
 (doom-modeline-def-segment misc-info
   "Mode line construct for miscellaneous information.
 By default, this shows the information specified by `global-mode-string'."
-  (when (and (doom-modeline--segment-visible 'misc-info)
-             (or doom-modeline-display-misc-in-all-mode-lines
-                 (doom-modeline--active)))
+  (when (or doom-modeline-display-misc-in-all-mode-lines
+            (doom-modeline--segment-visible 'misc-info))
     (doom-modeline-display-text
-     (format-mode-line mode-line-misc-info))))
+     (string-replace "%" "%%" (format-mode-line mode-line-misc-info)))))
 
 
 ;;
