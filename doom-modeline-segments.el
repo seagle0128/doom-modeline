@@ -3146,7 +3146,9 @@ When the svg library is not available, return nil."
   (if (and doom-modeline-time
            (bound-and-true-p doom-modeline-mode))
       (setq global-mode-string (delq 'display-time-string global-mode-string))
-    (setq global-mode-string (append global-mode-string '(display-time-string)))))
+    (or (memq 'display-time-string global-mode-string)
+	    (setq global-mode-string
+		      (append global-mode-string '(display-time-string))))))
 (add-hook 'display-time-mode-hook #'doom-modeline-override-time)
 (add-hook 'doom-modeline-mode-hook #'doom-modeline-override-time)
 
