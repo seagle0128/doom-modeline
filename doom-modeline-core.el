@@ -1309,7 +1309,7 @@ Throws an error if it doesn't exist."
 (defun doom-modeline-set-modeline (key &optional default)
   "Set the modeline format. Does nothing if the modeline KEY doesn't exist.
 If DEFAULT is non-nil, set the default mode-line for all buffers."
-  (when-let ((modeline (doom-modeline key)))
+  (when-let* ((modeline (doom-modeline key)))
     (setf (if default
               (default-value 'mode-line-format)
             mode-line-format)
@@ -1391,12 +1391,12 @@ So convert the face \":family XXX :height XXX :inherit XXX\" to
 See https://github.com/seagle0128/doom-modeline/issues/301."
   (when icon
     (if (doom-modeline-icon-displayable-p)
-        (when-let ((props (get-text-property 0 'face icon)))
+        (when-let* ((props (get-text-property 0 'face icon)))
           (when (listp props)
             (cl-destructuring-bind (&key family height inherit &allow-other-keys) props
               (propertize icon 'face `(:inherit (doom-modeline ,(or face inherit props))
-                                       :family  ,(or family "")
-                                       :height  ,(or height 1.0))))))
+                                                :family  ,(or family "")
+                                                :height  ,(or height 1.0))))))
       (propertize icon 'face `(:inherit (doom-modeline ,face))))))
 
 (defun doom-modeline-icon (icon-set icon-name unicode text &rest args)
@@ -1529,7 +1529,7 @@ Return nil if no project was found."
               (projectile-project-root))
              ((and (memq doom-modeline-project-detection '(auto project))
                    (fboundp 'project-current))
-              (when-let ((project (project-current)))
+              (when-let* ((project (project-current)))
                 (expand-file-name
                  (if (fboundp 'project-root)
                      (project-root project)
@@ -1681,8 +1681,8 @@ Example:
     (concat
      ;; Project root parent
      (unless hide-project-root-parent
-       (when-let (root-path-parent
-                  (file-name-directory (directory-file-name project-root)))
+       (when-let* ((root-path-parent
+                    (file-name-directory (directory-file-name project-root))))
          (propertize
           (if (and truncate-project-root-parent
                    (not (string-empty-p root-path-parent))
@@ -1696,12 +1696,12 @@ Example:
       'face 'doom-modeline-project-dir)
      ;; relative path
      (propertize
-      (when-let (relative-path (file-relative-name
-                                (or (file-name-directory
-                                     (if doom-modeline-buffer-file-true-name
-                                         true-file-path file-path))
-                                    "./")
-                                project-root))
+      (when-let* ((relative-path (file-relative-name
+                                  (or (file-name-directory
+                                       (if doom-modeline-buffer-file-true-name
+                                           true-file-path file-path))
+                                      "./")
+                                  project-root)))
         (if (string= relative-path "./")
             ""
           (if truncate-project-relative-path

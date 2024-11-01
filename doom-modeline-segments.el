@@ -373,8 +373,8 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 (defsubst doom-modeline--buffer-mode-icon ()
   "The icon of the current major mode."
   (when (and doom-modeline-icon doom-modeline-major-mode-icon)
-    (when-let ((icon (or doom-modeline--buffer-file-icon
-                         (doom-modeline-update-buffer-file-icon))))
+    (when-let* ((icon (or doom-modeline--buffer-file-icon
+                          (doom-modeline-update-buffer-file-icon))))
       (unless (string-empty-p icon)
         (concat
          (if doom-modeline-major-mode-color-icon
@@ -387,7 +387,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 (defsubst doom-modeline--buffer-state-icon ()
   "The icon of the current buffer state."
   (when doom-modeline-buffer-state-icon
-    (when-let ((icon (doom-modeline-update-buffer-file-state-icon)))
+    (when-let* ((icon (doom-modeline-update-buffer-file-state-icon)))
       (unless (string-empty-p icon)
         (concat
          (doom-modeline-display-icon icon)
@@ -414,8 +414,8 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
         ;; Only display the buffer name if the window is small, and doesn't
         ;; need to respect file-name style.
         (doom-modeline--buffer-simple-name)
-      (when-let ((name (or doom-modeline--buffer-file-name
-                           (doom-modeline-update-buffer-file-name))))
+      (when-let* ((name (or doom-modeline--buffer-file-name
+                            (doom-modeline-update-buffer-file-name))))
         ;; Check if the buffer is modified
         (if (and doom-modeline-highlight-modified-buffer-name
                  (buffer-modified-p))
@@ -445,7 +445,7 @@ read-only or non-existent)."
   "Display calculator icons and info."
   (concat
    (doom-modeline-spc)
-   (when-let ((icon (doom-modeline-icon 'faicon "nf-fa-calculator" "🖩" "")))
+   (when-let* ((icon (doom-modeline-icon 'faicon "nf-fa-calculator" "🖩" "")))
      (concat
       (doom-modeline-display-icon icon)
       (doom-modeline-vspc)))
@@ -573,7 +573,7 @@ project directory is important."
 (doom-modeline-def-segment remote-host
   "Hostname for remote buffers."
   (when default-directory
-    (when-let ((host (file-remote-p default-directory 'host)))
+    (when-let* ((host (file-remote-p default-directory 'host)))
       (propertize
        (concat "@" host)
        'face (doom-modeline-face 'doom-modeline-host)))))
@@ -1029,15 +1029,15 @@ level."
 
 (doom-modeline-def-segment check
   "Displays color-coded error status in the current buffer with pretty icons."
-  (when-let ((sep (doom-modeline-spc))
-             (vsep (doom-modeline-vspc))
-             (seg (cond
-                   ((and (bound-and-true-p flymake-mode)
-                         (bound-and-true-p flymake--state)) ; only support 26+
-                    doom-modeline--flymake)
-                   ((and (bound-and-true-p flycheck-mode)
-                         (bound-and-true-p flycheck--automatically-enabled-checkers))
-                    doom-modeline--flycheck))))
+  (when-let* ((sep (doom-modeline-spc))
+              (vsep (doom-modeline-vspc))
+              (seg (cond
+                    ((and (bound-and-true-p flymake-mode)
+                          (bound-and-true-p flymake--state)) ; only support 26+
+                     doom-modeline--flymake)
+                    ((and (bound-and-true-p flycheck-mode)
+                          (bound-and-true-p flycheck--automatically-enabled-checkers))
+                     doom-modeline--flycheck))))
     (concat
      sep
      (let ((str))
@@ -1525,7 +1525,7 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
   "The current workspace name or number.
 Requires `eyebrowse-mode' to be enabled or `tab-bar-mode' tabs to be created."
   (when doom-modeline-workspace-name
-    (when-let
+    (when-let*
         ((name (cond
                 ((and (bound-and-true-p eyebrowse-mode)
                       (length> (eyebrowse--get 'window-configs) 1))
@@ -1873,14 +1873,14 @@ Including `evil', `overwrite', `god', `ryo' and `xha-fly-kyes', etc."
 
 (doom-modeline-def-segment input-method
   "The current input method."
-  (when-let ((im (cond
-                  (current-input-method
-                   current-input-method-title)
-                  ((and (bound-and-true-p evil-local-mode)
-                        (bound-and-true-p evil-input-method))
-                   (nth 3 (assoc default-input-method input-method-alist)))
-                  (t nil)))
-             (sep (doom-modeline-spc)))
+  (when-let* ((im (cond
+                   (current-input-method
+                    current-input-method-title)
+                   ((and (bound-and-true-p evil-local-mode)
+                         (bound-and-true-p evil-input-method))
+                    (nth 3 (assoc default-input-method input-method-alist)))
+                   (t nil)))
+              (sep (doom-modeline-spc)))
     (concat
      sep
      (propertize im
@@ -1971,9 +1971,9 @@ mouse-3: Describe current input method")
 (doom-modeline-def-segment repl
   "The REPL state."
   (when doom-modeline-repl
-    (when-let ((icon (when (bound-and-true-p cider-mode)
-                       doom-modeline--cider))
-               (sep (doom-modeline-spc)))
+    (when-let* ((icon (when (bound-and-true-p cider-mode)
+                        doom-modeline--cider))
+                (sep (doom-modeline-spc)))
       (concat
        sep
        (doom-modeline-display-icon icon)
@@ -2121,13 +2121,13 @@ mouse-1: Toggle citre mode"
 (doom-modeline-def-segment lsp
   "The LSP server state."
   (when doom-modeline-lsp
-    (when-let ((icon (cond ((bound-and-true-p lsp-mode)
-                            doom-modeline--lsp)
-                           ((bound-and-true-p eglot--managed-mode)
-                            doom-modeline--eglot)
-                           ((bound-and-true-p citre-mode)
-                            doom-modeline--tags)))
-               (sep (doom-modeline-spc)))
+    (when-let* ((icon (cond ((bound-and-true-p lsp-mode)
+                             doom-modeline--lsp)
+                            ((bound-and-true-p eglot--managed-mode)
+                             doom-modeline--eglot)
+                            ((bound-and-true-p citre-mode)
+                             doom-modeline--tags)))
+                (sep (doom-modeline-spc)))
       (concat
        sep
        (doom-modeline-display-icon icon)
@@ -2289,7 +2289,7 @@ mouse-3: Fetch notifications"
   "The current `dap-mode' state."
   (when (and (bound-and-true-p dap-mode)
              (bound-and-true-p lsp-mode))
-    (when-let ((session (dap--cur-session)))
+    (when-let* ((session (dap--cur-session)))
       (when (dap--session-running session)
         (propertize (doom-modeline-debug-icon 'doom-modeline-info)
                     'help-echo (format "DAP (%s - %s)
@@ -2301,11 +2301,11 @@ mouse-3: Disconnect session"
                     'mouse-face 'doom-modeline-highlight
                     'local-map (let ((map (make-sparse-keymap)))
                                  (define-key map [mode-line mouse-1]
-                                   #'dap-hydra)
+                                             #'dap-hydra)
                                  (define-key map [mode-line mouse-2]
-                                   #'dap-debug-recent)
+                                             #'dap-debug-recent)
                                  (define-key map [mode-line mouse-3]
-                                   #'dap-disconnect)
+                                             #'dap-disconnect)
                                  map))))))
 
 (defvar-local doom-modeline--debug-dap nil)
