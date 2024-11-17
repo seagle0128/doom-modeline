@@ -1829,9 +1829,9 @@ Including `evil', `overwrite', `god', `ryo' and `xha-fly-kyes', etc."
            (ryo (doom-modeline--ryo))
            (xf (doom-modeline--xah-fly-keys))
            (boon (doom-modeline--boon))
-           (vsep (doom-modeline-vspc))
            (meow (doom-modeline--meow))
-           (sep (and (or evil ow god ryo xf boon) (doom-modeline-spc))))
+           (vsep (doom-modeline-vspc))
+           (sep (and (or evil ow god ryo xf boon meow) (doom-modeline-spc))))
       (concat sep
               (and evil (concat evil (and (or ow god ryo xf boon meow) vsep)))
               (and ow (concat ow (and (or god ryo xf boon meow) vsep)))
