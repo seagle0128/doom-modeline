@@ -1909,26 +1909,28 @@ mouse-3: Describe current input method")
 
 (doom-modeline-def-segment info-nodes
   "The topic and nodes in the Info buffer."
-  (concat
-   " ("
-   ;; topic
-   (propertize (if (stringp Info-current-file)
-                   (replace-regexp-in-string
-                    "%" "%%"
-                    (file-name-sans-extension
-                     (file-name-nondirectory Info-current-file)))
-                 (format "*%S*" Info-current-file))
-               'face (doom-modeline-face 'doom-modeline-info))
-   ") "
-   ;; node
-   (when Info-current-node
-     (propertize (replace-regexp-in-string
-                  "%" "%%" Info-current-node)
-                 'face (doom-modeline-face 'doom-modeline-buffer-path)
-                 'help-echo
-                 "mouse-1: scroll forward, mouse-3: scroll back"
-                 'mouse-face 'doom-modeline-highlight
-                 'local-map Info-mode-line-node-keymap))))
+  (when (and (fboundp 'Info-mode)
+	     (eq major-mode 'Info-mode))
+    (concat
+     " ("
+     ;; topic
+     (propertize (if (stringp Info-current-file)
+                     (replace-regexp-in-string
+                      "%" "%%"
+                      (file-name-sans-extension
+                       (file-name-nondirectory Info-current-file)))
+                   (format "*%S*" Info-current-file))
+		 'face (doom-modeline-face 'doom-modeline-info))
+     ") "
+     ;; node
+     (when Info-current-node
+       (propertize (replace-regexp-in-string
+                    "%" "%%" Info-current-node)
+                   'face (doom-modeline-face 'doom-modeline-buffer-path)
+                   'help-echo
+                   "mouse-1: scroll forward, mouse-3: scroll back"
+                   'mouse-face 'doom-modeline-highlight
+                   'local-map Info-mode-line-node-keymap)))))
 
 
 ;;
