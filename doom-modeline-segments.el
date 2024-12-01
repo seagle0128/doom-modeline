@@ -1564,7 +1564,8 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
 
 (doom-modeline-def-segment project-name
   "The current perspective name."
-  (when (doom-modeline--segment-visible 'project-name)
+  (when (and doom-modeline-project-name
+             (doom-modeline--segment-visible 'project-name))
     (propertize (doom-modeline-project-name)
                 'face (doom-modeline-face 'doom-modeline-project-name)
                 'mouse-face 'mode-line-highlight
