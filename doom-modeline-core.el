@@ -509,6 +509,13 @@ It respects option `doom-modeline-icon'."
   :type 'integer
   :group 'doom-modeline)
 
+(defcustom doom-modeline-project-name (bound-and-true-p project-mode-line)
+  "Whether display the project name.
+
+Non-nil to display in the mode-line."
+  :type 'boolean
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-workspace-name t
   "Whether display the workspace name.
 
@@ -945,6 +952,16 @@ Also see the face `doom-modeline-unread-number'."
 (defface doom-modeline-meow-keypad-state
   '((t (:inherit doom-modeline-evil-operator-state)))
   "Face for the keypad state in meow-edit indicator."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-project-name
+  '((t (:inherit (doom-modeline font-lock-comment-face italic))))
+  "Face for the project name."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-workspace-name
+  '((t (:inherit (doom-modeline-emphasis bold))))
+  "Face for the workspace name."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-persp-name

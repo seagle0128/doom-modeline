@@ -101,6 +101,7 @@
 (defvar phi-search--overlays)
 (defvar phi-search--selection)
 (defvar phi-search-mode-line-format)
+(defvar projectile-mode-map)
 (defvar rcirc-activity)
 (defvar symbol-overlay-keywords-alist)
 (defvar symbol-overlay-temp-symbol)
@@ -222,6 +223,8 @@
 (declare-function poke-line-create "ext:poke-line")
 (declare-function popup-create "ext:popup")
 (declare-function popup-delete "ext:popup")
+(declare-function project-name "project")
+(declare-function projectile-project-name "ext:projectile")
 (declare-function rcirc-next-active-buffer "rcirc")
 (declare-function rcirc-short-buffer-name "rcirc")
 (declare-function rcirc-switch-to-server-buffer "rcirc")
@@ -1516,6 +1519,58 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
       (propertize (format " %s " num)
                   'face (doom-modeline-face 'doom-modeline-buffer-major-mode)))))
 
+;;
+;; Project
+;;
+
+(defvar doom-modeline-project-map
+  (cond
+   ((and (memq doom-modeline-project-detection '(auto projectile))
+         (bound-and-true-p projectile-mode))
+    projectile-mode-map)
+   ((and (memq doom-modeline-project-detection '(auto project))
+         (fboundp 'project-current))
+    (let ((map (make-sparse-keymap)))
+      (define-key map [mode-line down-mouse-1]
+        (bound-and-true-p menu-bar-project-item))
+      map))))
+
+(defvar-local doom-modeline--project-name nil)
+(defun doom-modeline-project-name ()
+  "Get the project name."
+  (or doom-modeline--project-name
+      (setq doom-modeline--project-name
+            (let ((name (cond
+                         ((and (memq doom-modeline-project-detection '(auto projectile))
+                               (bound-and-true-p projectile-mode))
+                          (projectile-project-name))
+                         ((and (memq doom-modeline-project-detection '(auto project))
+                               (fboundp 'project-current))
+                          (when-let* ((project (project-current)))
+                            (project-name project)))
+                         (t ""))))
+              (unless (string-empty-p name)
+                (format " [%s] " name))))))
+
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-project-detection
+ (lambda (_sym val op _where)
+   (when (eq op 'set)
+     (setq doom-modeline-project-detection val)
+     (dolist (buf (buffer-list))
+       (with-current-buffer buf
+         (setq doom-modeline--project-name nil)
+         (and buffer-file-name (revert-buffer t t)))))))
+
+(doom-modeline-def-segment project-name
+  "The current perspective name."
+  (when (doom-modeline--segment-visible 'project-name)
+    (propertize (doom-modeline-project-name)
+                'face (doom-modeline-face 'doom-modeline-project-name)
+                'mouse-face 'mode-line-highlight
+                'help-echo "mouse-1: Project menu"
+                'local-map doom-modeline-project-map)))
+
 
 ;;
 ;; Workspace
@@ -1542,8 +1597,9 @@ Requires `eyebrowse-mode' to be enabled or `tab-bar-mode' tabs to be created."
                         (explicit-name (alist-get 'explicit-name current-tab))
                         (tab-name (alist-get 'name current-tab)))
                    (if explicit-name tab-name (+ 1 tab-index)))))))
-      (propertize (format " %s " name)
-                  'face (doom-modeline-face 'doom-modeline-buffer-major-mode)))))
+      (unless (string-empty-p name)
+        (propertize (format " %s " name)
+                    'face (doom-modeline-face 'doom-modeline-workspace-name))))))
 
 
 ;;
@@ -1571,10 +1627,7 @@ Requires `eyebrowse-mode' to be enabled or `tab-bar-mode' tabs to be created."
                       (not (string-equal persp-nil-name name)))
               (concat " "
                       (propertize (concat (and doom-modeline-persp-icon
-                                               (concat icon
-                                                       (propertize
-                                                        " "
-                                                        'display '((space :relative-width 0.5)))))
+                                               (concat icon (doom-modeline-vspc)))
                                           (propertize name 'face face))
                                   'help-echo "mouse-1: Switch perspective
 mouse-2: Show help for minor mode"

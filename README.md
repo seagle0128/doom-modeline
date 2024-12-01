@@ -313,6 +313,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; The maximum number displayed for notifications.
 (setq doom-modeline-number-limit 99)
 
+;; Whether display the project name. Non-nil to display in the mode-line.
+(setq doom-modeline-project-name t)
+
 ;; Whether display the workspace name. Non-nil to display in the mode-line.
 (setq doom-modeline-workspace-name t)
 
