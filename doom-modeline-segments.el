@@ -1547,10 +1547,10 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
                          ((and (memq doom-modeline-project-detection '(auto project))
                                (fboundp 'project-current))
                           (when-let* ((project (project-current)))
-                            (project-name project)))
-                         (t ""))))
-              (unless (string-empty-p name)
-                (format " [%s] " name))))))
+                            (project-name project))))))
+              (if (and name (not (string-empty-p name)))
+                  (format " [%s] " name)
+                "")))))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-project-detection
