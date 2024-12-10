@@ -1598,9 +1598,8 @@ Requires `eyebrowse-mode' to be enabled or `tab-bar-mode' tabs to be created."
                         (explicit-name (alist-get 'explicit-name current-tab))
                         (tab-name (alist-get 'name current-tab)))
                    (if explicit-name tab-name (+ 1 tab-index)))))))
-      (unless (string-empty-p name)
-        (propertize (format " %s " name)
-                    'face (doom-modeline-face 'doom-modeline-workspace-name))))))
+      (propertize (format " %s " name)
+                  'face (doom-modeline-face 'doom-modeline-workspace-name)))))
 
 
 ;;
