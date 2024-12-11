@@ -31,7 +31,7 @@ Emacs](https://github.com/hlissner/doom-emacs) and
 
 The `doom-modeline` was designed for minimalism, and offers:
 
-- A match count panel (for `anzu`, `iedit`, `multiple-cursors`, `symbol-overlay`,
+- A match count panel (for `anzu`, `visual-replace`, `iedit`, `multiple-cursors`, `symbol-overlay`,
   and `evil-search`, etc.)
 - An indicator for recording a macro
 - Current environment version (e.g. `python`, `ruby`, `go`, etc.) in the major-mode
@@ -582,6 +582,10 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
    Use `(setq mode-line-right-align-edge 'right-fringe)`.
    Please refer to [#672](https://github.com/seagle0128/doom-modeline/issues/672) for more details.
+
+1. How to display match counts in `visual-replace`?
+
+   It respects `visual-replace-display-total`, so you should use `(setq visual-replace-display-total t)` to display.
 
 ## Donate
 

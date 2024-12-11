@@ -107,6 +107,8 @@
 (defvar symbol-overlay-temp-symbol)
 (defvar text-scale-mode-amount)
 (defvar tracking-buffers)
+(defvar visual-replace--calling-buffer)
+(defvar visual-replace--match-ovs)
 (defvar winum-auto-setup-mode-line)
 (defvar xah-fly-insert-state-p)
 
@@ -1192,6 +1194,25 @@ Requires `anzu', also `evil-anzu' if using `evil-mode' for compatibility with
               (format " %s/%d " here total))))
      'face (doom-modeline-face 'doom-modeline-panel))))
 
+(defsubst doom-modeline--visual-replace ()
+  "Show the match index and total number of `visual-replace'.
+It respects `visual-replace-display-total'."
+  (when (and (bound-and-true-p visual-replace--match-ovs)
+             (not (bound-and-true-p iedit-mode))
+             (fboundp 'visual-replace--preview-is-complete)
+             (visual-replace--preview-is-complete))
+    (propertize
+     (let ((total (length visual-replace--match-ovs)))
+       (format " %s "
+               (if-let* ((ov
+                          (seq-find
+                           (lambda (ov) (overlay-get ov 'visual-replace-idx))
+                           (with-current-buffer visual-replace--calling-buffer
+                             (overlays-at (point))))))
+                   (format "%d/%d" (1+ (overlay-get ov 'visual-replace-idx)) total)
+                 (number-to-string total))))
+     'face (doom-modeline-face 'doom-modeline-panel))))
+
 (defsubst doom-modeline--evil-substitute ()
   "Show number of matches for `evil-ex' in real time.
 The number of matches contains substitutions and highlightings."
@@ -1318,6 +1339,7 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
 6. The number of active `multiple-cursors'."
   (let ((meta (concat (doom-modeline--macro-recording)
                       (doom-modeline--anzu)
+                      (doom-modeline--visual-replace)
                       (doom-modeline--phi-search)
                       (doom-modeline--evil-substitute)
                       (doom-modeline--iedit)
