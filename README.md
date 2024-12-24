@@ -181,6 +181,13 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; displayed. It can be an integer or a float number. `nil' means no limit."
 (setq doom-modeline-window-width-limit 85)
 
+;; Override attributes of the face used for padding.
+;; If the space character is very thin in the modeline, for example if a
+;; variable pitch font is used there, then segments may appear unusually close.
+;; To use the space character from the `fixed-pitch' font family instead, set
+;; this variable to `(list :family (face-attribute 'fixed-pitch :family))'.
+(setq doom-modeline-spc-face-overrides nil)
+
 ;; How to detect the project root.
 ;; nil means to use `default-directory'.
 ;; The project management packages have some issues on detecting project root.
