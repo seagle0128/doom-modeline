@@ -123,6 +123,16 @@ displayed. It can be an integer or a float number. nil means no limit."
                  (const :tag "Disable" nil))
   :group 'doom-modeline)
 
+(defcustom doom-modeline-spc-face-overrides nil
+  "Property list of face attributes for whitespace in the modeline.
+
+These face attributes override any attributes for spacing produced by
+`doom-modeline-spc', `doom-modeline-wspc', and `doom-modeline-vspc'.
+
+See `defface' for possible attributes and values in this property list."
+  :type 'plist
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-project-detection 'auto
   "How to detect the project root.
 
@@ -1342,16 +1352,16 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
 (defsubst doom-modeline-spc ()
   "Whitespace."
-  (propertize " " 'face (doom-modeline-face)))
+  (propertize " " 'face (doom-modeline-spc-face)))
 
 (defsubst doom-modeline-wspc ()
   "Wide Whitespace."
-  (propertize "  " 'face (doom-modeline-face)))
+  (propertize "  " 'face (doom-modeline-spc-face)))
 
 (defsubst doom-modeline-vspc ()
   "Thin whitespace."
   (propertize " "
-              'face (doom-modeline-face)
+              'face (doom-modeline-spc-face)
               'display '((space :relative-width 0.5))))
 
 (defun doom-modeline-face (&optional face inactive-face)
@@ -1364,6 +1374,12 @@ If INACTIVE-FACE is nil, `mode-line-inactive' face will be used."
           '(:inherit (doom-modeline mode-line)))
     (or (and (facep inactive-face) `(:inherit (doom-modeline ,inactive-face)))
         '(:inherit (doom-modeline mode-line-inactive)))))
+
+(defun doom-modeline-spc-face ()
+  "Apply `doom-modeline-spc-face-overrides' to `doom-modeline-face'."
+  (append
+   '(:inherit (doom-modeline-face))
+   doom-modeline-spc-face-overrides))
 
 (defun doom-modeline-string-pixel-width (str)
   "Return the width of STR in pixels."
