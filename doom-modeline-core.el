@@ -1459,10 +1459,11 @@ ARGS is same as `nerd-icons-octicon' and others."
 
 (defun doom-modeline-display-text (text)
   "Display TEXT in mode-line."
-  (if (doom-modeline--active)
-      text
-    (propertize text 'face `(:inherit (mode-line-inactive
-                                       ,(get-text-property 0 'face text))))))
+  (let ((text (string-replace "%" "%%" text)))
+    (if (doom-modeline--active)
+        text
+      (propertize text 'face `(:inherit (mode-line-inactive
+                                         ,(get-text-property 0 'face text)))))))
 
 (defun doom-modeline-vcs-name ()
   "Display the vcs name."
@@ -1598,7 +1599,7 @@ Return `default-directory' if no project was found."
             ('auto
              (if (doom-modeline-project-p)
                  (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink 'shrink 'hide)
-               (propertize "%b" 'face 'doom-modeline-buffer-file)))
+               (propertize (buffer-name) 'face 'doom-modeline-buffer-file)))
             ('truncate-upto-project
              (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink))
             ('truncate-from-project
@@ -1628,10 +1629,8 @@ Return `default-directory' if no project was found."
                      (propertize (file-name-nondirectory buffer-file-name)
                                  'face 'doom-modeline-buffer-file)))
             ((or 'buffer-name _)
-             (propertize "%b" 'face 'doom-modeline-buffer-file)))))
-    (propertize (if (string-empty-p file-name)
-                    (propertize "%b" 'face 'doom-modeline-buffer-file)
-                  file-name)
+             (propertize (buffer-name) 'face 'doom-modeline-buffer-file)))))
+    (propertize file-name
                 'mouse-face 'mode-line-highlight
                 'help-echo (concat buffer-file-truename
                                    (unless (string= (file-name-nondirectory buffer-file-truename)
