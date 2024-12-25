@@ -1661,7 +1661,7 @@ Return `default-directory' if no project was found."
 If TRUNCATE-TAIL is t also truncate the parent directory of the file."
   (let ((dirs (shrink-path-prompt (file-name-directory true-file-path))))
     (if (null dirs)
-        (propertize "%b" 'face 'doom-modeline-buffer-file)
+        (propertize (buffer-name) 'face 'doom-modeline-buffer-file)
       (let ((dirname (car dirs))
             (basename (cdr dirs)))
         (concat (propertize (concat dirname
@@ -1677,7 +1677,7 @@ If TRUNCATE-TAIL is t also truncate the parent directory of the file."
 If INCLUDE-PROJECT is non-nil, the project path will be included."
   (let ((root (file-local-name (doom-modeline-project-root))))
     (if (null root)
-        (propertize "%b" 'face 'doom-modeline-buffer-file)
+        (propertize (buffer-name) 'face 'doom-modeline-buffer-file)
       (let ((relative-dirs (file-relative-name (file-name-directory true-file-path)
                                                (if include-project (concat root "../") root))))
         (and (equal "./" relative-dirs) (setq relative-dirs ""))

@@ -337,7 +337,7 @@ Uses `nerd-icons-mdicon' to fetch the icon."
           (save-match-data
             (if buffer-file-name
                 (doom-modeline-buffer-file-name)
-              (propertize "%b"
+              (propertize (buffer-name)
                           'face 'doom-modeline-buffer-file
                           'mouse-face 'doom-modeline-highlight
                           'help-echo "Buffer name
@@ -400,7 +400,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 
 (defsubst doom-modeline--buffer-simple-name ()
   "The buffer simple name."
-  (propertize "%b"
+  (propertize (buffer-name)
               'face (doom-modeline-face
                      (if (and doom-modeline-highlight-modified-buffer-name
                               (buffer-modified-p))
