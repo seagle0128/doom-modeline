@@ -189,6 +189,7 @@
 (declare-function helm-get-candidate-number "ext:helm-core")
 (declare-function iedit-find-current-occurrence-overlay "ext:iedit-lib")
 (declare-function iedit-prev-occurrence "ext:iedit-lib")
+(declare-function image-compute-scaling-factor "image")
 (declare-function image-get-display-property "image-mode")
 (declare-function jsonrpc--request-continuations "jsonrpc" t t)
 (declare-function jsonrpc-last-error "jsonrpc" t t)
