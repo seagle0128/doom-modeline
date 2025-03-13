@@ -88,7 +88,7 @@
 ;;
 
 (doom-modeline-def-modeline 'main
-  '(eldoc bar workspace-name window-number modals matches follow buffer-info remote-host buffer-position word-count parrot selection-info)
+  '(eldoc bar window-state workspace-name window-number modals matches follow buffer-info remote-host buffer-position word-count parrot selection-info)
   '(compilation objed-state misc-info project-name persp-name battery grip irc mu4e gnus github debug repl lsp minor-modes input-method indent-info buffer-encoding major-mode process vcs check time))
 
 (doom-modeline-def-modeline 'minimal
@@ -96,7 +96,7 @@
   '(media-info major-mode time))
 
 (doom-modeline-def-modeline 'special
-  '(eldoc bar window-number modals matches buffer-info remote-host buffer-position word-count parrot selection-info)
+  '(eldoc bar window-state window-number modals matches buffer-info remote-host buffer-position word-count parrot selection-info)
   '(compilation objed-state misc-info battery irc-buffers debug minor-modes input-method indent-info buffer-encoding major-mode process time))
 
 (doom-modeline-def-modeline 'project
@@ -108,7 +108,7 @@
   '(compilation misc-info battery irc mu4e gnus github debug minor-modes input-method major-mode process time))
 
 (doom-modeline-def-modeline 'vcs
-  '(bar window-number modals matches buffer-info remote-host buffer-position parrot selection-info)
+  '(bar window-state window-number modals matches buffer-info remote-host buffer-position parrot selection-info)
   '(compilation misc-info battery irc mu4e gnus github debug minor-modes buffer-encoding major-mode process time))
 
 (doom-modeline-def-modeline 'package
@@ -124,7 +124,7 @@
   '(compilation misc-info media-info major-mode process vcs time))
 
 (doom-modeline-def-modeline 'message
-  '(eldoc bar window-number modals matches buffer-info-simple buffer-position word-count parrot selection-info)
+  '(eldoc bar window-state window-number modals matches buffer-info-simple buffer-position word-count parrot selection-info)
   '(compilation objed-state misc-info battery debug minor-modes input-method indent-info buffer-encoding major-mode time))
 
 (doom-modeline-def-modeline 'pdf
@@ -132,7 +132,7 @@
   '(compilation misc-info major-mode process vcs time))
 
 (doom-modeline-def-modeline 'org-src
-  '(eldoc bar window-number modals matches buffer-info buffer-position word-count parrot selection-info)
+  '(eldoc bar window-state window-number modals matches buffer-info buffer-position word-count parrot selection-info)
   '(compilation objed-state misc-info debug lsp minor-modes input-method indent-info buffer-encoding major-mode process check time))
 
 (doom-modeline-def-modeline 'helm

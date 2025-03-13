@@ -1486,6 +1486,82 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
 
 
 ;;
+;; Window state
+;;
+
+;; Port from Emacs 30
+(unless (fboundp 'toggle-window-dedicated)
+  (defun toggle-window-dedicated (&optional window flag interactive)
+    "Toggle whether WINDOW is dedicated to its current buffer.
+
+WINDOW must be a live window and defaults to the selected one.
+If FLAG is t (interactively, the prefix argument), make the window
+\"strongly\" dedicated to its buffer.  FLAG defaults to a non-nil,
+non-t value, and is passed to `set-window-dedicated-p', which see.
+If INTERACTIVE is non-nil, print a message describing the dedication
+status of WINDOW, after toggling it.  Interactively, this argument is
+always non-nil.
+
+When a window is dedicated to its buffer, `display-buffer' will avoid
+displaying another buffer in it, if possible.  When a window is
+strongly dedicated to its buffer, changing the buffer shown in the
+window will usually signal an error.
+
+You can control the default of FLAG with
+`toggle-window-dedicated-flag'.  Consequently, if you set that
+variable to t, strong dedication will be used by default and
+\\[universal-argument] will make the window weakly dedicated.
+
+See the info node `(elisp)Dedicated Windows' for more details."
+    (interactive "i\nP\np")
+    (setq window (window-normalize-window window))
+    (setq flag (cond
+                ((consp flag)
+                 (if (eq toggle-window-dedicated-flag t)
+                     'interactive
+                   t))
+                ((null flag) toggle-window-dedicated-flag)
+                (t flag)))
+    (if (window-dedicated-p window)
+        (set-window-dedicated-p window nil)
+      (set-window-dedicated-p window flag))
+    (when interactive
+      (message "Window is %s dedicated to buffer %s"
+               (let ((status (window-dedicated-p window)))
+                 (cond
+                  ((null status) "no longer")
+                  ((eq status t) "now strongly")
+                  (t "now")))
+               (current-buffer))
+      (force-mode-line-update)))
+
+  (defvar mode-line-window-dedicated-keymap
+    (let ((map (make-sparse-keymap)))
+      (define-key map [mode-line mouse-1] #'toggle-window-dedicated)
+      (purecopy map)) "\
+Keymap for what is displayed by `mode-line-window-dedicated'."))
+
+(doom-modeline-def-segment window-state
+  (let ((face (if (doom-modeline--active)
+                  'doom-modeline-emphasis
+                'doom-modeline)))
+    (cond
+     ((eq (window-dedicated-p) t)
+      (propertize
+       (format " %s " (doom-modeline-icon 'mdicon "nf-md-pin" "⍑" "D" :face face))
+       'help-echo "Window strongly dedicated to its buffer\nmouse-1: Toggle"
+       'local-map mode-line-window-dedicated-keymap
+       'mouse-face 'mode-line-highlight))
+     ((window-dedicated-p)
+      (propertize
+       (format " %s " (doom-modeline-icon 'mdicon "nf-md-pin_outline" "⊤" "d" :face face))
+       'help-echo "Window dedicated to its buffer\nmouse-1: Toggle"
+       'local-map mode-line-window-dedicated-keymap
+       'mouse-face 'mode-line-highlight))
+     (t ""))))
+
+
+;;
 ;; Window number
 ;;
 
