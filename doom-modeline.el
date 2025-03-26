@@ -167,6 +167,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 (defvar 2C-mode-line-format)
 (defvar flymake-mode-line-format)
 (defvar helm-ag-show-status-function)
+(defvar helm-fd-mode-line-function)
 (declare-function helm-display-mode-line "ext:helm-core")
 
 (defvar doom-modeline-mode-map (make-sparse-keymap))
@@ -234,7 +235,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
         ;; Special handles
         (advice-add #'helm-display-mode-line :after #'doom-modeline-set-helm-modeline)
-        (setq helm-ag-show-status-function #'doom-modeline-set-helm-modeline))
+        (setq helm-ag-show-status-function nil
+              helm-fd-mode-line-function nil))
     (progn
       ;; Restore mode-line
       (let ((original-format (doom-modeline--original-value 'mode-line-format)))
