@@ -221,6 +221,7 @@ PARSER should be a function for parsing COMMAND's output line-by-line, to
                                            (or doom-modeline-env-python-executable
                                                python-shell-interpreter
                                                "python"))))
+                       ((executable-find "uv") (list "uv" "run" "python" "--version"))
                        ((list (or doom-modeline-env-python-executable
                                   python-shell-interpreter
                                   "python")
