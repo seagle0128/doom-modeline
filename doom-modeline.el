@@ -232,6 +232,9 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         ;; Automatically set mode-lines
         (add-hook 'after-change-major-mode-hook #'doom-modeline-auto-set-modeline)
 
+        ;; Setup font height cache hook
+        (add-hook 'after-setting-font-hook #'doom-modeline--reset-font-height-cache)
+        
         ;; Special handles
         (advice-add #'helm-display-mode-line :after #'doom-modeline-set-helm-modeline)
         (setq helm-ag-show-status-function #'doom-modeline-set-helm-modeline))
@@ -251,6 +254,9 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
       ;; For two-column editing
       (setq 2C-mode-line-format (doom-modeline--original-value '2C-mode-line-format))
+
+      ;; Remove font height cache hook
+      (remove-hook 'after-setting-font-hook #'doom-modeline--reset-font-height-cache)
 
       ;; Cleanup
       (remove-hook 'after-change-major-mode-hook #'doom-modeline-auto-set-modeline)
