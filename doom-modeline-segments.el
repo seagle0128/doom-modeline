@@ -1862,37 +1862,38 @@ TEXT is alternative if icon is not available."
 (defsubst doom-modeline--evil ()
   "The current evil state. Requires `evil-mode' to be enabled."
   (when (bound-and-true-p evil-local-mode)
-    (doom-modeline--modal-icon
-     (let ((tag (evil-state-property evil-state :tag t)))
-       (if (stringp tag) tag (funcall tag)))
-     (cond
-      ((evil-normal-state-p) 'doom-modeline-evil-normal-state)
-      ((evil-emacs-state-p) 'doom-modeline-evil-emacs-state)
-      ((evil-insert-state-p) 'doom-modeline-evil-insert-state)
-      ((evil-motion-state-p) 'doom-modeline-evil-motion-state)
-      ((evil-visual-state-p) 'doom-modeline-evil-visual-state)
-      ((evil-operator-state-p) 'doom-modeline-evil-operator-state)
-      ((evil-replace-state-p) 'doom-modeline-evil-replace-state)
-      (t 'doom-modeline-evil-user-state))
-     (evil-state-property evil-state :name t)
-     (cond
-      ((evil-normal-state-p) "nf-md-alpha_n_circle")
-      ((evil-emacs-state-p) "nf-md-alpha_e_circle")
-      ((evil-insert-state-p) "nf-md-alpha_i_circle")
-      ((evil-motion-state-p) "nf-md-alpha_m_circle")
-      ((evil-visual-state-p) "nf-md-alpha_v_circle")
-      ((evil-operator-state-p) "nf-md-alpha_o_circle")
-      ((evil-replace-state-p) "nf-md-alpha_r_circle")
-      (t "nf-md-alpha_u_circle"))
-     (cond
-      ((evil-normal-state-p) "🅝")
-      ((evil-emacs-state-p) "🅔")
-      ((evil-insert-state-p) "🅘")
-      ((evil-motion-state-p) "🅜")
-      ((evil-visual-state-p) "🅥")
-      ((evil-operator-state-p) "🅞")
-      ((evil-replace-state-p) "🅡")
-      (t "🅤")))))
+    (let-alist (cond
+                ((evil-normal-state-p)   '((face    . doom-modeline-evil-normal-state)
+                                           (icon    . "nf-md-alpha_n_circle")
+                                           (unicode . "🅝")))
+                ((evil-emacs-state-p)    '((face    . doom-modeline-evil-emacs-state)
+                                           (icon    . "nf-md-alpha_e_circle")
+                                           (unicode . "🅔")))
+                ((evil-insert-state-p)   '((face    . doom-modeline-evil-insert-state)
+                                           (icon    . "nf-md-alpha_i_circle")
+                                           (unicode . "🅘")))
+                ((evil-motion-state-p)   '((face    . doom-modeline-evil-motion-state)
+                                           (icon    . "nf-md-alpha_m_circle")
+                                           (unicode . "🅜")))
+                ((evil-visual-state-p)   '((face    . doom-modeline-evil-visual-state)
+                                           (icon    . "nf-md-alpha_v_circle")
+                                           (unicode . "🅥")))
+                ((evil-operator-state-p) '((face    . doom-modeline-evil-operator-state)
+                                           (icon    . "nf-md-alpha_o_circle")
+                                           (unicode . "🅞")))
+                ((evil-replace-state-p)  '((face    . doom-modeline-evil-replace-state)
+                                           (icon    . "nf-md-alpha_r_circle")
+                                           (unicode . "🅡")))
+                (t                       '((face    . doom-modeline-evil-user-state)
+                                           (icon    . "nf-md-alpha_u_circle")
+                                           (unicode . "🅤"))))
+      (doom-modeline--modal-icon
+       (let ((tag (evil-state-property evil-state :tag t)))
+         (if (stringp tag) tag (funcall tag)))
+       .face
+       (evil-state-property evil-state :name t)
+       .icon
+       .unicode))))
 
 (defsubst doom-modeline--overwrite ()
   "The current overwrite state which is enabled by command `overwrite-mode'."
@@ -1944,30 +1945,31 @@ TEXT is alternative if icon is not available."
 (defsubst doom-modeline--meow ()
   "The current Meow state. Requires `meow-mode' to be enabled."
   (when (bound-and-true-p meow-mode)
-    (doom-modeline--modal-icon
-     (substring-no-properties meow--indicator)
-     (cond
-      ((meow-normal-mode-p) 'doom-modeline-meow-normal-state)
-      ((meow-insert-mode-p) 'doom-modeline-meow-insert-state)
-      ((meow-beacon-mode-p) 'doom-modeline-meow-beacon-state)
-      ((meow-motion-mode-p) 'doom-modeline-meow-motion-state)
-      ((meow-keypad-mode-p) 'doom-modeline-meow-keypad-state)
-      (t 'doom-modeline-meow-normal-state))
-     (symbol-name (meow--current-state))
-     (cond
-      ((meow-normal-mode-p) "nf-md-alpha_n_circle")
-      ((meow-insert-mode-p) "nf-md-alpha_i_circle")
-      ((meow-beacon-mode-p) "nf-md-alpha_b_circle")
-      ((meow-motion-mode-p) "nf-md-alpha_m_circle")
-      ((meow-keypad-mode-p) "nf-md-alpha_k_circle")
-      (t "nf-md-alpha_n_circle"))
-     (cond
-      ((meow-normal-mode-p) "🅝")
-      ((meow-insert-mode-p) "🅘")
-      ((meow-beacon-mode-p) "🅑")
-      ((meow-motion-mode-p) "🅜")
-      ((meow-keypad-mode-p) "🅚")
-      (t "🅝")))))
+    (let-alist (cond
+                ((meow-normal-mode-p) '((face    . doom-modeline-meow-normal-state)
+                                        (icon    . "nf-md-alpha_n_circle")
+                                        (unicode . "🅝")))
+                ((meow-insert-mode-p) '((face    . doom-modeline-meow-insert-state)
+                                        (icon    . "nf-md-alpha_i_circle")
+                                        (unicode . "🅘")))
+                ((meow-beacon-mode-p) '((face    . doom-modeline-meow-beacon-state)
+                                        (icon    . "nf-md-alpha_b_circle")
+                                        (unicode . "🅑")))
+                ((meow-motion-mode-p) '((face    . doom-modeline-meow-motion-state)
+                                        (icon    . "nf-md-alpha_m_circle")
+                                        (unicode . "🅜")))
+                ((meow-keypad-mode-p) '((face    . doom-modeline-meow-keypad-state)
+                                        (icon    . "nf-md-alpha_k_circle")
+                                        (unicode . "🅚")))
+                (t                    '((face    . doom-modeline-meow-normal-state)
+                                        (icon    . "nf-md-alpha_n_circle")
+                                        (unicode . "🅝"))))
+      (doom-modeline--modal-icon
+       (substring-no-properties meow--indicator)
+       .face
+       (symbol-name (meow--current-state))
+       .icon
+       .unicode))))
 
 (doom-modeline-def-segment modals
   "Displays modal editing states.
