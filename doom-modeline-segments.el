@@ -215,6 +215,7 @@
 (declare-function mu4e--modeline-string "ext:mu4e-modeline")
 (declare-function mu4e-alert-default-mode-line-formatter "ext:mu4e-alert")
 (declare-function mu4e-alert-enable-mode-line-display "ext:mu4e-alert")
+(declare-function mu4e-bookmark-favorite "ext:mu4e-bookmarks")
 (declare-function nyan-create "ext:nyan-mode")
 (declare-function org-edit-src-save "org-src")
 (declare-function parrot-create "ext:parrot")
@@ -2550,42 +2551,45 @@ mouse-1: Toggle Debug on Quit"
   "Show notifications of any unread emails in `mu4e'."
   (when (and doom-modeline-mu4e
              (doom-modeline--segment-visible 'mu4e))
-    (let ((sep (doom-modeline-spc))
-          (vsep (doom-modeline-vspc))
-          (icon (doom-modeline-icon 'mdicon "nf-md-email" "📧" "#"
-                                    :face 'doom-modeline-notification)))
-      (cond ((and (bound-and-true-p mu4e-alert-mode-line)
-                  (numberp mu4e-alert-mode-line)
-                  ;; don't display if the unread mails count is zero
-                  (> mu4e-alert-mode-line 0))
-             (concat
-              sep
-              (propertize
-               (concat
-                icon
-                vsep
-                (propertize
-                 (if (> mu4e-alert-mode-line doom-modeline-number-limit)
-                     (format "%d+" doom-modeline-number-limit)
-                   (number-to-string mu4e-alert-mode-line))
-                 'face '(:inherit
-                         (doom-modeline-unread-number doom-modeline-notification))))
-               'mouse-face 'doom-modeline-highlight
-               'keymap '(mode-line keymap
-                                   (mouse-1 . mu4e-alert-view-unread-mails)
-                                   (mouse-2 . mu4e-alert-view-unread-mails)
-                                   (mouse-3 . mu4e-alert-view-unread-mails))
-               'help-echo (concat (if (= mu4e-alert-mode-line 1)
-                                      "You have an unread email"
-                                    (format "You have %s unread emails" mu4e-alert-mode-line))
-                                  "\nClick here to view "
-                                  (if (= mu4e-alert-mode-line 1) "it" "them")))
-              sep))
-            ((bound-and-true-p mu4e-modeline-mode)
-             (concat sep icon vsep
-                     (propertize (mu4e--modeline-string)
-                                 'face 'doom-modeline-notification)
-                     sep))))))
+    (when-let* ((sep (doom-modeline-spc))
+                (vsep (doom-modeline-vspc))
+                (icon (doom-modeline-icon 'mdicon "nf-md-email" "📧" "#"
+                                          :face 'doom-modeline-notification))
+                (values (cond ((and (bound-and-true-p mu4e-alert-mode-line)
+                                    (numberp mu4e-alert-mode-line))
+                               `(,mu4e-alert-mode-line ,#'mu4e-alert-view-unread-mails))
+                              ((and (bound-and-true-p mu4e-modeline-mode)
+                                    (fboundp 'mu4e-bookmark-favorite))
+                               `(,(plist-get (mu4e-bookmark-favorite) :unread)
+                                 ,(lambda ()
+                                    (interactive)
+                                    (mu4e-search (plist-get (mu4e-bookmark-favorite) :query)))))))
+                (unread-count (nth 0 values))
+                (open-fun (nth 1 values)))
+      (when (> unread-count 0)
+        (concat
+         sep
+         (propertize
+          (concat
+           icon
+           vsep
+           (propertize
+            (if (> unread-count doom-modeline-number-limit)
+                (format "%d+" doom-modeline-number-limit)
+              (number-to-string unread-count))
+            'face '(:inherit
+                    (doom-modeline-unread-number doom-modeline-notification))))
+          'mouse-face 'doom-modeline-highlight
+          'keymap `(mode-line keymap
+                              (mouse-1 . ,open-fun)
+                              (mouse-2 . ,open-fun)
+                              (mouse-3 . ,open-fun))
+          'help-echo (concat (if (= unread-count 1)
+                                 "You have an unread email"
+                               (format "You have %s unread emails" unread-count))
+                             "\nClick here to view "
+                             (if (= unread-count 1) "it" "them")))
+         sep)))))
 
 (defun doom-modeline-override-mu4e-alert (&rest _)
   "Delete `mu4e-alert-mode-line' from global modeline string."
