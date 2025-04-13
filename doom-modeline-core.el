@@ -1391,7 +1391,7 @@ If INACTIVE-FACE is nil, `mode-line-inactive' face will be used."
 ;; Per-frame cache for mode-line font height.
 (defvar doom-modeline--font-height-cache (make-hash-table :test 'eq :weakness 'key)
   "Per-frame cache for mode-line font height.
-Keys are frame objects, values are cons cells (CACHED-HEIGHT . CACHED-FACE-HEIGHT-ATTR).")
+Keys are frame objects, values are cons cells (HEIGHT . FACE-HEIGHT-ATTR).")
 
 (defun doom-modeline--reset-font-height-cache (&rest _)
   "Reset cached font height for all frames."
