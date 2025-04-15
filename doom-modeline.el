@@ -1,6 +1,6 @@
 ;;; doom-modeline.el --- A minimal and modern mode-line -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2018-2024 Vincent Zhang
+;; Copyright (C) 2018-2025 Vincent Zhang
 
 ;; Author: Vincent Zhang <seagle0128@gmail.com>
 ;; Homepage: https://github.com/seagle0128/doom-modeline
@@ -234,7 +234,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
         ;; Setup font height cache hook
         (add-hook 'after-setting-font-hook #'doom-modeline--reset-font-height-cache)
-        
+
         ;; Special handles
         (advice-add #'helm-display-mode-line :after #'doom-modeline-set-helm-modeline)
         (setq helm-ag-show-status-function #'doom-modeline-set-helm-modeline))
