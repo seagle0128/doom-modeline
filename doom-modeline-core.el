@@ -497,6 +497,20 @@ It respects option `doom-modeline-icon'."
   :type 'function
   :group 'doom-modeline)
 
+(defcustom doom-modeline-vcs-state-faces-alist
+  '((needs-update . (doom-modeline-warning bold))
+    (removed . (doom-modeline-urgent bold))
+    (conflict . (doom-modeline-urgent bold))
+    (unregistered . (doom-modeline-urgent bold)))
+  "Alist mapping VCS states to their corresponding faces.
+
+See `vc-state' for possible values of the state.
+
+For states not explicitly listed, the `doom-modeline-vcs-default' face
+is used."
+  :type '(alist :key-type symbol :value-type sexp)
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-check-icon t
   "Whether display the icon of check segment.
 
@@ -992,6 +1006,11 @@ Also see the face `doom-modeline-unread-number'."
 (defface doom-modeline-repl-warning
   '((t (:inherit doom-modeline-warning)))
   "Face for REPL warning state."
+  :group 'doom-modeline-faces)
+
+(defface doom-modeline-vcs-default
+  '((t (:inherit (doom-modeline-info bold))))
+  "Default face for VCS states not explicitly listed in `doom-modeline-vcs-state-faces-alist'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-lsp-success
