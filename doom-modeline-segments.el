@@ -700,11 +700,8 @@ Uses `nerd-icons-octicon' to fetch the icon."
                                (functionp doom-modeline-vcs-display-function)
                                (funcall doom-modeline-vcs-display-function))
                           ""))
-                 (face (cond ((eq state 'needs-update)
-                              '(doom-modeline-warning bold))
-                             ((memq state '(removed conflict unregistered))
-                              '(doom-modeline-urgent bold))
-                             (t '(doom-modeline-info bold))))
+                 (face (or (cdr (assq state doom-modeline-vcs-state-faces-alist))
+                           'doom-modeline-vcs-default))
                  (text (propertize (if (length> str doom-modeline-vcs-max-length)
                                        (concat
                                         (substring str 0 (- doom-modeline-vcs-max-length 3))
