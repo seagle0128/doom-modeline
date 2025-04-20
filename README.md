@@ -311,6 +311,15 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; The function to display the branch name.
 (setq doom-modeline-vcs-display-function #'doom-modeline-vcs-name)
 
+;; Alist mapping VCS states to their corresponding faces.
+;; See `vc-state' for possible values of the state.
+;; For states not explicitly listed, the `doom-modeline-vcs-default' face is used.
+(setq doom-modeline-vcs-state-faces-alist
+      '((needs-update . (doom-modeline-warning bold))
+        (removed . (doom-modeline-urgent bold))
+        (conflict . (doom-modeline-urgent bold))
+        (unregistered . (doom-modeline-urgent bold))))
+
 ;; Whether display the icon of check segment. It respects option `doom-modeline-icon'.
 (setq doom-modeline-check-icon t)
 
