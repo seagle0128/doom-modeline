@@ -1010,7 +1010,9 @@ Also see the face `doom-modeline-unread-number'."
 
 (defface doom-modeline-vcs-default
   '((t (:inherit (doom-modeline-info bold))))
-  "Default face for VCS states not explicitly listed in `doom-modeline-vcs-state-faces-alist'."
+  "Default face for VCS states.
+
+Which are not explicitly listed in `doom-modeline-vcs-state-faces-alist'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-lsp-success
