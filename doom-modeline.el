@@ -217,7 +217,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         ;; Apply to all existing buffers.
         (dolist (buf (buffer-list))
           (with-current-buffer buf
-            (unless (doom-modeline-auto-set-modeline)
+            (when (and mode-line-format
+                       (not (doom-modeline-auto-set-modeline)))
               (doom-modeline-set-main-modeline))))
 
         ;; For flymake
@@ -244,7 +245,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (setq-default mode-line-format original-format)
         (dolist (buf (buffer-list))
           (with-current-buffer buf
-            (setq mode-line-format original-format))))
+            (when mode-line-format
+              (setq mode-line-format original-format)))))
 
       ;; For flymake
       (setq flymake-mode-line-format (doom-modeline--original-value 'flymake-mode-line-format))
