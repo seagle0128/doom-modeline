@@ -2331,12 +2331,13 @@ Example:
         (when (require 'ghub nil t)
           (with-timeout (10)
             (ignore-errors
-              (when-let* ((username (ghub--username ghub-default-host))
-                          (token (or (ghub--token ghub-default-host username 'forge t)
-                                     (ghub--token ghub-default-host username 'ghub t))))
+              (when-let* ((host (alist-get 'github ghub-default-host-alist))
+			  (username (ghub--username host))
+                          (token (or (ghub--token host username 'forge t)
+                                     (ghub--token host username 'ghub t))))
                 (ghub-get "/notifications"
                           '((notifications . t))
-                          :host ghub-default-host
+                          :host host
                           :username username
                           :auth token
                           :unpaginate t
