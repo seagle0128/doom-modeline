@@ -603,6 +603,10 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
    It respects `visual-replace-display-total`, so you should use `(setq visual-replace-display-total t)` to display.
 
+1. Why am I unable to get the GitHub notifications even thogh I enable `doom-modeline-github`?
+
+   The functionality requires the `async` and `ghub` packages.
+
 ## Donate
 
 If you think it's helpful for you, please consider paying a cup of coffee for

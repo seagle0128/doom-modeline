@@ -2320,7 +2320,8 @@ Example:
   "Hooks after fetching GitHub notifications.")
 
 (defun doom-modeline--github-fetch-notifications ()
-  "Fetch GitHub notifications."
+  "Fetch GitHub notifications.
+It requires `async' and `ghub' packages."
   (when (and doom-modeline-github
              (require 'async nil t))
     (async-start
@@ -2332,7 +2333,7 @@ Example:
           (with-timeout (10)
             (ignore-errors
               (when-let* ((host (alist-get 'github ghub-default-host-alist))
-			  (username (ghub--username host))
+			              (username (ghub--username host))
                           (token (or (ghub--token host username 'forge t)
                                      (ghub--token host username 'ghub t))))
                 (ghub-get "/notifications"
