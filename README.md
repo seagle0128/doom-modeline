@@ -605,7 +605,8 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
 1. Why am I unable to get the GitHub notifications even thogh I enable `doom-modeline-github`?
 
-   The functionality requires the `async` and `ghub` packages.
+   The functionality requires the `async` and `ghub` packages, and make sure the token has enough
+   permissions to access the repositories.
 
 ## Donate
 
