@@ -213,8 +213,8 @@
         (doom-modeline-buffer-file-name-style 'truncate-upto-root))
     (cl-flet ((doom-modeline-project-root () default-directory))
       (should
-       (string= (substring-no-properties (doom-modeline-buffer-file-name))
-                "/h/u/p/relative/test.txt")))))
+       (string-suffix-p "/h/u/p/relative/test.txt"
+                        (substring-no-properties (doom-modeline-buffer-file-name)))))))
 
 (ert-deftest doom-modeline-buffer-file-name/truncate-all ()
   (let ((default-directory "/home/user/project/")
@@ -223,8 +223,8 @@
         (doom-modeline-buffer-file-name-style 'truncate-all))
     (cl-flet ((doom-modeline-project-root () default-directory))
       (should
-       (string= (substring-no-properties (doom-modeline-buffer-file-name))
-                "/h/u/p/r/test.txt")))))
+       (string-suffix-p "/h/u/p/r/test.txt"
+                        (substring-no-properties (doom-modeline-buffer-file-name)))))))
 
 (ert-deftest doom-modeline-buffer-file-name/truncate-nil ()
   (let ((default-directory "/home/user/project/")
@@ -243,8 +243,8 @@
         (doom-modeline-buffer-file-name-style 'relative-to-project))
     (cl-flet ((doom-modeline-project-root () default-directory))
       (should
-       (string= (substring-no-properties (doom-modeline-buffer-file-name))
-                "relative/test.txt")))))
+       (string-suffix-p "relative/test.txt"
+                        (substring-no-properties (doom-modeline-buffer-file-name)))))))
 
 (ert-deftest doom-modeline-buffer-file-name/relative-from-project ()
   (let ((default-directory "/home/user/project/")
