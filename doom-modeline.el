@@ -4,7 +4,7 @@
 
 ;; Author: Vincent Zhang <seagle0128@gmail.com>
 ;; Homepage: https://github.com/seagle0128/doom-modeline
-;; Version: 4.2.1
+;; Version: 4.3.0
 ;; Package-Requires: ((emacs "25.1") (compat "30.1.0.0") (nerd-icons "0.1.0") (shrink-path "0.3.1"))
 ;; Keywords: faces mode-line
 
@@ -147,6 +147,10 @@
   '(window-number modals matches calc buffer-position)
   '(misc-info minor-modes major-mode process))
 
+(doom-modeline-def-modeline 'speedbar
+  '(bar " " major-mode)
+  '(speedbar-info))
+
 
 ;;
 ;; Interfaces
@@ -167,7 +171,10 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 (defvar 2C-mode-line-format)
 (defvar flymake-mode-line-format)
 (defvar helm-ag-show-status-function)
+(defvar speedbar-buffer)
 (declare-function helm-display-mode-line "ext:helm-core")
+(declare-function speedbar-frame-mode "speedbar")
+(declare-function speedbar-window-mode "speedbar")
 
 (defvar doom-modeline-mode-map (make-sparse-keymap))
 
@@ -187,7 +194,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
     (calc-trail-mode      . calculator)
     (circe-mode           . special)
     (erc-mode             . special)
-    (rcirc-mode           . special))
+    (rcirc-mode           . special)
+    (speedbar-mode        . speedbar))
   "Alist of major modes and mode-lines.")
 
 (defun doom-modeline-auto-set-modeline ()
@@ -198,7 +206,14 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (doom-modeline-set-modeline (cdr x))
         (throw 'found x)))))
 
-(defun doom-modeline-set-helm-modeline (&rest _) ; To advice helm
+(defun doom-modeline-set-speebar-modeline (&rest _)
+  "Set speedbar mode-line."
+  (when (and (bound-and-true-p speedbar-buffer)
+             (buffer-live-p speedbar-buffer))
+    (with-current-buffer speedbar-buffer
+      (doom-modeline-set-modeline 'speedbar))))
+
+(defun doom-modeline-set-helm-modeline (&rest _)
   "Set helm mode-line."
   (doom-modeline-set-modeline 'helm))
 
@@ -237,6 +252,9 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
         (add-hook 'after-setting-font-hook #'doom-modeline--reset-font-height-cache)
 
         ;; Special handles
+        (advice-add #'speedbar-frame-mode :after #'doom-modeline-set-speebar-modeline)
+        (advice-add #'speedbar-window-mode :after #'doom-modeline-set-speebar-modeline)
+
         (advice-add #'helm-display-mode-line :after #'doom-modeline-set-helm-modeline)
         (setq helm-ag-show-status-function #'doom-modeline-set-helm-modeline))
     (progn
@@ -261,6 +279,10 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
       (remove-hook 'after-setting-font-hook #'doom-modeline--reset-font-height-cache)
 
       ;; Cleanup
+      (advice-remove #'speedbar-frame-mode #'doom-modeline-set-speebar-modeline)
+      (advice-remove #'speedbar-window-mode #'doom-modeline-set-speebar-modeline)
+      (and (fboundp 'speedbar-set-mode-line-format) (speedbar-set-mode-line-format)) ; reset speedbar
+
       (remove-hook 'after-change-major-mode-hook #'doom-modeline-auto-set-modeline)
       (advice-remove #'helm-display-mode-line #'doom-modeline-set-helm-modeline)
       (setq helm-ag-show-status-function (default-value 'helm-ag-show-status-function)))))

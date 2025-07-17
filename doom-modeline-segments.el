@@ -3365,6 +3365,17 @@ Otherwise, it displays the message like `message' would."
     (apply #'message format-string args)))
 
 ;;
+;; Speedbar
+;;
+
+(doom-modeline-def-segment speedbar-info
+  (concat
+   (propertize "%l"
+               'face (doom-modeline-face)
+               'mouse-face 'doom-modeline-highlight)
+   (doom-modeline-spc)))
+
+;;
 ;; Kubernetes
 ;;
 
