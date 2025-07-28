@@ -502,54 +502,54 @@ project directory is important."
 (doom-modeline-def-segment buffer-encoding
   "Displays the eol and the encoding style of the buffer."
   (when doom-modeline-buffer-encoding
-    (let ((sep (doom-modeline-spc))
-          (face (doom-modeline-face))
-          (mouse-face 'doom-modeline-highlight))
-      (concat
-       sep
-
-       ;; eol type
-       (let ((eol (coding-system-eol-type buffer-file-coding-system)))
-         (when (or (eq doom-modeline-buffer-encoding t)
-                   (and (eq doom-modeline-buffer-encoding 'nondefault)
-                        (not (equal eol doom-modeline-default-eol-type))))
-           (propertize
-            (pcase eol
-              (0 "LF ")
-              (1 "CRLF ")
-              (2 "CR ")
-              (_ ""))
-            'face face
-            'mouse-face mouse-face
-            'help-echo (format "End-of-line style: %s\nmouse-1: Cycle"
-                               (pcase eol
-                                 (0 "Unix-style LF")
-                                 (1 "DOS-style CRLF")
-                                 (2 "Mac-style CR")
-                                 (_ "Undecided")))
-            'local-map (let ((map (make-sparse-keymap)))
-                         (define-key map [mode-line mouse-1] 'mode-line-change-eol)
-                         map))))
-
-       ;; coding system
-       (let* ((sys (coding-system-plist buffer-file-coding-system))
-              (cat (plist-get sys :category))
-              (sym (if (memq cat
-                             '(coding-category-undecided coding-category-utf-8))
-                       'utf-8
-                     (plist-get sys :name))))
-         (when (or (eq doom-modeline-buffer-encoding t)
-                   (and (eq doom-modeline-buffer-encoding 'nondefault)
-                        (not (eq cat 'coding-category-undecided))
-                        (not (eq sym doom-modeline-default-coding-system))))
-           (propertize
-            (upcase (symbol-name sym))
-            'face face
-            'mouse-face mouse-face
-            'help-echo 'mode-line-mule-info-help-echo
-            'local-map mode-line-coding-system-map)))
-
-       sep))))
+    (let* ((sep (doom-modeline-spc))
+           (face (doom-modeline-face))
+           (mouse-face 'doom-modeline-highlight)
+           ;; eol type
+           (eol (coding-system-eol-type buffer-file-coding-system))
+           (eol-part (when (or (eq doom-modeline-buffer-encoding t)
+                               (and (eq doom-modeline-buffer-encoding 'nondefault)
+                                    (not (equal eol doom-modeline-default-eol-type))))
+                       (propertize
+                        (pcase eol
+                          (0 "LF")
+                          (1 "CRLF")
+                          (2 "CR")
+                          (_ ""))
+                        'face face
+                        'mouse-face mouse-face
+                        'help-echo (format "End-of-line style: %s\nmouse-1: Cycle"
+                                           (pcase eol
+                                             (0 "Unix-style LF")
+                                             (1 "DOS-style CRLF")
+                                             (2 "Mac-style CR")
+                                             (_ "Undecided")))
+                        'local-map (let ((map (make-sparse-keymap)))
+                                     (define-key map [mode-line mouse-1] 'mode-line-change-eol)
+                                     map))))
+           ;; coding system
+           (sys (coding-system-plist buffer-file-coding-system))
+           (cat (plist-get sys :category))
+           (sym (if (memq cat
+                          '(coding-category-undecided coding-category-utf-8))
+                    'utf-8
+                  (plist-get sys :name)))
+           (sys-part (when (or (eq doom-modeline-buffer-encoding t)
+                               (and (eq doom-modeline-buffer-encoding 'nondefault)
+                                    (not (eq cat 'coding-category-undecided))
+                                    (not (eq sym doom-modeline-default-coding-system))))
+                       (propertize
+                        (upcase (symbol-name sym))
+                        'face face
+                        'mouse-face mouse-face
+                        'help-echo 'mode-line-mule-info-help-echo
+                        'local-map mode-line-coding-system-map))))
+      (when (or eol-part sys-part)
+        (concat sep
+                eol-part
+                (when (and eol-part sys-part) sep)
+                sys-part
+                sep)))))
 
 
 ;;
