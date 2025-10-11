@@ -40,7 +40,7 @@
 
 (unless (boundp 'mode-line-right-align-edge)
   (defcustom mode-line-right-align-edge 'window
-    "Where mode-line should align to.
+    "Where function `mode-line-format-right-align' should align to.
 Internally, that function uses `:align-to' in a display property,
 so aligns to the left edge of the given area.  See info node
 `(elisp)Pixel Specification'.
@@ -1084,8 +1084,6 @@ Which are not explicitly listed in `doom-modeline-vcs-state-faces-alist'."
 ;; Externals
 ;;
 
-(defvar mode-line-right-align-edge)
-
 (declare-function doom-modeline-shorten-irc "doom-modeline-segments")
 (declare-function face-remap-remove-relative "face-remap")
 (declare-function ffip-project-root "ext:find-file-in-project")
@@ -1314,7 +1312,7 @@ Example:
     (defalias sym
       (lambda ()
         (list lhs-forms
-              (let* ((rhs-str (format-mode-line (cons "" rhs-forms)))
+              (let* ((rhs-str (format-mode-line `("" ,@rhs-forms)))
                      (rhs-width (progn
                                   (add-face-text-property
                                    0 (length rhs-str) 'mode-line t rhs-str)
@@ -1325,21 +1323,24 @@ Example:
                  'display
                  ;; Backport from `mode-line-right-align-edge' in 30
                  (if (and (display-graphic-p)
-                           (not (eq mode-line-right-align-edge 'window)))
-		              `(space :align-to (- ,mode-line-right-align-edge
-                                           (,rhs-width)))
-		            `(space :align-to (,(- (window-pixel-width)
-                                           (window-scroll-bar-width)
-                                           (window-right-divider-width)
-                                           (* (or (cdr (window-margins)) 1)
-                                              (frame-char-width))
-                                           (pcase mode-line-right-align-edge
-                                             ('right-margin
-                                              (or (cdr (window-margins)) 0))
-                                             ('right-fringe
-                                              (or (cadr (window-fringes)) 0))
-                                             (_ 0))
-                                           rhs-width))))))
+                          (not (eq mode-line-right-align-edge 'window)))
+		             `(space :align-to (- ,mode-line-right-align-edge
+                                          (,rhs-width)))
+		           `(space :align-to (,(- (window-pixel-width)
+                                          (window-scroll-bar-width)
+                                          (window-right-divider-width)
+                                          (* (or (car (window-margins)) 0)
+                                             (frame-char-width))
+                                          ;; Manually account for value of
+                                          ;; `mode-line-right-align-edge' even
+                                          ;; when display is non-graphical
+                                          (pcase mode-line-right-align-edge
+                                            ('right-margin
+                                             (or (cdr (window-margins)) 0))
+                                            ('right-fringe
+                                             (or (cadr (window-fringes)) 0))
+                                            (_ 0))
+                                          rhs-width))))))
               rhs-forms))
       (concat "Modeline:\n"
               (format "  %s\n  %s"
