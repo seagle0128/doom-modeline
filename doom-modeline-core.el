@@ -1329,7 +1329,7 @@ Example:
 		           `(space :align-to (,(- (window-pixel-width)
                                           (window-scroll-bar-width)
                                           (window-right-divider-width)
-                                          (* (or (car (window-margins)) 0)
+                                          (* (or (car (window-margins)) 1)
                                              (frame-char-width))
                                           ;; Manually account for value of
                                           ;; `mode-line-right-align-edge' even
