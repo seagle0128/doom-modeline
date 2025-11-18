@@ -1121,6 +1121,10 @@ block selection."
           " "))
        'face 'doom-modeline-emphasis))))
 
+;; Ensure selection info updates on cursor movements
+;; NOTE: No issue with mouse movements
+(add-hook 'post-command-hook #'force-mode-line-update)
+
 
 ;;
 ;; Matches (macro, anzu, evil-substitute, iedit, symbol-overlay and multi-cursors)
