@@ -1123,8 +1123,9 @@ block selection."
 
 ;; Ensure selection info updates on cursor movements
 ;; NOTE: No issue with mouse movements
-(add-hook 'post-command-hook (lambda ()
-                               (and mark-active (force-mode-line-update))))
+(add-hook 'post-command-hook
+          (lambda ()
+            (and mark-active (force-mode-line-update))))
 
 
 ;;
