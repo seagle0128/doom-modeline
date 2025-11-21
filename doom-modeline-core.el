@@ -327,6 +327,11 @@ See `mode-line-position-column-line-format'."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-selection-info t
+  "Whether display the selection information."
+  :type 'boolean
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-enable-word-count nil
   "If non-nil, a word count will be added to the selection-info modeline segment."
   :type 'boolean
