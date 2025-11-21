@@ -284,6 +284,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether display the minor modes in the mode-line.
 (setq doom-modeline-minor-modes nil)
 
+;; Whether display the selection information.
+(setq doom-modeline-selection-info t)
+
 ;; If non-nil, a word count will be added to the selection-info modeline segment.
 (setq doom-modeline-enable-word-count nil)
 
