@@ -1092,33 +1092,34 @@ Respects `doom-modeline-enable-word-count'."
 
 Such as how many characters and lines are selected, or the NxM dimensions of a
 block selection."
-  (when (and doom-modeline-selection-info (and (or mark-active (and (bound-and-true-p evil-local-mode)
-                                                                    (eq evil-state 'visual)))
-                                               (doom-modeline--active)))
+  (when (and doom-modeline-selection-info
+             (or mark-active (and (bound-and-true-p evil-local-mode)
+                                  (eq evil-state 'visual)))
+             (doom-modeline--active))
     (cl-destructuring-bind (beg . end)
-        (if (and (bound-and-true-p evil-local-mode) (eq evil-state 'visual))
-            (cons evil-visual-beginning evil-visual-end)
-          (cons (region-beginning) (region-end)))
+      (if (and (bound-and-true-p evil-local-mode) (eq evil-state 'visual))
+          (cons evil-visual-beginning evil-visual-end)
+        (cons (region-beginning) (region-end)))
       (propertize
        (let ((lines (count-lines beg (min end (point-max)))))
-         (concat
-          " "
-          (cond ((or (bound-and-true-p rectangle-mark-mode)
-                     (and (bound-and-true-p evil-visual-selection)
-                          (eq 'block evil-visual-selection)))
-                 (let ((cols (abs (- (doom-modeline-column end)
-                                     (doom-modeline-column beg)))))
-                   (format "%dx%dB" lines cols)))
-                ((and (bound-and-true-p evil-visual-selection)
-                      (eq evil-visual-selection 'line))
-                 (format "%dL" lines))
-                ((> lines 1)
-                 (format "%dC %dL" (- end beg) lines))
-                (t
-                 (format "%dC" (- end beg))))
-          (when doom-modeline-enable-word-count
-            (format " %dW" (count-words beg end)))
-          " "))
+       (concat
+        " "
+        (cond ((or (bound-and-true-p rectangle-mark-mode)
+                   (and (bound-and-true-p evil-visual-selection)
+                        (eq 'block evil-visual-selection)))
+               (let ((cols (abs (- (doom-modeline-column end)
+                                   (doom-modeline-column beg)))))
+                 (format "%dx%dB" lines cols)))
+              ((and (bound-and-true-p evil-visual-selection)
+                    (eq evil-visual-selection 'line))
+               (format "%dL" lines))
+              ((> lines 1)
+               (format "%dC %dL" (- end beg) lines))
+              (t
+               (format "%dC" (- end beg))))
+        (when doom-modeline-enable-word-count
+          (format " %dW" (count-words beg end)))
+        " "))
        'face 'doom-modeline-emphasis))))
 
 ;; Ensure selection info updates on cursor movements
