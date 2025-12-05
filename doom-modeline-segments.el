@@ -578,7 +578,7 @@ project directory is important."
 
 (doom-modeline-def-segment remote-host
   "Hostname for remote buffers."
-  (when default-directory
+  (when (and doom-modeline-remote-host default-directory)
     (when-let* ((host (file-remote-p default-directory 'host)))
       (propertize
        (concat "@" host)
