@@ -400,6 +400,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; If nil, display only if the mode line is active.
 (setq doom-modeline-display-misc-in-all-mode-lines t)
 
+;; Whether to display the remote host information.
+(setq doom-modeline-remote-host t)
+
 ;; The function to handle `buffer-file-name'.
 (setq doom-modeline-buffer-file-name-function #'identity)
 
