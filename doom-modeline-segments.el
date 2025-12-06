@@ -2869,7 +2869,7 @@ mouse-3: Switch to next unread buffer")))
            (bound-and-true-p doom-modeline-mode))
       (progn
         (when (and rcirc-track-minor-mode
-                 (not (memq 'rcirc-activity-string doom-modeline-tab-bar-string)))
+                   (not (memq 'rcirc-activity-string doom-modeline-tab-bar-string)))
           (setq doom-modeline-tab-bar-string
                 (append doom-modeline-tab-bar-string '(rcirc-activity-string))))
         (setq global-mode-string
@@ -3028,7 +3028,7 @@ Uses `nerd-icons-mdicon' to fetch the icon."
           (setq doom-modeline-tab-bar-string
                 (append doom-modeline-tab-bar-string '(battery-mode-line-string))))
         (setq global-mode-string
-	      (delq 'battery-mode-line-string global-mode-string))
+	          (delq 'battery-mode-line-string global-mode-string))
         (and (bound-and-true-p display-battery-mode) (battery-update)))
     (progn
       (advice-remove #'battery-update #'doom-modeline-update-battery-status)
@@ -3039,7 +3039,7 @@ Uses `nerd-icons-mdicon' to fetch the icon."
             (setq doom-modeline-tab-bar-string
                   (delq 'battery-mode-line-string doom-modeline-tab-bar-string)))
           (setq global-mode-string
-		(append global-mode-string '(battery-mode-line-string))))))))
+		        (append global-mode-string '(battery-mode-line-string))))))))
 (add-hook 'display-battery-mode-hook #'doom-modeline-override-battery)
 (add-hook 'doom-modeline-mode-hook #'doom-modeline-override-battery)
 
@@ -3336,14 +3336,14 @@ When the svg library is not available, return nil."
                 (append doom-modeline-tab-bar-string '(display-time-string))))
         (setq global-mode-string
               (delq 'display-time-string global-mode-string))
-       )
+        )
     (or (memq 'display-time-string global-mode-string)
         (progn
           (when (memq 'display-time-string doom-modeline-tab-bar-string)
             (setq doom-modeline-tab-bar-string
                   (delq 'display-time-string doom-modeline-tab-bar-string)))
-	  (setq global-mode-string
-		(append global-mode-string '(display-time-string)))))))
+	      (setq global-mode-string
+		        (append global-mode-string '(display-time-string)))))))
 (add-hook 'display-time-mode-hook #'doom-modeline-override-time)
 (add-hook 'doom-modeline-mode-hook #'doom-modeline-override-time)
 
