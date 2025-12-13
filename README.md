@@ -196,6 +196,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; You can specify one if you encounter the issue.
 (setq doom-modeline-project-detection 'auto)
 
+;; Whether to show the buffer position in the mode-line.
+(setq doom-modeline-enable-buffer-position t)
+
 ;; Determines the style used by `doom-modeline-buffer-file-name'.
 ;;
 ;; Given ~/Projects/FOSS/emacs/lisp/comint.el
