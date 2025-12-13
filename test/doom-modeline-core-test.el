@@ -339,4 +339,14 @@
                  (doom-modeline--buffer-file-name-relative file-path true-file-path 'include-project))
                 "project/relative/test.txt")))))
 
+(ert-deftest doom-modeline-enable-buffer-position/test ()
+  "Test that doom-modeline-enable-buffer-position is defined correctly."
+  ;; Test that the variable exists and defaults to t
+  (should (boundp 'doom-modeline-enable-buffer-position))
+  (should doom-modeline-enable-buffer-position)
+
+  ;; Test that it can be set to nil
+  (let ((doom-modeline-enable-buffer-position nil))
+    (should-not doom-modeline-enable-buffer-position)))
+
 ;;; doom-modeline-core-test.el ends here

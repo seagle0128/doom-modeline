@@ -1781,66 +1781,68 @@ By default, this shows the information specified by `global-mode-string'."
 ;;
 
 (doom-modeline-def-segment buffer-position
-  "The buffer position information."
-  (let ((visible (doom-modeline--segment-visible 'buffer-position))
-        (sep (doom-modeline-spc))
-        (wsep (doom-modeline-wspc))
-        (face (doom-modeline-face))
-        (help-echo "Buffer percentage\n\
+  "The buffer position information.
+Respects `doom-modeline-enable-buffer-position'."
+  (when doom-modeline-enable-buffer-position
+    (let ((visible (doom-modeline--segment-visible 'buffer-position))
+          (sep (doom-modeline-spc))
+          (wsep (doom-modeline-wspc))
+          (face (doom-modeline-face))
+          (help-echo "Buffer percentage\n\
 mouse-1: Display Line and Column Mode Menu")
-        (mouse-face 'doom-modeline-highlight)
-        (local-map mode-line-column-line-number-mode-map))
-    `(,wsep
+          (mouse-face 'doom-modeline-highlight)
+          (local-map mode-line-column-line-number-mode-map))
+      `(,wsep
 
-      ;; Line and column
-      (:propertize
-       ((line-number-mode
-         (column-number-mode
-          (doom-modeline-column-zero-based
-           doom-modeline-position-column-line-format
-           ,(string-replace
-             "%c" "%C" (car doom-modeline-position-column-line-format)))
-          doom-modeline-position-line-format)
-         (column-number-mode
-          (doom-modeline-column-zero-based
-           doom-modeline-position-column-format
-           ,(string-replace
-             "%c" "%C" (car doom-modeline-position-column-format)))))
-        (doom-modeline-total-line-number
-         ,(and doom-modeline-total-line-number
-               (format "/%d" (line-number-at-pos (point-max))))))
-       face ,face
-       help-echo ,help-echo
-       mouse-face ,mouse-face
-       local-map ,local-map)
-
-      ((or line-number-mode column-number-mode)
-       ,sep)
-
-      ;; Position
-      (,visible
-       ,(cond
-         ((bound-and-true-p nyan-mode)
-          (concat sep (nyan-create) sep))
-         ((bound-and-true-p poke-line-mode)
-          (concat sep (poke-line-create) sep))
-         ((bound-and-true-p mlscroll-mode)
-          (concat sep
-                  (let ((mlscroll-right-align nil))
-                    (format-mode-line (mlscroll-mode-line)))
-                  sep))
-         ((bound-and-true-p sml-modeline-mode)
-          (concat sep (sml-modeline-create) sep))
-         (t "")))
-
-      ;; Percent position
-      (doom-modeline-percent-position
-       ((:propertize ("" doom-modeline-percent-position)
+        ;; Line and column
+        (:propertize
+         ((line-number-mode
+           (column-number-mode
+            (doom-modeline-column-zero-based
+             doom-modeline-position-column-line-format
+             ,(string-replace
+               "%c" "%C" (car doom-modeline-position-column-line-format)))
+            doom-modeline-position-line-format)
+           (column-number-mode
+            (doom-modeline-column-zero-based
+             doom-modeline-position-column-format
+             ,(string-replace
+               "%c" "%C" (car doom-modeline-position-column-format)))))
+          (doom-modeline-total-line-number
+           ,(and doom-modeline-total-line-number
+                 (format "/%d" (line-number-at-pos (point-max))))))
          face ,face
          help-echo ,help-echo
          mouse-face ,mouse-face
          local-map ,local-map)
-        ,sep)))))
+
+        ((or line-number-mode column-number-mode)
+         ,sep)
+
+        ;; Visual position
+        (,visible
+         ,(cond
+           ((bound-and-true-p nyan-mode)
+            (concat sep (nyan-create) sep))
+           ((bound-and-true-p poke-line-mode)
+            (concat sep (poke-line-create) sep))
+           ((bound-and-true-p mlscroll-mode)
+            (concat sep
+                    (let ((mlscroll-right-align nil))
+                      (format-mode-line (mlscroll-mode-line)))
+                    sep))
+           ((bound-and-true-p sml-modeline-mode)
+            (concat sep (sml-modeline-create) sep))
+           (t "")))
+
+        ;; Percent position
+        (doom-modeline-percent-position
+         ((:propertize ("" doom-modeline-percent-position)
+           face ,face
+           help-echo ,help-echo
+           mouse-face ,mouse-face
+           local-map ,local-map)
+          ,sep))))))
 
 ;;
 ;; Party parrot

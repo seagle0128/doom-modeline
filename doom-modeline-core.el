@@ -345,6 +345,11 @@ It respects `doom-modeline-enable-word-count'."
   :type '(repeat (symbol :tag "Major-Mode") )
   :group 'doom-modeline)
 
+(defcustom doom-modeline-enable-buffer-position t
+  "Whether display the buffer position information."
+  :type 'boolean
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-buffer-encoding t
   "Whether display the buffer encoding."
   :type '(choice (const :tag "Always" t)

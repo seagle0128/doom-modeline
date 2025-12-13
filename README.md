@@ -296,6 +296,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; remove the modes from `doom-modeline-continuous-word-count-modes'.
 (setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mode org-mode))
 
+;; Whether display the buffer position information.
+(setq doom-modeline-enable-buffer-position t)
+
 ;; Whether display the buffer encoding.
 (setq doom-modeline-buffer-encoding t)
 
