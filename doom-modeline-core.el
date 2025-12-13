@@ -149,6 +149,11 @@ Specify another one if you encounter the issue."
                  (const :tag "Disable" nil))
   :group 'doom-modeline)
 
+(defcustom doom-modeline-enable-buffer-position t
+  "Enable display of the cursor position in the current buffer."
+  :type 'boolean
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-buffer-file-name-style 'auto
   "Determines the style used by `doom-modeline-buffer-file-name'.
 
