@@ -103,6 +103,8 @@
 (defvar phi-search--selection)
 (defvar phi-search-mode-line-format)
 (defvar projectile-mode-map)
+(defvar reader-current-doc-pagenumber)
+(defvar reader-current-doc-pagecount)
 (defvar rcirc-activity)
 (defvar symbol-overlay-keywords-alist)
 (defvar symbol-overlay-temp-symbol)
@@ -2556,6 +2558,25 @@ mouse-1: Toggle Debug on Quit"
   "Display PDF pages."
   doom-modeline--pdf-pages)
 
+
+;;
+;; Reader Pages
+;;
+
+(defvar-local doom-modeline--reader-pages nil)
+(defun doom-modeline-update-reader-pages ()
+  "Update Emacs Reader document pages."
+  (setq doom-modeline--reader-pages
+        (format "  P%d/P%d "
+                (or (eval `(reader-current-doc-pagenumber)) 0)
+                (or reader-current-doc-pagecount 0))))
+
+(advice-add 'reader-dyn--next-page :after #'doom-modeline-update-reader-pages)
+(advice-add 'reader-dyn--prev-page :after #'doom-modeline-update-reader-pages)
+
+(doom-modeline-def-segment reader-pages
+  "Display Emacs Reader document pages."
+  doom-modeline--reader-pages)
 
 ;;
 ;; `mu4e' notifications
