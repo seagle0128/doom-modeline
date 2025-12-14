@@ -128,7 +128,7 @@
   '(compilation objed-state misc-info battery debug minor-modes input-method indent-info buffer-encoding major-mode time))
 
 (doom-modeline-def-modeline 'pdf
-  '(bar window-number modals matches buffer-info pdf-pages)
+  '(bar window-number modals matches buffer-info pdf-pages reader-pages)
   '(compilation misc-info major-mode process vcs time))
 
 (doom-modeline-def-modeline 'org-src
@@ -186,6 +186,8 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
     (image-mode           . media)
     (pdf-view-mode        . pdf)
     (org-src-mode         . org-src)
+    (pdf-view-mode        . pdf)
+    (reader-mode          . pdf)
     (paradox-menu-mode    . package)
     (xwidget-webkit-mode  . minimal)
     (git-timemachine-mode . timemachine)
