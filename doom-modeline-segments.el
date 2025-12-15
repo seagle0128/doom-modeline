@@ -1166,7 +1166,7 @@ block selection."
 ;; `anzu' and `evil-anzu' expose current/total state that can be displayed in the
 ;; mode-line.
 (defun doom-modeline-fix-anzu-count (positions here)
-  "Calulate anzu count via POSITIONS and HERE."
+  "Calculate anzu count via POSITIONS and HERE."
   (cl-loop with i = 0
            for (start . end) in positions
            do (cl-incf i)

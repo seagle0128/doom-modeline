@@ -192,7 +192,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; nil means to use `default-directory'.
 ;; The project management packages have some issues on detecting project root.
 ;; e.g. `projectile' doesn't handle symlink folders well, while `project' is unable
-;; to hanle sub-projects.
+;; to handle sub-projects.
 ;; You can specify one if you encounter the issue.
 (setq doom-modeline-project-detection 'auto)
 
