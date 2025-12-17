@@ -15,3 +15,6 @@
 
 # Undo-tree save-files
 *.~undo-tree
+
+# agent shell
+.agent-shell/
