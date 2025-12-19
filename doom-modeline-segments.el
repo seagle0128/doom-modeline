@@ -2572,8 +2572,8 @@ mouse-1: Toggle Debug on Quit"
                 (or (eval `(reader-current-doc-pagenumber)) 0)
                 (or reader-current-doc-pagecount 0))))
 
-(advice-add 'reader-dyn--next-page :after #'doom-modeline-update-reader-pages)
-(advice-add 'reader-dyn--prev-page :after #'doom-modeline-update-reader-pages)
+(add-hook 'reader-mode-hook
+          (lambda () (add-hook 'post-command-hook #'doom-modeline-update-reader-pages nil t)))
 
 (doom-modeline-def-segment reader-pages
   "Display Emacs Reader document pages."
