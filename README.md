@@ -125,26 +125,12 @@ In `init.el`,
 (doom-modeline-mode 1)
 ```
 
-or
-
-```emacs-lisp
-(add-hook 'after-init-hook #'doom-modeline-mode)
-```
-
 ### Use-package
 
 ```emacs-lisp
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1))
-```
-
-or
-
-```emacs-lisp
-(use-package doom-modeline
-  :ensure t
-  :hook (after-init . doom-modeline-mode))
 ```
 
 This package is able to display icons if `nerd-icons` package and required
