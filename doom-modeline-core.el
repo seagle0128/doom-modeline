@@ -389,6 +389,7 @@ It respects `doom-modeline-enable-word-count'."
 (defcustom doom-modeline-indent-alist
   '((apache-mode apache-indent-level)
     (awk-mode c-basic-offset)
+    (awk-ts-mode awk-ts-mode-indent-level)
     (bpftrace-mode c-basic-offset)
     (c-mode c-basic-offset)
     (c++-mode c-basic-offset)
@@ -429,6 +430,7 @@ It respects `doom-modeline-enable-word-count'."
                   haskell-indentation-where-post-offset
                   haskell-indentation-where-pre-offset
                   shm-indent-spaces)
+    (haskell-ts-mode)
     (haxor-mode haxor-tab-width)
     (idl-mode c-basic-offset)
     (jade-mode jade-tab-width)
@@ -448,6 +450,7 @@ It respects `doom-modeline-enable-word-count'."
     (julia-mode julia-indent-offset)
     (julia-ts-mode julia-ts-indent-offset)
     (kotlin-mode kotlin-tab-width)
+    (kotlin-mode kotlin-ts-mode-indent-offset)
     (latex-mode tex-indent-basic)
     (lisp-mode lisp-indent-offset)
     (livescript-mode livescript-tab-width)
