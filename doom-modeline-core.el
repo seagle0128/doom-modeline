@@ -390,14 +390,19 @@ It respects `doom-modeline-enable-word-count'."
   '((apache-mode apache-indent-level)
     (awk-mode c-basic-offset)
     (bpftrace-mode c-basic-offset)
-    (c++-mode c-basic-offset)
     (c-mode c-basic-offset)
+    (c++-mode c-basic-offset)
+    (c-ts-mode c-ts-mode-indent-offset)
+    (c++-ts-mode c-ts-mode-indent-offset)
     (cmake-mode cmake-tab-width)
+    (cmake-ts-mode cmake-ts-mode-indent-offset)
     (coffee-mode coffee-tab-width)
     (cperl-mode cperl-indent-level)
     (crystal-mode crystal-indent-level)
     (csharp-mode c-basic-offset)
+    (csharp-ts-mode csharp-ts-mode-indent-offset)
     (css-mode css-indent-offset)
+    (css-ts-mode css-indent-offset)
     (d-mode c-basic-offset)
     (emacs-lisp-mode lisp-indent-offset)
     (enh-ruby-mode enh-ruby-indent-level)
@@ -428,7 +433,10 @@ It respects `doom-modeline-enable-word-count'."
     (idl-mode c-basic-offset)
     (jade-mode jade-tab-width)
     (java-mode c-basic-offset)
+    (java-ts-mode java-ts-mode-indent-offset
+                  c-ts-common-statement-offset)
     (js-mode js-indent-level)
+    (js-ts-mode js-indent-level)
     (js-jsx-mode js-indent-level
                  sgml-basic-offset)
     (js2-mode js2-basic-offset)
@@ -436,12 +444,15 @@ It respects `doom-modeline-enable-word-count'."
                   sgml-basic-offset)
     (js3-mode js3-indent-level)
     (json-mode js-indent-level)
+    (json-ts-mode json-ts-mode-indent-offset)
     (julia-mode julia-indent-offset)
+    (julia-ts-mode julia-ts-indent-offset)
     (kotlin-mode kotlin-tab-width)
     (latex-mode tex-indent-basic)
     (lisp-mode lisp-indent-offset)
     (livescript-mode livescript-tab-width)
     (lua-mode lua-indent-level)
+    (lua-ts-mode lua-ts-indent-offset)
     (matlab-mode matlab-indent-level)
     (mips-mode mips-tab-width)
     (mustache-mode mustache-basic-offset)
@@ -452,25 +463,33 @@ It respects `doom-modeline-enable-word-count'."
     (octave-mode octave-block-offset)
     (perl-mode perl-indent-level)
     (php-mode c-basic-offset)
+    (php-ts-mode php-ts-mode-indent-offset)
     (pike-mode c-basic-offset)
     (ps-mode ps-mode-tab)
     (pug-mode pug-tab-width)
     (puppet-mode puppet-indent-level)
     (python-mode python-indent-offset)
+    (python-ts-mode python-indent-offset)
     (ruby-mode ruby-indent-level)
+    (ruby-ts-mode ruby-indent-level)
     (rust-mode rust-indent-offset)
+    (rust-ts-mode rust-ts-mode-indent-offset)
     (rustic-mode rustic-indent-offset)
     (scala-mode scala-indent:step)
+    (scala-ts-mode scala-ts-indent-offset)
     (scss-mode css-indent-offset)
     (sgml-mode sgml-basic-offset)
     (sh-mode sh-basic-offset
              sh-indentation)
+    (bash-ts-mode sh-basic-offset
+                  sh-indentation)
     (slim-mode slim-indent-offset)
     (sml-mode sml-indent-level)
     (tcl-mode tcl-indent-level
               tcl-continued-indent-level)
     (terra-mode terra-indent-level)
     (typescript-mode typescript-indent-level)
+    (typescript-ts-mode typescript-ts-mode-indent-offset)
     (verilog-mode verilog-indent-level
                   verilog-indent-level-behavioral
                   verilog-indent-level-declaration
@@ -486,7 +505,8 @@ It respects `doom-modeline-enable-word-count'."
               web-mode-block-padding
               web-mode-script-padding
               web-mode-style-padding)
-    (yaml-mode yaml-indent-offset))
+    (yaml-mode yaml-indent-offset)
+    (yaml-ts-mode yaml-indent-offset))
   "Indentation retrieving variables matched to major modes.
 
 Which is used when `doom-modeline-indent-info' is non-nil.
@@ -668,8 +688,8 @@ number, Emacs must have been idle this given time, checked after
 reach the defined timer, to fetch news.  The time step can be
 configured in `gnus-demon-timestep'."
   :type '(choice
-	  (boolean :tag "Set `doom-modeline-gnus-timer' as an idle timer")
-	  (number :tag "Set a custom idle timer"))
+	      (boolean :tag "Set `doom-modeline-gnus-timer' as an idle timer")
+	      (number :tag "Set a custom idle timer"))
   :group 'doom-modeline)
 
 (defcustom doom-modeline-gnus-excluded-groups nil

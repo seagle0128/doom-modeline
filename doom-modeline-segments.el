@@ -1107,24 +1107,24 @@ block selection."
         (cons (region-beginning) (region-end)))
       (propertize
        (let ((lines (count-lines beg (min end (point-max)))))
-       (concat
-        " "
-        (cond ((or (bound-and-true-p rectangle-mark-mode)
-                   (and (bound-and-true-p evil-visual-selection)
-                        (eq 'block evil-visual-selection)))
-               (let ((cols (abs (- (doom-modeline-column end)
-                                   (doom-modeline-column beg)))))
-                 (format "%dx%dB" lines cols)))
-              ((and (bound-and-true-p evil-visual-selection)
-                    (eq evil-visual-selection 'line))
-               (format "%dL" lines))
-              ((> lines 1)
-               (format "%dC %dL" (- end beg) lines))
-              (t
-               (format "%dC" (- end beg))))
-        (when doom-modeline-enable-word-count
-          (format " %dW" (count-words beg end)))
-        " "))
+         (concat
+          " "
+          (cond ((or (bound-and-true-p rectangle-mark-mode)
+                     (and (bound-and-true-p evil-visual-selection)
+                          (eq 'block evil-visual-selection)))
+                 (let ((cols (abs (- (doom-modeline-column end)
+                                     (doom-modeline-column beg)))))
+                   (format "%dx%dB" lines cols)))
+                ((and (bound-and-true-p evil-visual-selection)
+                      (eq evil-visual-selection 'line))
+                 (format "%dL" lines))
+                ((> lines 1)
+                 (format "%dC %dL" (- end beg) lines))
+                (t
+                 (format "%dC" (- end beg))))
+          (when doom-modeline-enable-word-count
+            (format " %dW" (count-words beg end)))
+          " "))
        'face 'doom-modeline-emphasis))))
 
 ;; Ensure selection info updates on cursor movements
@@ -2471,12 +2471,9 @@ mouse-3: Disconnect session"
                                        (dap--debug-session-state session))
                     'mouse-face 'doom-modeline-highlight
                     'local-map (let ((map (make-sparse-keymap)))
-                                 (define-key map [mode-line mouse-1]
-                                             #'dap-hydra)
-                                 (define-key map [mode-line mouse-2]
-                                             #'dap-debug-recent)
-                                 (define-key map [mode-line mouse-3]
-                                             #'dap-disconnect)
+                                 (define-key map [mode-line mouse-1] #'dap-hydra)
+                                 (define-key map [mode-line mouse-2] #'dap-debug-recent)
+                                 (define-key map [mode-line mouse-3] #'dap-disconnect)
                                  map))))))
 
 (defvar-local doom-modeline--debug-dap nil)
