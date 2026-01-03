@@ -815,65 +815,66 @@ level."
 (defun doom-modeline-update-flycheck (&optional status)
   "Update flycheck via STATUS."
   (setq doom-modeline--flycheck
-        (let-alist (doom-modeline--flycheck-count-errors)
-          (let* ((vsep (doom-modeline-vspc))
-                 (seg (cond
-                       ((or (eq doom-modeline-check 'simple)
-                            (and doom-modeline--limited-width-p (eq doom-modeline-check 'auto)))
-                        (let ((count (+ .error .warning .info)))
-                          (pcase status
-                            ('finished (if (> count 0)
-                                           (let ((face (if (> .error 0) 'doom-modeline-urgent 'doom-modeline-warning)))
-                                             (concat
-                                              (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" face)
-                                              vsep
-                                              (doom-modeline-check-text (number-to-string count) face)))
-                                         (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "*" 'doom-modeline-info)))
-                            ('running (concat
-                                       (doom-modeline-check-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug)
-                                       (when (> count 0)
-                                         (concat
-                                          vsep
-                                          (doom-modeline-check-text (number-to-string count) 'doom-modeline-debug)))))
-                            ('no-checker (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "-" 'doom-modeline-debug))
-                            ('errored (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "!" 'doom-modeline-urgent))
-                            ('interrupted (doom-modeline-check-icon "nf-md-pause_circle_outline" "⦷" "." 'doom-modeline-debug))
-                            ('suspicious (doom-modeline-check-icon "nf-md-file_question_outline" "❓" "?" 'doom-modeline-debug))
-                            (_ ""))))
-                       ((or (eq doom-modeline-check 'full)
-                            (and (not doom-modeline--limited-width-p) (eq doom-modeline-check 'auto)))
-                        (concat
-                         (doom-modeline-check-icon "nf-md-close_circle_outline" "⮾" "!" 'doom-modeline-urgent)
-                         vsep
-                         (doom-modeline-check-text (number-to-string .error) 'doom-modeline-urgent)
-                         vsep
-                         (doom-modeline-check-icon "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning)
-                         vsep
-                         (doom-modeline-check-text (number-to-string .warning) 'doom-modeline-warning)
-                         vsep
-                         (doom-modeline-check-icon "nf-md-information_outline" "🛈" "!" 'doom-modeline-info)
-                         vsep
-                         (doom-modeline-check-text (number-to-string .info) 'doom-modeline-info)))
-                       (t ""))))
-            (propertize seg
-                        'help-echo (concat "Flycheck\n"
-                                           (pcase status
-                                             ('finished (format "error: %d, warning: %d, info: %d" .error .warning .info))
-                                             ('running "Checking...")
-                                             ('no-checker "No Checker")
-                                             ('errored "Error")
-                                             ('interrupted "Interrupted")
-                                             ('suspicious "Suspicious"))
-                                           "\nmouse-1: Display minor mode menu\nmouse-2: Show help for minor mode")
-                        'mouse-face 'doom-modeline-highlight
-                        'local-map (let ((map (make-sparse-keymap)))
-                                     (define-key map [mode-line down-mouse-1]
-                                       flycheck-mode-menu-map)
-                                     (define-key map [mode-line mouse-2]
-                                       (lambda ()
-                                         (interactive)
-                                         (describe-function 'flycheck-mode)))
-                                     map))))))
+        (when (bound-and-true-p flycheck-mode)
+          (let-alist (doom-modeline--flycheck-count-errors)
+            (let* ((vsep (doom-modeline-vspc))
+                   (seg (cond
+                         ((or (eq doom-modeline-check 'simple)
+                              (and doom-modeline--limited-width-p (eq doom-modeline-check 'auto)))
+                          (let ((count (+ .error .warning .info)))
+                            (pcase status
+                              ('finished (if (> count 0)
+                                             (let ((face (if (> .error 0) 'doom-modeline-urgent 'doom-modeline-warning)))
+                                               (concat
+                                                (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" face)
+                                                vsep
+                                                (doom-modeline-check-text (number-to-string count) face)))
+                                           (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "*" 'doom-modeline-info)))
+                              ('running (concat
+                                         (doom-modeline-check-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug)
+                                         (when (> count 0)
+                                           (concat
+                                            vsep
+                                            (doom-modeline-check-text (number-to-string count) 'doom-modeline-debug)))))
+                              ('no-checker (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "-" 'doom-modeline-debug))
+                              ('errored (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "!" 'doom-modeline-urgent))
+                              ('interrupted (doom-modeline-check-icon "nf-md-pause_circle_outline" "⦷" "." 'doom-modeline-debug))
+                              ('suspicious (doom-modeline-check-icon "nf-md-file_question_outline" "❓" "?" 'doom-modeline-debug))
+                              (_ ""))))
+                         ((or (eq doom-modeline-check 'full)
+                              (and (not doom-modeline--limited-width-p) (eq doom-modeline-check 'auto)))
+                          (concat
+                           (doom-modeline-check-icon "nf-md-close_circle_outline" "⮾" "!" 'doom-modeline-urgent)
+                           vsep
+                           (doom-modeline-check-text (number-to-string .error) 'doom-modeline-urgent)
+                           vsep
+                           (doom-modeline-check-icon "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning)
+                           vsep
+                           (doom-modeline-check-text (number-to-string .warning) 'doom-modeline-warning)
+                           vsep
+                           (doom-modeline-check-icon "nf-md-information_outline" "🛈" "!" 'doom-modeline-info)
+                           vsep
+                           (doom-modeline-check-text (number-to-string .info) 'doom-modeline-info)))
+                         (t ""))))
+              (propertize seg
+                          'help-echo (concat "Flycheck\n"
+                                             (pcase status
+                                               ('finished (format "error: %d, warning: %d, info: %d" .error .warning .info))
+                                               ('running "Checking...")
+                                               ('no-checker "No Checker")
+                                               ('errored "Error")
+                                               ('interrupted "Interrupted")
+                                               ('suspicious "Suspicious"))
+                                             "\nmouse-1: Display minor mode menu\nmouse-2: Show help for minor mode")
+                          'mouse-face 'doom-modeline-highlight
+                          'local-map (let ((map (make-sparse-keymap)))
+                                       (define-key map [mode-line down-mouse-1]
+                                         flycheck-mode-menu-map)
+                                       (define-key map [mode-line mouse-2]
+                                         (lambda ()
+                                           (interactive)
+                                           (describe-function 'flycheck-mode)))
+                                       map)))))))
 (add-hook 'flycheck-status-changed-functions #'doom-modeline-update-flycheck)
 (add-hook 'flycheck-mode-hook #'doom-modeline-update-flycheck)
 (add-hook 'window-state-change-functions #'doom-modeline-update-flycheck)
@@ -949,70 +950,71 @@ level."
 (defun doom-modeline-update-flymake (&rest _)
   "Update flymake."
   (setq doom-modeline--flymake
-        (let* ((known (hash-table-keys flymake--state))
-               (running (flymake-running-backends))
-               (disabled (flymake-disabled-backends))
-               (reported (flymake-reporting-backends))
-               (all-disabled (and disabled (null running)))
-               (some-waiting (cl-set-difference running reported)))
-          (let-alist (doom-modeline--flymake-count-errors)
-            (let* ((vsep (doom-modeline-vspc))
-                   (seg (cond
-                         ((or (eq doom-modeline-check 'simple)
-                              (and doom-modeline--limited-width-p (eq doom-modeline-check 'auto)))
-                          (let ((count (+ .error .warning .note)))
-                            (cond
-                             (some-waiting (concat
-                                            (doom-modeline-check-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug)
-                                            (when (> count 0)
-                                              (concat
-                                               vsep
-                                               (doom-modeline-check-text (number-to-string count) 'doom-modeline-debug)))))
-                             ((null known) (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "!" 'doom-modeline-urgent))
-                             (all-disabled (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "!" 'doom-modeline-warning))
-                             (t (if (> count 0)
-                                    (let ((face (cond ((> .error 0) 'doom-modeline-urgent)
-                                                      ((> .warning 0) 'doom-modeline-warning)
-                                                      (t 'doom-modeline-info))))
-                                      (concat
-                                       (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" face)
-                                       vsep
-                                       (doom-modeline-check-text (number-to-string count) face)))
-                                  (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "*" 'doom-modeline-info))))))
-                         ((or (eq doom-modeline-check 'full)
-                              (and (not doom-modeline--limited-width-p) (eq doom-modeline-check 'auto)))
-                          (concat
-                           (doom-modeline-check-icon "nf-md-close_circle_outline" "⮾" "!" 'doom-modeline-urgent)
-                           vsep
-                           (doom-modeline-check-text (number-to-string .error) 'doom-modeline-urgent)
-                           vsep
-                           (doom-modeline-check-icon "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning)
-                           vsep
-                           (doom-modeline-check-text (number-to-string .warning) 'doom-modeline-warning)
-                           vsep
-                           (doom-modeline-check-icon "nf-md-information_outline" "🛈" "!" 'doom-modeline-info)
-                           vsep
-                           (doom-modeline-check-text (number-to-string .note) 'doom-modeline-info)))
-                         (t ""))))
-              (propertize
-               seg
-               'help-echo (concat
-                           "Flymake\n"
-                           (cond (some-waiting "Checking...")
-                                 ((null known) "No Checker")
-                                 (all-disabled "All Checkers Disabled")
-                                 (t (format "%d/%d backends running\nerror: %d, warning: %d, note: %d"
-                                            (length running) (length known) .error .warning .note)))
-                           "\nmouse-1: Display minor mode menu\nmouse-2: Show help for minor mode")
-               'mouse-face 'doom-modeline-highlight
-               'local-map (let ((map (make-sparse-keymap)))
-                            (define-key map [mode-line down-mouse-1]
-                              flymake-menu)
-                            (define-key map [mode-line mouse-2]
-                              (lambda ()
-                                (interactive)
-                                (describe-function 'flymake-mode)))
-                            map)))))))
+        (when (bound-and-true-p flymake--state)
+          (let* ((known (hash-table-keys flymake--state))
+                 (running (flymake-running-backends))
+                 (disabled (flymake-disabled-backends))
+                 (reported (flymake-reporting-backends))
+                 (all-disabled (and disabled (null running)))
+                 (some-waiting (cl-set-difference running reported)))
+            (let-alist (doom-modeline--flymake-count-errors)
+              (let* ((vsep (doom-modeline-vspc))
+                     (seg (cond
+                           ((or (eq doom-modeline-check 'simple)
+                                (and doom-modeline--limited-width-p (eq doom-modeline-check 'auto)))
+                            (let ((count (+ .error .warning .note)))
+                              (cond
+                               (some-waiting (concat
+                                              (doom-modeline-check-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug)
+                                              (when (> count 0)
+                                                (concat
+                                                 vsep
+                                                 (doom-modeline-check-text (number-to-string count) 'doom-modeline-debug)))))
+                               ((null known) (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "!" 'doom-modeline-urgent))
+                               (all-disabled (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "!" 'doom-modeline-warning))
+                               (t (if (> count 0)
+                                      (let ((face (cond ((> .error 0) 'doom-modeline-urgent)
+                                                        ((> .warning 0) 'doom-modeline-warning)
+                                                        (t 'doom-modeline-info))))
+                                        (concat
+                                         (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" face)
+                                         vsep
+                                         (doom-modeline-check-text (number-to-string count) face)))
+                                    (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "*" 'doom-modeline-info))))))
+                           ((or (eq doom-modeline-check 'full)
+                                (and (not doom-modeline--limited-width-p) (eq doom-modeline-check 'auto)))
+                            (concat
+                             (doom-modeline-check-icon "nf-md-close_circle_outline" "⮾" "!" 'doom-modeline-urgent)
+                             vsep
+                             (doom-modeline-check-text (number-to-string .error) 'doom-modeline-urgent)
+                             vsep
+                             (doom-modeline-check-icon "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning)
+                             vsep
+                             (doom-modeline-check-text (number-to-string .warning) 'doom-modeline-warning)
+                             vsep
+                             (doom-modeline-check-icon "nf-md-information_outline" "🛈" "!" 'doom-modeline-info)
+                             vsep
+                             (doom-modeline-check-text (number-to-string .note) 'doom-modeline-info)))
+                           (t ""))))
+                (propertize
+                 seg
+                 'help-echo (concat
+                             "Flymake\n"
+                             (cond (some-waiting "Checking...")
+                                   ((null known) "No Checker")
+                                   (all-disabled "All Checkers Disabled")
+                                   (t (format "%d/%d backends running\nerror: %d, warning: %d, note: %d"
+                                              (length running) (length known) .error .warning .note)))
+                             "\nmouse-1: Display minor mode menu\nmouse-2: Show help for minor mode")
+                 'mouse-face 'doom-modeline-highlight
+                 'local-map (let ((map (make-sparse-keymap)))
+                              (define-key map [mode-line down-mouse-1]
+                                flymake-menu)
+                              (define-key map [mode-line mouse-2]
+                                (lambda ()
+                                  (interactive)
+                                  (describe-function 'flymake-mode)))
+                              map))))))))
 (advice-add #'flymake--handle-report :after #'doom-modeline-update-flymake)
 (add-hook 'window-state-change-functions #'doom-modeline-update-flymake)
 
