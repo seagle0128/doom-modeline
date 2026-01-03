@@ -556,11 +556,6 @@ It respects option `doom-modeline-icon'."
   :type 'boolean
   :group 'doom-modeline)
 
-(define-obsolete-variable-alias
-  'doom-modeline-checker-simple-format
-  'doom-modeline-check-simple-format
-  "4.2.0")
-
 (defcustom doom-modeline-check-simple-format nil
   "If non-nil, only display one number for check information if applicable."
   :type 'boolean

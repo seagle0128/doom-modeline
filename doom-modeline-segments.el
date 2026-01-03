@@ -644,7 +644,8 @@ mouse-3: Toggle minor modes"
 ;;
 
 (doom-modeline-def-segment minor-modes
-  (when doom-modeline-minor-modes
+  (when (and doom-modeline-minor-modes
+             (not doom-modeline--limited-width-p))
     (let ((sep (doom-modeline-spc))
           (face (doom-modeline-face 'doom-modeline-buffer-minor-mode))
           (mouse-face 'doom-modeline-highlight)
@@ -1042,31 +1043,32 @@ level."
 
 (doom-modeline-def-segment check
   "Displays color-coded error status in the current buffer with pretty icons."
-  (when-let* ((sep (doom-modeline-spc))
-              (vsep (doom-modeline-vspc))
-              (seg (cond
-                    ((and (bound-and-true-p flymake-mode)
-                          (bound-and-true-p flymake--state)) ; only support 26+
-                     doom-modeline--flymake)
-                    ((and (bound-and-true-p flycheck-mode)
-                          (bound-and-true-p flycheck--automatically-enabled-checkers))
-                     doom-modeline--flycheck))))
-    (concat
-     sep
-     (let ((str))
-       (dolist (s (split-string seg " "))
-         (setq str
-               (concat str
-                       (if (string-match-p "^[0-9]+$" s)
-                           (concat vsep
-                                   (doom-modeline-display-text s)
-                                   vsep)
-                         (doom-modeline-display-icon s)))))
-       (propertize str
-                   'help-echo (get-text-property 0 'help-echo seg)
-                   'mouse-face 'doom-modeline-highlight
-                   'local-map (get-text-property 0 'local-map seg)))
-     sep)))
+  (unless doom-modeline--limited-width-p
+    (when-let* ((sep (doom-modeline-spc))
+                (vsep (doom-modeline-vspc))
+                (seg (cond
+                      ((and (bound-and-true-p flymake-mode)
+                            (bound-and-true-p flymake--state)) ; only support 26+
+                       doom-modeline--flymake)
+                      ((and (bound-and-true-p flycheck-mode)
+                            (bound-and-true-p flycheck--automatically-enabled-checkers))
+                       doom-modeline--flycheck))))
+      (concat
+       sep
+       (let ((str))
+         (dolist (s (split-string seg " "))
+           (setq str
+                 (concat str
+                         (if (string-match-p "^[0-9]+$" s)
+                             (concat vsep
+                                     (doom-modeline-display-text s)
+                                     vsep)
+                           (doom-modeline-display-icon s)))))
+         (propertize str
+                     'help-echo (get-text-property 0 'help-echo seg)
+                     'mouse-face 'doom-modeline-highlight
+                     'local-map (get-text-property 0 'local-map seg)))
+       sep))))
 
 
 ;;
@@ -1693,7 +1695,8 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
 (doom-modeline-def-segment workspace-name
   "The current workspace name or number.
 Requires `eyebrowse-mode' to be enabled or `tab-bar-mode' tabs to be created."
-  (when doom-modeline-workspace-name
+  (when (and doom-modeline-workspace-name
+             (not doom-modeline--limited-width-p))
     (when-let*
         ((name (cond
                 ((and (bound-and-true-p eyebrowse-mode)
@@ -3409,8 +3412,8 @@ Otherwise, it displays the message like `message' would."
       (progn
 	    (add-hook 'minibuffer-exit-hook
 		          (lambda () (setq eldoc-mode-line-string nil
-			                  ;; https://debbugs.gnu.org/16920
-			                  eldoc-last-message nil))
+			                       ;; https://debbugs.gnu.org/16920
+			                       eldoc-last-message nil))
 		          nil t)
 	    (with-current-buffer
 	        (window-buffer
