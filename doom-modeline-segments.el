@@ -876,7 +876,6 @@ level."
                                      map))))))
 (add-hook 'flycheck-status-changed-functions #'doom-modeline-update-flycheck)
 (add-hook 'flycheck-mode-hook #'doom-modeline-update-flycheck)
-(add-hook 'window-size-change-functions #'doom-modeline-update-flycheck)
 (add-hook 'window-state-change-functions #'doom-modeline-update-flycheck)
 
 (doom-modeline-add-variable-watcher
@@ -1015,7 +1014,6 @@ level."
                                 (describe-function 'flymake-mode)))
                             map)))))))
 (advice-add #'flymake--handle-report :after #'doom-modeline-update-flymake)
-(add-hook 'window-size-change-functions #'doom-modeline-update-flymake)
 (add-hook 'window-state-change-functions #'doom-modeline-update-flymake)
 
 (doom-modeline-add-variable-watcher
