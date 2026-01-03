@@ -766,8 +766,10 @@ Uses `nerd-icons-octicon' to fetch the icon."
         (concat sep
                 (propertize (concat
                              (doom-modeline-display-icon .icon)
-                             vsep
-                             (doom-modeline-display-text .text))
+                             (unless doom-modeline--limited-width-p
+                               (concat
+                                vsep
+                                (doom-modeline-display-text .text))))
                             'help-echo (get-text-property 1 'help-echo vc-mode)
                             'mouse-face 'doom-modeline-highlight
                             'local-map (get-text-property 1 'local-map vc-mode))
