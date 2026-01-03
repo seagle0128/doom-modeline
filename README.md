@@ -315,8 +315,12 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether display the icon of check segment. It respects option `doom-modeline-icon'.
 (setq doom-modeline-check-icon t)
 
-;; If non-nil, only display one number for check information if applicable.
-(setq doom-modeline-check-simple-format nil)
+;; How to display the check segment.
+;; auto mode adapts to window width (see `doom-modeline-window-width-limit').
+;; full displays all detailed error information.
+;; simple summarizes error counts.
+;; nil disables the check segment.
+(setq doom-modeline-check 'auto)
 
 ;; The maximum number displayed for notifications.
 (setq doom-modeline-number-limit 99)

@@ -284,7 +284,7 @@ Only relevant when `doom-modeline-time-analogue-clock' is non-nil, which see."
   :group 'doom-modeline)
 
 (defcustom doom-modeline-column-zero-based t
-  "When non-nil, mode line displays column numbers zero-based.
+  "When non-nil, mode line display column numbers zero-based.
 See `column-number-indicator-zero-based'."
   :type 'boolean
   :group 'doom-modeline)
@@ -556,9 +556,17 @@ It respects option `doom-modeline-icon'."
   :type 'boolean
   :group 'doom-modeline)
 
-(defcustom doom-modeline-check-simple-format nil
-  "If non-nil, only display one number for check information if applicable."
-  :type 'boolean
+(defcustom doom-modeline-check 'auto
+  "How to display the check segment.
+
+auto mode adapts to window width (see `doom-modeline-window-width-limit').
+full displays all detailed error information.
+simple summarizes error counts.
+nil disables the check segment."
+  :type '(choice (const :tag "Auto format" auto)
+                 (const :tag "Full format" full)
+                 (const :tag "Simple format" simple)
+                 (const :tag "Disable" nil))
   :group 'doom-modeline)
 
 (defcustom doom-modeline-number-limit 99
