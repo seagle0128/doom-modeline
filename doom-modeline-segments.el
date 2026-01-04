@@ -74,10 +74,8 @@
 (defvar evil-visual-beginning)
 (defvar evil-visual-end)
 (defvar evil-visual-selection)
-(defvar flycheck--automatically-enabled-checkers)
 (defvar flycheck-current-errors)
 (defvar flycheck-mode-menu-map)
-(defvar flymake--mode-line-format)
 (defvar flymake--state)
 (defvar flymake-menu)
 (defvar gnus-newsrc-alist)
@@ -886,8 +884,7 @@ level."
      (setq doom-modeline-icon val)
      (dolist (buf (buffer-list))
        (with-current-buffer buf
-         (when (bound-and-true-p flycheck-mode)
-           (doom-modeline-update-flycheck)))))))
+         (doom-modeline-update-flycheck))))))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-check-icon
@@ -896,8 +893,7 @@ level."
      (setq doom-modeline-check-icon val)
      (dolist (buf (buffer-list))
        (with-current-buffer buf
-         (when (bound-and-true-p flycheck-mode)
-           (doom-modeline-update-flycheck)))))))
+         (doom-modeline-update-flycheck))))))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-unicode-fallback
@@ -906,8 +902,7 @@ level."
      (setq doom-modeline-unicode-fallback val)
      (dolist (buf (buffer-list))
        (with-current-buffer buf
-         (when (bound-and-true-p flycheck-mode)
-           (doom-modeline-update-flycheck)))))))
+         (doom-modeline-update-flycheck))))))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-check
@@ -916,8 +911,7 @@ level."
      (setq doom-modeline-check val)
      (dolist (buf (buffer-list))
        (with-current-buffer buf
-         (when (bound-and-true-p flycheck-mode)
-           (doom-modeline-update-flycheck)))))))
+         (doom-modeline-update-flycheck))))))
 
 ;; Flymake
 
@@ -950,7 +944,8 @@ level."
 (defun doom-modeline-update-flymake (&rest _)
   "Update flymake."
   (setq doom-modeline--flymake
-        (when (bound-and-true-p flymake--state)
+        (when (and (bound-and-true-p flymake-mode)
+                   (bound-and-true-p flymake--state))
           (let* ((known (hash-table-keys flymake--state))
                  (running (flymake-running-backends))
                  (disabled (flymake-disabled-backends))
@@ -1025,8 +1020,7 @@ level."
      (setq doom-modeline-icon val)
      (dolist (buf (buffer-list))
        (with-current-buffer buf
-         (when (bound-and-true-p flymake-mode)
-           (doom-modeline-update-flymake)))))))
+         (doom-modeline-update-flymake))))))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-check-icon
@@ -1035,8 +1029,7 @@ level."
      (setq doom-modeline-check-icon val)
      (dolist (buf (buffer-list))
        (with-current-buffer buf
-         (when (bound-and-true-p flymake-mode)
-           (doom-modeline-update-flymake)))))))
+         (doom-modeline-update-flymake))))))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-unicode-fallback
@@ -1063,11 +1056,9 @@ level."
   (when-let* ((sep (doom-modeline-spc))
               (vsep (doom-modeline-vspc))
               (seg (cond
-                    ((and (bound-and-true-p flymake-mode)
-                          (bound-and-true-p flymake--state)) ; only support 26+
+                    ((bound-and-true-p flymake-mode)
                      doom-modeline--flymake)
-                    ((and (bound-and-true-p flycheck-mode)
-                          (bound-and-true-p flycheck--automatically-enabled-checkers))
+                    ((bound-and-true-p flycheck-mode)
                      doom-modeline--flycheck))))
     (concat
      sep
