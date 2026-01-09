@@ -686,6 +686,13 @@ Uses `nerd-icons-octicon' to fetch the icon."
   (doom-modeline-icon 'devicon (and doom-modeline-vcs-icon icon)
                       unicode text :face face))
 
+(defun doom-modeline--in-git-worktree-p ()
+  "Return non-nil if the current buffer's file is in a git worktree."
+  (when-let ((git-dir (and buffer-file-name
+                           (locate-dominating-file buffer-file-name ".git"))))
+    ;; In a worktree, .git is a file (not a directory)
+    (file-regular-p (expand-file-name ".git" git-dir))))
+
 (defvar-local doom-modeline--vcs nil)
 (defun doom-modeline-update-vcs (&rest _)
   "Update vcs state in mode-line."
@@ -760,10 +767,14 @@ Uses `nerd-icons-octicon' to fetch the icon."
   (when doom-modeline--vcs
     (let-alist doom-modeline--vcs
       (let ((sep (doom-modeline-spc))
-            (vsep (doom-modeline-vspc)))
+            (vsep (doom-modeline-vspc))
+            (worktree-indicator (when (doom-modeline--in-git-worktree-p)
+                                  (propertize "WT" 'face 'doom-modeline-warning))))
         (concat sep
                 (propertize (concat
                              (doom-modeline-display-icon .icon)
+                             (when worktree-indicator
+                               (concat vsep worktree-indicator))
                              (unless doom-modeline--limited-width-p
                                (concat
                                 vsep
