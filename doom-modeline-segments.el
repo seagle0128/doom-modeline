@@ -365,14 +365,11 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
             `(global menu-item ,(format-mode-line string) ignore))
           doom-modeline-tab-bar-string))
 
-(with-no-warnings
-  (if (boundp 'after-focus-change-function)
-      (progn
-        (advice-add #'handle-switch-frame :after #'doom-modeline-update-buffer-file-name)
-        (add-function :after after-focus-change-function #'doom-modeline-update-buffer-file-name))
-    (progn
-      (add-hook 'focus-in-hook #'doom-modeline-update-buffer-file-name)
-      (add-hook 'focus-out-hook #'doom-modeline-update-buffer-file-name))))
+(if (boundp 'after-focus-change-function)
+    (add-function :after after-focus-change-function
+      #'doom-modeline-update-buffer-file-name)
+  (with-no-warnings
+    (add-hook 'focus-in-hook #'doom-modeline-update-buffer-file-name)))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-buffer-file-name-style
@@ -1122,9 +1119,9 @@ block selection."
                                   (eq evil-state 'visual)))
              (doom-modeline--active))
     (cl-destructuring-bind (beg . end)
-        (if (and (bound-and-true-p evil-local-mode) (eq evil-state 'visual))
-            (cons evil-visual-beginning evil-visual-end)
-          (cons (region-beginning) (region-end)))
+      (if (and (bound-and-true-p evil-local-mode) (eq evil-state 'visual))
+          (cons evil-visual-beginning evil-visual-end)
+        (cons (region-beginning) (region-end)))
       (propertize
        (let ((lines (count-lines beg (min end (point-max)))))
          (concat
@@ -1310,15 +1307,15 @@ The number of matches contains substitutions and highlightings."
 (defsubst doom-modeline--multiple-cursors ()
   "Show the number of multiple cursors."
   (cl-destructuring-bind (count . face)
-      (cond ((bound-and-true-p multiple-cursors-mode)
-             (cons (mc/num-cursors)
-                   (doom-modeline-face 'doom-modeline-panel)))
-            ((bound-and-true-p evil-mc-cursor-list)
-             (cons (length evil-mc-cursor-list)
-                   (doom-modeline-face (if evil-mc-frozen
-                                           'doom-modeline-bar
-                                         'doom-modeline-panel))))
-            ((cons nil nil)))
+    (cond ((bound-and-true-p multiple-cursors-mode)
+           (cons (mc/num-cursors)
+                 (doom-modeline-face 'doom-modeline-panel)))
+          ((bound-and-true-p evil-mc-cursor-list)
+           (cons (length evil-mc-cursor-list)
+                 (doom-modeline-face (if evil-mc-frozen
+                                         'doom-modeline-bar
+                                       'doom-modeline-panel))))
+          ((cons nil nil)))
     (when count
       (concat (propertize " " 'face face)
               (if (doom-modeline-icon-displayable-p)
@@ -1396,8 +1393,8 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
   ;; TODO: Include other information
   (cond ((eq major-mode 'image-mode)
          (cl-destructuring-bind (width . height)
-             (when (fboundp 'image-size)
-               (image-size (image-get-display-property) :pixels))
+           (when (fboundp 'image-size)
+             (image-size (image-get-display-property) :pixels))
            (format "  %dx%d  " width height)))))
 
 
