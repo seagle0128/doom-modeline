@@ -1242,8 +1242,8 @@ used as an advice to window creation functions."
 
 (defun doom-modeline-set-selected-window (&rest _)
   "Set `doom-modeline-current-window' appropriately."
-  (let ((win (doom-modeline--selected-window)))
-    (setq doom-modeline-current-window
+  (setq doom-modeline-current-window
+        (let ((win (doom-modeline--selected-window)))
           (if (minibuffer-window-active-p win)
               (minibuffer-selected-window)
             win))))
@@ -1252,51 +1252,11 @@ used as an advice to window creation functions."
   "Unset `doom-modeline-current-window' appropriately."
   (setq doom-modeline-current-window nil))
 
-(add-hook 'pre-redisplay-functions #'doom-modeline-set-selected-window)
-
-;; Ensure modeline is inactive when Emacs is unfocused
-(defvar doom-modeline--remap-faces '(mode-line
-                                     mode-line-active
-                                     mode-line-emphasis
-                                     mode-line-highlight
-                                     mode-line-buffer-id
-                                     doom-modeline
-                                     solaire-mode-line-face
-                                     solaire-mode-line-active-face
-                                     paradox-mode-line-face
-                                     flycheck-color-mode-line-error-face
-                                     flycheck-color-mode-line-warning-face
-                                     flycheck-color-mode-line-info-face
-                                     flycheck-color-mode-line-success-face))
-
-(defvar doom-modeline--remap-face-cookie-alist nil)
-(defun doom-modeline-focus ()
-  "Focus mode-line."
-  (mapc #'face-remap-remove-relative doom-modeline--remap-face-cookie-alist))
-
-(defun doom-modeline-unfocus ()
-  "Unfocus mode-line."
-  (dolist (face doom-modeline--remap-faces)
-    (add-to-list 'doom-modeline--remap-face-cookie-alist
-                 (face-remap-add-relative face 'mode-line-inactive))))
-
-(with-no-warnings
-  (if (boundp 'after-focus-change-function)
-      (progn
-        (defun doom-modeline-focus-change (&rest _)
-          (if (frame-focus-state (frame-parent))
-              (progn
-                (doom-modeline-focus)
-                ;; HACK: pulse after focusing in the frame to refresh the buffer name.
-                ;; @see https://github.com/seagle0128/doom-modeline/issues/591
-                (when (fboundp 'pulse-momentary-highlight-region)
-                  (pulse-momentary-highlight-region 0 0)))
-            (doom-modeline-unfocus)))
-        (advice-add #'handle-switch-frame :after #'doom-modeline-focus-change)
-        (add-function :after after-focus-change-function #'doom-modeline-focus-change))
-    (progn
-      (add-hook 'focus-in-hook #'doom-modeline-focus)
-      (add-hook 'focus-out-hook #'doom-modeline-unfocus))))
+(defun doom-modeline-focus-change (&rest _)
+  "Focus change."
+  (if (frame-focus-state (frame-parent))
+      (doom-modeline-set-selected-window)
+    (doom-modeline-unset-selected-window)))
 
 
 ;;
@@ -1620,8 +1580,8 @@ respectively."
         'pbm t :foreground color1 :background color2 :ascent 'center)))))
 
 ;; Check whether `window-total-width' is smaller than the limit
-(defun doom-modeline-window-size-change-function (&rest _)
-  "Function for `window-size-change-functions'."
+(defun doom-modeline-window-size-change (&rest _)
+  "Handles while window size is changed."
   (setq doom-modeline--limited-width-p
         (cond
          ((integerp doom-modeline-window-width-limit)
@@ -1629,10 +1589,9 @@ respectively."
          ((floatp doom-modeline-window-width-limit)
           (<= (/ (window-total-width) (frame-width) 1.0)
               doom-modeline-window-width-limit)))))
-
-(add-hook 'after-revert-hook #'doom-modeline-window-size-change-function)
-(add-hook 'buffer-list-update-hook #'doom-modeline-window-size-change-function)
-(add-hook 'window-size-change-functions #'doom-modeline-window-size-change-function)
+(add-hook 'after-revert-hook #'doom-modeline-window-size-change)
+(add-hook 'buffer-list-update-hook #'doom-modeline-window-size-change)
+(add-hook 'window-size-change-functions #'doom-modeline-window-size-change)
 
 (defvar-local doom-modeline--project-root nil)
 (defun doom-modeline--project-root ()
