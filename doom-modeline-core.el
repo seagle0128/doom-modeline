@@ -1125,6 +1125,7 @@ Which are not explicitly listed in `doom-modeline-vcs-state-faces-alist'."
   '((t (:inherit doom-modeline-warning :slant italic :height 0.9)))
   "Face for compilation progress."
   :group 'doom-modeline-faces)
+
 
 ;;
 ;; Externals
@@ -1252,12 +1253,6 @@ used as an advice to window creation functions."
   "Unset `doom-modeline-current-window' appropriately."
   (setq doom-modeline-current-window nil))
 
-(defun doom-modeline-focus-change (&rest _)
-  "Focus change."
-  (if (frame-focus-state)
-      (doom-modeline-set-selected-window)
-    (doom-modeline-unset-selected-window)))
-
 
 ;;
 ;; Core
@@ -1370,6 +1365,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
             mode-line-format)
           (list "%e" modeline))))
 
+
 ;;
 ;; Helpers
 ;;

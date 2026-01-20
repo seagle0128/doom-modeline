@@ -100,13 +100,13 @@ Example: \\='doom-modeline-env--ruby")
            (run-hooks 'doom-modeline-after-update-env-hook)))))))
 
 (add-hook 'find-file-hook #'doom-modeline-update-env)
-(with-no-warnings
-  (if (boundp 'after-focus-change-function)
-      (add-function
-       :after after-focus-change-function
-       (lambda ()
-         (if (frame-focus-state)
-             (doom-modeline-update-env))))
+(if (boundp 'after-focus-change-function)
+    (add-function
+     :after after-focus-change-function
+     (lambda ()
+       (if (frame-focus-state)
+           (doom-modeline-update-env))))
+  (with-no-warnings
     (add-hook 'focus-in-hook #'doom-modeline-update-env)))
 
 (defun doom-modeline-env--get (prog args callback)
