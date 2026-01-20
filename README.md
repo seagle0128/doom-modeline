@@ -239,6 +239,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; The scaling factor used when drawing the analogue clock.
 (setq doom-modeline-time-clock-size 0.7)
 
+;; Whether to use unicode numbers.
+(setq doom-modeline-unicode-number t)
+
 ;; Whether to use unicode as a fallback (instead of ASCII) when not using icons.
 (setq doom-modeline-unicode-fallback nil)
 

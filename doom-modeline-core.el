@@ -268,6 +268,11 @@ Only relevant when `doom-modeline-time-analogue-clock' is non-nil, which see."
   :type 'number
   :group 'doom-modeline)
 
+(defcustom doom-modeline-unicode-number t
+  "Whether to use unicode numbers."
+  :type 'boolean
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-unicode-fallback nil
   "Whether to use unicode as a fallback (instead of ASCII) when not using icons."
   :type 'boolean

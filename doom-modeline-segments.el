@@ -1122,9 +1122,9 @@ block selection."
                                   (eq evil-state 'visual)))
              (doom-modeline--active))
     (cl-destructuring-bind (beg . end)
-      (if (and (bound-and-true-p evil-local-mode) (eq evil-state 'visual))
-          (cons evil-visual-beginning evil-visual-end)
-        (cons (region-beginning) (region-end)))
+        (if (and (bound-and-true-p evil-local-mode) (eq evil-state 'visual))
+            (cons evil-visual-beginning evil-visual-end)
+          (cons (region-beginning) (region-end)))
       (propertize
        (let ((lines (count-lines beg (min end (point-max)))))
          (concat
@@ -1310,15 +1310,15 @@ The number of matches contains substitutions and highlightings."
 (defsubst doom-modeline--multiple-cursors ()
   "Show the number of multiple cursors."
   (cl-destructuring-bind (count . face)
-    (cond ((bound-and-true-p multiple-cursors-mode)
-           (cons (mc/num-cursors)
-                 (doom-modeline-face 'doom-modeline-panel)))
-          ((bound-and-true-p evil-mc-cursor-list)
-           (cons (length evil-mc-cursor-list)
-                 (doom-modeline-face (if evil-mc-frozen
-                                         'doom-modeline-bar
-                                       'doom-modeline-panel))))
-          ((cons nil nil)))
+      (cond ((bound-and-true-p multiple-cursors-mode)
+             (cons (mc/num-cursors)
+                   (doom-modeline-face 'doom-modeline-panel)))
+            ((bound-and-true-p evil-mc-cursor-list)
+             (cons (length evil-mc-cursor-list)
+                   (doom-modeline-face (if evil-mc-frozen
+                                           'doom-modeline-bar
+                                         'doom-modeline-panel))))
+            ((cons nil nil)))
     (when count
       (concat (propertize " " 'face face)
               (if (doom-modeline-icon-displayable-p)
@@ -1396,8 +1396,8 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
   ;; TODO: Include other information
   (cond ((eq major-mode 'image-mode)
          (cl-destructuring-bind (width . height)
-           (when (fboundp 'image-size)
-             (image-size (image-get-display-property) :pixels))
+             (when (fboundp 'image-size)
+               (image-size (image-get-display-property) :pixels))
            (format "  %dx%d  " width height)))))
 
 
@@ -1627,6 +1627,22 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
 (advice-add #'winum--install-mode-line :override #'ignore)
 (advice-add #'winum--clear-mode-line :override #'ignore)
 
+(defun doom-modeline--unicode-number (num)
+  "Return a nice unicode representation of NUM."
+  (cond
+   ((not num) "")
+   ((string= "1" num) "➊")
+   ((string= "2" num) "➋")
+   ((string= "3" num) "➌")
+   ((string= "4" num) "➍")
+   ((string= "5" num) "➎")
+   ((string= "6" num) "➏")
+   ((string= "7" num) "➐")
+   ((string= "8" num) "➑")
+   ((string= "9" num) "➒")
+   ((string= "10" num) "➓")
+   (t num)))
+
 (doom-modeline-def-segment window-number
   "The current window number."
   (let ((num (cond
@@ -1649,7 +1665,9 @@ one. The ignored buffers are excluded unless `aw-ignore-on' is nil."
                              (window-list frame 'never)))
                          (visible-frame-list))
                         1))
-      (propertize (format " %s " num)
+      (propertize (format " %s " (if doom-modeline-unicode-number
+                                     (doom-modeline--unicode-number num)
+                                   num))
                   'face (doom-modeline-face 'doom-modeline-buffer-major-mode)))))
 
 ;;
@@ -1758,7 +1776,7 @@ Requires `eyebrowse-mode' to be enabled or `tab-bar-mode' tabs to be created."
                  (icon (doom-modeline-icon 'octicon "nf-oct-repo" "🖿" "#"
                                            :face `(:inherit ,face :slant normal))))
             (when (or doom-modeline-display-default-persp-name
-                      (not (string-equal persp-nil-name name)))
+                      (not (string= persp-nil-name name)))
               (concat " "
                       (propertize (concat (and doom-modeline-persp-icon
                                                (concat icon (doom-modeline-vspc)))
@@ -2955,8 +2973,8 @@ Uses `nerd-icons-mdicon' to fetch the icon."
           (let* ((data (and battery-status-function
                             (funcall battery-status-function)))
                  (status (cdr (assoc ?L data)))
-                 (charging? (or (string-equal "AC" status)
-                                (string-equal "on-line" status)))
+                 (charging? (or (string= "AC" status)
+                                (string= "on-line" status)))
                  (percentage (car (read-from-string (or (cdr (assq ?p data)) "ERR"))))
                  (valid-percentage? (and (numberp percentage)
                                          (>= percentage 0)
