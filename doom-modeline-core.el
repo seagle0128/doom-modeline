@@ -1438,11 +1438,10 @@ If INACTIVE-FACE is nil, `mode-line-inactive' face will be used."
     (or (and (facep inactive-face) `(:inherit (doom-modeline ,inactive-face)))
         '(:inherit (doom-modeline mode-line-inactive)))))
 
-(defun doom-modeline-spc-face ()
-  "Apply `doom-modeline-spc-face-overrides' to `doom-modeline-face'."
-  (append
-   `(:inherit ,(doom-modeline-face))
-   doom-modeline-spc-face-overrides))
+(defun doom-modeline-spc-face (&optional face)
+  "Apply FACE or `doom-modeline-spc-face-overrides' to `doom-modeline-face'."
+  (append `(:inherit ,(doom-modeline-face))
+          (or face doom-modeline-spc-face-overrides)))
 
 (defun doom-modeline-string-pixel-width (str)
   "Return the width of STR in pixels."
