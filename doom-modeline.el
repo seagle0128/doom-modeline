@@ -247,12 +247,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
 
         ;; For window
         (if (boundp 'after-focus-change-function)
-            (add-function
-             :after after-focus-change-function
-             (lambda ()
-               (if (frame-focus-state)
-                   (doom-modeline-set-selected-window)
-                 (doom-modeline-unset-selected-window))))
+            (add-function :after after-focus-change-function #'doom-modeline-focus-change)
           (with-no-warnings
             (add-hook 'focus-in-hook #'doom-modeline-set-selected-window)
             (add-hook 'focus-out-hook #'doom-modeline-unset-selected-window)))

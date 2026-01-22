@@ -1253,6 +1253,13 @@ used as an advice to window creation functions."
   "Unset `doom-modeline-current-window' appropriately."
   (setq doom-modeline-current-window nil))
 
+(defun doom-modeline-focus-change (&rest _)
+  "Focus change."
+  (if (frame-focus-state)
+      (doom-modeline-set-selected-window)
+    (doom-modeline-unset-selected-window)))
+
+
 
 ;;
 ;; Core
