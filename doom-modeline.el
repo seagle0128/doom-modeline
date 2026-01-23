@@ -112,11 +112,11 @@
   '(compilation misc-info battery irc mu4e gnus github debug minor-modes buffer-encoding major-mode process time))
 
 (doom-modeline-def-modeline 'package
-  '(bar window-number modals package)
+  '(bar window-number modals matches package buffer-position parrot)
   '(compilation misc-info major-mode process time))
 
 (doom-modeline-def-modeline 'info
-  '(bar window-number modals buffer-info info-nodes buffer-position parrot selection-info)
+  '(bar window-number modals matches buffer-info info-nodes buffer-position parrot selection-info)
   '(compilation misc-info buffer-encoding major-mode time))
 
 (doom-modeline-def-modeline 'media
@@ -187,6 +187,7 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
     (pdf-view-mode        . pdf)
     (reader-mode          . pdf)
     (org-src-mode         . org-src)
+    (package-menu-mode    . package)
     (paradox-menu-mode    . package)
     (xwidget-webkit-mode  . minimal)
     (git-timemachine-mode . timemachine)

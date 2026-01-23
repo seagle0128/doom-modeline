@@ -3105,7 +3105,7 @@ Uses `nerd-icons-mdicon' to fetch the icon."
 ;;
 
 (doom-modeline-def-segment package
-  "Show package information via `paradox'."
+  "Show package information."
   (concat
    (doom-modeline-display-text
     (format-mode-line 'mode-line-front-space))
@@ -3117,7 +3117,8 @@ Uses `nerd-icons-mdicon' to fetch the icon."
                           :face (doom-modeline-face
                                  (if doom-modeline-major-mode-color-icon
                                      'nerd-icons-silver
-                                   'mode-line)))))
+                                   'mode-line)))
+      (doom-modeline-vspc)))
    (doom-modeline-display-text
     (format-mode-line 'mode-line-buffer-identification))))
 
