@@ -291,7 +291,6 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
           (remove-hook 'focus-in-hook #'doom-modeline-set-selected-window)
           (remove-hook 'focus-out-hook #'doom-modeline-unset-selected-window)))
       (remove-hook 'window-selection-change-functions #'doom-modeline-set-selected-window)
-      (advice-remove #'handle-switch-frame #'doom-modeline-set-selected-window)
 
       ;; For major modes
       (remove-hook 'after-change-major-mode-hook #'doom-modeline-auto-set-modeline)
