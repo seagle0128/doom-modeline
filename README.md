@@ -377,7 +377,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether gnus should automatically be updated and how often (set to 0 or smaller than 0 to disable)
 (setq doom-modeline-gnus-timer 2)
 
-;; Wheter groups should be excludede when gnus automatically being updated.
+;; Whether groups should be excluded when gnus automatically being updated.
 (setq doom-modeline-gnus-excluded-groups '("dummy.group"))
 
 ;; Whether display the IRC notifications. It requires `circe' or `erc' package.
@@ -605,7 +605,7 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
    It respects `visual-replace-display-total`, so you should use `(setq visual-replace-display-total t)` to display.
 
-1. Why am I unable to get the GitHub notifications even thogh I enable `doom-modeline-github`?
+1. Why am I unable to get the GitHub notifications even though I enable `doom-modeline-github`?
 
    The functionality requires the `async` and `ghub` packages, and make sure the token has
    permission to access the Github repositories.
