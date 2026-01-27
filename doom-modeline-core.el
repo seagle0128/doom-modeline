@@ -300,13 +300,13 @@ See `mode-line-percent-position'."
   :type '(radio
           (const :tag "nil:  No offset is displayed" nil)
           (const :tag "\"%o\": Proportion of \"travel\" of the window through the buffer"
-                 (-3 "%o"))
+            (-3 "%o"))
           (const :tag "\"%p\": Percentage offset of top of window"
-                 (-3 "%p"))
+            (-3 "%p"))
           (const :tag "\"%P\": Percentage offset of bottom of window"
-                 (-3 "%P"))
+            (-3 "%P"))
           (const :tag "\"%q\": Offsets of both top and bottom of window"
-                 (6 "%q")))
+            (6 "%q")))
   :group 'doom-modeline)
 
 (defcustom doom-modeline-position-line-format '("L%l")
@@ -1478,8 +1478,8 @@ See https://github.com/seagle0128/doom-modeline/issues/301."
           (when (listp props)
             (cl-destructuring-bind (&key family height inherit &allow-other-keys) props
               (propertize icon 'face `(:inherit (doom-modeline ,(or face inherit props))
-                                                :family  ,(or family "")
-                                                :height  ,(or height 1.0))))))
+                                       :family  ,(or family "")
+                                       :height  ,(or height 1.0))))))
       (propertize icon 'face `(:inherit (doom-modeline ,face))))))
 
 (defun doom-modeline-icon (icon-set icon-name unicode text &rest args)
