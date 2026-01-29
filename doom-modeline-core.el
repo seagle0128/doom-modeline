@@ -1255,8 +1255,13 @@ used as an advice to window creation functions."
 
 (defun doom-modeline-focus-change (&rest _)
   "Focus change."
-  (if (frame-focus-state)
-      (doom-modeline-set-selected-window)
+  (if (frame-focus-state (frame-parent))
+      (progn
+        (doom-modeline-set-selected-window)
+        ;; HACK: pulse after focusing in the frame to refresh the buffer name.
+        ;; @see https://github.com/seagle0128/doom-modeline/issues/591
+        (when (fboundp 'pulse-momentary-highlight-region)
+          (pulse-momentary-highlight-region 0 0)))
     (doom-modeline-unset-selected-window)))
 
 
