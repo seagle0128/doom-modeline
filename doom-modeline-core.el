@@ -1219,7 +1219,7 @@ used as an advice to window creation functions."
 ;; Keep `doom-modeline-current-window' up-to-date
 (defun doom-modeline--selected-window ()
   "Get the selected window."
-  (frame-selected-window (frame-parent)))
+  (frame-selected-window))
 
 (defvar doom-modeline-current-window (doom-modeline--selected-window)
   "Current window.")
@@ -1255,7 +1255,7 @@ used as an advice to window creation functions."
 
 (defun doom-modeline-focus-change (&rest _)
   "Focus change."
-  (if (frame-focus-state (frame-parent))
+  (if (frame-focus-state)
       (doom-modeline-set-selected-window)
     (doom-modeline-unset-selected-window)))
 
