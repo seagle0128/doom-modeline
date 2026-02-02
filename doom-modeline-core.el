@@ -1132,7 +1132,6 @@ Which are not explicitly listed in `doom-modeline-vcs-state-faces-alist'."
 ;;
 
 (declare-function doom-modeline-shorten-irc "doom-modeline-segments")
-(declare-function face-remap-remove-relative "face-remap")
 (declare-function ffip-project-root "ext:find-file-in-project")
 (declare-function project-root "project")
 (declare-function projectile-project-root "ext:projectile")
