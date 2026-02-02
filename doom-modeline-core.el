@@ -1216,9 +1216,11 @@ used as an advice to window creation functions."
   (and (featurep 'mwheel) (bound-and-true-p mouse-wheel-mode)))
 
 ;; Keep `doom-modeline-current-window' up-to-date
-(defun doom-modeline--selected-window ()
-  "Get the selected window."
-  (frame-selected-window))
+(defun doom-modeline--selected-window (&optional frame)
+  "Get the selected window of FRAME but should exclude the child windows."
+  (if (and (fboundp 'frame-parent) (frame-parent frame))
+      (frame-selected-window (frame-parent frame))
+    (frame-selected-window frame)))
 
 (defvar doom-modeline-current-window (doom-modeline--selected-window)
   "Current window.")
@@ -1254,9 +1256,10 @@ used as an advice to window creation functions."
 
 (defun doom-modeline-focus-change (&rest _)
   "Focus change."
-  (if (frame-focus-state)
-      (doom-modeline-set-selected-window)
-    (doom-modeline-unset-selected-window)))
+  ;; (if (frame-focus-state)
+  ;;     (doom-modeline-set-selected-window)
+  ;;   (doom-modeline-unset-selected-window))
+  )
 
 
 
