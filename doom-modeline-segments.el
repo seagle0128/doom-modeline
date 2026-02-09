@@ -53,6 +53,7 @@
 (defvar battery-load-critical)
 (defvar battery-mode-line-format)
 (defvar battery-mode-line-limit)
+(defvar battery-mode-line-string)
 (defvar battery-update-functions)
 (defvar battery-status-function)
 (defvar boon-command-state)
