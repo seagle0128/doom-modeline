@@ -3039,11 +3039,12 @@ Uses `nerd-icons-mdicon' to fetch the icon."
             (run-hook-with-args 'battery-update-functions data)
             (cons (propertize icon 'help-echo help-echo)
                   (propertize text 'face face 'help-echo help-echo)))))
-  (setq battery-mode-line-string (substring
-                                  (concat
-                                   (substring-no-properties (car doom-modeline--battery-status))
-                                   (substring-no-properties (cdr doom-modeline--battery-status)))
-                                  0 -1))
+  (when doom-modeline--battery-status
+    (setq battery-mode-line-string (substring
+                                    (concat
+                                     (substring-no-properties (car doom-modeline--battery-status))
+                                     (substring-no-properties (cdr doom-modeline--battery-status)))
+                                    0 -1)))
   (force-mode-line-update t))
 
 (doom-modeline-add-variable-watcher
