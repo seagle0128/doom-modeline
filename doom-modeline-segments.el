@@ -687,6 +687,7 @@ Uses `nerd-icons-octicon' to fetch the icon."
 (defun doom-modeline--in-git-worktree-p ()
   "Return non-nil if the current buffer's file is in a git worktree."
   (when-let* ((git-dir (and buffer-file-name
+                            (not (file-remote-p buffer-file-name)) ; avoid tramp hangs
                             (locate-dominating-file buffer-file-name ".git"))))
     ;; In a worktree, .git is a file (not a directory)
     (file-regular-p (expand-file-name ".git" git-dir))))
