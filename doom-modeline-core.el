@@ -1267,8 +1267,8 @@ used as an advice to window creation functions."
 ;; Core
 ;;
 
-(defvar doom-modeline-fn-alist ())
-(defvar doom-modeline-var-alist ())
+(defvar doom-modeline--fn-alist ())
+(defvar doom-modeline--var-alist ())
 
 (defmacro doom-modeline-def-segment (name &rest body)
   "Define a modeline segment NAME with BODY and byte compiles it."
@@ -1279,11 +1279,11 @@ used as an advice to window creation functions."
                      (format "%s modeline segment" name))))
     (cond ((and (symbolp (car body))
                 (not (cdr body)))
-           `(add-to-list 'doom-modeline-var-alist (cons ',name ',(car body))))
+           `(add-to-list 'doom-modeline--var-alist (cons ',name ',(car body))))
           (t
            `(progn
               (defun ,sym () ,docstring ,@body)
-              (add-to-list 'doom-modeline-fn-alist (cons ',name ',sym))
+              (add-to-list 'doom-modeline--fn-alist (cons ',name ',sym))
               ,(unless (bound-and-true-p byte-compile-current-file)
                  `(let (byte-compile-warnings)
                     (unless (and (fboundp 'subr-native-elisp-p)
@@ -1297,9 +1297,9 @@ used as an advice to window creation functions."
       (cond ((stringp seg)
              (push seg forms))
             ((symbolp seg)
-             (cond ((setq it (alist-get seg doom-modeline-fn-alist))
+             (cond ((setq it (alist-get seg doom-modeline--fn-alist))
                     (push (list :eval (list it)) forms))
-                   ((setq it (alist-get seg doom-modeline-var-alist))
+                   ((setq it (alist-get seg doom-modeline--var-alist))
                     (push it forms))
                    ((error "%s is not a defined segment" seg))))
             ((error "%s is not a valid segment" seg))))
