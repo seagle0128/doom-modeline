@@ -3229,9 +3229,7 @@ The cdr can also be a function that returns a name to use.")
    (doom-modeline-spc)
    (doom-modeline--buffer-mode-icon)
    (doom-modeline--buffer-state-icon)
-   (propertize
-    "*%b*"
-    'face (doom-modeline-face 'doom-modeline-buffer-timemachine))))
+   (format-mode-line mode-line-buffer-identification)))
 
 ;;
 ;; Markdown/Org preview

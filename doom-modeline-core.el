@@ -1111,11 +1111,6 @@ Which are not explicitly listed in `doom-modeline-vcs-state-faces-alist'."
   "Face for battery error status."
   :group 'doom-modeline-faces)
 
-(defface doom-modeline-buffer-timemachine
-  '((t (:inherit doom-modeline-buffer-file :slant italic)))
-  "Face for timemachine status."
-  :group 'doom-modeline-faces)
-
 (defface doom-modeline-time
   '((t (:inherit doom-modeline)))
   "Face for display time."
