@@ -435,6 +435,84 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 (setq doom-modeline-after-update-env-hook nil)
 ```
 
+## Programmatic Customization
+
+You can programmatically define segments and modelines, and add segments to existing modelines.
+
+### Defining Custom Segments
+
+Use `doom-modeline-def-segment` to define a new segment:
+
+```emacs-lisp
+(doom-modeline-def-segment segment-name
+  "Docstring describing the segment."
+  ;; Body that returns the segment string
+  (when some-condition
+    (format "output: %s" value)))
+```
+
+Example:
+```emacs-lisp
+(doom-modeline-def-segment evil-state
+  "Display evil state."
+  (when (bound-and-true-p evil-mode)
+    (format "[%s]" (symbol-name evil-state))))
+```
+
+### Defining Custom Modelines
+
+Use `doom-modeline-def-modeline` to define a new modeline:
+
+```emacs-lisp
+(doom-modeline-def-modeline modeline-name
+  '(left-hand-side segments)
+  '(right-hand-side segments))
+```
+
+Example:
+```emacs-lisp
+(doom-modeline-def-modeline 'my-simple-line
+  '(bar window-number buffer-info)
+  '(major-mode time))
+
+;; Set as the default modeline
+(add-hook 'doom-modeline-mode-hook
+          (lambda ()
+            (doom-modeline-set-modeline 'my-simple-line t)))
+
+;; Configure other mode-lines based on major modes
+(add-to-list 'doom-modeline-mode-alist '(my-mode . my-simple-line))
+
+;; Or disable other mode-lines
+(setq 'doom-modeline-mode-alist nil)
+```
+
+### Adding Segments to Existing Modelines
+
+- If the information is simple, add to `mode-line-misc-info` or `global-mode-string`.
+- Use `doom-modeline-add-segment` to add a segment to modelines:
+
+```emacs-lisp
+;; Exclude certain modelines from automatic modification
+(setq doom-modeline-excluded-modelines '(speedbar))
+
+;; Add segment to all modelines (after anchor segment)
+(doom-modeline-add-segment 'evil-state 'window-number)
+
+;; Add segment before anchor
+(doom-modeline-add-segment 'evil-state 'window-number :before)
+
+;; Add segment to a specific modeline only
+(doom-modeline-add-segment 'evil-state 'window-number :after 'main)
+```
+
+Function: `doom-modeline-add-segment SEGMENT ANCHOR &optional POSITION MODELINE`
+
+- `SEGMENT`: The segment name to add (a symbol)
+- `ANCHOR`: The segment name to anchor to (a symbol)
+- `POSITION`: Can be `:before` or `:after` (default: `:after`)
+- `MODELINE`: A modeline name (symbol) to add to a specific modeline, or `nil`/`'all` to add to all modelines (respecting `doom-modeline-excluded-modelines`)
+
 ## FAQ
 
 1. How to display icons correctly?
@@ -484,36 +562,6 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
        up-to-date](https://magit.vc/manual/magit/The-mode_002dline-information-isn_0027t-always-up_002dto_002ddate.html)
      - [Maybe provide an alternative to VC's mode-line
        information](https://github.com/magit/magit/issues/2687)
-
-1. Can I add my mode-line segments myself? How to do that?
-   How can I define my own mode-line?
-
-   There are two methods.
-
-   - If the information is simple, just add to `mode-line-misc-info` or `global-mode-string`.
-
-   - Use `doom-modeline-def-modeline` to define your own mode-line and set it as
-     default.
-
-     For example:
-
-     ```emacs-lisp
-     ;; Define your custom doom-modeline
-     (doom-modeline-def-modeline 'my-simple-line
-       '(bar matches buffer-info remote-host buffer-position parrot selection-info)
-       '(misc-info minor-modes input-method buffer-encoding major-mode process vcs check))
-
-     ;; Set default mode-line
-     (add-hook 'doom-modeline-mode-hook
-               (lambda ()
-                 (doom-modeline-set-modeline 'my-simple-line 'default)))
-
-     ;; Configure other mode-lines based on major modes
-     (add-to-list 'doom-modeline-mode-alist '(my-mode . my-simple-line))
-
-     ;; Or disable other mode-lines
-     (setq 'doom-modeline-mode-alist nil)
-     ```
 
 1. How to specify font family and size in modeline?
 

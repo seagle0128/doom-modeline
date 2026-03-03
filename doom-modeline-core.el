@@ -1264,6 +1264,9 @@ used as an advice to window creation functions."
 
 (defvar doom-modeline--fn-alist ())
 (defvar doom-modeline--var-alist ())
+(defvar doom-modeline--modelines ()
+  "Alist of modeline definitions.
+Each element is (NAME . ((lhs-segments...) (rhs-segments...))).")
 
 (defmacro doom-modeline-def-segment (name &rest body)
   "Define a modeline segment NAME with BODY and byte compiles it."
@@ -1311,6 +1314,11 @@ Example:
     \\='(bar matches \" \" buffer-info)
     \\='(media-info major-mode))
   (doom-modeline-set-modeline \\='minimal t)"
+  ;; Register the modeline definition for runtime manipulation
+  (let ((def (assq name doom-modeline--modelines)))
+    (if def
+        (setcdr def (list lhs rhs))
+      (push (cons name (list lhs rhs)) doom-modeline--modelines)))
   (let ((sym (intern (format "doom-modeline-format--%s" name)))
         (lhs-forms (doom-modeline--prepare-segments lhs))
         (rhs-forms (doom-modeline--prepare-segments rhs)))
@@ -1368,6 +1376,61 @@ If DEFAULT is non-nil, set the default mode-line for all buffers."
               (default-value 'mode-line-format)
             mode-line-format)
           (list "%e" modeline))))
+
+;;
+;; Modeline Segment Management
+;;
+
+(defcustom doom-modeline-excluded-modelines nil
+  "List of modeline names to exclude from `doom-modeline-add-segment'.
+These modelines will not be modified when adding segments programmatically."
+  :type '(repeat symbol)
+  :group 'doom-modeline)
+
+(defun doom-modeline--insert-segment-in-list (list anchor segment position)
+  "Insert SEGMENT in LIST relative to ANCHOR at POSITION.
+POSITION can be :before or :after.
+Returns the modified list."
+  (cond ((null list) (list segment))
+        ((eq (car list) anchor)
+         (if (eq position :before)
+             (cons segment list)
+           (cons anchor (cons segment (cdr list)))))
+        (t
+         (cons (car list)
+               (doom-modeline--insert-segment-in-list (cdr list) anchor segment position)))))
+
+(defun doom-modeline-add-segment (segment anchor &optional position modeline)
+  "Add SEGMENT to modeline(s) relative to ANCHOR segment.
+SEGMENT is the segment name to add (a symbol).
+ANCHOR is the segment name to anchor to (a symbol).
+POSITION can be :before or :after (default: :after).
+MODELINE can be a modeline name (symbol) to add to a specific modeline,
+or nil/'all to add to all modelines (respecting `doom-modeline-excluded-modelines').
+
+Modelines listed in `doom-modeline-excluded-modelines' are not modified
+when adding to all modelines."
+  (let ((modelines (if (or (null modeline) (eq modeline 'all))
+                       doom-modeline--modelines
+                     (list (assq modeline doom-modeline--modelines)))))
+    (dolist (modeline-def modelines)
+      (when modeline-def
+        (pcase-let ((`(,name . (,lhs ,rhs)) modeline-def))
+          (unless (memq name doom-modeline-excluded-modelines)
+            (let ((new-lhs lhs)
+                  (new-rhs rhs))
+              ;; Try to add to LHS
+              (when (memq anchor lhs)
+                (setq new-lhs (doom-modeline--insert-segment-in-list lhs anchor segment
+                                                                     (or position :after))))
+              ;; Try to add to RHS
+              (when (memq anchor rhs)
+                (setq new-rhs (doom-modeline--insert-segment-in-list rhs anchor segment
+                                                                     (or position :after))))
+              ;; Only redefine if at least one list was modified
+              (when (or (not (eq new-lhs lhs))
+                        (not (eq new-rhs rhs)))
+                (doom-modeline-def-modeline name new-lhs new-rhs)))))))))
 
 
 ;;

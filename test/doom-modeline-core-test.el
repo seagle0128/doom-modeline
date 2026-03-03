@@ -31,6 +31,7 @@
 
 (require 'cl-lib)
 (require 'doom-modeline-core)
+(require 'doom-modeline-segments)
 
 ;; XXX: This is a precaution for older Emacsen that may ship with
 ;; outdated versions of `project'.
@@ -348,5 +349,157 @@
   ;; Test that it can be set to nil
   (let ((doom-modeline-enable-buffer-position nil))
     (should-not doom-modeline-enable-buffer-position)))
+
+;;
+;; Tests for doom-modeline-add-segment
+;;
+
+(ert-deftest doom-modeline--insert-segment-in-list/after ()
+  "Test inserting segment after anchor."
+  (should (equal '(a b x c)
+                 (doom-modeline--insert-segment-in-list '(a b c) 'b 'x :after)))
+  (should (equal '(a x)
+                 (doom-modeline--insert-segment-in-list '(a) 'nonexistent 'x :after)))
+  (should (equal '(a x)
+                 (doom-modeline--insert-segment-in-list '(a) 'a 'x :after))))
+
+(ert-deftest doom-modeline--insert-segment-in-list/before ()
+  "Test inserting segment before anchor."
+  (should (equal '(a x b c)
+                 (doom-modeline--insert-segment-in-list '(a b c) 'b 'x :before)))
+  (should (equal '(x a)
+                 (doom-modeline--insert-segment-in-list '(a) 'a 'x :before)))
+  (should (equal '(a x)
+                 (doom-modeline--insert-segment-in-list '(a) 'nonexistent 'x :before))))
+
+(ert-deftest doom-modeline--insert-segment-in-list/empty ()
+  "Test inserting into empty list."
+  (should (equal '(x)
+                 (doom-modeline--insert-segment-in-list nil 'anchor 'x :after))))
+
+(ert-deftest doom-modeline-add-segment/to-all-modelines ()
+  "Test adding segment to all modelines."
+  (setq doom-modeline-excluded-modelines nil)
+  (unwind-protect
+      (progn
+        ;; Use existing segments that are already defined in the package
+        ;; Define test modelines using existing segments
+        (doom-modeline-def-modeline 'test-main-seg
+          '(buffer-info buffer-info-simple)
+          '(major-mode time))
+        (doom-modeline-def-modeline 'test-minimal-seg
+          '(buffer-info)
+          '(major-mode))
+
+        ;; Add segment after buffer-info in all modelines
+        (doom-modeline-add-segment 'buffer-position 'buffer-info)
+
+        ;; Verify segment was added after buffer-info in both modelines
+        (should (member 'buffer-position
+                       (cadr (assq 'test-main-seg doom-modeline--modelines))))
+        (should (member 'buffer-position
+                       (cadr (assq 'test-minimal-seg doom-modeline--modelines)))))
+    (setq doom-modeline-excluded-modelines nil)))
+
+(ert-deftest doom-modeline-add-segment/to-specific-modeline ()
+  "Test adding segment to a specific modeline only."
+  (setq doom-modeline-excluded-modelines nil)
+  (unwind-protect
+      (progn
+        ;; Define test modelines using existing segments
+        (doom-modeline-def-modeline 'test-main2-seg
+          '(buffer-info buffer-info-simple)
+          '(major-mode))
+        (doom-modeline-def-modeline 'test-minimal2-seg
+          '(buffer-info)
+          '(major-mode))
+
+        ;; Add segment only to test-main2
+        (doom-modeline-add-segment 'buffer-position 'buffer-info :after 'test-main2-seg)
+
+        ;; Verify segment was added only to test-main2
+        (should (member 'buffer-position
+                       (cadr (assq 'test-main2-seg doom-modeline--modelines))))
+        ;; test-minimal2 should NOT have the segment
+        (should-not (member 'buffer-position
+                           (cadr (assq 'test-minimal2-seg doom-modeline--modelines)))))
+    (setq doom-modeline-excluded-modelines nil)))
+
+(ert-deftest doom-modeline-add-segment/before-position ()
+  "Test adding segment before anchor."
+  (setq doom-modeline-excluded-modelines nil)
+  (unwind-protect
+      (progn
+        (doom-modeline-def-modeline 'test-main3-seg
+          '(buffer-info buffer-info-simple)
+          '(major-mode))
+
+        ;; Add segment before buffer-info
+        (doom-modeline-add-segment 'buffer-position 'buffer-info :before)
+
+        ;; Verify segment was added before buffer-info
+        (let ((lhs (cadr (assq 'test-main3-seg doom-modeline--modelines))))
+          (should (equal (car lhs) 'buffer-position))
+          (should (equal (cadr lhs) 'buffer-info))))
+    (setq doom-modeline-excluded-modelines nil)))
+
+(ert-deftest doom-modeline-add-segment/excluded-modelines ()
+  "Test that excluded modelines are not modified."
+  (setq doom-modeline-excluded-modelines '(test-minimal4-seg))
+  (unwind-protect
+      (progn
+        (doom-modeline-def-modeline 'test-main4-seg
+          '(buffer-info)
+          '(major-mode))
+        (doom-modeline-def-modeline 'test-minimal4-seg
+          '(buffer-info)
+          '(major-mode))
+
+        ;; Add segment to all modelines
+        (doom-modeline-add-segment 'buffer-position 'buffer-info)
+
+        ;; test-main4 should have the segment
+        (should (member 'buffer-position
+                       (cadr (assq 'test-main4-seg doom-modeline--modelines))))
+        ;; test-minimal4 should NOT have the segment (it's excluded)
+        (should-not (member 'buffer-position
+                           (cadr (assq 'test-minimal4-seg doom-modeline--modelines)))))
+    (setq doom-modeline-excluded-modelines nil)))
+
+(ert-deftest doom-modeline-add-segment/to-rhs ()
+  "Test adding segment to RHS when anchor is in RHS."
+  (setq doom-modeline-excluded-modelines nil)
+  (unwind-protect
+      (progn
+        (doom-modeline-def-modeline 'test-main5-seg
+          '(buffer-info)
+          '(major-mode time))
+
+        ;; Add segment after major-mode (which is in RHS)
+        (doom-modeline-add-segment 'buffer-position 'major-mode :after)
+
+        ;; Verify segment was added to RHS after major-mode
+        (let ((rhs (caddr (assq 'test-main5-seg doom-modeline--modelines))))
+          (should (equal rhs '(major-mode buffer-position time)))))
+    (setq doom-modeline-excluded-modelines nil)))
+
+(ert-deftest doom-modeline-add-segment/to-both-lhs-and-rhs ()
+  "Test adding segment when anchor exists in both LHS and RHS."
+  (setq doom-modeline-excluded-modelines nil)
+  (unwind-protect
+      (progn
+        (doom-modeline-def-modeline 'test-main6-seg
+          '(buffer-info time)
+          '(time major-mode))
+
+        ;; Add segment after time (which exists in both LHS and RHS)
+        (doom-modeline-add-segment 'buffer-position 'time :after)
+
+        ;; Verify segment was added to both LHS and RHS after time
+        (let ((lhs (cadr (assq 'test-main6-seg doom-modeline--modelines)))
+              (rhs (caddr (assq 'test-main6-seg doom-modeline--modelines))))
+          (should (equal lhs '(buffer-info time buffer-position)))
+          (should (equal rhs '(time buffer-position major-mode)))))
+    (setq doom-modeline-excluded-modelines nil)))
 
 ;;; doom-modeline-core-test.el ends here
