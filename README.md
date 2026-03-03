@@ -513,6 +513,23 @@ Function: `doom-modeline-add-segment SEGMENT ANCHOR &optional POSITION MODELINE`
 - `POSITION`: Can be `:before` or `:after` (default: `:after`)
 - `MODELINE`: A modeline name (symbol) to add to a specific modeline, or `nil`/`'all` to add to all modelines (respecting `doom-modeline-excluded-modelines`)
 
+### Removing Segments from Modelines
+
+- Use `doom-modeline-remove-segment` to remove a segment from modelines:
+
+```emacs-lisp
+;; Remove segment from all modelines
+(doom-modeline-remove-segment 'evil-state)
+
+;; Remove segment from a specific modeline only
+(doom-modeline-remove-segment 'evil-state 'main)
+```
+
+Function: `doom-modeline-remove-segment SEGMENT &optional MODELINE`
+
+- `SEGMENT`: The segment name to remove (a symbol)
+- `MODELINE`: A modeline name (symbol) to remove from a specific modeline, or `nil`/`'all` to remove from all modelines (respecting `doom-modeline-excluded-modelines`)
+
 ## FAQ
 
 1. How to display icons correctly?

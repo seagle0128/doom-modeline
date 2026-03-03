@@ -1400,6 +1400,16 @@ Returns the modified list."
          (cons (car list)
                (doom-modeline--insert-segment-in-list (cdr list) anchor segment position)))))
 
+(defun doom-modeline--remove-segment-from-list (list segment)
+  "Remove SEGMENT from LIST.
+Returns the modified list."
+  (cond ((null list) nil)
+        ((eq (car list) segment)
+         (doom-modeline--remove-segment-from-list (cdr list) segment))
+        (t
+         (cons (car list)
+               (doom-modeline--remove-segment-from-list (cdr list) segment)))))
+
 (defun doom-modeline-add-segment (segment anchor &optional position modeline)
   "Add SEGMENT to modeline(s) relative to ANCHOR segment.
 SEGMENT is the segment name to add (a symbol).
@@ -1427,6 +1437,34 @@ when adding to all modelines."
               (when (memq anchor rhs)
                 (setq new-rhs (doom-modeline--insert-segment-in-list rhs anchor segment
                                                                      (or position :after))))
+              ;; Only redefine if at least one list was modified
+              (when (or (not (eq new-lhs lhs))
+                        (not (eq new-rhs rhs)))
+                (doom-modeline-def-modeline name new-lhs new-rhs)))))))))
+
+(defun doom-modeline-remove-segment (segment &optional modeline)
+  "Remove SEGMENT from modeline(s).
+SEGMENT is the segment name to remove (a symbol).
+MODELINE can be a modeline name (symbol) to remove from a specific modeline,
+or nil/'all to remove from all modelines (respecting `doom-modeline-excluded-modelines').
+
+Modelines listed in `doom-modeline-excluded-modelines' are not modified
+when removing segments programmatically."
+  (let ((modelines (if (or (null modeline) (eq modeline 'all))
+                       doom-modeline--modelines
+                     (list (assq modeline doom-modeline--modelines)))))
+    (dolist (modeline-def modelines)
+      (when modeline-def
+        (pcase-let ((`(,name . (,lhs ,rhs)) modeline-def))
+          (unless (memq name doom-modeline-excluded-modelines)
+            (let ((new-lhs lhs)
+                  (new-rhs rhs))
+              ;; Try to remove from LHS
+              (when (memq segment lhs)
+                (setq new-lhs (doom-modeline--remove-segment-from-list lhs segment)))
+              ;; Try to remove from RHS
+              (when (memq segment rhs)
+                (setq new-rhs (doom-modeline--remove-segment-from-list rhs segment)))
               ;; Only redefine if at least one list was modified
               (when (or (not (eq new-lhs lhs))
                         (not (eq new-rhs rhs)))

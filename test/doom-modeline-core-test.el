@@ -502,4 +502,140 @@
           (should (equal rhs '(time buffer-position major-mode)))))
     (setq doom-modeline-excluded-modelines nil)))
 
+;;
+;; Tests for doom-modeline-remove-segment
+;;
+
+(ert-deftest doom-modeline--remove-segment-from-list ()
+  "Test removing segment from list."
+  (should (equal '(a b c)
+                 (doom-modeline--remove-segment-from-list '(a b c d) 'd)))
+  (should (equal '(b c)
+                 (doom-modeline--remove-segment-from-list '(a b c) 'a)))
+  (should (equal '(a c)
+                 (doom-modeline--remove-segment-from-list '(a b c) 'b)))
+  (should (equal '(a b c)
+                 (doom-modeline--remove-segment-from-list '(a b c) 'nonexistent)))
+  (should (equal nil
+                 (doom-modeline--remove-segment-from-list '(a) 'a)))
+  (should (equal nil
+                 (doom-modeline--remove-segment-from-list nil 'a))))
+
+(ert-deftest doom-modeline-remove-segment/from-lhs ()
+  "Test removing segment from LHS."
+  (setq doom-modeline-excluded-modelines nil)
+  (unwind-protect
+      (progn
+        (doom-modeline-def-modeline 'test-remove-lhs
+          '(buffer-info buffer-position buffer-info-simple)
+          '(major-mode))
+
+        ;; Remove buffer-position from LHS
+        (doom-modeline-remove-segment 'buffer-position)
+
+        ;; Verify segment was removed from LHS
+        (let ((lhs (cadr (assq 'test-remove-lhs doom-modeline--modelines))))
+          (should (equal lhs '(buffer-info buffer-info-simple)))))
+    (setq doom-modeline-excluded-modelines nil)))
+
+(ert-deftest doom-modeline-remove-segment/from-rhs ()
+  "Test removing segment from RHS."
+  (setq doom-modeline-excluded-modelines nil)
+  (unwind-protect
+      (progn
+        (doom-modeline-def-modeline 'test-remove-rhs
+          '(buffer-info)
+          '(major-mode time buffer-position))
+
+        ;; Remove buffer-position from RHS
+        (doom-modeline-remove-segment 'buffer-position)
+
+        ;; Verify segment was removed from RHS
+        (let ((rhs (caddr (assq 'test-remove-rhs doom-modeline--modelines))))
+          (should (equal rhs '(major-mode time)))))
+    (setq doom-modeline-excluded-modelines nil)))
+
+(ert-deftest doom-modeline-remove-segment/from-both-sides ()
+  "Test removing segment from both LHS and RHS."
+  (setq doom-modeline-excluded-modelines nil)
+  (unwind-protect
+      (progn
+        (doom-modeline-def-modeline 'test-remove-both
+          '(buffer-info time)
+          '(time major-mode))
+
+        ;; Remove time from both sides
+        (doom-modeline-remove-segment 'time)
+
+        ;; Verify segment was removed from both LHS and RHS
+        (let ((lhs (cadr (assq 'test-remove-both doom-modeline--modelines)))
+              (rhs (caddr (assq 'test-remove-both doom-modeline--modelines))))
+          (should (equal lhs '(buffer-info)))
+          (should (equal rhs '(major-mode)))))
+    (setq doom-modeline-excluded-modelines nil)))
+
+(ert-deftest doom-modeline-remove-segment/to-specific-modeline ()
+  "Test removing segment from a specific modeline only."
+  (setq doom-modeline-excluded-modelines nil)
+  (unwind-protect
+      (progn
+        (doom-modeline-def-modeline 'test-remove-specific1
+          '(buffer-info buffer-position)
+          '(major-mode))
+        (doom-modeline-def-modeline 'test-remove-specific2
+          '(buffer-info buffer-position)
+          '(major-mode))
+
+        ;; Remove segment only from test-remove-specific1
+        (doom-modeline-remove-segment 'buffer-position 'test-remove-specific1)
+
+        ;; Verify segment was removed only from test-remove-specific1
+        (let ((lhs1 (cadr (assq 'test-remove-specific1 doom-modeline--modelines)))
+              (lhs2 (cadr (assq 'test-remove-specific2 doom-modeline--modelines))))
+          (should (equal lhs1 '(buffer-info)))
+          (should (equal lhs2 '(buffer-info buffer-position)))))
+    (setq doom-modeline-excluded-modelines nil)))
+
+(ert-deftest doom-modeline-remove-segment/excluded-modelines ()
+  "Test that excluded modelines are not modified."
+  (setq doom-modeline-excluded-modelines '(test-remove-excluded))
+  (unwind-protect
+      (progn
+        (doom-modeline-def-modeline 'test-remove-main
+          '(buffer-info buffer-position)
+          '(major-mode))
+        (doom-modeline-def-modeline 'test-remove-excluded
+          '(buffer-info buffer-position)
+          '(major-mode))
+
+        ;; Remove segment from all modelines
+        (doom-modeline-remove-segment 'buffer-position)
+
+        ;; test-remove-main should have segment removed
+        (let ((lhs-main (cadr (assq 'test-remove-main doom-modeline--modelines))))
+          (should (equal lhs-main '(buffer-info))))
+        ;; test-remove-excluded should NOT have segment removed (it's excluded)
+        (let ((lhs-excluded (cadr (assq 'test-remove-excluded doom-modeline--modelines))))
+          (should (equal lhs-excluded '(buffer-info buffer-position)))))
+    (setq doom-modeline-excluded-modelines nil)))
+
+(ert-deftest doom-modeline-remove-segment/not-found ()
+  "Test removing segment that doesn't exist."
+  (setq doom-modeline-excluded-modelines nil)
+  (unwind-protect
+      (progn
+        (doom-modeline-def-modeline 'test-remove-not-found
+          '(buffer-info buffer-info-simple)
+          '(major-mode time))
+
+        ;; Try to remove non-existent segment
+        (doom-modeline-remove-segment 'nonexistent-segment)
+
+        ;; Modeline should be unchanged
+        (let ((lhs (cadr (assq 'test-remove-not-found doom-modeline--modelines)))
+              (rhs (caddr (assq 'test-remove-not-found doom-modeline--modelines))))
+          (should (equal lhs '(buffer-info buffer-info-simple)))
+          (should (equal rhs '(major-mode time)))))
+    (setq doom-modeline-excluded-modelines nil)))
+
 ;;; doom-modeline-core-test.el ends here
