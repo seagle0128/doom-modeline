@@ -37,21 +37,21 @@
 ;; outdated versions of `project'.
 (load "project")
 
-;; (ert-deftest doom-modeline-icon/octicon-icon ()
-;;   (let ((doom-modeline-icon t)
-;;         (doom-modeline-unicode-fallback t))
-;;     ;; In TUI, fallback to unicode.
-;;     (should
-;;      (string= (substring-no-properties
-;;                (doom-modeline-icon 'octicon "nf-oct-octoface" "☻" ":)" :face 'error))
-;;               (nerd-icons-octicon "nf-oct-octoface")))))
+(ert-deftest doom-modeline-icon/octicon-icon ()
+  (let ((doom-modeline-icon t)
+        (doom-modeline-unicode-fallback t))
+    ;; In TUI, fallback to unicode.
+    (should
+     (string= (substring-no-properties
+               (doom-modeline-icon 'octicon "nf-oct-smiley" "☻" ":)" :face 'error))
+              ""))))
 
 (ert-deftest doom-modeline-icon/octicon-unicode ()
   (let ((doom-modeline-icon nil)
         (doom-modeline-unicode-fallback t))
     (should
      (string= (substring-no-properties
-               (doom-modeline-icon 'octicon "nf-oct-octoface" "☻" ":)" :face 'warning))
+               (doom-modeline-icon 'octicon "nf-oct-smiley" "☻" ":)" :face 'warning))
               "☻"))))
 
 (ert-deftest doom-modeline-icon/octicon-text ()
@@ -59,7 +59,7 @@
         (doom-modeline-unicode-fallback nil))
     (should
      (string= (substring-no-properties
-               (doom-modeline-icon 'octicon "nf-oct-octoface" "☻" ":)" :face 'success))
+               (doom-modeline-icon 'octicon "nf-oct-smiley" "☻" ":)" :face 'success))
               ":)"))))
 
 (ert-deftest doom-modeline-project-root/auto ()
