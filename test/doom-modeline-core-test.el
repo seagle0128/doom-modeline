@@ -341,7 +341,7 @@
                 "project/relative/test.txt")))))
 
 (ert-deftest doom-modeline-enable-buffer-position/test ()
-  "Test that doom-modeline-enable-buffer-position is defined correctly."
+  "Test that `doom-modeline-enable-buffer-position' is defined correctly."
   ;; Test that the variable exists and defaults to t
   (should (boundp 'doom-modeline-enable-buffer-position))
   (should doom-modeline-enable-buffer-position)
@@ -349,6 +349,153 @@
   ;; Test that it can be set to nil
   (let ((doom-modeline-enable-buffer-position nil))
     (should-not doom-modeline-enable-buffer-position)))
+
+;;
+;; Tests for doom-modeline-def-segment
+;;
+
+(ert-deftest doom-modeline-def-segment/function-segment ()
+  "Test defining a function-based segment."
+  (let ((doom-modeline--fn-alist nil)
+        (doom-modeline--var-alist nil))
+    (unwind-protect
+        (progn
+          ;; Define a function segment
+          (doom-modeline-def-segment test-func-seg
+            "Test segment that returns a string."
+            "test-value")
+
+          ;; Should be added to fn-alist
+          (should (assoc 'test-func-seg doom-modeline--fn-alist))
+          ;; Should create a function
+          (should (fboundp (cdr (assoc 'test-func-seg doom-modeline--fn-alist))))
+          ;; Function should return the value
+          (should (string= "test-value"
+                           (funcall (cdr (assoc 'test-func-seg doom-modeline--fn-alist))))))
+      (setq doom-modeline--fn-alist nil
+            doom-modeline--var-alist nil))))
+
+(ert-deftest doom-modeline-def-segment/variable-segment ()
+  "Test defining a variable reference segment."
+  (let ((doom-modeline--fn-alist nil)
+        (doom-modeline--var-alist nil))
+    (unwind-protect
+        (progn
+          ;; Define a variable segment (just a symbol, no body)
+          (doom-modeline-def-segment test-var-seg buffer-info)
+
+          ;; Should be added to var-alist, not fn-alist
+          (should-not (assoc 'test-var-seg doom-modeline--fn-alist))
+          (should (assoc 'test-var-seg doom-modeline--var-alist))
+          (should (eq (cdr (assoc 'test-var-seg doom-modeline--var-alist)) 'buffer-info)))
+      (setq doom-modeline--fn-alist nil
+            doom-modeline--var-alist nil))))
+
+(ert-deftest doom-modeline-def-segment/with-docstring ()
+  "Test defining a segment with docstring."
+  (let ((doom-modeline--fn-alist nil)
+        (doom-modeline--var-alist nil))
+    (unwind-protect
+        (progn
+          (doom-modeline-def-segment test-doc-seg
+            "This is the docstring."
+            "value")
+
+          ;; Check the function has the docstring
+          (let ((fn (cdr (assoc 'test-doc-seg doom-modeline--fn-alist))))
+            (should (string= (documentation fn) "This is the docstring."))))
+      (setq doom-modeline--fn-alist nil
+            doom-modeline--var-alist nil))))
+
+;;
+;; Tests for doom-modeline-def-modeline
+;;
+
+(ert-deftest doom-modeline-def-modeline/basic ()
+  "Test defining a basic modeline."
+  (let ((doom-modeline--modelines nil))
+    (unwind-protect
+        (progn
+          (doom-modeline-def-modeline 'test-basic-modeline
+            '(buffer-info)
+            '(major-mode))
+
+          ;; Should be registered in modelines
+          (should (assoc 'test-basic-modeline doom-modeline--modelines))
+          ;; Should have correct lhs and rhs
+          (let ((def (assoc 'test-basic-modeline doom-modeline--modelines)))
+            (should (equal (cadr def) '(buffer-info)))
+            (should (equal (caddr def) '(major-mode)))))
+      (setq doom-modeline--modelines nil))))
+
+(ert-deftest doom-modeline-def-modeline/lhs-only ()
+  "Test defining a modeline with only LHS."
+  (let ((doom-modeline--modelines nil))
+    (unwind-protect
+        (progn
+          (doom-modeline-def-modeline 'test-lhs-only
+            '(buffer-info))
+
+          (let ((def (assoc 'test-lhs-only doom-modeline--modelines)))
+            (should (equal (cadr def) '(buffer-info)))
+            (should (equal (caddr def) nil))))
+      (setq doom-modeline--modelines nil))))
+
+(ert-deftest doom-modeline-def-modeline/empty-rhs ()
+  "Test defining a modeline with empty RHS."
+  (let ((doom-modeline--modelines nil))
+    (unwind-protect
+        (progn
+          (doom-modeline-def-modeline 'test-empty-rhs
+            '(buffer-info)
+            nil)
+
+          (let ((def (assoc 'test-empty-rhs doom-modeline--modelines)))
+            (should (equal (cadr def) '(buffer-info)))
+            (should (equal (caddr def) nil))))
+      (setq doom-modeline--modelines nil))))
+
+(ert-deftest doom-modeline-def-modeline/update-existing ()
+  "Test updating an existing modeline definition."
+  (let ((doom-modeline--modelines nil))
+    (unwind-protect
+        (progn
+          ;; Define initial modeline
+          (doom-modeline-def-modeline 'test-update
+            '(buffer-info)
+            '(major-mode))
+
+          ;; Update it
+          (doom-modeline-def-modeline 'test-update
+            '(buffer-info buffer-position)
+            '(major-mode time))
+
+          ;; Should be updated, not duplicated
+          (let ((count 0))
+            (dolist (def doom-modeline--modelines)
+              (when (eq (car def) 'test-update)
+                (cl-incf count)))
+            (should (= count 1)))
+
+          ;; Should have new values
+          (let ((def (assoc 'test-update doom-modeline--modelines)))
+            (should (equal (cadr def) '(buffer-info buffer-position)))
+            (should (equal (caddr def) '(major-mode time)))))
+      (setq doom-modeline--modelines nil))))
+
+(ert-deftest doom-modeline-def-modeline/multiple-segments ()
+  "Test defining a modeline with multiple segments."
+  (let ((doom-modeline--modelines nil))
+    (unwind-protect
+        (progn
+          (doom-modeline-def-modeline 'test-multi
+            '(bar buffer-info buffer-info-simple matches)
+            '(major-mode time buffer-encoding))
+
+          (let ((def (assoc 'test-multi doom-modeline--modelines)))
+            (should (equal (cadr def) '(bar buffer-info buffer-info-simple matches)))
+            (should (equal (caddr def) '(major-mode time buffer-encoding)))))
+      (setq doom-modeline--modelines nil))))
 
 ;;
 ;; Tests for doom-modeline-add-segment
@@ -396,9 +543,9 @@
 
         ;; Verify segment was added after buffer-info in both modelines
         (should (member 'buffer-position
-                       (cadr (assq 'test-main-seg doom-modeline--modelines))))
+                        (cadr (assq 'test-main-seg doom-modeline--modelines))))
         (should (member 'buffer-position
-                       (cadr (assq 'test-minimal-seg doom-modeline--modelines)))))
+                        (cadr (assq 'test-minimal-seg doom-modeline--modelines)))))
     (setq doom-modeline-excluded-modelines nil)))
 
 (ert-deftest doom-modeline-add-segment/to-specific-modeline ()
@@ -419,10 +566,10 @@
 
         ;; Verify segment was added only to test-main2
         (should (member 'buffer-position
-                       (cadr (assq 'test-main2-seg doom-modeline--modelines))))
+                        (cadr (assq 'test-main2-seg doom-modeline--modelines))))
         ;; test-minimal2 should NOT have the segment
         (should-not (member 'buffer-position
-                           (cadr (assq 'test-minimal2-seg doom-modeline--modelines)))))
+                            (cadr (assq 'test-minimal2-seg doom-modeline--modelines)))))
     (setq doom-modeline-excluded-modelines nil)))
 
 (ert-deftest doom-modeline-add-segment/before-position ()
@@ -460,10 +607,10 @@
 
         ;; test-main4 should have the segment
         (should (member 'buffer-position
-                       (cadr (assq 'test-main4-seg doom-modeline--modelines))))
+                        (cadr (assq 'test-main4-seg doom-modeline--modelines))))
         ;; test-minimal4 should NOT have the segment (it's excluded)
         (should-not (member 'buffer-position
-                           (cadr (assq 'test-minimal4-seg doom-modeline--modelines)))))
+                            (cadr (assq 'test-minimal4-seg doom-modeline--modelines)))))
     (setq doom-modeline-excluded-modelines nil)))
 
 (ert-deftest doom-modeline-add-segment/to-rhs ()
