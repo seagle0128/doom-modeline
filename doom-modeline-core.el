@@ -1416,7 +1416,8 @@ SEGMENT is the segment name to add (a symbol).
 ANCHOR is the segment name to anchor to (a symbol).
 POSITION can be :before or :after (default: :after).
 MODELINE can be a modeline name (symbol) to add to a specific modeline,
-or nil/'all to add to all modelines (respecting `doom-modeline-excluded-modelines').
+or nil/'all to add to all modelines (respecting
+`doom-modeline-excluded-modelines').
 
 Modelines listed in `doom-modeline-excluded-modelines' are not modified
 when adding to all modelines."
@@ -1446,7 +1447,8 @@ when adding to all modelines."
   "Remove SEGMENT from modeline(s).
 SEGMENT is the segment name to remove (a symbol).
 MODELINE can be a modeline name (symbol) to remove from a specific modeline,
-or nil/'all to remove from all modelines (respecting `doom-modeline-excluded-modelines').
+or nil/'all to remove from all modelines (respecting
+`doom-modeline-excluded-modelines').
 
 Modelines listed in `doom-modeline-excluded-modelines' are not modified
 when removing segments programmatically."
