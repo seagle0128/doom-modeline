@@ -1540,9 +1540,12 @@ The result is cached per-frame to avoid expensive calculations during redisplay.
       ;; Else, recalculate and update cache for this frame
       (let* ((base-char-height (window-font-height nil 'mode-line)) ; Use window-font-height in the context of the frame/window
              (new-height (round
-                          (* 1.0 (cond ((integerp current-face-height-attr) (/ current-face-height-attr 10.0)) ; Ensure float division
-                                       ((floatp current-face-height-attr) (* current-face-height-attr base-char-height))
-                                       (t base-char-height))))))
+                          (* 1.0 (cond
+                                  ((integerp current-face-height-attr)
+                                   (/ current-face-height-attr 10.0)) ; Ensure float division
+                                  ((floatp current-face-height-attr)
+                                   (* current-face-height-attr base-char-height))
+                                  (t base-char-height))))))
         ;; Update cache for the current frame
         (puthash frame (cons new-height current-face-height-attr) doom-modeline--font-height-cache)
         new-height))))
