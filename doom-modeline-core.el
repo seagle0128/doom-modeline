@@ -1030,7 +1030,7 @@ Also see the face `doom-modeline-unread-number'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-workspace-name
-  '((t (:inherit (doom-modeline-emphasis bold))))
+  '((t (:inherit (doom-modeline-panel bold))))
   "Face for the workspace name."
   :group 'doom-modeline-faces)
 
