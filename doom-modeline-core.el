@@ -653,7 +653,7 @@ Including `evil', `overwrite', `god', `ryo' and `xah-fly-keys', etc."
   :type 'boolean
   :group 'doom-modeline)
 
-(defcustom doom-modeline-modal-icon t
+(defcustom doom-modeline-modal-icon nil
   "Whether display the modal state icon.
 
 Including `evil', `overwrite', `god', `ryo' and `xah-fly-keys', etc."
@@ -1612,7 +1612,7 @@ ARGS is same as `nerd-icons-octicon' and others."
       (propertize unicode 'face face))
      ;; ASCII text
      (text
-      (propertize text 'face face))
+      (propertize text 'face `(:inherit ,face :inverse-video t)))
      ;; Fallback
      (t ""))))
 
