@@ -38,7 +38,7 @@ The `doom-modeline` was designed for minimalism, and offers:
 - A customizable mode-line height (see `doom-modeline-height`)
 - A minor modes segment which is compatible with `minions`
 - An error/warning count segment for `flymake`/`flycheck`
-- A workspace number/name segment for `eyebrowse` or `tab-bar-mode`
+- A workspace name segment for `eyebrowse`/`tab-bar-mode`
 - A perspective name segment for `persp-mode`
 - A window number segment for `ace-window`, `winum` and `window-numbering`
 - An indicator for modal editing state, including `evil`, `overwrite`, `god`, `ryo` and

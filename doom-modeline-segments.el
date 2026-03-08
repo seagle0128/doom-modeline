@@ -1715,7 +1715,7 @@ Keymap for what is displayed by `mode-line-window-dedicated'."))
 ;;
 
 (doom-modeline-def-segment workspace-name
-  "The current workspace name or number.
+  "The current workspace name.
 Requires `eyebrowse-mode' to be enabled or `tab-bar-mode' tabs to be created."
   (when (and doom-modeline-workspace-name
              (not doom-modeline--limited-width-p))

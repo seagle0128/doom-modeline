@@ -40,7 +40,7 @@
 ;; - A customizable mode-line height (see doom-modeline-height)
 ;; - A minor modes segment which is compatible with minions
 ;; - An error/warning count segment for flymake/flycheck
-;; - A workspace number segment for eyebrowse
+;; - A workspace name segment for eyebrowse/tab-bar
 ;; - A perspective name segment for persp-mode
 ;; - A window number segment for winum and window-numbering
 ;; - An indicator for modal editing state, including evil, overwrite, god, ryo
