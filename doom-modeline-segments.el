@@ -1936,11 +1936,15 @@ TEXT is alternative if icon is not available."
                                            (face    . doom-modeline-evil-user-state)
                                            (icon    . "nf-md-alpha_u_circle")
                                            (unicode . "🅤"))))
-      (doom-modeline--modal-icon .text
-                                 .face
-                                 (evil-state-property evil-state :name t)
-                                 .icon
-                                 .unicode))))
+      (doom-modeline--modal-icon
+       (if doom-modeline-modal-use-evil-tag
+           (let ((tag (evil-state-property evil-state :tag t)))
+             (if (stringp tag) tag (funcall tag)))
+         .text)
+       .face
+       (evil-state-property evil-state :name t)
+       .icon
+       .unicode))))
 
 (defsubst doom-modeline--overwrite ()
   "The current overwrite state which is enabled by command `overwrite-mode'."
