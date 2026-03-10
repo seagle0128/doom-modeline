@@ -1617,7 +1617,7 @@ ARGS is same as `nerd-icons-octicon' and others."
       (propertize unicode 'face face))
      ;; ASCII text
      (text
-      (propertize text 'face `(:inherit ,face :inverse-video t)))
+      (propertize text 'face face))
      ;; Fallback
      (t ""))))
 
