@@ -1947,14 +1947,14 @@ TEXT is alternative if icon is not available."
              (not (bound-and-true-p evil-local-mode)))
     (doom-modeline--modal-icon
      "<W>" 'doom-modeline-overwrite "Overwrite mode"
-     "nf-md-marker" "🅦")))
+     "nf-md-marker" "✍")))
 
 (defsubst doom-modeline--god ()
   "The current god state which is enabled by the command `god-mode'."
   (when (bound-and-true-p god-local-mode)
     (doom-modeline--modal-icon
      "<G>" 'doom-modeline-god "God mode"
-     "nf-md-account_circle" "🅖")))
+     "nf-md-account_circle" "🙏")))
 
 (defsubst doom-modeline--ryo ()
   "The current ryo-modal state which is enabled by the command `ryo-modal-mode'."
