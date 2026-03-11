@@ -363,9 +363,6 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether display the modern icons for modals.
 (setq doom-modeline-modal-modern-icon t)
 
-;; Whether use the tag of evil state.
-(setq doom-modeline-modal-use-evil-tag nil)
-
 ;; When non-nil, always show the register name when recording an evil macro.
 (setq doom-modeline-always-show-macro-register nil)
 

@@ -665,11 +665,6 @@ Including `evil', `overwrite', `god', `ryo' and `xah-fly-keys', etc."
   :type 'boolean
   :group 'doom-modeline)
 
-(defcustom doom-modeline-modal-use-evil-tag nil
-  "Whether use the tag of evil state."
-  :type 'boolean
-  :group 'doom-modeline)
-
 (defcustom doom-modeline-always-show-macro-register nil
   "When non-nil, always show the register name when recording an evil macro."
   :type 'boolean
