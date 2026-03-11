@@ -653,7 +653,7 @@ Including `evil', `overwrite', `god', `ryo' and `xah-fly-keys', etc."
   :type 'boolean
   :group 'doom-modeline)
 
-(defcustom doom-modeline-modal-icon nil
+(defcustom doom-modeline-modal-icon t
   "Whether display the modal state icon.
 
 Including `evil', `overwrite', `god', `ryo' and `xah-fly-keys', etc."
@@ -1030,7 +1030,7 @@ Also see the face `doom-modeline-unread-number'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-workspace-name
-  '((t (:inherit (doom-modeline-panel bold))))
+  '((t (:inherit (doom-modeline-emphasis bold))))
   "Face for the workspace name."
   :group 'doom-modeline-faces)
 
