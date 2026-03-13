@@ -853,7 +853,7 @@ This applies to `anzu', `evil-substitute', `iedit' etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-host
-  '((t (:inherit (doom-modeline mode-line italic))))
+  '((t (:inherit (doom-modeline italic))))
   "Face for remote hosts in the mode-line."
   :group 'doom-modeline-faces)
 
@@ -894,12 +894,12 @@ Also see the face `doom-modeline-unread-number'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-unread-number
-  '((t (:inherit (doom-modeline mode-line italic))))
+  '((t (:inherit doom-modeline :slant italic)))
   "Face for unread number in the mode-line. Used by GitHub, mu4e, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-bar
-  '((t (:inherit (doom-modeline doom-modeline-highlight))))
+  '((t (:inherit doom-modeline-highlight)))
   "The face used for the left-most bar in the mode-line of an active window."
   :group 'doom-modeline-faces)
 
@@ -1112,7 +1112,7 @@ Which are not explicitly listed in `doom-modeline-vcs-state-faces-alist'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-time
-  '((t (:inherit (doom-modeline mode-line))))
+  '((t (:inherit doom-modeline)))
   "Face for display time."
   :group 'doom-modeline-faces)
 
