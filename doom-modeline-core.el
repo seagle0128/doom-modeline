@@ -1092,7 +1092,7 @@ Which are not explicitly listed in `doom-modeline-vcs-state-faces-alist'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-battery-normal
-  '((t (:inherit (doom-modeline mode-line))))
+  '((t (:inherit doom-modeline)))
   "Face for battery normal status."
   :group 'doom-modeline-faces)
 
