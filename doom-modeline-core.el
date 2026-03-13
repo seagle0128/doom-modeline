@@ -812,7 +812,7 @@ If nil, display only if the mode line is active."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-buffer-file
-  '((t (:inherit (doom-modeline mode-line bold))))
+  '((t (:inherit (doom-modeline mode-line-buffer-id bold))))
   "Face used for the filename part of the mode-line buffer path."
   :group 'doom-modeline-faces)
 
