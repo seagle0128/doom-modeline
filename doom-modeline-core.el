@@ -1500,16 +1500,17 @@ when removing segments programmatically."
 IF FACE is nil, `mode-line' face will be used.
 If INACTIVE-FACE is nil, `mode-line-inactive' face will be used."
   (if (doom-modeline--active)
-      (or (and (facep face) `(:inherit (doom-modeline ,face)))
-          (and (facep 'mode-line-active) '(:inherit (doom-modeline mode-line-active)))
-          '(:inherit (doom-modeline mode-line)))
-    (or (and (facep inactive-face) `(:inherit (doom-modeline ,inactive-face)))
-        '(:inherit (doom-modeline mode-line-inactive)))))
+      `(:inherit (doom-modeline
+                  ,(cond ((facep face) face)
+                         ((facep 'mode-line-active) 'mode-line-active)
+                         (t 'mode-line))))
+    `(:inherit (doom-modeline
+                ,(if (facep inactive-face) inactive-face
+                   'mode-line-inactive)))))
 
 (defun doom-modeline-spc-face (&optional face)
   "Apply FACE or `doom-modeline-spc-face-overrides' to `doom-modeline-face'."
-  (append `(:inherit ,(doom-modeline-face))
-          (or face doom-modeline-spc-face-overrides)))
+  `(:inherit (,(doom-modeline-face) ,face ,doom-modeline-spc-face-overrides)))
 
 (defun doom-modeline-string-pixel-width (str)
   "Return the width of STR in pixels."
