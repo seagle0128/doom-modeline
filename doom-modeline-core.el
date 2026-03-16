@@ -1243,12 +1243,17 @@ used as an advice to window creation functions."
    (not doom-modeline--limited-width-p)))
 
 (defun doom-modeline-set-selected-window (&rest _)
-  "Set `doom-modeline-current-window' appropriately."
-  (setq doom-modeline-current-window
-        (let ((win (doom-modeline--selected-window)))
-          (if (minibuffer-window-active-p win)
-              (minibuffer-selected-window)
-            win))))
+  "Set `doom-modeline-current-window' appropriately.
+When the selected frame is a child frame (e.g. a posframe popup),
+unset `doom-modeline-current-window' so that all modelines in the
+parent frame render as inactive."
+  (if (and (fboundp 'frame-parent) (frame-parent (selected-frame)))
+      (doom-modeline-unset-selected-window)
+    (setq doom-modeline-current-window
+          (let ((win (doom-modeline--selected-window)))
+            (if (minibuffer-window-active-p win)
+                (minibuffer-selected-window)
+              win)))))
 
 (defun doom-modeline-unset-selected-window ()
   "Unset `doom-modeline-current-window' appropriately."
