@@ -1212,10 +1212,8 @@ used as an advice to window creation functions."
 
 ;; Keep `doom-modeline-current-window' up-to-date
 (defun doom-modeline--selected-window (&optional frame)
-  "Get the selected window of FRAME but should exclude the child windows."
-  (if (and (fboundp 'frame-parent) (frame-parent frame))
-      (frame-selected-window (frame-parent frame))
-    (frame-selected-window frame)))
+  "Get the selected window of FRAME."
+  (frame-selected-window frame))
 
 (defvar doom-modeline-current-window (doom-modeline--selected-window)
   "Current window.")
@@ -1238,17 +1236,12 @@ used as an advice to window creation functions."
    (not doom-modeline--limited-width-p)))
 
 (defun doom-modeline-set-selected-window (&rest _)
-  "Set `doom-modeline-current-window' appropriately.
-When the selected frame is a child frame (e.g. a posframe popup),
-unset `doom-modeline-current-window' so that all modelines in the
-parent frame render as inactive."
-  (if (and (fboundp 'frame-parent) (frame-parent (selected-frame)))
-      (doom-modeline-unset-selected-window)
-    (setq doom-modeline-current-window
-          (let ((win (doom-modeline--selected-window)))
-            (if (minibuffer-window-active-p win)
-                (minibuffer-selected-window)
-              win)))))
+  "Set `doom-modeline-current-window' appropriately."
+  (setq doom-modeline-current-window
+        (let ((win (doom-modeline--selected-window)))
+          (if (minibuffer-window-active-p win)
+              (minibuffer-selected-window)
+            win))))
 
 (defun doom-modeline-unset-selected-window ()
   "Unset `doom-modeline-current-window' appropriately."
