@@ -76,6 +76,7 @@
 (defvar evil-visual-end)
 (defvar evil-visual-selection)
 (defvar flycheck-current-errors)
+(defvar flycheck-last-status-change)
 (defvar flycheck-mode-menu-map)
 (defvar flymake--state)
 (defvar flymake-menu)
@@ -822,6 +823,10 @@ level."
 (defvar-local doom-modeline--flycheck nil)
 (defun doom-modeline-update-flycheck (&optional status)
   "Update flycheck via STATUS."
+  ;; `window-state-change-functions' will pass window or frame
+  (unless (and status (symbolp status))
+    (setq status flycheck-last-status-change))
+
   (setq doom-modeline--flycheck
         (when (bound-and-true-p flycheck-mode)
           (let-alist (doom-modeline--flycheck-count-errors)
@@ -884,7 +889,6 @@ level."
                                            (describe-function 'flycheck-mode)))
                                        map)))))))
 (add-hook 'flycheck-status-changed-functions #'doom-modeline-update-flycheck)
-(add-hook 'flycheck-mode-hook #'doom-modeline-update-flycheck)
 (add-hook 'window-state-change-functions #'doom-modeline-update-flycheck)
 
 (doom-modeline-add-variable-watcher
