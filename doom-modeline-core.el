@@ -721,6 +721,14 @@ It requires either `circe' , `erc' or `rcirc' package."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-irc-priority-only nil
+  "Only show IRC notifications for buffers matching a filter.
+This lets you filter out general channel activity and only show what matters to you.
+Requires `circe' and `tracking-faces-priorities' or `rcirc' and `rcirc-keywords'
+to be configured."
+  :type 'boolean
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-irc-stylize #'doom-modeline-shorten-irc
   "Which function to call to stylize IRC buffer names.
 

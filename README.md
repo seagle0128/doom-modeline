@@ -380,11 +380,14 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether groups should be excluded when gnus automatically being updated.
 (setq doom-modeline-gnus-excluded-groups '("dummy.group"))
 
-;; Whether display the IRC notifications. It requires `circe' or `erc' package.
+;; Whether display the IRC notifications. It requires `circe', `erc' or `rcirc' package.
 (setq doom-modeline-irc t)
 
 ;; Function to stylize the irc buffer names.
 (setq doom-modeline-irc-stylize 'identity)
+
+;; Whether to filter IRC notifications. It supports `circe' and `rcirc'.
+(setq doom-modeline-irc-priority-only nil)
 
 ;; Whether display the battery status. It respects `display-battery-mode'.
 (setq doom-modeline-battery t)
@@ -674,6 +677,12 @@ Function: `doom-modeline-remove-segment SEGMENT &optional MODELINE`
 
    The functionality requires the `async` and `ghub` packages, and make sure the token has
    permission to access the Github repositories.
+
+1. How to filter irc notifications to only mentions or keywords?
+
+   Use `doom-modeline-irc-priority-only` to enable and set up your filters with
+   `rcirc-keyword` for rcirc and `tracking-faces-priorities` for circe. ERC
+   support is not yet available see [#820](https://github.com/seagle0128/doom-modeline/pull/820).
 
 ## Donate
 
