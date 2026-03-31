@@ -2839,11 +2839,31 @@ read the individual functions documentation for more."
   "Check if `rcirc' is in use."
   (bound-and-true-p rcirc-track-minor-mode))
 
+(defun doom-modeline--circe-mention-buffers ()
+  "Return filtered 'circe' buffers based on variable 'tracking-faces-priorities'."
+  (if doom-modeline-irc-priority-only
+      (seq-filter
+       (lambda (buf)
+         (memq (get-text-property 0 'face buf)
+               tracking-faces-priorities))
+       tracking-buffers)
+    tracking-buffers))
+
+(defun doom-modeline--rcirc-mention-buffers ()
+  "Return filtered 'rcirc' buffers based on variable 'rcirc-keywords'."
+  (if doom-modeline-irc-priority-only
+      (seq-filter
+       (lambda (buf)
+         (with-current-buffer buf
+           (memq 'keyword rcirc-activity-types)))
+       rcirc-activity)
+    rcirc-activity))
+
 (defun doom-modeline--get-buffers ()
   "Gets the buffers that have activity."
   (cond
    ((doom-modeline--circe-p)
-    tracking-buffers)
+    (doom-modeline--circe-mention-buffers))
    ((doom-modeline--erc-p)
     (mapcar (lambda (l)
               (buffer-name (car l)))
@@ -2851,7 +2871,8 @@ read the individual functions documentation for more."
    ((doom-modeline--rcirc-p)
     (mapcar (lambda (b)
               (buffer-name b))
-            rcirc-activity))))
+            (doom-modeline--rcirc-mention-buffers)))
+   ))
 
 ;; Create a modeline segment that contains all the irc tracked buffers
 (doom-modeline-def-segment irc-buffers
