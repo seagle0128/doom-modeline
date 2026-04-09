@@ -107,10 +107,12 @@
 (defvar reader-current-doc-pagenumber)
 (defvar reader-current-doc-pagecount)
 (defvar rcirc-activity)
+(defvar rcirc-activity-types)
 (defvar symbol-overlay-keywords-alist)
 (defvar symbol-overlay-temp-symbol)
 (defvar text-scale-mode-amount)
 (defvar tracking-buffers)
+(defvar tracking-faces-priorities)
 (defvar visual-replace--calling-buffer)
 (defvar visual-replace--match-ovs)
 (defvar winum-auto-setup-mode-line)
@@ -2840,7 +2842,8 @@ read the individual functions documentation for more."
   (bound-and-true-p rcirc-track-minor-mode))
 
 (defun doom-modeline--circe-mention-buffers ()
-  "Return filtered 'circe' buffers based on variable 'tracking-faces-priorities'."
+  "Return filtered `circe' buffers.
+The return value is based on the variable `tracking-faces-priorities'."
   (if doom-modeline-irc-priority-only
       (seq-filter
        (lambda (buf)
@@ -2850,7 +2853,7 @@ read the individual functions documentation for more."
     tracking-buffers))
 
 (defun doom-modeline--rcirc-mention-buffers ()
-  "Return filtered 'rcirc' buffers based on variable 'rcirc-keywords'."
+  "Return filtered `rcirc' buffers based on variable `rcirc-keywords'."
   (if doom-modeline-irc-priority-only
       (seq-filter
        (lambda (buf)
