@@ -88,20 +88,20 @@ Must be set before loading `doom-modeline'."
   :group 'doom-modeline)
 
 (defcustom doom-modeline-height (+ (window-font-height nil 'mode-line) 4)
-  "How tall the mode-line should be. It's only respected in GUI.
+  "How tall the mode-line should be.  It's only respected in GUI.
 If the actual char height is larger, it respects the actual char height."
   :type 'integer
   :group 'doom-modeline)
 
 (defcustom doom-modeline-bar-width 4
-  "How wide the mode-line bar should be. It's only respected in GUI."
+  "How wide the mode-line bar should be.  It's only respected in GUI."
   :type 'integer
   :set (lambda (sym val)
          (set sym (if (> val 0) val 1)))
   :group 'doom-modeline)
 
 (defcustom doom-modeline-hud nil
-  "Whether to use hud instead of default bar. It's only respected in GUI."
+  "Whether to use hud instead of default bar.  It's only respected in GUI."
   :type 'boolean
   :group 'doom-modeline)
 
@@ -117,7 +117,7 @@ Only respected in GUI."
   "The limit of the window width.
 
 If `window-width' is smaller than the limit, some information won't be
-displayed. It can be an integer or a float number. nil means no limit."
+displayed.  It can be an integer or a float number.  nil means no limit."
   :type '(choice integer
                  float
                  (const :tag "Disable" nil))
@@ -139,7 +139,7 @@ See `defface' for possible attributes and values in this property list."
 nil means to use `default-directory'.
 
 The project management packages have some issues on detecting project root.
-e.g. `projectile' doesn't handle symlink folders well, while `project' is
+E.g., `projectile' doesn't handle symlink folders well, while `project' is
 unable to handle sub-projects.
 Specify another one if you encounter the issue."
   :type '(choice (const :tag "Auto-detect" auto)
@@ -601,12 +601,12 @@ Non-nil to display in the mode-line."
   :group 'doom-modeline)
 
 (defcustom doom-modeline-display-default-persp-name nil
-  "If non nil the default perspective name is displayed in the mode-line."
+  "If non-nil, the default perspective name is displayed in the mode-line."
   :type 'boolean
   :group 'doom-modeline)
 
 (defcustom doom-modeline-persp-icon t
-  "If non nil the perspective name is displayed alongside a folder icon."
+  "If non-nil, the perspective name is displayed alongside a folder icon."
   :type 'boolean
   :group 'doom-modeline)
 
@@ -627,7 +627,7 @@ Non-nil to display in the mode-line."
 (defcustom doom-modeline-github nil
   "Whether display the GitHub notifications.
 
-It requires `ghub' and `async' packages. Additionally, your GitHub personal
+It requires `ghub' and `async' packages.  Additionally, your GitHub personal
 access token must have `notifications' permissions.
 
 If you use `pass' to manage your secrets, you also need to add this hook:
@@ -877,33 +877,33 @@ This applies to `anzu', `evil-substitute', `iedit' etc."
 
 (defface doom-modeline-debug
   '((t (:inherit (doom-modeline font-lock-doc-face) :slant normal)))
-  "Face for debug-level messages in the mode-line. Used by vcs, check, etc."
+  "Face for debug-level messages in the mode-line.  Used by vcs, check, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-info
   '((t (:inherit (doom-modeline success))))
-  "Face for info-level messages in the mode-line. Used by vcs, check, etc."
+  "Face for info-level messages in the mode-line.  Used by vcs, check, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-warning
   '((t (:inherit (doom-modeline warning))))
-  "Face for warnings in the mode-line. Used by vcs, check, etc."
+  "Face for warnings in the mode-line.  Used by vcs, check, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-urgent
   '((t (:inherit (doom-modeline error))))
-  "Face for errors in the mode-line. Used by vcs, check, etc."
+  "Face for errors in the mode-line.  Used by vcs, check, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-notification
   '((t (:inherit doom-modeline-warning)))
-  "Face for notifications in the mode-line. Used by GitHub, mu4e, etc.
+  "Face for notifications in the mode-line.  Used by GitHub, mu4e, etc.
 Also see the face `doom-modeline-unread-number'."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-unread-number
   '((t (:inherit doom-modeline :slant italic)))
-  "Face for unread number in the mode-line. Used by GitHub, mu4e, etc."
+  "Face for unread number in the mode-line.  Used by GitHub, mu4e, etc."
   :group 'doom-modeline-faces)
 
 (defface doom-modeline-bar
@@ -1195,9 +1195,9 @@ explicitly at the appropriate time and this functions purpose
 is to make it easier to do so.
 
 This function is like `redisplay' with non-nil FORCE argument,
-but it will only trigger a redisplay when there is a non nil
+but it will only trigger a redisplay when there is a non-nil
 `mode-line-format' and the height of the mode-line is different
-from that of the `default' face. This function is intended to be
+from that of the `default' face.  This function is intended to be
 used as an advice to window creation functions."
       (when (and (bound-and-true-p doom-modeline-mode)
                  mode-line-format
@@ -1375,7 +1375,7 @@ Throws an error if it doesn't exist."
       `(:eval (,fn)))))
 
 (defun doom-modeline-set-modeline (key &optional default)
-  "Set the modeline format. Does nothing if the modeline KEY doesn't exist.
+  "Set the modeline format.  Does nothing if the modeline KEY doesn't exist.
 If DEFAULT is non-nil, set the default mode-line for all buffers."
   (when-let* ((modeline (doom-modeline key)))
     (setf (if default
@@ -1560,7 +1560,7 @@ The result is cached per-frame to avoid expensive calculations during redisplay.
 (defun doom-modeline--original-value (sym)
   "Return the original value for SYM, if any.
 
-If SYM has an original value, return it in a list. Return nil
+If SYM has an original value, return it in a list.  Return nil
 otherwise."
   (let* ((orig-val-expr (get sym 'standard-value)))
     (when (consp orig-val-expr)
@@ -1597,7 +1597,7 @@ See https://github.com/seagle0128/doom-modeline/issues/301."
 
 ICON-SET includes `ipsicon', `octicon', `pomicon', `powerline', `faicon',
 `wicon', `sucicon', `devicon', `codicon', `flicon' and `mdicon', etc.
-UNICODE is the unicode char fallback. TEXT is the ASCII char fallback.
+UNICODE is the unicode char fallback.  TEXT is the ASCII char fallback.
 ARGS is same as `nerd-icons-octicon' and others."
   (let ((face `(:inherit (doom-modeline
                           ,(or (plist-get args :face) 'mode-line)))))
