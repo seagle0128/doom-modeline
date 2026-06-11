@@ -1640,8 +1640,9 @@ ARGS is same as `nerd-icons-octicon' and others."
   (let ((text (string-replace "%" "%%" text)))
     (if (doom-modeline--active)
         text
-      (propertize text 'face `(:inherit (mode-line-inactive
-                                         ,(get-text-property 0 'face text)))))))
+      (let ((copy (copy-sequence text)))
+        (add-face-text-property 0 (length copy) 'mode-line-inactive nil copy)
+        copy))))
 
 (defun doom-modeline-vcs-name ()
   "Display the vcs name."
