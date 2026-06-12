@@ -1577,22 +1577,21 @@ See docs of `add-variable-watcher'."
   (when (fboundp 'add-variable-watcher)
     (add-variable-watcher symbol watch-function)))
 
-(defun doom-modeline-propertize-icon (icon &optional face)
-  "Propertize the ICON with the specified FACE.
+(defun doom-modeline--propertize (object &optional face)
+  "Add FACE to the OBJECT."
+  (let* ((copy (copy-sequence (or object "")))
+         (len (length copy)))
+    (add-face-text-property 0 len face nil copy)
+    (add-face-text-property 0 len 'doom-modeline nil copy)
+    copy))
 
-The face should be the first attribute, or the font family may be overridden.
-So convert the face \":family XXX :height XXX :inherit XXX\" to
-\":inherit XXX :family XXX :height XXX\".
-See https://github.com/seagle0128/doom-modeline/issues/301."
-  (unless (or (null icon) (string-empty-p icon))
-    (if (doom-modeline-icon-displayable-p)
-        (when-let* ((props (get-text-property 0 'face icon)))
-          (when (listp props)
-            (cl-destructuring-bind (&key family height inherit &allow-other-keys) props
-              (propertize icon 'face `(:inherit (doom-modeline ,(or face inherit props))
-                                       :family  ,(or family "")
-                                       :height  ,(or height 1.0))))))
-      (propertize icon 'face `(:inherit (doom-modeline ,face))))))
+(defun doom-modeline-propertize-icon (icon &optional face)
+  "Propertize ICON with FACE."
+  (doom-modeline--propertize icon face))
+
+(defun doom-modeline-propertize-text (text &optional face)
+  "Propertize TEXT with FACE."
+  (doom-modeline--propertize text face))
 
 (defun doom-modeline-icon (icon-set icon-name unicode text &rest args)
   "Display icon of ICON-NAME with ARGS in mode-line.
@@ -1608,20 +1607,18 @@ ARGS is same as `nerd-icons-octicon' and others."
      ((and (doom-modeline-icon-displayable-p)
            icon-name
            (not (string-empty-p icon-name)))
-      (if-let* ((func (nerd-icons--function-name icon-set))
-                (icon (and (fboundp func)
-                           (apply func icon-name args))))
-          (doom-modeline-propertize-icon icon face)
-        ""))
+      (let* ((func (nerd-icons--function-name icon-set))
+             (icon (and (fboundp func) (apply func icon-name args))))
+        (doom-modeline-propertize-icon icon face)))
      ;; Unicode fallback
      ((and doom-modeline-unicode-fallback
            unicode
            (not (string-empty-p unicode))
            (char-displayable-p (string-to-char unicode)))
-      (propertize unicode 'face face))
+      (doom-modeline-propertize-text unicode face))
      ;; ASCII text
      (text
-      (propertize text 'face face))
+      (doom-modeline-propertize-text text face))
      ;; Fallback
      (t ""))))
 
@@ -1631,18 +1628,17 @@ ARGS is same as `nerd-icons-octicon' and others."
 
 (defun doom-modeline-display-icon (icon)
   "Display ICON in mode-line."
-  (if (doom-modeline--active)
-      icon
-    (doom-modeline-propertize-icon icon 'mode-line-inactive)))
+  (let ((icon (or icon "")))
+    (if (doom-modeline--active)
+        icon
+      (doom-modeline-propertize-icon icon 'mode-line-inactive))))
 
 (defun doom-modeline-display-text (text)
   "Display TEXT in mode-line."
-  (let ((text (string-replace "%" "%%" text)))
+  (let ((text (string-replace "%" "%%" (or text ""))))
     (if (doom-modeline--active)
         text
-      (let ((copy (copy-sequence text)))
-        (add-face-text-property 0 (length copy) 'mode-line-inactive nil copy)
-        copy))))
+      (doom-modeline-propertize-text text 'mode-line-inactive))))
 
 (defun doom-modeline-vcs-name ()
   "Display the vcs name."

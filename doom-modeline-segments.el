@@ -394,9 +394,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
         (concat
          (if doom-modeline-major-mode-color-icon
              (doom-modeline-display-icon icon)
-           (doom-modeline-propertize-icon
-            icon
-            (doom-modeline-face)))
+           (doom-modeline-propertize-icon icon (doom-modeline-face)))
          (doom-modeline-vspc))))))
 
 (defsubst doom-modeline--buffer-state-icon ()
