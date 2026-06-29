@@ -1579,11 +1579,9 @@ See docs of `add-variable-watcher'."
 
 (defun doom-modeline-propertize-text (text &optional face)
   "Propertize TEXT with FACE."
-  (let* ((copy (copy-sequence (or text "")))
-         (len (length copy)))
-    (add-face-text-property 0 len face nil copy)
-    (add-face-text-property 0 len 'doom-modeline nil copy)
-    copy))
+  (propertize text 'face `(:inherit (doom-modeline
+                                     ,face
+                                     ,(get-text-property 0 'face text)))))
 
 (defun doom-modeline-propertize-icon (icon &optional face)
   "Propertize the ICON with the specified FACE.
