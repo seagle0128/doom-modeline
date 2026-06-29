@@ -1577,21 +1577,29 @@ See docs of `add-variable-watcher'."
   (when (fboundp 'add-variable-watcher)
     (add-variable-watcher symbol watch-function)))
 
-(defun doom-modeline--propertize (object &optional face)
-  "Add FACE to the OBJECT."
-  (let* ((copy (copy-sequence (or object "")))
+(defun doom-modeline-propertize-text (text &optional face)
+  "Propertize TEXT with FACE."
+  (let* ((copy (copy-sequence (or text "")))
          (len (length copy)))
     (add-face-text-property 0 len face nil copy)
     (add-face-text-property 0 len 'doom-modeline nil copy)
     copy))
 
 (defun doom-modeline-propertize-icon (icon &optional face)
-  "Propertize ICON with FACE."
-  (doom-modeline--propertize icon face))
+  "Propertize the ICON with the specified FACE.
 
-(defun doom-modeline-propertize-text (text &optional face)
-  "Propertize TEXT with FACE."
-  (doom-modeline--propertize text face))
+The face should be the first attribute, or the font family may be overridden.
+So convert the face \":family XXX :height XXX :inherit XXX\" to
+\":inherit XXX :family XXX :height XXX\".
+See https://github.com/seagle0128/doom-modeline/issues/301."
+  (if (doom-modeline-icon-displayable-p)
+      (when-let* ((props (get-text-property 0 'face icon)))
+        (when (listp props)
+          (cl-destructuring-bind (&key family height inherit &allow-other-keys) props
+            (propertize icon 'face `(:inherit (doom-modeline ,(or face inherit props))
+                                     :family  ,(or family "")
+                                     :height  ,(or height 1.0))))))
+    (doom-modeline-propertize-text icon face)))
 
 (defun doom-modeline-icon (icon-set icon-name unicode text &rest args)
   "Display icon of ICON-NAME with ARGS in mode-line.
