@@ -1506,7 +1506,7 @@ when removing segments programmatically."
 (defun doom-modeline-face (&optional face inactive-face)
   "Display FACE in active window, and INACTIVE-FACE in inactive window.
 IF FACE is nil, `mode-line' face will be used.
-If INACTIVE-FACE is nil, `mode-line-inactive' face will be used."
+If INACTIVE-FACE is nil, `mode-line-inactive' face will be added."
   (if (doom-modeline--active)
       `(:inherit (doom-modeline
                   ,(cond ((facep face) face)
@@ -1514,7 +1514,7 @@ If INACTIVE-FACE is nil, `mode-line-inactive' face will be used."
                          (t 'mode-line))))
     `(:inherit (doom-modeline
                 ,(if (facep inactive-face) inactive-face
-                   'mode-line-inactive)))))
+                   `(:inherit (mode-line-inactive ,face)))))))
 
 (defun doom-modeline-spc-face (&optional face)
   "Apply FACE or `doom-modeline-spc-face-overrides' to `doom-modeline-face'."
