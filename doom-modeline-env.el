@@ -270,7 +270,12 @@ PARSER should be a function for parsing COMMAND's output line-by-line, to
 (doom-modeline-def-env elixir
   :hooks   '(elixir-mode-hook elixir-ts-mode-hook)
   :command (lambda () (list (or doom-modeline-env-elixir-executable "elixir") "--version"))
-  :parser  (lambda (line) (cadr (split-string line))))
+  :parser  (lambda (line)
+             (cond
+              ((string-match
+                "Elixir[[:space:]]+\\([^[:space:]]+\\).*Erlang/OTP[[:space:]]+\\([0-9]+\\)"
+                line)
+               (format "%s/OTP%s" (match-string 1 line) (match-string 2 line))))))
 
 ;;;###autoload (autoload 'doom-modeline-env-setup-rust "doom-modeline-env")
 (doom-modeline-def-env rust

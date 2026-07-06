@@ -33,10 +33,11 @@
    (string= (doom-modeline-env--ruby-parse "ruby 2.3.3p222 (2016-11-21 revision 56859) [x86_64-darwin16]")
             "2.3.3")))
 
-(ert-deftest doom-modeline-env--elixir/parse-elixr-version-string ()
+(ert-deftest doom-modeline-env--elixir/parse-elixir-version-string ()
   (should
-   (string= (doom-modeline-env--elixir-parse "IEx 1.7.4 (compiled with Erlang/OTP 21)")
-            "1.7.4")))
+   (string= (doom-modeline-env--elixir-parse
+             "Erlang/OTP 26 [erts-14.2.5] [source] [64-bit] [smp:10:10] [ds:10:10:10] [async-threads:1] [jit]\n\nElixir 1.18.2 (compiled with Erlang/OTP 26)")
+            "1.18.2/OTP26")))
 
 (ert-deftest doom-modeline-env--rustc/parse-rustc-version-string ()
   (should
