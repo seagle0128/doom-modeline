@@ -29,6 +29,8 @@
 
 (require 'doom-modeline-core)
 (require 'doom-modeline-env)
+(require 'timeout) ;; `timeout-throttle'
+
 (eval-when-compile
   (require 'cl-lib)
   (require 'seq)
@@ -1108,13 +1110,18 @@ level."
 ;; Word Count
 ;;
 
+(defun doom-modeline-segments-count-words ()
+  "Call `count-words' for the current buffer."
+  (count-words (point-min) (point-max)))
+
 (doom-modeline-def-segment word-count
   "The buffer word count.
 Displayed when in a major mode in `doom-modeline-continuous-word-count-modes'.
 Respects `doom-modeline-enable-word-count'."
   (when (and doom-modeline-enable-word-count
              (member major-mode doom-modeline-continuous-word-count-modes))
-    (propertize (format " %dW" (count-words (point-min) (point-max)))
+    (propertize (format " %dW"
+                        (timeout-throttle doom-modeline-segments-count-words))
                 'face (doom-modeline-face))))
 
 
