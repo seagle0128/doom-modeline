@@ -681,12 +681,12 @@ mouse-1: Display minor modes menu"
 ;; VCS
 ;;
 
-(defun doom-modeline-vcs-icon (icon &optional unicode text face)
+(defun doom-modeline-vcs-icon (icon &optional unicode text face icon-set)
   "Displays the vcs ICON with FACE and VOFFSET.
 
 UNICODE and TEXT are fallbacks.
-Uses `nerd-icons-octicon' to fetch the icon."
-  (doom-modeline-icon 'devicon (and doom-modeline-vcs-icon icon)
+ICON-SET is the nerd-icons set ICON belongs to, `devicon' by default."
+  (doom-modeline-icon (or icon-set 'devicon) (and doom-modeline-vcs-icon icon)
                       unicode text :face face))
 
 (defvar-local doom-modeline--in-git-worktree-p nil)
@@ -782,7 +782,8 @@ Uses `nerd-icons-octicon' to fetch the icon."
             (vsep (doom-modeline-vspc))
             (worktree-indicator (when doom-modeline--in-git-worktree-p
                                   (doom-modeline-vcs-icon "nf-cod-worktree" "⑆" "WT"
-                                                          'doom-modeline-warning))))
+                                                          'doom-modeline-warning
+                                                          'codicon))))
         (concat sep
                 (propertize (concat
                              (doom-modeline-display-icon .icon)
