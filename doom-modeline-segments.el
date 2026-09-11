@@ -300,42 +300,51 @@ UNICODE and TEXT are the alternatives if it is not applicable.
 Uses `nerd-icons-mdicon' to fetch the icon."
   (doom-modeline-icon 'mdicon icon unicode text :face face))
 
+(defvar-local doom-modeline--buffer-file-state-icon nil)
 (defun doom-modeline-update-buffer-file-state-icon (&rest _)
   "Update the buffer or file state in mode-line."
-  (when doom-modeline-buffer-state-icon
-    (ignore-errors
-      (concat
-       (cond (buffer-read-only
-              (doom-modeline-buffer-file-state-icon
-               "nf-md-lock" "🔒" "%1*"
-               'doom-modeline-warning))
-             ((and doom-modeline-buffer-modification-icon
-                   buffer-file-name
-                   (buffer-modified-p))
-              (doom-modeline-buffer-file-state-icon
-               "nf-md-content_save_edit" "💾" "%1*"
-               'doom-modeline-warning))
-             ((and buffer-file-name
-                   ;; Avoid freezing while connection is lost
-                   (not (file-remote-p buffer-file-name))
-                   (not (file-exists-p buffer-file-name)))
-              (doom-modeline-buffer-file-state-icon
-               "nf-md-cancel" "🚫" "!"
-               'doom-modeline-urgent))
-             ((not (or (and buffer-file-name
-                            (file-remote-p buffer-file-name))
-                       (verify-visited-file-modtime (current-buffer))))
-              (doom-modeline-buffer-file-state-icon
-               "nf-md-reload_alert" "⟳" "%1*"
-               'doom-modeline-warning))
-             (t ""))
-       (when (or (buffer-narrowed-p)
-                 (and (bound-and-true-p fancy-narrow-mode)
-                      (fancy-narrow-active-p))
-                 (bound-and-true-p dired-narrow-mode))
-         (doom-modeline-buffer-file-state-icon
-          "nf-md-unfold_less_horizontal" "↕" "><"
-          'doom-modeline-warning))))))
+  (setq doom-modeline--buffer-file-state-icon
+        (when doom-modeline-buffer-state-icon
+          (ignore-errors
+            (concat
+             (cond (buffer-read-only
+                    (doom-modeline-buffer-file-state-icon
+                     "nf-md-lock" "🔒" "%1*"
+                     'doom-modeline-warning))
+                   ((and doom-modeline-buffer-modification-icon
+                         buffer-file-name
+                         (buffer-modified-p))
+                    (doom-modeline-buffer-file-state-icon
+                     "nf-md-content_save_edit" "💾" "%1*"
+                     'doom-modeline-warning))
+                   ((and buffer-file-name
+                         ;; Avoid freezing while connection is lost
+                         (not (file-remote-p buffer-file-name))
+                         (not (file-exists-p buffer-file-name)))
+                    (doom-modeline-buffer-file-state-icon
+                     "nf-md-cancel" "🚫" "!"
+                     'doom-modeline-urgent))
+                   ((not (or (and buffer-file-name
+                                  (file-remote-p buffer-file-name))
+                             (verify-visited-file-modtime (current-buffer))))
+                    (doom-modeline-buffer-file-state-icon
+                     "nf-md-reload_alert" "⟳" "%1*"
+                     'doom-modeline-warning))
+                   (t ""))
+             (when (or (buffer-narrowed-p)
+                       (and (bound-and-true-p fancy-narrow-mode)
+                            (fancy-narrow-active-p))
+                       (bound-and-true-p dired-narrow-mode))
+               (doom-modeline-buffer-file-state-icon
+                "nf-md-unfold_less_horizontal" "↕" "><"
+                'doom-modeline-warning)))))))
+(add-hook 'post-command-hook #'doom-modeline-update-buffer-file-state-icon)
+
+(defun doom-mdeline-refresh-buffer-file-state ()
+  "Refresh buffer file state."
+  (doom-modeline-update-buffer-file-state-icon)
+  (force-mode-line-update))
+(run-with-timer 0 2 #'doom-mdeline-refresh-buffer-file-state)
 
 (defvar-local doom-modeline--buffer-file-name nil)
 (defun doom-modeline-update-buffer-file-name (&rest _)
@@ -402,7 +411,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 (defsubst doom-modeline--buffer-state-icon ()
   "The icon of the current buffer state."
   (when doom-modeline-buffer-state-icon
-    (when-let* ((icon (doom-modeline-update-buffer-file-state-icon)))
+    (when-let* ((icon doom-modeline--buffer-file-state-icon))
       (unless (string-empty-p icon)
         (concat
          (doom-modeline-display-icon icon)
