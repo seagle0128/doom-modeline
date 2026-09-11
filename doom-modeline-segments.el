@@ -304,7 +304,8 @@ Uses `nerd-icons-mdicon' to fetch the icon."
 (defun doom-modeline-update-buffer-file-state-icon (&rest _)
   "Update the buffer or file state in mode-line."
   (setq doom-modeline--buffer-file-state-icon
-        (when doom-modeline-buffer-state-icon
+        (when (and doom-modeline-buffer-state-icon
+                   (doom-modeline-icon-displayable-p))
           (ignore-errors
             (concat
              (cond (buffer-read-only
@@ -410,7 +411,7 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 
 (defsubst doom-modeline--buffer-state-icon ()
   "The icon of the current buffer state."
-  (when doom-modeline-buffer-state-icon
+  (when (and doom-modeline-icon doom-modeline-buffer-state-icon)
     (when-let* ((icon doom-modeline--buffer-file-state-icon))
       (unless (string-empty-p icon)
         (concat
