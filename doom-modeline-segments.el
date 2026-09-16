@@ -273,8 +273,7 @@
 (defun doom-modeline-update-buffer-file-icon (&rest _)
   "Update file icon in mode-line."
   (setq doom-modeline--buffer-file-icon
-        (when (and doom-modeline-major-mode-icon
-                   (doom-modeline-icon-displayable-p))
+        (when (and doom-modeline-icon doom-modeline-major-mode-icon)
           (let ((icon (doom-modeline-icon-for-buffer)))
             (propertize (if (or (null icon) (symbolp icon))
                             (doom-modeline-icon 'faicon "nf-fa-file_o" nil nil
@@ -303,8 +302,7 @@ Uses `nerd-icons-mdicon' to fetch the icon."
 (defvar-local doom-modeline--buffer-file-state-icon nil)
 (defun doom-modeline-update-buffer-file-state-icon (&rest _)
   "Update the buffer or file state in mode-line."
-  (when (and doom-modeline-buffer-state-icon
-             (doom-modeline-icon-displayable-p))
+  (when (and doom-modeline-icon doom-modeline-buffer-state-icon)
     (concat
      (or (cond (buffer-read-only
                 (doom-modeline-buffer-file-state-icon
@@ -329,8 +327,7 @@ Uses `nerd-icons-mdicon' to fetch the icon."
 (defun doom-mdeline-refresh-buffer-file-state ()
   "Refresh buffer file state."
   (setq doom-modeline--buffer-file-state-icon
-        (when (and doom-modeline-buffer-state-icon
-                   (doom-modeline-icon-displayable-p))
+        (when (and doom-modeline-icon doom-modeline-buffer-state-icon)
           (cond ((and buffer-file-name
                       ;; Avoid freezing while connection is lost
                       (not (file-remote-p buffer-file-name))
@@ -1361,7 +1358,7 @@ The number of matches contains substitutions and highlightings."
           ((cons nil nil)))
     (when count
       (concat (propertize " " 'face face)
-              (if (doom-modeline-icon-displayable-p)
+              (if doom-modeline-icon
                   (doom-modeline-icon 'faicon "nf-fa-i_cursor" "" "" :face face)
                 (propertize "I"
                             'face `(:inherit ,face :height 1.4 :weight normal)

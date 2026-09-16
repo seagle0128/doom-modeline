@@ -1242,10 +1242,6 @@ used as an advice to window creation functions."
   (defvar flycheck-color-mode-line-face-to-color)
   (setq flycheck-color-mode-line-face-to-color 'doom-modeline))
 
-(defun doom-modeline-icon-displayable-p ()
-  "Return non-nil if icons are displayable."
-  (and doom-modeline-icon (featurep 'nerd-icons)))
-
 (defun doom-modeline-mwheel-available-p ()
   "Whether mouse wheel is available."
   (and (featurep 'mwheel) (bound-and-true-p mouse-wheel-mode)))
@@ -1620,7 +1616,7 @@ The face should be the first attribute, or the font family may be overridden.
 So convert the face \":family XXX :height XXX :inherit XXX\" to
 \":inherit XXX :family XXX :height XXX\".
 See https://github.com/seagle0128/doom-modeline/issues/301."
-  (if (doom-modeline-icon-displayable-p)
+  (if doom-modeline-icon
       (when-let* ((props (get-text-property 0 'face icon)))
         (when (listp props)
           (cl-destructuring-bind (&key family height inherit &allow-other-keys) props
@@ -1640,7 +1636,7 @@ ARGS is same as `nerd-icons-octicon' and others."
                           ,(or (plist-get args :face) 'mode-line)))))
     (cond
      ;; Icon
-     ((and (doom-modeline-icon-displayable-p)
+     ((and doom-modeline-icon
            icon-name
            (not (string-empty-p icon-name)))
       (let* ((func (nerd-icons--function-name icon-set))
