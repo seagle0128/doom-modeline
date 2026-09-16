@@ -348,6 +348,7 @@ Uses `nerd-icons-mdicon' to fetch the icon."
 
 (defvar doom-modeline--refresh-state-icon-timer nil)
 (defun doom-modeline-refresh-buffer-file-state-icon ()
+  "Refresh the file state icon on demand."
   (when doom-modeline--refresh-state-icon-timer
     (cancel-timer doom-modeline--refresh-state-icon-timer))
   (setq doom-modeline--refresh-state-icon-timer
@@ -1191,12 +1192,6 @@ block selection."
             (format " %dW" (count-words beg end)))
           " "))
        'face 'doom-modeline-emphasis))))
-
-;; Ensure selection info updates on cursor movements
-;; NOTE: No issue with mouse movements
-;; (add-hook 'post-command-hook
-;;           (lambda ()
-;;             (and mark-active (force-mode-line-update))))
 
 
 ;;
