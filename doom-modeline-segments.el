@@ -3550,14 +3550,11 @@ Otherwise, it displays the message like `message' would."
 
 (doom-modeline-def-segment speedbar-name
   (propertize " %b"
-              'face (doom-modeline-face 'doom-modeline-buffer-major-mode)
-              'mouse-face 'doom-modeline-highlight))
+              'face (doom-modeline-face 'doom-modeline-buffer-major-mode)))
 
 (doom-modeline-def-segment speedbar-info
   (concat
-   (propertize "%l "
-               'face (doom-modeline-face)
-               'mouse-face 'doom-modeline-highlight)
+   (propertize "%l " 'face (doom-modeline-face))
    (propertize (doom-modeline-project-name)
                'face (doom-modeline-face 'doom-modeline-project-name))))
 
