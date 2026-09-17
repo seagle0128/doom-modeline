@@ -1284,11 +1284,10 @@ used as an advice to window creation functions."
   (setq doom-modeline-current-window nil))
 
 (defun doom-modeline-focus-change (&rest _)
-  "Focus change."
-  ;; (if (frame-focus-state)
-  ;;     (doom-modeline-set-selected-window)
-  ;;   (doom-modeline-unset-selected-window))
-  )
+  "Function to handle the events of the focus change."
+  (if (frame-focus-state)
+      (doom-modeline-set-selected-window)
+    (doom-modeline-unset-selected-window)))
 
 
 
