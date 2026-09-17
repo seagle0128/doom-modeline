@@ -148,7 +148,7 @@
   '(misc-info minor-modes major-mode process))
 
 (doom-modeline-def-modeline 'speedbar
-  '(bar " " major-mode)
+  '(bar speedbar-name)
   '(speedbar-info))
 
 
