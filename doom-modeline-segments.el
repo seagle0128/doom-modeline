@@ -619,20 +619,21 @@ project directory is important."
         (face (doom-modeline-face 'doom-modeline-buffer-major-mode)))
     (concat
      sep
-     (propertize (concat
-                  (format-mode-line
-                   (or (and (boundp 'delighted-modes)
-                            (cadr (assq major-mode delighted-modes)))
-                       mode-name))
-                  (when (and doom-modeline-env-version doom-modeline-env--version)
-                    (format " %s" doom-modeline-env--version)))
-                 'help-echo "Major mode\n\
+     (propertize
+      (concat
+       (format-mode-line
+        (or (and (boundp 'delighted-modes)
+                 (cadr (assq major-mode delighted-modes)))
+            mode-name))
+       (when (and doom-modeline-env-version doom-modeline-env--version)
+         (format " %s" doom-modeline-env--version)))
+      'help-echo "Major mode\n\
 mouse-1: Display major mode menu\n\
 mouse-2: Show help for major mode\n\
 mouse-3: Toggle minor modes"
-                 'face face
-                 'mouse-face 'doom-modeline-highlight
-                 'local-map mode-line-major-mode-keymap)
+      'face face
+      'mouse-face 'doom-modeline-highlight
+      'local-map mode-line-major-mode-keymap)
      (and (boundp 'text-scale-mode-amount)
           (/= text-scale-mode-amount 0)
           (propertize
@@ -1659,15 +1660,15 @@ Keymap for what is displayed by `mode-line-window-dedicated'."))
   "Return a nice unicode representation of NUM."
   (cond
    ((not num) "")
-   ((string= "1" num) "➊")
-   ((string= "2" num) "➋")
-   ((string= "3" num) "➌")
-   ((string= "4" num) "➍")
-   ((string= "5" num) "➎")
-   ((string= "6" num) "➏")
-   ((string= "7" num) "➐")
-   ((string= "8" num) "➑")
-   ((string= "9" num) "➒")
+   ((string= "1"  num) "➊")
+   ((string= "2"  num) "➋")
+   ((string= "3"  num) "➌")
+   ((string= "4"  num) "➍")
+   ((string= "5"  num) "➎")
+   ((string= "6"  num) "➏")
+   ((string= "7"  num) "➐")
+   ((string= "8"  num) "➑")
+   ((string= "9"  num) "➒")
    ((string= "10" num) "➓")
    (t num)))
 
