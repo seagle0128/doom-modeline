@@ -1720,17 +1720,21 @@ Keymap for what is displayed by `mode-line-window-dedicated'."))
   "Get the project name."
   (or doom-modeline--project-name
       (setq doom-modeline--project-name
-            (let ((name (cond
-                         ((and (memq doom-modeline-project-detection '(auto projectile))
-                               (bound-and-true-p projectile-mode))
-                          (projectile-project-name))
-                         ((and (memq doom-modeline-project-detection '(auto project))
-                               (fboundp 'project-current))
-                          (when-let* ((project (project-current)))
-                            (project-name project))))))
-              (if (and name (not (string-empty-p name)))
-                  (format " [%s] " name)
-                "")))))
+            (unless (and (eq doom-modeline-project-name 'non-remote)
+                         (file-remote-p default-directory))
+              (when-let*
+                 ((last-coding-system-used last-coding-system-used)
+                  (name (cond
+                        ((and (memq doom-modeline-project-detection '(auto projectile))
+                              (bound-and-true-p projectile-mode))
+                         (projectile-project-name))
+                        ((and (memq doom-modeline-project-detection '(auto project))
+                              (fboundp 'project-current))
+                         (when-let* ((project (project-current)))
+                           (project-name project))))))
+               (unless (string-empty-p name)
+                 (format " [%s] " name)))))
+      ""))
 
 (doom-modeline-add-variable-watcher
  'doom-modeline-project-detection

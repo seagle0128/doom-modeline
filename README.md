@@ -329,14 +329,15 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; The maximum number displayed for notifications.
 (setq doom-modeline-number-limit 99)
 
-;; Whether display the project name. Non-nil to display in the mode-line.
-(setq doom-modeline-project-name t)
-
 ;; Whether display the workspace name. Non-nil to display in the mode-line.
-(setq doom-modeline-workspace-name t)
+(setq doom-modeline-workspace-name nil)
+
+;; Whether display the project name. Non-nil to display in the mode-line. When
+;; the value is `non-remote', show the project name only for local files."
+(setq doom-modeline-project-name 'non-remote)
 
 ;; Whether display the perspective name. Non-nil to display in the mode-line.
-(setq doom-modeline-persp-name t)
+(setq doom-modeline-persp-name nil)
 
 ;; If non nil the default perspective name is displayed in the mode-line.
 (setq doom-modeline-display-default-persp-name nil)

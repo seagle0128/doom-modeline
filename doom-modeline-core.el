@@ -604,18 +604,21 @@ nil disables the check segment."
   :type 'integer
   :group 'doom-modeline)
 
-(defcustom doom-modeline-project-name nil
-  "Whether display the project name.
-
-Non-nil to display in the mode-line."
-  :type 'boolean
-  :group 'doom-modeline)
-
 (defcustom doom-modeline-workspace-name nil
   "Whether display the workspace name.
 
 Non-nil to display in the mode-line."
   :type 'boolean
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-project-name 'non-remote
+  "Whether display the project name.
+
+Non-nil to display in the mode-line. When the value is `non-remote',
+show the project name only for local files."
+  :type '(choice (const :tag "Don't show project on mode line" nil)
+                 (const :tag "Show project only for local files" non-remote)
+                 (const :tag "Always show project on mode line" t))
   :group 'doom-modeline)
 
 (defcustom doom-modeline-persp-name nil
