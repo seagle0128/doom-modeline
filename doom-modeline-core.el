@@ -192,9 +192,7 @@ Turn on this to provide right relative path for buffer file name."
   :group'doom-modeline)
 
 (defcustom doom-modeline-icon t
-  "Whether display the icons in the mode-line.
-
-While using the server mode in GUI, should set the value explicitly."
+  "Whether display the icons in the mode-line."
   :type 'boolean
   :group 'doom-modeline)
 
@@ -606,21 +604,21 @@ nil disables the check segment."
   :type 'integer
   :group 'doom-modeline)
 
-(defcustom doom-modeline-project-name (bound-and-true-p project-mode-line)
+(defcustom doom-modeline-project-name nil
   "Whether display the project name.
 
 Non-nil to display in the mode-line."
   :type 'boolean
   :group 'doom-modeline)
 
-(defcustom doom-modeline-workspace-name t
+(defcustom doom-modeline-workspace-name nil
   "Whether display the workspace name.
 
 Non-nil to display in the mode-line."
   :type 'boolean
   :group 'doom-modeline)
 
-(defcustom doom-modeline-persp-name t
+(defcustom doom-modeline-persp-name nil
   "Whether display the perspective name.
 
 Non-nil to display in the mode-line."
