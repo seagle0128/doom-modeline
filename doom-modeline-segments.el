@@ -351,6 +351,11 @@ Uses `nerd-icons-mdicon' to fetch the icon."
   (setq doom-modeline--refresh-state-icon-timer
         (run-with-idle-timer 0.5 nil #'doom-mdeline-refresh-buffer-file-state)))
 (add-hook 'post-command-hook #'doom-modeline-refresh-buffer-file-state-icon)
+(if (boundp 'after-focus-change-function)
+    (add-function :after after-focus-change-function
+      #'doom-mdeline-refresh-buffer-file-state)
+  (with-no-warnings
+    (add-hook 'focus-in-hook #'doom-mdeline-refresh-buffer-file-state)))
 
 (defvar-local doom-modeline--buffer-file-name nil)
 (defun doom-modeline-update-buffer-file-name (&rest _)
