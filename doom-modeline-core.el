@@ -621,7 +621,7 @@ Non-nil to display in the mode-line."
   :type 'boolean
   :group 'doom-modeline)
 
-(defcustom doom-modeline-project-name 'non-remote
+(defcustom doom-modeline-project-name nil
   "Whether display the project name.
 
 Non-nil to display in the mode-line. When the value is `non-remote',
