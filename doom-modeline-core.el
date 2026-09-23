@@ -94,20 +94,30 @@ If the actual char height is larger, it respects the actual char height."
   :group 'doom-modeline)
 
 (defcustom doom-modeline-bar-width 4
-  "How wide the mode-line bar should be.  It's only respected in GUI."
+  "How wide the mode-line bar should be.
+It's only respected in GUI."
   :type 'integer
   :set (lambda (sym val)
          (set sym (if (> val 0) val 1)))
   :group 'doom-modeline)
 
 (defcustom doom-modeline-hud nil
-  "Whether to use hud instead of default bar.  It's only respected in GUI."
+  "Whether to use hud instead of default bar.
+It's only respected in GUI."
   :type 'boolean
+  :group 'doom-modeline)
+
+(defcustom doom-modeline-hud-width 10
+  "Width in pixels of the \"thumb\" hud.
+It's only respected in GUI."
+  :type 'integer
+  :set (lambda (sym val)
+         (set sym (if (> val 0) val 1)))
   :group 'doom-modeline)
 
 (defcustom doom-modeline-hud-min-height 2
   "Minimum height in pixels of the \"thumb\" of the hud.
-Only respected in GUI."
+It's only respected in GUI."
   :type 'integer
   :set (lambda (sym val)
          (set sym (if (> val 1) val 1)))

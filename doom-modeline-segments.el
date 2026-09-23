@@ -1459,8 +1459,7 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
       (setq doom-modeline--bar-active
             (doom-modeline--create-bar-image 'doom-modeline-bar width height)
             doom-modeline--bar-inactive
-            (doom-modeline--create-bar-image
-             'doom-modeline-bar-inactive width height))))
+            (doom-modeline--create-bar-image 'doom-modeline-bar-inactive width height))))
   (if (doom-modeline--active)
       doom-modeline--bar-active
     doom-modeline--bar-inactive))
@@ -1496,11 +1495,11 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
                     (doom-modeline--hud-cache-bottom-margin cache)))
       (setf (doom-modeline--hud-cache-active cache)
             (doom-modeline--create-hud-image
-             'doom-modeline-bar 'default doom-modeline-bar-width
+             'doom-modeline-bar 'default doom-modeline-hud-width
              height top-margin bottom-margin)
             (doom-modeline--hud-cache-inactive cache)
             (doom-modeline--create-hud-image
-             'doom-modeline-bar-inactive 'default doom-modeline-bar-width
+             'doom-modeline-bar-inactive 'default doom-modeline-hud-width
              height top-margin bottom-margin)
             (doom-modeline--hud-cache-top-margin cache) top-margin
             (doom-modeline--hud-cache-bottom-margin cache) bottom-margin))
@@ -1525,7 +1524,12 @@ regions, 5. The current/total for the highlight term (with `symbol-overlay'),
  'doom-modeline-bar-width
  (lambda (_sym val op _where)
    (when (and (eq op 'set) (integerp val))
-     (doom-modeline-refresh-bars)
+     (doom-modeline-refresh-bars))))
+
+(doom-modeline-add-variable-watcher
+ 'doom-modeline-hud-width
+ (lambda (_sym val op _where)
+   (when (and (eq op 'set) (integerp val))
      (doom-modeline-invalidate-huds))))
 
 (doom-modeline-add-variable-watcher

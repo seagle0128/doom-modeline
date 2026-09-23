@@ -162,6 +162,13 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether to use hud instead of default bar. It's only respected in GUI.
 (setq doom-modeline-hud nil)
 
+;; Width in pixels of the \"thumb\" hud. It's only respected in GUI.
+(setq doom-modeline-hud-width 8)
+
+;; Minimum height in pixels of the \"thumb\" of the hud.
+;; It's only respected in GUI."
+(setq doom-modeline-hud-min-height 2)
+
 ;; The limit of the window width.
 ;; If `window-width' is smaller than the limit, some information won't be
 ;; displayed. It can be an integer or a float number. `nil' means no limit."
