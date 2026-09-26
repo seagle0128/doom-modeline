@@ -2415,7 +2415,7 @@ mouse-1: Toggle citre mode"
 (add-hook 'doom-modeline-mode-hook #'doom-modeline-override-eglot)
 
 (doom-modeline-add-variable-watcher
- 'doom-modeline-battery
+ 'doom-modeline-lsp
  (lambda (_sym val op _where)
    (when (eq op 'set)
      (setq doom-modeline-lsp val)
