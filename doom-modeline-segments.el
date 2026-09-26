@@ -3135,16 +3135,23 @@ Uses `nerd-icons-mdicon' to fetch the icon."
             (cons (propertize icon 'help-echo help-echo)
                   (propertize text 'face face 'help-echo help-echo)))))
   (when doom-modeline--battery-status
-    (setq battery-mode-line-string (substring
-                                    (concat
-                                     (let* ((status (car doom-modeline--battery-status))
-                                            (substr (substring-no-properties status))
-                                            (char   (string-to-char substr)))
-                                       (unless (or (eq (char-displayable-p char) 'unicode)
-                                                   (null (char-displayable-p char)))
-                                         substr))
-                                     (substring-no-properties (cdr doom-modeline--battery-status)))
-                                    0 -1)))
+    (setq battery-mode-line-string
+          (substring
+           (concat
+            (let* ((status (car doom-modeline--battery-status))
+                   (substr (substring-no-properties status))
+                   (char   (string-to-char substr))
+                   (char-p (char-displayable-p char))
+                   (fallback (doom-modeline-battery-icon
+                              "nf-md-battery_alert" "⚠" "N/A"
+                              'doom-modeline-battery-error)))
+              (if (or (null char-p)
+                      (eq char-p 'unicode)
+                      (string-empty-p substr))
+                  fallback
+                substr))
+            (substring-no-properties (cdr doom-modeline--battery-status)))
+           0 -1)))
   (force-mode-line-update t))
 
 (doom-modeline-add-variable-watcher
