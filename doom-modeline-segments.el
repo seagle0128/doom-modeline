@@ -1751,8 +1751,7 @@ Keymap for what is displayed by `mode-line-window-dedicated'."))
      (setq doom-modeline-project-detection val)
      (dolist (buf (buffer-list))
        (with-current-buffer buf
-         (setq doom-modeline--project-name nil)
-         (and buffer-file-name (revert-buffer t t)))))))
+         (setq doom-modeline--project-name nil))))))
 
 (doom-modeline-def-segment project-name
   "The current perspective name."
