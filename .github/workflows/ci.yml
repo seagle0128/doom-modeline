@@ -31,19 +31,13 @@ jobs:
         with:
           version: ${{ matrix.emacs-version }}
 
-      - uses: conao3/setup-cask@master
+      - uses: emacs-eask/setup-eask@master
         with:
-          version: snapshot
+          version: 'snapshot'
 
-      - name: install
-        run: cask install
-
-      - name: test
-        run: cask exec ert-runner
-
-      - name: build
-        run: cask build
-
-      - name: package
-        run: cask package
-
+      - name: Run tests
+        run: |
+          eask package
+          eask install
+          eask test ert-runner
+          eask compile
