@@ -302,7 +302,7 @@ Uses `nerd-icons-mdicon' to fetch the icon."
 (defvar-local doom-modeline--buffer-file-state-icon nil)
 (defun doom-modeline-update-buffer-file-state-icon (&rest _)
   "Update the buffer or file state in mode-line."
-  (when (and doom-modeline-icon doom-modeline-buffer-state-icon)
+  (when doom-modeline-buffer-state-icon
     (concat
      (or (cond (buffer-read-only
                 (doom-modeline-buffer-file-state-icon
@@ -312,7 +312,7 @@ Uses `nerd-icons-mdicon' to fetch the icon."
                      buffer-file-name
                      (buffer-modified-p))
                 (doom-modeline-buffer-file-state-icon
-                 "nf-md-content_save_edit" "💾" "%1*"
+                 "nf-md-content_save_edit" "💾" "%1+"
                  'doom-modeline-warning)))
          doom-modeline--buffer-file-state-icon)
      (when (or (buffer-narrowed-p)
@@ -320,14 +320,14 @@ Uses `nerd-icons-mdicon' to fetch the icon."
                     (fancy-narrow-active-p))
                (bound-and-true-p dired-narrow-mode))
        (doom-modeline-buffer-file-state-icon
-        "nf-md-unfold_less_horizontal" "↕" "><"
+        "nf-md-unfold_less_horizontal" "↕" "^"
         'doom-modeline-warning)))))
 
 ;; PERF: `file-exists' and `verify-visited-file-modtime' consume resources heavily
 (defun doom-mdeline-refresh-buffer-file-state ()
   "Refresh buffer file state."
   (setq doom-modeline--buffer-file-state-icon
-        (when (and doom-modeline-icon doom-modeline-buffer-state-icon)
+        (when doom-modeline-buffer-state-icon
           (cond ((and buffer-file-name
                       ;; Avoid freezing while connection is lost
                       (not (file-remote-p buffer-file-name))
@@ -421,12 +421,11 @@ mouse-1: Previous buffer\nmouse-3: Next buffer"
 
 (defsubst doom-modeline--buffer-state-icon ()
   "The icon of the current buffer state."
-  (when (and doom-modeline-icon doom-modeline-buffer-state-icon)
-    (when-let* ((icon (doom-modeline-update-buffer-file-state-icon)))
-      (unless (string-empty-p icon)
-        (concat
-         (doom-modeline-display-icon icon)
-         (doom-modeline-vspc))))))
+  (when-let* ((icon (doom-modeline-update-buffer-file-state-icon)))
+    (unless (string-empty-p icon)
+      (concat
+       (doom-modeline-display-icon icon)
+       (doom-modeline-vspc)))))
 
 (defsubst doom-modeline--buffer-simple-name ()
   "The buffer simple name."
