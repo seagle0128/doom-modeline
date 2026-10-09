@@ -304,24 +304,57 @@ Uses `nerd-icons-mdicon' to fetch the icon."
   "Update the buffer or file state in mode-line."
   (when doom-modeline-buffer-state-icon
     (concat
+     ;; modified/readonly
      (or (cond (buffer-read-only
-                (doom-modeline-buffer-file-state-icon
-                 "nf-md-lock" "🔒" "%1*"
-                 'doom-modeline-warning))
+                (propertize
+	             (doom-modeline-buffer-file-state-icon
+                  "nf-md-lock" "🔒" "%1*"
+                  'doom-modeline-warning)
+	             'help-echo 'mode-line-read-only-help-echo
+                 'local-map (make-mode-line-mouse-map
+                             'mouse-1
+                             #'mode-line-toggle-read-only)
+	             'mouse-face 'doom-modeline-highlight))
                ((and doom-modeline-buffer-modification-icon
                      buffer-file-name
                      (buffer-modified-p))
-                (doom-modeline-buffer-file-state-icon
-                 "nf-md-content_save_edit" "💾" "%1+"
-                 'doom-modeline-warning)))
+                (propertize
+	             (doom-modeline-buffer-file-state-icon
+                  "nf-md-content_save_edit" "💾" "%1+"
+                  'doom-modeline-warning)
+	             'help-echo 'mode-line-read-only-help-echo
+                 'local-map (make-mode-line-mouse-map
+                             'mouse-1
+                             #'mode-line-toggle-modified)
+	             'mouse-face 'doom-modeline-highlight)))
          doom-modeline--buffer-file-state-icon)
+
+     ;; narrow
      (when (or (buffer-narrowed-p)
                (and (bound-and-true-p fancy-narrow-mode)
                     (fancy-narrow-active-p))
                (bound-and-true-p dired-narrow-mode))
        (doom-modeline-buffer-file-state-icon
         "nf-md-unfold_less_horizontal" "↕" "^"
-        'doom-modeline-warning)))))
+        'doom-modeline-warning))
+
+     ;; remote
+     (when (file-remote-p default-directory)
+       (propertize
+        (doom-modeline-buffer-file-state-icon
+         "nf-md-remote_desktop" "@" "%1@"
+         'doom-modeline-info)
+	    'mouse-face 'doom-modeline-highlight
+        'help-echo (lambda (window _object _point)
+                     (format "%s"
+                             (with-selected-window window
+                               (if (stringp default-directory)
+                                   (concat
+                                    (if (file-remote-p default-directory)
+                                        "Current directory is remote: "
+                                      "Current directory is local: ")
+                                    default-directory)
+                                 "Current directory is nil")))))))))
 
 ;; PERF: `file-exists' and `verify-visited-file-modtime' consume resources heavily
 (defun doom-mdeline-refresh-buffer-file-state ()
