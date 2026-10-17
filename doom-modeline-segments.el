@@ -2371,6 +2371,34 @@ mouse-3: LSP server control menu"
                                    map)))))
 (add-hook 'eglot-managed-mode-hook #'doom-modeline-update-eglot)
 
+(defcustom doom-modeline-eglot-refresh-delay 0.1
+  "Delay before refreshing the modeline icon after eglot events (seconds).
+If the LSP server responds in less time than this, the modeline icon
+does not change."
+  :type 'number
+  :group 'doom-modeline)
+
+(defvar doom-modeline--eglot-refresh-timer nil)
+
+(defun doom-modeline--eglot-event-handler (_connection _origin &rest _args)
+  "Schedule a refresh of the LSP icon in response to jsonrpc events.
+Intended to be called from `jsonrpc-event-hook'."
+  (unless doom-modeline--eglot-refresh-timer
+    (setq doom-modeline--eglot-refresh-timer
+          (run-with-timer doom-modeline-eglot-refresh-delay nil
+                          #'doom-modeline--timed-eglot-refresh))))
+
+(defun doom-modeline--timed-eglot-refresh ()
+  "Callback run from `doom-modeline--eglot-refresh-timer'."
+  (setq doom-modeline--eglot-refresh-timer nil)
+  (doom-modeline-update-eglot))
+
+(defun doom-modeline--eglot-connected (_server)
+  "Callback run from `eglot-connect-hook'."
+  (add-hook 'jsonrpc-event-hook #'doom-modeline--eglot-event-handler) nil 'local)
+
+(add-hook 'eglot-connect-hook #'doom-modeline--eglot-connected)
+
 (defvar-local doom-modeline--tags nil)
 (defun doom-modeline-update-tags ()
   "Update tags state."
