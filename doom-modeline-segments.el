@@ -1764,8 +1764,7 @@ Keymap for what is displayed by `mode-line-window-dedicated'."))
             (unless (and (eq doom-modeline-project-name 'non-remote)
                          (file-remote-p default-directory))
               (when-let*
-                  ((last-coding-system-used last-coding-system-used)
-                   (name (cond
+                  ((name (cond
                           ((and (memq doom-modeline-project-detection '(auto projectile))
                                 (bound-and-true-p projectile-mode))
                            (projectile-project-name))
