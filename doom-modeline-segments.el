@@ -1391,8 +1391,8 @@ The number of matches contains substitutions and highlightings."
             ((bound-and-true-p evil-mc-cursor-list)
              (cons (length evil-mc-cursor-list)
                    (doom-modeline-face (if evil-mc-frozen
-                                         'doom-modeline-bar
-                                       'doom-modeline-panel))))
+                                           'doom-modeline-bar
+                                         'doom-modeline-panel))))
             ((cons nil nil)))
     (when count
       (concat (propertize " " 'face face)
