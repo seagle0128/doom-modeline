@@ -696,6 +696,21 @@ mouse-3: Toggle minor modes"
 
 
 ;;
+;; Minibuffer Recursive Editing Depth
+;;
+
+(doom-modeline-def-segment minibuffer-depth
+  "The minibuffer recursive edit depth.
+Normally, the depth is at 0, and 1 when performing something in the minibuffer.
+Show an indicator if the depth goes higher than 1."
+  (let* ((sep (doom-modeline-spc))
+         (depth (minibuffer-depth))
+         (face (doom-modeline-face 'doom-modeline-minibuffer-depth)))
+    (when (> depth 1)
+      (concat (propertize (format "(%d)" depth) 'face face) sep))))
+
+
+;;
 ;; Minor modes
 ;;
 
