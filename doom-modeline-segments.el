@@ -565,9 +565,10 @@ project directory is important."
            (mouse-face 'doom-modeline-highlight)
            ;; eol type
            (eol (coding-system-eol-type buffer-file-coding-system))
-           (eol-part (when (or (eq doom-modeline-buffer-encoding t)
-                               (and (eq doom-modeline-buffer-encoding 'nondefault)
-                                    (not (equal eol doom-modeline-default-eol-type))))
+           (eol-part (when (and (memq eol '(0 1 2))
+                                (or (eq doom-modeline-buffer-encoding t)
+                                    (and (eq doom-modeline-buffer-encoding 'nondefault)
+                                         (not (equal eol doom-modeline-default-eol-type)))))
                        (propertize
                         (pcase eol
                           (0 "LF")
