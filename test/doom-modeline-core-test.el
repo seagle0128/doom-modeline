@@ -785,4 +785,75 @@
           (should (equal rhs '(major-mode time)))))
     (setq doom-modeline-excluded-modelines nil)))
 
+(ert-deftest doom-modeline-buffer-encoding/undecided-eol ()
+  (with-temp-buffer
+    (setq buffer-file-coding-system 'utf-8)
+    (let ((doom-modeline-buffer-encoding t))
+      (should (vectorp (coding-system-eol-type buffer-file-coding-system)))
+      (should (equal (substring-no-properties
+                      (doom-modeline-segment--buffer-encoding))
+                     " UTF-8 ")))))
+
+(ert-deftest doom-modeline-buffer-encoding/undecided-eol-default-coding ()
+  (with-temp-buffer
+    (setq buffer-file-coding-system 'utf-8)
+    (let ((doom-modeline-buffer-encoding 'nondefault)
+          (doom-modeline-default-eol-type 0)
+          (doom-modeline-default-coding-system 'utf-8))
+      (should-not (doom-modeline-segment--buffer-encoding)))))
+
+(ert-deftest doom-modeline-buffer-encoding/undecided-eol-nondefault-coding ()
+  (with-temp-buffer
+    (setq buffer-file-coding-system 'utf-8)
+    (let ((doom-modeline-buffer-encoding 'nondefault)
+          (doom-modeline-default-eol-type 0)
+          (doom-modeline-default-coding-system 'iso-latin-1))
+      (should (equal (substring-no-properties
+                      (doom-modeline-segment--buffer-encoding))
+                     " UTF-8 ")))))
+
+(ert-deftest doom-modeline-buffer-encoding/known-eol-labels-and-properties ()
+  (with-temp-buffer
+    (let ((doom-modeline-buffer-encoding t))
+      (dolist (case '((utf-8-unix " LF UTF-8 ")
+                      (utf-8-dos " CRLF UTF-8 ")
+                      (utf-8-mac " CR UTF-8 ")))
+        (setq buffer-file-coding-system (car case))
+        (let* ((text (doom-modeline-segment--buffer-encoding))
+               (encoding-start (- (length text) 6)))
+          (should (equal (substring-no-properties text) (cadr case)))
+          (should (get-text-property 1 'face text))
+          (should (eq (lookup-key (get-text-property 1 'local-map text)
+                                 [mode-line mouse-1])
+                      #'mode-line-change-eol))
+          (should (eq (get-text-property encoding-start 'local-map text)
+                      mode-line-coding-system-map)))))))
+
+(ert-deftest doom-modeline-buffer-encoding/nondefault-field-combinations ()
+  (with-temp-buffer
+    (let ((doom-modeline-buffer-encoding 'nondefault)
+          (doom-modeline-default-eol-type 0)
+          (doom-modeline-default-coding-system 'utf-8))
+      (setq buffer-file-coding-system 'utf-8-unix)
+      (should-not (doom-modeline-segment--buffer-encoding))
+      (setq buffer-file-coding-system 'utf-8-dos)
+      (should (equal (substring-no-properties
+                      (doom-modeline-segment--buffer-encoding))
+                     " CRLF "))
+      (let ((doom-modeline-default-coding-system 'iso-latin-1))
+        (setq buffer-file-coding-system 'utf-8-unix)
+        (should (equal (substring-no-properties
+                        (doom-modeline-segment--buffer-encoding))
+                       " UTF-8 "))
+        (setq buffer-file-coding-system 'utf-8-dos)
+        (should (equal (substring-no-properties
+                        (doom-modeline-segment--buffer-encoding))
+                       " CRLF UTF-8 "))))))
+
+(ert-deftest doom-modeline-buffer-encoding/disabled ()
+  (with-temp-buffer
+    (setq buffer-file-coding-system 'utf-8)
+    (let ((doom-modeline-buffer-encoding nil))
+      (should-not (doom-modeline-segment--buffer-encoding)))))
+
 ;;; doom-modeline-core-test.el ends here
