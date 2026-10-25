@@ -2119,6 +2119,12 @@ TEXT is alternative if icon is not available."
        .icon
        .unicode))))
 
+(defsubst doom-modeline--calc-embedded ()
+  "The current state which is enabled by command `calc-embedded'."
+  (when (bound-and-true-p calc-embedded-info)
+    (doom-modeline--modal-icon
+     "<C>" 'doom-modeline-notification "Embedded Calc mode" "nf-md-alpha_c_circle" "🅒")))
+
 (doom-modeline-def-segment modals
   "Displays modal editing states.
 
@@ -2131,16 +2137,18 @@ Including `evil', `overwrite', `god', `ryo' and `xha-fly-kyes', etc."
            (xf (doom-modeline--xah-fly-keys))
            (boon (doom-modeline--boon))
            (meow (doom-modeline--meow))
+           (calc (doom-modeline--calc-embedded))
            (vsep (doom-modeline-vspc))
            (sep (and (or evil ow god ryo xf boon meow) (doom-modeline-spc))))
       (concat sep
-              (and evil (concat evil (and (or ow god ryo xf boon meow) vsep)))
-              (and ow (concat ow (and (or god ryo xf boon meow) vsep)))
-              (and god (concat god (and (or ryo xf boon meow) vsep)))
-              (and ryo (concat ryo (and (or xf boon meow) vsep)))
-              (and xf (concat xf (and (or boon meow) vsep)))
-              (and boon (concat boon (and meow vsep)))
-              meow
+              (and evil (concat evil (and (or ow god ryo xf boon meow calc) vsep)))
+              (and ow (concat ow (and (or god ryo xf boon meow calc) vsep)))
+              (and god (concat god (and (or ryo xf boon meow calc) vsep)))
+              (and ryo (concat ryo (and (or xf boon meow calc ) vsep)))
+              (and xf (concat xf (and (or boon meow calc) vsep)))
+              (and boon (concat boon (and (or meow calc) vsep)))
+              (and meow (concat meow (and calc vsep)))
+              calc
               sep))))
 
 ;;
