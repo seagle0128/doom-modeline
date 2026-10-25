@@ -2123,7 +2123,7 @@ TEXT is alternative if icon is not available."
   "The current state which is enabled by command `calc-embedded'."
   (when (bound-and-true-p calc-embedded-info)
     (doom-modeline--modal-icon
-     "<C>" 'doom-modeline-notification "Embedded Calc mode" "nf-md-alpha_c_circle" "🅒")))
+     "<EC>" 'doom-modeline-notification "Embedded Calc mode" "nf-md-alpha_c_circle" "🅒")))
 
 (doom-modeline-def-segment modals
   "Displays modal editing states.
