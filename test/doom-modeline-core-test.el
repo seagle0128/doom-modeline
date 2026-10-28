@@ -62,21 +62,43 @@
                (doom-modeline-icon 'octicon "nf-oct-smiley" "☻" ":)" :face 'success))
               ":)"))))
 
-(ert-deftest doom-modeline-project-root/auto ()
-  ;; The latest `project' requires Emacs >= 26.1
-  (skip-unless (>= emacs-major-version 26))
-  (let ((default-directory "~/project/")
-        (doom-modeline-project-detection 'auto)
-        (doom-modeline--project-root nil))
-    (should (string= (doom-modeline-project-root) default-directory))))
+;; The latest `project' requires Emacs >= 26.1
+;; Old versions of project.el do not have `project-root'
+(when (>= emacs-major-version 26)
+  (ert-deftest doom-modeline-project-root/auto ()
+    (let ((default-directory "~/project/")
+          (doom-modeline-project-detection 'auto)
+          (doom-modeline--project-root nil))
+      (should (string= (doom-modeline-project-root) default-directory))))
 
-(ert-deftest doom-modeline-project-root/auto-old ()
-  ;; Old versions of project.el do not have `project-root'
-  (skip-unless (< emacs-major-version 26))
-  (let ((default-directory "~/project-current/")
-        (doom-modeline-project-detection 'auto)
-        (doom-modeline--project-root nil))
-    (should (string= (doom-modeline-project-root) default-directory))))
+  (ert-deftest doom-modeline-project-root/auto-old ()
+    (let ((default-directory "~/project-current/")
+          (doom-modeline-project-detection 'auto)
+          (doom-modeline--project-root nil))
+      (should (string= (doom-modeline-project-root) default-directory))))
+
+  (ert-deftest doom-modeline-project-root/project ()
+    (let ((default-directory "~/project-current/")
+          (doom-modeline-project-detection 'project)
+          (doom-modeline--project-root nil))
+      (should (string= (doom-modeline-project-root) default-directory))))
+
+  (ert-deftest doom-modeline-project-root/project-old ()
+    (let ((default-directory "~/project-current/")
+          (doom-modeline-project-detection 'project)
+          (doom-modeline--project-root nil))
+      (should (string= (doom-modeline-project-root) default-directory))))
+  )
+
+;; The latest `projectile' requires Emacs >= 28.1
+(when (>= emacs-major-version 28)
+  (ert-deftest doom-modeline-project-root/projectile ()
+    (let ((default-directory "~/projectile/")
+          (doom-modeline-project-detection 'projectile)
+          (doom-modeline--project-root nil))
+      (cl-flet ((projectile-project-root () default-directory))
+        (should (string= (doom-modeline-project-root) default-directory)))))
+  )
 
 (ert-deftest doom-modeline-project-root/ffip ()
   (let ((default-directory "~/project-ffip/")
@@ -84,29 +106,6 @@
         (doom-modeline--project-root nil))
     (cl-flet ((ffip-get-project-root-directory () default-directory))
       (should (string= (doom-modeline-project-root) default-directory)))))
-
-(ert-deftest doom-modeline-project-root/projectile ()
-  (let ((default-directory "~/projectile/")
-        (doom-modeline-project-detection 'projectile)
-        (doom-modeline--project-root nil))
-    (cl-flet ((projectile-project-root () default-directory))
-      (should (string= (doom-modeline-project-root) default-directory)))))
-
-(ert-deftest doom-modeline-project-root/project ()
-  ;; The latest `project' requires Emacs >= 26.1
-  (skip-unless (>= emacs-major-version 26))
-  (let ((default-directory "~/project-current/")
-        (doom-modeline-project-detection 'project)
-        (doom-modeline--project-root nil))
-    (should (string= (doom-modeline-project-root) default-directory))))
-
-(ert-deftest doom-modeline-project-root/project-old ()
-  ;; Old versions of project.el do not have `project-root'
-  (skip-unless (< emacs-major-version 26))
-  (let ((default-directory "~/project-current/")
-        (doom-modeline-project-detection 'project)
-        (doom-modeline--project-root nil))
-    (should (string= (doom-modeline-project-root) default-directory))))
 
 (ert-deftest doom-modeline-project-root/default ()
   (let ((default-directory "~/project/")
@@ -824,7 +823,7 @@
           (should (equal (substring-no-properties text) (cadr case)))
           (should (get-text-property 1 'face text))
           (should (eq (lookup-key (get-text-property 1 'local-map text)
-                                 [mode-line mouse-1])
+                                  [mode-line mouse-1])
                       #'mode-line-change-eol))
           (should (eq (get-text-property encoding-start 'local-map text)
                       mode-line-coding-system-map)))))))
