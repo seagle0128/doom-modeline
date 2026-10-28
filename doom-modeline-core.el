@@ -826,6 +826,21 @@ If nil, display only if the mode line is active."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-display-tab-bar-string 'active
+  "Whether display `doom-modeline-tab-bar-format-global' on the tab bar.
+
+If non-nil, always display `doom-modeline-tab-bar-format-global'
+on the tab bar. If `active', display information about
+active segments. If nil, never display
+`doom-modeline-tab-bar-format-global' on the tab bar.
+
+Note that `doom-modeline-tab-bar-format-global' must be added to the
+`tab-bar-format' list for this variable to take effect."
+  :type '(choice (const :tag "Don't show `doom-modeline-tab-bar-format-global' on tab bar" nil)
+                 (const :tag "Show `doom-modeline-tab-bar-format-global' only for active segments" active)
+                 (const :tag "Always show `doom-modeline-tab-bar-format-global' on tab bar" t))
+  :group 'doom-modeline)
+
 
 ;;
 ;; Faces

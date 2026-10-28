@@ -404,6 +404,9 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether display the time. It respects `display-time-mode'.
 (setq doom-modeline-time t)
 
+;; Whether display `doom-modeline-tab-bar-format-global' on the tab bar.
+(setq doom-modeline-display-tab-bar-string 'active)
+
 ;; Whether display the misc segment on all mode lines.
 ;; If nil, display only if the mode line is active.
 (setq doom-modeline-display-misc-in-all-mode-lines t)
