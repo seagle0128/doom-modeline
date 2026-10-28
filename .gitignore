@@ -8,7 +8,6 @@
 
 # Packaging
 .cask
-.eask
 /dist/
 
 # Backup files
