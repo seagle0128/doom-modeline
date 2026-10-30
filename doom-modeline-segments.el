@@ -89,6 +89,8 @@
 (defvar ispell-dictionary)
 (defvar ispell-local-dictionary)
 (defvar kele-menu-map)
+(defvar keycast-invisible-mode)
+(defvar keycast-mode-line-format)
 (defvar meow--current-state)
 (defvar meow--indicator)
 (defvar minions-mode-line-lighter)
@@ -206,6 +208,7 @@
 (declare-function jsonrpc-name "jsonrpc" t t)
 (declare-function kele-current-context-name "ext:kele")
 (declare-function kele-current-namespace "ext:kele")
+(declare-function keycast-format "ext:keycast")
 (declare-function lsp--workspace-print "ext:lsp-mode")
 (declare-function lsp-describe-session "ext:lsp-mode")
 (declare-function lsp-workspace-folders-open "ext:lsp-mode")
@@ -3680,6 +3683,15 @@ mouse-2: Show help for minor mode"
                                map)
                   'mouse-face 'doom-modeline-highlight
                   'help-echo help-msg))))
+
+;;
+;; Keycast
+;;
+
+(doom-modeline-def-segment keycast ()
+  (and (mode-line-window-selected-p)
+       (bound-and-true-p 'keycast-invisible-mode
+       (keycast-format keycast-mode-line-format)))
 
 (provide 'doom-modeline-segments)
 
