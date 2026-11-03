@@ -1060,6 +1060,11 @@ Also see the face `doom-modeline-unread-number'."
   "Face for the off state tag in boon indicator."
   :group 'doom-modeline-faces)
 
+(defface doom-modeline-minibuffer-depth
+  '((t (:inherit (doom-modeline doom-modeline-notification))))
+  "Face for the `minibuffer-depth' indicator."
+  :group 'doom-modeline-faces)
+
 (defface doom-modeline-meow-normal-state
   '((t (:inherit doom-modeline-evil-normal-state)))
   "Face for the normal state in meow-edit indicator."
