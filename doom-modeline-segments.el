@@ -3705,7 +3705,7 @@ mouse-2: Show help for minor mode"
 
 (doom-modeline-def-segment keycast ()
   (and (mode-line-window-selected-p)
-       (bound-and-true-p 'keycast-invisible-mode
+       (bound-and-true-p 'keycast-invisible-mode)
        (keycast-format keycast-mode-line-format)))
 
 (provide 'doom-modeline-segments)
