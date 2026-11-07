@@ -589,9 +589,9 @@ project directory is important."
                                              (1 "DOS-style CRLF")
                                              (2 "Mac-style CR")
                                              (_ "Undecided")))
-                        'local-map (let ((map (make-sparse-keymap)))
-                                     (define-key map [mode-line mouse-1] #'mode-line-change-eol)
-                                     map))))
+                        'local-map (make-mode-line-mouse-map
+                                    'mouse-1
+                                    #'mode-line-change-eol))))
            ;; coding system
            (sys (coding-system-plist buffer-file-coding-system))
            (cat (plist-get sys :category))
@@ -3264,7 +3264,7 @@ Uses `nerd-icons-mdicon' to fetch the icon."
     (when (and display-battery-mode battery-status-function battery-mode-line-format
                (not (memq 'battery-mode-line-string global-mode-string)))
       (setq global-mode-string
-	    (append global-mode-string '(battery-mode-line-string))))))
+	        (append global-mode-string '(battery-mode-line-string))))))
 (add-hook 'display-battery-mode-hook #'doom-modeline-override-battery)
 (add-hook 'doom-modeline-mode-hook #'doom-modeline-override-battery)
 
