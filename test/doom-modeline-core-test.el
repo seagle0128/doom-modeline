@@ -887,17 +887,28 @@
       (setq managed nil)
       (should (eq (doom-modeline--eglot-face) 'doom-modeline-lsp-warning)))))
 
+;; `doom-modeline--eglot-icon' reads these eglot variables dynamically.  The
+;; bare `defvar' declarations in `doom-modeline-segments' are optimized away
+;; when that file is byte-compiled, so declare them here as well: otherwise
+;; the `let' below is a lexical binding and the icon builder gets a
+;; `void-variable' error under `lexical-binding'.
+(defvar eglot-menu-string)
+(defvar eglot-menu)
+(defvar eglot-server-menu)
+
 (ert-deftest doom-modeline-update-eglot/caches-all-faces ()
   "Updating eglot caches an icon variant for every server state."
   (let ((eglot-menu-string "E")
         (eglot-menu #'ignore)
-        (eglot-server-menu #'ignore)
-        (doom-modeline-lsp-icon nil))
+        (eglot-server-menu #'ignore))
     (dolist (fn '(eglot-managed-p eglot-current-server eglot-project-nickname
                   eglot--server-info eglot--major-modes))
       (unless (fboundp fn)
         (fset fn #'ignore)))
-    (cl-letf (((symbol-function 'eglot-managed-p) (lambda () t))
+    ;; Keep the icon independent of the installed icon font.
+    (cl-letf (((symbol-function 'doom-modeline-lsp-icon)
+               (lambda (&rest _) "E"))
+              ((symbol-function 'eglot-managed-p) (lambda () t))
               ((symbol-function 'eglot-current-server) (lambda () 'mock-server))
               ((symbol-function 'eglot-project-nickname) (lambda (_) "mock"))
               ((symbol-function 'eglot--server-info)
