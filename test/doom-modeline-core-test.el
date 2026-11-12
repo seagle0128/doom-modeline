@@ -905,9 +905,10 @@
                   eglot--server-info eglot--major-modes))
       (unless (fboundp fn)
         (fset fn #'ignore)))
-    ;; Keep the icon independent of the installed icon font.
+    ;; Stub the icon helper with its terminal fallback, which is what adds
+    ;; FACE to the string; this keeps the test independent of icon fonts.
     (cl-letf (((symbol-function 'doom-modeline-lsp-icon)
-               (lambda (&rest _) "E"))
+               (lambda (text face) (propertize text 'face face)))
               ((symbol-function 'eglot-managed-p) (lambda () t))
               ((symbol-function 'eglot-current-server) (lambda () 'mock-server))
               ((symbol-function 'eglot-project-nickname) (lambda (_) "mock"))
