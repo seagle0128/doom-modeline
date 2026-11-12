@@ -855,4 +855,73 @@
     (let ((doom-modeline-buffer-encoding nil))
       (should-not (doom-modeline-segment--buffer-encoding)))))
 
+;;;
+;;; Eglot LSP state (issue #846)
+;;;
+
+(ert-deftest doom-modeline-eglot-face/state-transitions ()
+  "The eglot face follows the server state without re-running the hook."
+  (let ((managed t)
+        (pending 2)
+        (last-error nil)
+        (server '(mock-server)))
+    ;; `cl-letf' cannot bind a place whose function is void, and neither
+    ;; eglot nor jsonrpc is necessarily loaded in the test session.
+    (dolist (fn '(eglot-managed-p eglot-current-server eglot-project-nickname
+                  jsonrpc-last-error))
+      (unless (fboundp fn)
+        (fset fn #'ignore)))
+    (cl-letf (((symbol-function 'eglot-managed-p) (lambda () managed))
+              ((symbol-function 'eglot-current-server) (lambda () server))
+              ((symbol-function 'eglot-project-nickname) (lambda (_) "mock"))
+              ((symbol-function 'jsonrpc-last-error) (lambda (_) last-error))
+              ((symbol-function 'doom-modeline--eglot-pending-count)
+               (lambda (_) pending)))
+      ;; Requests are in flight when `eglot-managed-mode-hook' runs.
+      (should (eq (doom-modeline--eglot-face) 'doom-modeline-lsp-warning))
+      ;; They finish, but no hook runs: the segment must pick another face.
+      (setq pending 0)
+      (should (eq (doom-modeline--eglot-face) 'doom-modeline-lsp-success))
+      (setq last-error '(jsonrpc-error))
+      (should (eq (doom-modeline--eglot-face) 'doom-modeline-lsp-error))
+      (setq managed nil)
+      (should (eq (doom-modeline--eglot-face) 'doom-modeline-lsp-warning)))))
+
+;; `doom-modeline--eglot-icon' reads these eglot variables dynamically.  The
+;; bare `defvar' declarations in `doom-modeline-segments' are optimized away
+;; when that file is byte-compiled, so declare them here as well: otherwise
+;; the `let' below is a lexical binding and the icon builder gets a
+;; `void-variable' error under `lexical-binding'.
+(defvar eglot-menu-string)
+(defvar eglot-menu)
+(defvar eglot-server-menu)
+
+(ert-deftest doom-modeline-update-eglot/caches-all-faces ()
+  "Updating eglot caches an icon variant for every server state."
+  (let ((eglot-menu-string "E")
+        (eglot-menu #'ignore)
+        (eglot-server-menu #'ignore))
+    (dolist (fn '(eglot-managed-p eglot-current-server eglot-project-nickname
+                  eglot--server-info eglot--major-modes))
+      (unless (fboundp fn)
+        (fset fn #'ignore)))
+    ;; Stub the icon helper with its terminal fallback, which is what adds
+    ;; FACE to the string; this keeps the test independent of icon fonts.
+    (cl-letf (((symbol-function 'doom-modeline-lsp-icon)
+               (lambda (text face) (propertize text 'face face)))
+              ((symbol-function 'eglot-managed-p) (lambda () t))
+              ((symbol-function 'eglot-current-server) (lambda () 'mock-server))
+              ((symbol-function 'eglot-project-nickname) (lambda (_) "mock"))
+              ((symbol-function 'eglot--server-info)
+               (lambda (_) '(:name "mock-server")))
+              ((symbol-function 'eglot--major-modes) (lambda (_) "mock-mode")))
+      (with-temp-buffer
+        (doom-modeline-update-eglot)
+        (dolist (face '(doom-modeline-lsp-error
+                        doom-modeline-lsp-warning
+                        doom-modeline-lsp-success))
+          (should
+           (eq (get-text-property 0 'face (plist-get doom-modeline--eglot face))
+               face)))))))
+
 ;;; doom-modeline-core-test.el ends here

@@ -2371,33 +2371,67 @@ mouse-1: Reload to start server")
       (jsonrpc-continuation-count server)
     (hash-table-count (jsonrpc--request-continuations server))))
 
-(defvar-local doom-modeline--eglot nil)
+(defvar-local doom-modeline--eglot nil
+  "Cached eglot mode-line icons, keyed by the face describing the server state.
+
+This is a plist with `doom-modeline-lsp-error',
+`doom-modeline-lsp-warning' and `doom-modeline-lsp-success' as keys.
+The icon itself (glyph, help-echo and keymap) is cached by
+`doom-modeline-update-eglot', while the face is chosen when the `lsp'
+segment is displayed: pending requests and server errors change without
+any hook being run, so a cached face would go stale (see issue #846).")
+
+(defun doom-modeline--eglot-icon (face nick server-name major-modes)
+  "Build the cached eglot mode-line icon with FACE.
+NICK, SERVER-NAME and MAJOR-MODES describe the current server and are
+used for the tooltip."
+  (let ((icon (doom-modeline-lsp-icon eglot-menu-string face)))
+    (propertize icon
+                'help-echo (format "Eglot connected [%s]\n%s %s
+mouse-1: Display minor mode menu
+mouse-3: LSP server control menu"
+                                   nick server-name major-modes)
+                'mouse-face 'doom-modeline-highlight
+                'local-map (let ((map (make-sparse-keymap)))
+                             (define-key map [mode-line mouse-1] eglot-menu)
+                             (define-key map [mode-line mouse-3] eglot-server-menu)
+                             map))))
+
+(defun doom-modeline--eglot-face ()
+  "Return the face reflecting the current state of the eglot server.
+
+This is called whenever the `lsp' segment is displayed instead of when
+`doom-modeline-update-eglot' runs: neither the number of pending
+requests nor the last error has a hook, so caching the face would leave
+the icon in a stale state.  The lookups are the same ones that eglot's
+own `eglot--mode-line-format' performs on every redisplay, which
+doom-modeline hides."
+  (if-let* ((server (and (eglot-managed-p) (eglot-current-server))))
+      (let ((pending (doom-modeline--eglot-pending-count server)))
+        (cond ((jsonrpc-last-error server) 'doom-modeline-lsp-error)
+              ((and pending (cl-plusp pending)) 'doom-modeline-lsp-warning)
+              ((eglot-project-nickname server) 'doom-modeline-lsp-success)
+              (t 'doom-modeline-lsp-warning)))
+    'doom-modeline-lsp-warning))
+
 (defun doom-modeline-update-eglot ()
-  "Update eglot state."
+  "Update cached eglot state."
   (setq doom-modeline--eglot
         (let* ((server (and (eglot-managed-p) (eglot-current-server)))
                (nick (and server (eglot-project-nickname server)))
-               (pending (and server (doom-modeline--eglot-pending-count server)))
-               (last-error (and server (jsonrpc-last-error server)))
-               (face (cond (last-error 'doom-modeline-lsp-error)
-                           ((and pending (cl-plusp pending)) 'doom-modeline-lsp-warning)
-                           (nick 'doom-modeline-lsp-success)
-                           (t 'doom-modeline-lsp-warning)))
                (server-info (and server (eglot--server-info server)))
                (server-name (or (plist-get server-info :name)
                                 (and server (jsonrpc-name server)) ""))
-               (major-modes (or (and server (eglot--major-modes server)) ""))
-               (icon (doom-modeline-lsp-icon eglot-menu-string face)))
-          (propertize icon
-                      'help-echo (format "Eglot connected [%s]\n%s %s
-mouse-1: Display minor mode menu
-mouse-3: LSP server control menu"
-                                         nick server-name major-modes)
-                      'mouse-face 'doom-modeline-highlight
-                      'local-map (let ((map (make-sparse-keymap)))
-                                   (define-key map [mode-line mouse-1] eglot-menu)
-                                   (define-key map [mode-line mouse-3] eglot-server-menu)
-                                   map)))))
+               (major-modes (or (and server (eglot--major-modes server)) "")))
+          (list 'doom-modeline-lsp-error
+                (doom-modeline--eglot-icon 'doom-modeline-lsp-error
+                                           nick server-name major-modes)
+                'doom-modeline-lsp-warning
+                (doom-modeline--eglot-icon 'doom-modeline-lsp-warning
+                                           nick server-name major-modes)
+                'doom-modeline-lsp-success
+                (doom-modeline--eglot-icon 'doom-modeline-lsp-success
+                                           nick server-name major-modes)))))
 (add-hook 'eglot-managed-mode-hook #'doom-modeline-update-eglot)
 
 (defvar-local doom-modeline--tags nil)
@@ -2454,7 +2488,8 @@ mouse-1: Toggle citre mode"
     (when-let* ((icon (cond ((bound-and-true-p lsp-mode)
                              doom-modeline--lsp)
                             ((bound-and-true-p eglot--managed-mode)
-                             doom-modeline--eglot)
+                             (plist-get doom-modeline--eglot
+                                        (doom-modeline--eglot-face)))
                             ((bound-and-true-p citre-mode)
                              doom-modeline--tags)))
                 (sep (doom-modeline-spc)))
