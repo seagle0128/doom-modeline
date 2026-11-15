@@ -1252,31 +1252,47 @@ runs on every window switch, cheap."
          (when (bound-and-true-p flymake-mode)
            (doom-modeline-update-flymake)))))))
 
+(defvar-local doom-modeline--check nil
+  "Cached rendering of the check segment for the current buffer.")
+
+(defvar-local doom-modeline--check-key nil
+  "Inputs `doom-modeline--check' was rendered from.")
+
 (doom-modeline-def-segment check
-  "Displays color-coded error status in the current buffer with pretty icons."
-  (when-let* ((sep (doom-modeline-spc))
-              (vsep (doom-modeline-vspc))
-              (seg (cond
-                    ((bound-and-true-p flymake-mode)
-                     doom-modeline--flymake)
-                    ((bound-and-true-p flycheck-mode)
-                     doom-modeline--flycheck))))
-    (concat
-     sep
-     (let ((str))
-       (dolist (s (split-string seg " "))
-         (setq str
-               (concat str
-                       (if (string-match-p "^[0-9]+$" s)
-                           (concat vsep
-                                   (doom-modeline-display-text s)
-                                   vsep)
-                         (doom-modeline-display-icon s)))))
-       (propertize str
-                   'help-echo (get-text-property 0 'help-echo seg)
-                   'mouse-face 'doom-modeline-highlight
-                   'local-map (get-text-property 0 'local-map seg)))
-     sep)))
+  "Displays color-coded error status in the current buffer with pretty icons.
+
+The wrapped string only depends on the diagnostics reported by
+Flymake or Flycheck and on whether the window is active, so the
+result is cached.  This segment runs on every redisplay, and
+re-splitting and rewrapping the string each time is pure overhead."
+  (let ((seg (cond ((bound-and-true-p flymake-mode)
+                    doom-modeline--flymake)
+                   ((bound-and-true-p flycheck-mode)
+                    doom-modeline--flycheck)))
+        (active (doom-modeline--active)))
+    (when seg
+      (if (equal (cons seg active) doom-modeline--check-key)
+          doom-modeline--check
+        (setq doom-modeline--check-key (cons seg active)
+              doom-modeline--check
+              (let ((sep (doom-modeline-spc))
+                    (vsep (doom-modeline-vspc)))
+                (concat
+                 sep
+                 (let ((str))
+                   (dolist (s (split-string seg " "))
+                     (setq str
+                           (concat str
+                                   (if (string-match-p "^[0-9]+$" s)
+                                       (concat vsep
+                                               (doom-modeline-display-text s)
+                                               vsep)
+                                     (doom-modeline-display-icon s)))))
+                   (propertize str
+                               'help-echo (get-text-property 0 'help-echo seg)
+                               'mouse-face 'doom-modeline-highlight
+                               'local-map (get-text-property 0 'local-map seg)))
+                 sep)))))))
 
 
 ;;
