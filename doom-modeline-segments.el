@@ -1034,97 +1034,184 @@ level."
     (defalias 'flymake--state-diags 'flymake--backend-state-diags)))
 
 (defun doom-modeline--flymake-count-errors ()
-  "Count the number of ERRORS, grouped by level."
+  "Count the number of ERRORS, grouped by level.
+
+The severity of a diagnostic type is a property of the type, not
+of the diagnostic, so it is looked up once per type."
   (let ((warning-level (warning-numeric-level :warning))
         (note-level (warning-numeric-level :debug))
+        (error-level (warning-numeric-level :error))
+        (severities (make-hash-table :test #'eq))
         (note 0) (warning 0) (error 0))
-    (maphash (lambda (_b state)
-               (cl-loop
-                with diags = (flymake--state-diags state)
-                for diag in diags do
-                (let ((severity (flymake--lookup-type-property (flymake--diag-type diag) 'severity
-                                                               (warning-numeric-level :error))))
-                  (cond ((> severity warning-level) (cl-incf error))
-                        ((> severity note-level) (cl-incf warning))
-                        (t (cl-incf note))))))
-             flymake--state)
+    (maphash
+     (lambda (_b state)
+       (cl-loop
+        with diags = (flymake--state-diags state)
+        for diag in diags do
+        (let* ((type (flymake--diag-type diag))
+               (severity (gethash type severities 'unknown)))
+          (when (eq severity 'unknown)
+            (setq severity (flymake--lookup-type-property
+                            type 'severity error-level))
+            (puthash type severity severities))
+          (cond ((> severity warning-level) (cl-incf error))
+                ((> severity note-level) (cl-incf warning))
+                (t (cl-incf note))))))
+     flymake--state)
     `((note . ,note) (warning . ,warning) (error . ,error))))
 
 (defvar-local doom-modeline--flymake nil)
+
+(defvar-local doom-modeline--flymake-counts nil
+  "Cached diagnostic counts of the current buffer, grouped by level.")
+
+(defvar-local doom-modeline--flymake-dirty t
+  "Non-nil when `doom-modeline--flymake-counts' may be out of date.")
+
+(defvar-local doom-modeline--flymake-key nil
+  "Inputs the current `doom-modeline--flymake' was rendered from.")
+
+(defvar doom-modeline--flymake-keymap nil
+  "Keymap of the flymake check segment.")
+
+(defvar doom-modeline--flymake-icons (make-hash-table :test #'equal)
+  "Cache of the icons used by the flymake check segment.
+
+Keyed by the arguments of `doom-modeline-check-icon' and by the
+options the rendered icon depends on, so it invalidates itself.")
+
+(defun doom-modeline--flymake-icon (icon unicode text face)
+  "Return the cached check ICON for FACE.
+ICON, UNICODE and TEXT are the fallbacks of `doom-modeline-check-icon'."
+  (let ((key (list doom-modeline-icon
+                   doom-modeline-check-icon
+                   doom-modeline-unicode-fallback
+                   (display-graphic-p)
+                   icon unicode text face)))
+    (or (gethash key doom-modeline--flymake-icons)
+        (puthash key (doom-modeline-check-icon icon unicode text face)
+                 doom-modeline--flymake-icons))))
+
+(defun doom-modeline--flymake-keymap ()
+  "Return the keymap of the flymake check segment."
+  (or doom-modeline--flymake-keymap
+      (setq doom-modeline--flymake-keymap
+            (let ((map (make-sparse-keymap)))
+              (define-key map [mode-line down-mouse-1]
+                flymake-menu)
+              (define-key map [mode-line mouse-2]
+                (lambda ()
+                  (interactive)
+                  (describe-function 'flymake-mode)))
+              map))))
+
+(defun doom-modeline--flymake-render (status)
+  "Build the flymake check segment.
+STATUS is the list (KNOWN RUNNING DISABLED REPORTED) of backends."
+  (pcase-let ((`(,known ,running ,disabled ,reported) status))
+    (let-alist doom-modeline--flymake-counts
+      (let* ((all-disabled (and disabled (null running)))
+             (some-waiting (cl-set-difference running reported))
+             (vsep (doom-modeline-vspc))
+             (seg (cond
+                   ((or (eq doom-modeline-check 'simple)
+                        (and doom-modeline--limited-width-p (eq doom-modeline-check 'auto)))
+                    (let ((count (+ .error .warning .note)))
+                      (cond
+                       (some-waiting
+                        (concat
+                         (doom-modeline--flymake-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug)
+                         (when (> count 0)
+                           (concat
+                            vsep
+                            (doom-modeline-check-text (number-to-string count) 'doom-modeline-debug)))))
+                       ((zerop known)
+                        (doom-modeline--flymake-icon "nf-md-alert_box_outline" "⚠" "!" 'doom-modeline-urgent))
+                       (all-disabled
+                        (doom-modeline--flymake-icon "nf-md-alert_box_outline" "⚠" "!" 'doom-modeline-warning))
+                       (t
+                        (if (> count 0)
+                            (let ((face (cond ((> .error 0) 'doom-modeline-urgent)
+                                              ((> .warning 0) 'doom-modeline-warning)
+                                              (t 'doom-modeline-info))))
+                              (concat
+                               (doom-modeline--flymake-icon "nf-md-alert_circle_outline" "⚠" "!" face)
+                               vsep
+                               (doom-modeline-check-text (number-to-string count) face)))
+                          (doom-modeline--flymake-icon "nf-md-check_circle_outline" "✔" "*" 'doom-modeline-info))))))
+                   ((or (eq doom-modeline-check 'full)
+                        (and (not doom-modeline--limited-width-p) (eq doom-modeline-check 'auto)))
+                    (concat
+                     (doom-modeline--flymake-icon "nf-md-close_circle_outline" "⮾" "!" 'doom-modeline-urgent)
+                     vsep
+                     (doom-modeline-check-text (number-to-string .error) 'doom-modeline-urgent)
+                     vsep
+                     (doom-modeline--flymake-icon "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning)
+                     vsep
+                     (doom-modeline-check-text (number-to-string .warning) 'doom-modeline-warning)
+                     vsep
+                     (doom-modeline--flymake-icon "nf-md-information_outline" "🛈" "!" 'doom-modeline-info)
+                     vsep
+                     (doom-modeline-check-text (number-to-string .note) 'doom-modeline-info)))
+                   (t ""))))
+        (propertize
+         seg
+         'help-echo (concat
+                     "Flymake\n"
+                     (cond (some-waiting "Checking...")
+                           ((zerop known) "No Checker")
+                           (all-disabled "All Checkers Disabled")
+                           (t (format "%d/%d backends running\nerror: %d, warning: %d, note: %d"
+                                      (length running) known .error .warning .note)))
+                     "\nmouse-1: Display minor mode menu\nmouse-2: Show help for minor mode")
+         'mouse-face 'doom-modeline-highlight
+         'local-map (doom-modeline--flymake-keymap))))))
+
+(defun doom-modeline--flymake-invalidate (&rest _)
+  "Flag the cached flymake counts as out of date."
+  (setq doom-modeline--flymake-dirty t))
+
+(defun doom-modeline--flymake-report (&rest _)
+  "Refresh the flymake segment after a report."
+  (doom-modeline--flymake-invalidate)
+  (doom-modeline-update-flymake))
+
 (defun doom-modeline-update-flymake (&rest _)
-  "Update flymake."
-  (setq doom-modeline--flymake
-        (when (and (bound-and-true-p flymake-mode)
-                   (bound-and-true-p flymake--state))
-          (let* ((known (hash-table-keys flymake--state))
-                 (running (flymake-running-backends))
-                 (disabled (flymake-disabled-backends))
-                 (reported (flymake-reporting-backends))
-                 (all-disabled (and disabled (null running)))
-                 (some-waiting (cl-set-difference running reported)))
-            (let-alist (doom-modeline--flymake-count-errors)
-              (let* ((vsep (doom-modeline-vspc))
-                     (seg (cond
-                           ((or (eq doom-modeline-check 'simple)
-                                (and doom-modeline--limited-width-p (eq doom-modeline-check 'auto)))
-                            (let ((count (+ .error .warning .note)))
-                              (cond
-                               (some-waiting
-                                (concat
-                                 (doom-modeline-check-icon "nf-md-timer_sand" "⏳" "*" 'doom-modeline-debug)
-                                 (when (> count 0)
-                                   (concat
-                                    vsep
-                                    (doom-modeline-check-text (number-to-string count) 'doom-modeline-debug)))))
-                               ((null known)
-                                (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "!" 'doom-modeline-urgent))
-                               (all-disabled
-                                (doom-modeline-check-icon "nf-md-alert_box_outline" "⚠" "!" 'doom-modeline-warning))
-                               (t
-                                (if (> count 0)
-                                    (let ((face (cond ((> .error 0) 'doom-modeline-urgent)
-                                                      ((> .warning 0) 'doom-modeline-warning)
-                                                      (t 'doom-modeline-info))))
-                                      (concat
-                                       (doom-modeline-check-icon "nf-md-alert_circle_outline" "⚠" "!" face)
-                                       vsep
-                                       (doom-modeline-check-text (number-to-string count) face)))
-                                  (doom-modeline-check-icon "nf-md-check_circle_outline" "✔" "*" 'doom-modeline-info))))))
-                           ((or (eq doom-modeline-check 'full)
-                                (and (not doom-modeline--limited-width-p) (eq doom-modeline-check 'auto)))
-                            (concat
-                             (doom-modeline-check-icon "nf-md-close_circle_outline" "⮾" "!" 'doom-modeline-urgent)
-                             vsep
-                             (doom-modeline-check-text (number-to-string .error) 'doom-modeline-urgent)
-                             vsep
-                             (doom-modeline-check-icon "nf-md-alert_outline" "⚠" "!" 'doom-modeline-warning)
-                             vsep
-                             (doom-modeline-check-text (number-to-string .warning) 'doom-modeline-warning)
-                             vsep
-                             (doom-modeline-check-icon "nf-md-information_outline" "🛈" "!" 'doom-modeline-info)
-                             vsep
-                             (doom-modeline-check-text (number-to-string .note) 'doom-modeline-info)))
-                           (t ""))))
-                (propertize
-                 seg
-                 'help-echo (concat
-                             "Flymake\n"
-                             (cond (some-waiting "Checking...")
-                                   ((null known) "No Checker")
-                                   (all-disabled "All Checkers Disabled")
-                                   (t (format "%d/%d backends running\nerror: %d, warning: %d, note: %d"
-                                              (length running) (length known) .error .warning .note)))
-                             "\nmouse-1: Display minor mode menu\nmouse-2: Show help for minor mode")
-                 'mouse-face 'doom-modeline-highlight
-                 'local-map (let ((map (make-sparse-keymap)))
-                              (define-key map [mode-line down-mouse-1]
-                                flymake-menu)
-                              (define-key map [mode-line mouse-2]
-                                (lambda ()
-                                  (interactive)
-                                  (describe-function 'flymake-mode)))
-                              map))))))))
-(advice-add #'flymake--handle-report :after #'doom-modeline-update-flymake)
+  "Update flymake.
+
+The diagnostics are only counted again when flymake reported
+something new, and the segment is only rebuilt when one of its
+inputs changed.  This keeps `window-state-change-functions', which
+runs on every window switch, cheap."
+  (if (and (bound-and-true-p flymake-mode)
+           (bound-and-true-p flymake--state))
+      (progn
+        (when (or doom-modeline--flymake-dirty
+                  (null doom-modeline--flymake-counts))
+          (setq doom-modeline--flymake-counts
+                (doom-modeline--flymake-count-errors)
+                doom-modeline--flymake-dirty nil))
+        (let* ((status (list (hash-table-count flymake--state)
+                             (flymake-running-backends)
+                             (flymake-disabled-backends)
+                             (flymake-reporting-backends)))
+               (key (list status
+                          doom-modeline--flymake-counts
+                          doom-modeline--limited-width-p
+                          doom-modeline-check
+                          doom-modeline-icon
+                          doom-modeline-check-icon
+                          doom-modeline-unicode-fallback
+                          (display-graphic-p)
+                          (doom-modeline--active))))
+          (unless (equal key doom-modeline--flymake-key)
+            (setq doom-modeline--flymake-key key
+                  doom-modeline--flymake (doom-modeline--flymake-render status)))))
+    (setq doom-modeline--flymake nil
+          doom-modeline--flymake-key nil
+          doom-modeline--flymake-counts nil
+          doom-modeline--flymake-dirty t)))
+(advice-add #'flymake--handle-report :after #'doom-modeline--flymake-report)
 (add-hook 'window-state-change-functions #'doom-modeline-update-flymake)
 
 (doom-modeline-add-variable-watcher
