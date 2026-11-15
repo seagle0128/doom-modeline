@@ -176,4 +176,14 @@ for both of them."
            (doom-modeline-update-flymake)
            (should (zerop calls))))))))
 
+(ert-deftest doom-modeline-flymake/reuses-keymap ()
+  (doom-modeline-test--call-with-diags
+   (list (doom-modeline-test--diag :error))
+   (lambda ()
+     (doom-modeline-update-flymake)
+     (let ((map (get-text-property 0 'local-map doom-modeline--flymake)))
+       (should (keymapp map))
+       (should (eq map (doom-modeline--check-keymap 'flymake)))
+       (should (eq (lookup-key map [mode-line down-mouse-1]) flymake-menu))))))
+
 ;;; doom-modeline-flymake-test.el ends here
