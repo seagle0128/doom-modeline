@@ -1840,12 +1840,26 @@ Return `default-directory' if no project was found."
         buffer-file-name)))
 
 (defun doom-modeline--format-buffer-file-truename (b-f-n)
-  "Get and format buffer file truename via B-F-N."
-  (let ((buffer-file-truename (file-local-name
-                               (or (file-truename b-f-n) ""))))
+  "Get and format buffer file truename via B-F-N.
+Prefer Emacs' cached `buffer-file-truename' of the base buffer, which is
+resolved at find-file time, over a synchronous `file-truename' call.  This
+keeps filesystem I/O off the redisplay path on cold starts; fall back to
+`file-truename' only when the cached value is unavailable."
+  (let* ((base (buffer-base-buffer))
+         ;; Emacs caches the truename at find-file time.  Reading it is O(1);
+         ;; `file-truename' performs synchronous symlink resolution (~11us).
+         ;; Only trust the cached value when B-F-N is the genuine file name;
+         ;; a custom `doom-modeline-buffer-file-name-function' may rewrite it
+         ;; into a different path, in which case fall back to resolving B-F-N.
+         (genuine-name-p (eq doom-modeline-buffer-file-name-function #'identity))
+         (cached-truename (and genuine-name-p
+                               (buffer-local-value 'buffer-file-truename
+                                                   (or base (current-buffer)))))
+         (truename (file-local-name
+                    (or cached-truename (file-truename b-f-n) ""))))
     (or (and doom-modeline-buffer-file-truename-function
-             (funcall doom-modeline-buffer-file-truename-function buffer-file-truename))
-        buffer-file-truename)))
+             (funcall doom-modeline-buffer-file-truename-function truename))
+        truename)))
 
 (defun doom-modeline-buffer-file-name ()
   "Propertize file name based on `doom-modeline-buffer-file-name-style'."

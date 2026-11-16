@@ -339,6 +339,83 @@
                  (doom-modeline--buffer-file-name-relative file-path true-file-path 'include-project))
                 "project/relative/test.txt")))))
 
+;;
+;; Tests for `doom-modeline--format-buffer-file-truename' truename caching (P1')
+;;
+
+(ert-deftest doom-modeline-format-truename/uses-cache-no-io ()
+  "With the default name function, no `file-truename' call is made."
+  (let ((calls 0)
+        (doom-modeline-buffer-file-name-function #'identity)
+        (doom-modeline-buffer-file-truename-function #'identity))
+    (find-file "/etc/hosts")
+    (unwind-protect
+        (cl-letf (((symbol-function 'file-truename)
+                   (lambda (&rest _) (setq calls (1+ calls)) "SHOULD-NOT-BE-USED")))
+          (should (equal (doom-modeline--format-buffer-file-truename "/etc/hosts")
+                         (file-local-name buffer-file-truename)))
+          (should (= calls 0)))
+      (kill-buffer))))
+
+(ert-deftest doom-modeline-format-truename/fallback-when-no-cache ()
+  "Without a cached truename, fall back to a real `file-truename' call."
+  (let ((calls 0)
+        (doom-modeline-buffer-file-name-function #'identity)
+        (doom-modeline-buffer-file-truename-function #'identity)
+        (real (symbol-function 'file-truename)))
+    (with-temp-buffer
+      (setq buffer-file-name "/etc/hosts")
+      ;; No find-file: buffer-file-truename is nil for this buffer.
+      (should (null buffer-file-truename))
+      (cl-letf (((symbol-function 'file-truename)
+                 (lambda (&rest args) (setq calls (1+ calls)) (apply real args))))
+        (let ((got (doom-modeline--format-buffer-file-truename "/etc/hosts")))
+          ;; `file-truename' recurses internally, so count > 0 (not exactly 1).
+          (should (> calls 0))
+          (should (equal got (file-local-name (funcall real "/etc/hosts")))))))))
+
+(ert-deftest doom-modeline-format-truename/custom-name-function-falls-back ()
+  "A custom name function disables the cache to preserve semantics.
+When B-F-N may be rewritten, resolve it directly as the original code did."
+  (let ((calls 0)
+        (doom-modeline-buffer-file-name-function (lambda (n) (concat n "X")))
+        (doom-modeline-buffer-file-truename-function #'identity)
+        (real (symbol-function 'file-truename)))
+    (find-file "/etc/hosts")
+    (unwind-protect
+        (cl-letf (((symbol-function 'file-truename)
+                   (lambda (&rest args) (setq calls (1+ calls)) (apply real args))))
+          (doom-modeline--format-buffer-file-truename "/etc/hosts")
+          (should (> calls 0)))
+      (kill-buffer))))
+
+(ert-deftest doom-modeline-format-truename/indirect-buffer-uses-base ()
+  "An indirect buffer resolves truename from its base buffer."
+  (let ((doom-modeline-buffer-file-name-function #'identity)
+        (doom-modeline-buffer-file-truename-function #'identity))
+    (find-file "/etc/hosts")
+    (unwind-protect
+        (let ((ind (clone-indirect-buffer " *dm-p1-ind*" nil)))
+          (unwind-protect
+              (with-current-buffer ind
+                (should (null buffer-file-truename))
+                (should (equal (doom-modeline--format-buffer-file-truename "/etc/hosts")
+                               (file-local-name
+                                (buffer-local-value 'buffer-file-truename
+                                                    (buffer-base-buffer))))))
+            (kill-buffer ind)))
+      (kill-buffer))))
+
+(ert-deftest doom-modeline-format-truename/truename-function-applied ()
+  "The custom truename function still post-processes the result."
+  (let ((doom-modeline-buffer-file-name-function #'identity)
+        (doom-modeline-buffer-file-truename-function (lambda (s) (concat "<" s ">"))))
+    (find-file "/etc/hosts")
+    (unwind-protect
+        (should (equal (doom-modeline--format-buffer-file-truename "/etc/hosts")
+                       (concat "<" (file-local-name buffer-file-truename) ">")))
+      (kill-buffer))))
+
 (ert-deftest doom-modeline-enable-buffer-position/test ()
   "Test that `doom-modeline-enable-buffer-position' is defined correctly."
   ;; Test that the variable exists and defaults to t
