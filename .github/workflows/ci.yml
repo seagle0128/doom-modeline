@@ -41,3 +41,7 @@ jobs:
           eask install
           eask test ert-runner
           eask compile
+
+      - name: Lint segment redisplay path
+        run: |
+          emacs -Q --batch -l scripts/lint-segments.el -- doom-modeline-segments.el
