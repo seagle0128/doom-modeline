@@ -543,6 +543,25 @@ read-only or non-existent)."
       (doom-modeline-vspc)))
    (doom-modeline--buffer-simple-name)))
 
+(defvar-local doom-modeline--default-directory-cache nil
+  "Cache of values derived from `default-directory'.
+Cons of (DIR . (HOST . ABBREV)), where DIR is the `default-directory' the
+values were computed for.  Both `file-remote-p' (path parsing) and
+`abbreviate-file-name' are needlessly repeated on every redisplay, so they
+are computed once per distinct directory and reused.  A mismatch on DIR
+invalidates the cache without any hook.")
+
+(defun doom-modeline--default-directory-info ()
+  "Return (HOST . ABBREV) for the current `default-directory', cached.
+HOST is the remote host string or nil; ABBREV is the abbreviated directory."
+  (let ((dir default-directory))
+    (unless (and doom-modeline--default-directory-cache
+                 (equal (car doom-modeline--default-directory-cache) dir))
+      (setq doom-modeline--default-directory-cache
+            (cons dir (cons (file-remote-p dir 'host)
+                            (abbreviate-file-name dir)))))
+    (cdr doom-modeline--default-directory-cache)))
+
 (doom-modeline-def-segment buffer-default-directory
   "Displays `default-directory' with the icon and state.
 
@@ -560,7 +579,7 @@ project directory is important."
             'octicon "nf-oct-file_directory_fill" "🖿" "" :face face)
            (doom-modeline-vspc)))
      (doom-modeline--buffer-state-icon)
-     (propertize (abbreviate-file-name default-directory) 'face face))))
+     (propertize (cdr (doom-modeline--default-directory-info)) 'face face))))
 
 (doom-modeline-def-segment buffer-default-directory-simple
   "Displays `default-directory'.
@@ -575,7 +594,7 @@ project directory is important."
            (doom-modeline-icon
             'octicon "nf-oct-file_directory_fill" "🖿" "" :face face)
            (doom-modeline-vspc)))
-     (propertize (abbreviate-file-name default-directory) 'face face))))
+     (propertize (cdr (doom-modeline--default-directory-info)) 'face face))))
 
 
 ;;
@@ -666,7 +685,7 @@ project directory is important."
 (doom-modeline-def-segment remote-host
   "Hostname for remote buffers."
   (when (and doom-modeline-remote-host default-directory)
-    (when-let* ((host (file-remote-p default-directory 'host)))
+    (when-let* ((host (car (doom-modeline--default-directory-info))))
       (propertize
        (concat "@" host)
        'face (doom-modeline-face 'doom-modeline-host)))))
@@ -1401,6 +1420,33 @@ Respects `doom-modeline-enable-word-count'."
   (save-excursion (goto-char pos)
                   (current-column)))
 
+(defvar-local doom-modeline--selection-cache nil
+  "Cache of selection statistics for the current buffer.
+A plist of :beg, :end, :tick, :count-words and :lines/:chars/:words.
+Selection statistics (`count-lines' and `count-words') scan the region and
+must not be recomputed on every redisplay while the region is unchanged; a
+mismatch on the region bounds, the buffer's modification tick, or the
+word-count option invalidates the cache.")
+
+(defun doom-modeline--selection-stats (beg end want-words)
+  "Return (LINES CHARS . WORDS) for the region BEG..END, cached.
+WANT-WORDS is `doom-modeline-enable-word-count'; WORDS is nil when false."
+  (let ((cache doom-modeline--selection-cache)
+        (tick (buffer-modified-tick)))
+    (unless (and cache
+                 (= (plist-get cache :beg) beg)
+                 (= (plist-get cache :end) end)
+                 (= (plist-get cache :tick) tick)
+                 (eq (plist-get cache :count-words) want-words))
+      (setq doom-modeline--selection-cache
+            (list :beg beg :end end :tick tick :count-words want-words
+                  :lines (count-lines beg (min end (point-max)))
+                  :chars (- end beg)
+                  :words (when want-words (count-words beg end)))))
+    (let ((cache doom-modeline--selection-cache))
+      (cons (plist-get cache :lines)
+            (cons (plist-get cache :chars) (plist-get cache :words))))))
+
 (doom-modeline-def-segment selection-info
   "Information about the current selection.
 
@@ -1414,8 +1460,12 @@ block selection."
         (if (and (bound-and-true-p evil-local-mode) (eq evil-state 'visual))
             (cons evil-visual-beginning evil-visual-end)
           (cons (region-beginning) (region-end)))
-      (propertize
-       (let ((lines (count-lines beg (min end (point-max)))))
+      (let* ((stats (doom-modeline--selection-stats
+                     beg end doom-modeline-enable-word-count))
+             (lines (car stats))
+             (chars (cadr stats))
+             (words (cddr stats)))
+        (propertize
          (concat
           " "
           (cond ((or (bound-and-true-p rectangle-mark-mode)
@@ -1428,13 +1478,13 @@ block selection."
                       (eq evil-visual-selection 'line))
                  (format "%dL" lines))
                 ((> lines 1)
-                 (format "%dC %dL" (- end beg) lines))
+                 (format "%dC %dL" chars lines))
                 (t
-                 (format "%dC" (- end beg))))
+                 (format "%dC" chars)))
           (when doom-modeline-enable-word-count
-            (format " %dW" (count-words beg end)))
-          " "))
-       'face 'doom-modeline-emphasis))))
+            (format " %dW" words))
+          " ")
+         'face 'doom-modeline-emphasis)))))
 
 
 ;;
@@ -2007,50 +2057,68 @@ Keymap for what is displayed by `mode-line-window-dedicated'."))
 ;; Workspace
 ;;
 
+(defvar doom-modeline--workspace-keymap-cache nil
+  "Cached mode-line keymap for the workspace segment.
+Cons of (KIND . MAP), where KIND is `eyebrowse' or `tab-bar'.  The keymap
+depends only on the active backend, not on the workspace name, so it is
+built once per backend instead of allocating a sparse keymap and several
+`define-key' entries on every redisplay.")
+
+(defun doom-modeline--workspace-keymap (kind)
+  "Return the cached mode-line keymap for workspace backend KIND."
+  (unless (eq (car doom-modeline--workspace-keymap-cache) kind)
+    (setq doom-modeline--workspace-keymap-cache
+          (cons kind
+                (let ((map (make-sparse-keymap)))
+                  (pcase kind
+                    ('eyebrowse
+                     (define-key map [mode-line mouse-1]
+                       #'eyebrowse-switch-to-window-config)
+                     (define-key map [mode-line mouse-2]
+                       (lambda ()
+                         (interactive)
+                         (describe-function 'eyebrowse-mode))))
+                    ('tab-bar
+                     (define-key map [mode-line mouse-1] #'tab-bar-switch-to-tab)
+                     (define-key map [mode-line mouse-2]
+                       (lambda ()
+                         (interactive)
+                         (describe-function 'tab-bar-mode)))))
+                  map))))
+  (cdr doom-modeline--workspace-keymap-cache))
+
 (doom-modeline-def-segment workspace-name
   "The current workspace name.
 Requires `eyebrowse-mode' to be enabled or `tab-bar-mode' tabs to be created."
   (when (and doom-modeline-workspace-name
              (not doom-modeline--limited-width-p))
-    (when-let*
-        ((name (cond
-                ((and (bound-and-true-p eyebrowse-mode)
-                      (length> (eyebrowse--get 'window-configs) 1))
-                 (setq mode-line-misc-info
-                       (assq-delete-all 'eyebrowse-mode mode-line-misc-info))
-                 (when-let*
-                     ((num (eyebrowse--get 'current-slot))
-                      (tag (nth 2 (assoc num (eyebrowse--get 'window-configs)))))
-                   (if (length> tag 0) tag (int-to-string num))))
-                ((and (fboundp 'tab-bar-mode)
-                      (length> (frame-parameter nil 'tabs) 1))
-                 (let* ((current-tab (tab-bar--current-tab))
-                        (tab-index (tab-bar--current-tab-index))
-                        (explicit-name (alist-get 'explicit-name current-tab))
-                        (tab-name (alist-get 'name current-tab)))
-                   (if explicit-name tab-name (+ 1 tab-index))))))
-         (keymap (let ((map (make-sparse-keymap)))
-                   (cond ((and (bound-and-true-p eyebrowse-mode)
-                               (length> (eyebrowse--get 'window-configs) 1))
-                          (define-key map [mode-line mouse-1] #'eyebrowse-switch-to-window-config)
-                          (define-key map [mode-line mouse-2]
-                            (lambda ()
-                              (interactive)
-                              (describe-function 'eyebrowse-mode))))
-                         ((and (fboundp 'tab-bar-mode)
-                               (length> (frame-parameter nil 'tabs) 1))
-                          (define-key map [mode-line mouse-1] #'tab-bar-switch-to-tab)
-                          (define-key map [mode-line mouse-2]
-                            (lambda ()
-                              (interactive)
-                              (describe-function 'tab-bar-mode)))))
-                   map)))
-      (propertize (format " %s " name)
-                  'face (doom-modeline-face 'doom-modeline-workspace-name)
-                  'mouse-face 'mode-line-highlight
-                  'help-echo "mouse-1: Switch workspace
+    (let (kind name)
+      ;; Determine the backend and name in one pass; the old implementation
+      ;; queried `eyebrowse--get'/`frame-parameter' again in the keymap branch.
+      (cond
+       ((and (bound-and-true-p eyebrowse-mode)
+             (length> (eyebrowse--get 'window-configs) 1))
+        (setq kind 'eyebrowse)
+        (setq mode-line-misc-info
+              (assq-delete-all 'eyebrowse-mode mode-line-misc-info))
+        (when-let* ((num (eyebrowse--get 'current-slot))
+                    (tag (nth 2 (assoc num (eyebrowse--get 'window-configs)))))
+          (setq name (if (length> tag 0) tag (int-to-string num)))))
+       ((and (fboundp 'tab-bar-mode)
+             (length> (frame-parameter nil 'tabs) 1))
+        (setq kind 'tab-bar)
+        (let* ((current-tab (tab-bar--current-tab))
+               (tab-index (tab-bar--current-tab-index))
+               (explicit-name (alist-get 'explicit-name current-tab))
+               (tab-name (alist-get 'name current-tab)))
+          (setq name (if explicit-name tab-name (+ 1 tab-index))))))
+      (when name
+        (propertize (format " %s " name)
+                    'face (doom-modeline-face 'doom-modeline-workspace-name)
+                    'mouse-face 'mode-line-highlight
+                    'help-echo "mouse-1: Switch workspace
 mouse-2: Show help for minor mode"
-                  'local-map keymap))))
+                    'local-map (doom-modeline--workspace-keymap kind))))))
 
 
 ;;
