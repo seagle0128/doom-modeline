@@ -1577,12 +1577,32 @@ If INACTIVE-FACE is nil, `mode-line-inactive' face will be added."
   "Apply FACE or `doom-modeline-spc-face-overrides' to `doom-modeline-face'."
   `(:inherit (,(doom-modeline-face) ,face ,doom-modeline-spc-face-overrides)))
 
+(defvar doom-modeline--pixel-width-cache nil
+  "Cache of the most recent mode-line pixel width measurement.
+A cons of (KEY . WIDTH), where KEY is (FRAME . STRING).  Only one entry is
+kept: consecutive redisplays usually measure the same string, while the
+right-hand side may contain a clock that changes every second, so a bounded
+single entry avoids both repeated expensive measurement and unbounded growth.")
+
 (defun doom-modeline-string-pixel-width (str)
-  "Return the width of STR in pixels."
-  (if (fboundp 'string-pixel-width)
-      (string-pixel-width str)
-    (* (string-width str) (window-font-width nil 'mode-line)
-       (if (display-graphic-p) 1.05 1.0))))
+  "Return the width of STR in pixels, cached across consecutive redisplays.
+Measuring a typical mode-line right-hand side is expensive (tens of
+microseconds) and happens on every redisplay, while the measured string is
+often unchanged.  The cache key includes FRAME and the text properties of STR,
+so switching frames or changing the string's faces forces a fresh measurement."
+  (let* ((frame (selected-frame))
+         (cached doom-modeline--pixel-width-cache))
+    (if (and cached
+             (eq (car (car cached)) frame)
+             (equal-including-properties (cdr (car cached)) str))
+        (cdr cached)
+      (let ((width (if (fboundp 'string-pixel-width)
+                       (string-pixel-width str)
+                     (* (string-width str) (window-font-width nil 'mode-line)
+                        (if (display-graphic-p) 1.05 1.0)))))
+        (setq doom-modeline--pixel-width-cache
+              (cons (cons frame str) width))
+        width))))
 
 ;; Per-frame cache for mode-line font height.
 (defvar doom-modeline--font-height-cache (make-hash-table :test 'eq :weakness 'key)
