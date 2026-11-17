@@ -1388,12 +1388,18 @@ Example:
         (rhs-forms (doom-modeline--prepare-segments rhs)))
     (defalias sym
       (lambda ()
-        (list lhs-forms
-              (let* ((rhs-str (format-mode-line `("" ,@rhs-forms)))
-                     (rhs-width (progn
-                                  (add-face-text-property
-                                   0 (length rhs-str) 'mode-line t rhs-str)
-                                  (doom-modeline-string-pixel-width rhs-str))))
+        (let* ((rhs-str (format-mode-line `("" ,@rhs-forms)))
+               ;; Measure a copy: `add-face-text-property' mutates its
+               ;; argument, but the RHS returned below must stay exactly as
+               ;; `format-mode-line' produced it.  Appending the `mode-line'
+               ;; face to the returned string would override segment faces
+               ;; that carry their own colors.
+               (measure-str (copy-sequence rhs-str))
+               (rhs-width (progn
+                            (add-face-text-property
+                             0 (length measure-str) 'mode-line t measure-str)
+                            (doom-modeline-string-pixel-width measure-str))))
+          (list lhs-forms
                 (propertize
                  " "
                  'face (doom-modeline-face)
@@ -1401,9 +1407,9 @@ Example:
                  ;; Backport from `mode-line-right-align-edge' in 30
                  (if (and (display-graphic-p)
                           (not (eq mode-line-right-align-edge 'window)))
-		             `(space :align-to (- ,mode-line-right-align-edge
+                     `(space :align-to (- ,mode-line-right-align-edge
                                           (,rhs-width)))
-		           `(space :align-to (,(- (window-pixel-width)
+                   `(space :align-to (,(- (window-pixel-width)
                                           (window-scroll-bar-width)
                                           (window-right-divider-width)
                                           (* (or (car (window-margins)) 0)
@@ -1418,8 +1424,11 @@ Example:
                                             ('right-fringe
                                              (or (cadr (window-fringes)) 0))
                                             (_ 0))
-                                          rhs-width))))))
-              rhs-forms))
+                                          rhs-width)))))
+                ;; Return the already-rendered string instead of RHS-FORMS.
+                ;; Returning the forms made Emacs evaluate every RHS segment
+                ;; a second time (once here for width, once at display time).
+                rhs-str)))
       (concat "Modeline:\n"
               (format "  %s\n  %s"
                       (prin1-to-string lhs)

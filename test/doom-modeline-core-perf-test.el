@@ -126,5 +126,56 @@ expensive and must not run on every redisplay."
       (doom-modeline-string-pixel-width s)
       (should (= calls 1)))))
 
+(ert-deftest doom-modeline-def-modeline/rhs-evaluated-once ()
+  "The RHS of a modeline is rendered once and returned as a string.
+Regression: the old implementation measured the RHS with `format-mode-line'
+and then returned the un-evaluated forms as the third element of the mode-line
+format, so Emacs evaluated every RHS segment a second time at display time.
+The third element must be the pre-rendered string, not a (:eval ...) form."
+  (let ((doom-modeline--modelines nil)
+        (doom-modeline--pixel-width-cache nil)
+        (rendered (propertize "X" 'face 'doom-modeline-info 'help-echo "probe")))
+    (unwind-protect
+        (progn
+          ;; In batch mode `format-mode-line' does not evaluate :eval forms, so
+          ;; stub it to return the string a real redisplay would produce.
+          (cl-letf (((symbol-function 'format-mode-line)
+                     (lambda (&rest _) rendered))
+                    ((symbol-function 'doom-modeline-string-pixel-width)
+                     (lambda (_s) 10)))
+            (add-to-list 'doom-modeline--fn-alist '(rhs-count-probe . ignore))
+            (doom-modeline-def-modeline 'test-rhs-once nil '(rhs-count-probe))
+            (let ((fmt (funcall
+                        (intern "doom-modeline-format--test-rhs-once"))))
+              ;; The third element is the rendered string, not a form list.
+              (should (stringp (nth 2 fmt)))
+              (should (equal (nth 2 fmt) rendered))
+              ;; Text properties survive, unchanged by width measurement.
+              (should (eq 'doom-modeline-info
+                          (get-text-property 0 'face (nth 2 fmt))))
+              (should (string= "probe"
+                               (get-text-property 0 'help-echo (nth 2 fmt)))))))
+      (setq doom-modeline--modelines nil))))
+
+(ert-deftest doom-modeline-def-modeline/measure-uses-copy ()
+  "Width measurement must not mutate the string returned as the RHS.
+`add-face-text-property' mutates in place; measuring a copy keeps the
+returned RHS free of the appended `mode-line' face, which would otherwise
+override segment faces carrying their own colors."
+  (let ((measured-input nil)
+        (doom-modeline--pixel-width-cache nil))
+    (cl-letf (((symbol-function 'format-mode-line)
+               (lambda (&rest _) (propertize "X" 'face 'doom-modeline-info)))
+              ((symbol-function 'doom-modeline-string-pixel-width)
+               (lambda (s) (setq measured-input s) 10)))
+      (add-to-list 'doom-modeline--fn-alist '(rhs-copy-probe . ignore))
+      (doom-modeline-def-modeline 'test-rhs-copy nil '(rhs-copy-probe))
+      (let ((fmt (funcall (intern "doom-modeline-format--test-rhs-copy"))))
+        ;; The measured string carries the appended mode-line face (the copy).
+        (should (memq 'mode-line (get-text-property 0 'face measured-input)))
+        ;; The returned RHS does not.
+        (should (eq 'doom-modeline-info
+                    (get-text-property 0 'face (nth 2 fmt))))))))
+
 (provide 'doom-modeline-core-perf-test)
 ;;; doom-modeline-core-perf-test.el ends here
