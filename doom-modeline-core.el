@@ -1888,10 +1888,15 @@ Return nil if no project was found."
  (lambda (_sym val op _where)
    (when (eq op 'set)
      (setq doom-modeline-project-detection val)
+     ;; Invalidate the buffer-local project-root cache on every buffer so the
+     ;; next redisplay recomputes it with the new detection backend.  Do NOT
+     ;; `revert-buffer' here: that re-reads every visited file from disk,
+     ;; re-runs major mode and font-lock, and with NOCONFIRM=t can discard
+     ;; unsaved edits on unrelated buffers.  None of it is needed to refresh
+     ;; a mode-line value.
      (dolist (buf (buffer-list))
        (with-current-buffer buf
-         (setq doom-modeline--project-root nil)
-         (and buffer-file-name (revert-buffer t t)))))))
+         (setq doom-modeline--project-root nil))))))
 
 (defun doom-modeline-project-p ()
   "Check if the file is in a project."

@@ -107,6 +107,42 @@
     (cl-flet ((ffip-get-project-root-directory () default-directory))
       (should (string= (doom-modeline-project-root) default-directory)))))
 
+;;; P1: changing project-detection must not revert visited buffers
+(ert-deftest doom-modeline-project-detection/watcher-invalidates-without-revert ()
+  "Changing `doom-modeline-project-detection' clears the per-buffer cache
+but never calls `revert-buffer'.  Reverting would re-read every visited file
+from disk and re-run major mode, which is unnecessary for a mode-line value."
+  (let ((reverts 0)
+        (orig-detection doom-modeline-project-detection)
+        (bufs nil))
+    (unwind-protect
+        (progn
+          ;; Two file-visiting buffers with populated caches.  Create them
+          ;; without `find-file' to avoid heavy major-mode hooks; setting
+          ;; `buffer-file-name' is enough for the watcher's old code path.
+          (dolist (name '("/tmp/dm-proj-a.txt" "/tmp/dm-proj-b.txt"))
+            (let ((buf (generate-new-buffer " *dm-proj-test*")))
+              (push buf bufs)
+              (with-current-buffer buf
+                (setq buffer-file-name name)
+                (setq doom-modeline--project-root "/fake/root"))))
+          (cl-letf (((symbol-function 'revert-buffer)
+                     (lambda (&rest _) (setq reverts (1+ reverts)))))
+            ;; Trigger the variable watcher via a real set.
+            (setq doom-modeline-project-detection 'project)
+            ;; No buffer may be reverted, even though both visit files.
+            (should (= reverts 0))
+            ;; Every buffer's cache is invalidated so it recomputes lazily.
+            (dolist (buf bufs)
+              (with-current-buffer buf
+                (should (null doom-modeline--project-root))))))
+      ;; Cleanup: restore detection (fires the watcher again, harmless) and
+      ;; kill the temporary buffers.
+      (setq doom-modeline-project-detection orig-detection)
+      (dolist (buf bufs)
+        (when (buffer-live-p buf)
+          (kill-buffer buf))))))
+
 (ert-deftest doom-modeline-project-root/default ()
   (let ((default-directory "~/project/")
         (doom-modeline-project-detection nil))
