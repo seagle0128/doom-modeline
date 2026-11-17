@@ -1685,6 +1685,14 @@ See https://github.com/seagle0128/doom-modeline/issues/301."
                                      :height  ,(or height 1.0))))))
     (doom-modeline-propertize-text icon face)))
 
+(defconst doom-modeline-icon-cache-max 256
+  "Maximum number of entries in `doom-modeline--icon-cache'.
+
+The cache is bounded because icon keys include the TEXT argument; an
+unbounded cache would grow forever if a caller ever passed dynamic text.
+A FIFO policy evicts the oldest entry at capacity.  256 comfortably holds
+every icon rendered in a single redisplay.")
+
 (defvar doom-modeline--icon-cache (make-hash-table :test #'equal)
   "Cache of icons rendered by `doom-modeline-icon'.
 
@@ -1693,7 +1701,36 @@ etc.), not the icon-set constructors (`nerd-icons-mdicon', ...) nor the
 propertization done by `doom-modeline-propertize-icon'.  Since mode-line
 segments call `doom-modeline-icon' on every redisplay, that work is repeated
 needlessly.  The cache key includes the function arguments plus every global
-option the result depends on, so it invalidates itself when those change.")
+option the result depends on, so it invalidates itself when those change.
+Entries are bounded by `doom-modeline-icon-cache-max' and evicted FIFO;
+`doom-modeline--icon-cache-order' tracks insertion order for eviction.")
+
+(defvar doom-modeline--icon-cache-order nil
+  "Keys of `doom-modeline--icon-cache', newest first.
+Used by `doom-modeline--icon-cache-put' to evict the oldest entry when the
+cache reaches `doom-modeline-icon-cache-max'.")
+
+(defun doom-modeline--icon-cache-put (key value)
+  "Store VALUE under KEY in `doom-modeline--icon-cache', evicting FIFO.
+Only genuinely new keys are appended to the order list; refreshing an
+existing key leaves it in place.  Once the cache exceeds
+`doom-modeline-icon-cache-max', the oldest keys are dropped from both the
+order list and the hash table.  The hit path in `doom-modeline-icon' does
+not call this function, so lookups stay O(1)."
+  (let ((table doom-modeline--icon-cache))
+    (unless (gethash key table)
+      (setq doom-modeline--icon-cache-order
+            (cons key doom-modeline--icon-cache-order))
+      (let ((n 0)
+            (keys doom-modeline--icon-cache-order)
+            (kept nil))
+        (dolist (k keys)
+          (setq n (1+ n))
+          (if (<= n doom-modeline-icon-cache-max)
+              (push k kept)
+            (remhash k table)))
+        (setq doom-modeline--icon-cache-order (nreverse kept))))
+    (puthash key value table)))
 
 (defun doom-modeline-icon (icon-set icon-name unicode text &rest args)
   "Display icon of ICON-NAME with ARGS in mode-line.
@@ -1737,7 +1774,7 @@ The result is cached, keyed by the arguments and the relevant global options."
                      (doom-modeline-propertize-text text face))
                     ;; Fallback
                     (t ""))))
-        (puthash key (copy-sequence icon) doom-modeline--icon-cache)
+        (doom-modeline--icon-cache-put key (copy-sequence icon))
         icon))))
 
 (defun doom-modeline-icon-for-buffer ()

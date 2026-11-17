@@ -180,6 +180,7 @@ override segment faces carrying their own colors."
 (ert-deftest doom-modeline-icon/cached-by-args-and-options ()
   "The icon render runs once per distinct (args, options) combination."
   (let ((doom-modeline--icon-cache (make-hash-table :test #'equal))
+        (doom-modeline--icon-cache-order nil)
         (doom-modeline-icon t)
         (doom-modeline-unicode-fallback nil)
         (renders 0))
@@ -206,6 +207,7 @@ override segment faces carrying their own colors."
 (ert-deftest doom-modeline-icon/cache-returns-isolated-copy ()
   "Mutating a returned icon must not corrupt the cached value."
   (let ((doom-modeline--icon-cache (make-hash-table :test #'equal))
+        (doom-modeline--icon-cache-order nil)
         (doom-modeline-icon nil)
         (doom-modeline-unicode-fallback nil))
     (let ((a (doom-modeline-icon 'mdicon nil nil "XY" :face 'doom-modeline-info))
@@ -217,6 +219,58 @@ override segment faces carrying their own colors."
       ;; Mutating A's text properties leaves B untouched.
       (add-face-text-property 0 (length a) 'mode-line t a)
       (should-not (memq 'mode-line (get-text-property 0 'face b))))))
+
+
+(ert-deftest doom-modeline-icon/cache-evicts-oldest-at-capacity ()
+  "The icon cache evicts the oldest entry once it reaches the bound.
+The high hit rate of an `equal' hash cache must be preserved: a single-slot
+cache is not acceptable because one redisplay renders many distinct icons."
+  (let ((doom-modeline--icon-cache (make-hash-table :test #'equal))
+        (doom-modeline--icon-cache-order nil)
+        (doom-modeline-icon-cache-max 3)
+        (doom-modeline-icon nil)
+        (doom-modeline-unicode-fallback nil)
+        (renders 0))
+    (cl-letf (((symbol-function 'doom-modeline-propertize-text)
+               (lambda (text _face)
+                 (setq renders (1+ renders))
+                 (propertize text 'face 'doom-modeline-info))))
+      ;; Fill the cache to capacity with three distinct icons.
+      (doom-modeline-icon 'mdicon nil nil "A")
+      (doom-modeline-icon 'mdicon nil nil "B")
+      (doom-modeline-icon 'mdicon nil nil "C")
+      (should (= renders 3))
+      (should (= (hash-table-count doom-modeline--icon-cache) 3))
+      (should (= (length doom-modeline--icon-cache-order) 3))
+      ;; A fourth distinct icon evicts the oldest (A).
+      (doom-modeline-icon 'mdicon nil nil "D")
+      (should (= renders 4))
+      (should (= (hash-table-count doom-modeline--icon-cache) 3))
+      (should (= (length doom-modeline--icon-cache-order) 3))
+      ;; Re-requesting an evicted icon re-renders; a retained one hits cache.
+      (doom-modeline-icon 'mdicon nil nil "A")
+      (should (= renders 5))
+      (doom-modeline-icon 'mdicon nil nil "C")
+      (should (= renders 5))
+      ;; Re-requesting a present key does not grow the order list.
+      (doom-modeline-icon 'mdicon nil nil "D")
+      (should (= renders 5))
+      (should (= (length doom-modeline--icon-cache-order) 3)))))
+
+(ert-deftest doom-modeline-icon/dynamic-text-does-not-grow-cache ()
+  "Dynamic TEXT arguments cannot grow the cache without bound.
+Regression: the cache key includes TEXT and the table had no capacity bound,
+so passing varying text could leak entries indefinitely."
+  (let ((doom-modeline--icon-cache (make-hash-table :test #'equal))
+        (doom-modeline--icon-cache-order nil)
+        (doom-modeline-icon nil)
+        (doom-modeline-unicode-fallback nil))
+    (dotimes (i 1000)
+      (doom-modeline-icon 'faicon "nf-fa-terminal" "$" (number-to-string i) :face 'x))
+    (should (<= (hash-table-count doom-modeline--icon-cache)
+                doom-modeline-icon-cache-max))
+    (should (<= (length doom-modeline--icon-cache-order)
+                doom-modeline-icon-cache-max))))
 
 (provide 'doom-modeline-core-perf-test)
 ;;; doom-modeline-core-perf-test.el ends here
