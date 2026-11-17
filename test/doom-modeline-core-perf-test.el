@@ -177,5 +177,46 @@ override segment faces carrying their own colors."
         (should (eq 'doom-modeline-info
                     (get-text-property 0 'face (nth 2 fmt))))))))
 
+(ert-deftest doom-modeline-icon/cached-by-args-and-options ()
+  "The icon render runs once per distinct (args, options) combination."
+  (let ((doom-modeline--icon-cache (make-hash-table :test #'equal))
+        (doom-modeline-icon t)
+        (doom-modeline-unicode-fallback nil)
+        (renders 0))
+    (cl-letf (((symbol-function 'doom-modeline-propertize-icon)
+               (lambda (_icon _face)
+                 (setq renders (1+ renders))
+                 (propertize "I" 'face 'doom-modeline-info))))
+      ;; First call renders; second identical call is served from cache.
+      (doom-modeline-icon 'mdicon "nf-md-email" "e" "@" :face 'doom-modeline-info)
+      (should (= renders 1))
+      (doom-modeline-icon 'mdicon "nf-md-email" "e" "@" :face 'doom-modeline-info)
+      (should (= renders 1))
+      ;; A different face is a different key.
+      (doom-modeline-icon 'mdicon "nf-md-email" "e" "@" :face 'doom-modeline-warning)
+      (should (= renders 2))
+      ;; A different icon-name is a different key.
+      (doom-modeline-icon 'mdicon "nf-md-account" "e" "@" :face 'doom-modeline-info)
+      (should (= renders 3))
+      ;; A different nerd-icons option is a different key.
+      (let ((nerd-icons-scale-factor 1.5))
+        (doom-modeline-icon 'mdicon "nf-md-email" "e" "@" :face 'doom-modeline-info))
+      (should (= renders 4)))))
+
+(ert-deftest doom-modeline-icon/cache-returns-isolated-copy ()
+  "Mutating a returned icon must not corrupt the cached value."
+  (let ((doom-modeline--icon-cache (make-hash-table :test #'equal))
+        (doom-modeline-icon nil)
+        (doom-modeline-unicode-fallback nil))
+    (let ((a (doom-modeline-icon 'mdicon nil nil "XY" :face 'doom-modeline-info))
+          (b (doom-modeline-icon 'mdicon nil nil "XY" :face 'doom-modeline-info)))
+      ;; Distinct string objects ...
+      (should-not (eq a b))
+      ;; ... with equal content.
+      (should (equal a b))
+      ;; Mutating A's text properties leaves B untouched.
+      (add-face-text-property 0 (length a) 'mode-line t a)
+      (should-not (memq 'mode-line (get-text-property 0 'face b))))))
+
 (provide 'doom-modeline-core-perf-test)
 ;;; doom-modeline-core-perf-test.el ends here

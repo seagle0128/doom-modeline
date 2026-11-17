@@ -1685,34 +1685,60 @@ See https://github.com/seagle0128/doom-modeline/issues/301."
                                      :height  ,(or height 1.0))))))
     (doom-modeline-propertize-text icon face)))
 
+(defvar doom-modeline--icon-cache (make-hash-table :test #'equal)
+  "Cache of icons rendered by `doom-modeline-icon'.
+
+nerd-icons caches only the lookup functions (`nerd-icons-icon-for-file',
+etc.), not the icon-set constructors (`nerd-icons-mdicon', ...) nor the
+propertization done by `doom-modeline-propertize-icon'.  Since mode-line
+segments call `doom-modeline-icon' on every redisplay, that work is repeated
+needlessly.  The cache key includes the function arguments plus every global
+option the result depends on, so it invalidates itself when those change.")
+
 (defun doom-modeline-icon (icon-set icon-name unicode text &rest args)
   "Display icon of ICON-NAME with ARGS in mode-line.
 
 ICON-SET includes `ipsicon', `octicon', `pomicon', `powerline', `faicon',
 `wicon', `sucicon', `devicon', `codicon', `flicon' and `mdicon', etc.
 UNICODE is the unicode char fallback.  TEXT is the ASCII char fallback.
-ARGS is same as `nerd-icons-octicon' and others."
-  (let ((face `(:inherit (doom-modeline
-                          ,(or (plist-get args :face) 'mode-line)))))
-    (cond
-     ;; Icon
-     ((and doom-modeline-icon
-           icon-name
-           (not (string-empty-p icon-name)))
-      (let* ((func (nerd-icons--function-name icon-set))
-             (icon (and (fboundp func) (apply func icon-name args))))
-        (doom-modeline-propertize-icon icon face)))
-     ;; Unicode fallback
-     ((and doom-modeline-unicode-fallback
-           unicode
-           (not (string-empty-p unicode))
-           (char-displayable-p (string-to-char unicode)))
-      (doom-modeline-propertize-text unicode face))
-     ;; ASCII text
-     (text
-      (doom-modeline-propertize-text text face))
-     ;; Fallback
-     (t ""))))
+ARGS is same as `nerd-icons-octicon' and others.
+
+The result is cached, keyed by the arguments and the relevant global options."
+  (let* ((key (list doom-modeline-icon
+                    doom-modeline-unicode-fallback
+                    (display-graphic-p)
+                    ;; nerd-icons options that affect the rendered icon.
+                    nerd-icons-scale-factor
+                    nerd-icons-default-adjust
+                    nerd-icons-font-family
+                    nerd-icons-color-icons
+                    icon-set icon-name unicode text args))
+         (cached (gethash key doom-modeline--icon-cache)))
+    (if cached
+        (copy-sequence cached)
+      (let* ((face `(:inherit (doom-modeline
+                               ,(or (plist-get args :face) 'mode-line))))
+             (icon (cond
+                    ;; Icon
+                    ((and doom-modeline-icon
+                          icon-name
+                          (not (string-empty-p icon-name)))
+                     (let* ((func (nerd-icons--function-name icon-set))
+                            (raw (and (fboundp func) (apply func icon-name args))))
+                       (doom-modeline-propertize-icon raw face)))
+                    ;; Unicode fallback
+                    ((and doom-modeline-unicode-fallback
+                          unicode
+                          (not (string-empty-p unicode))
+                          (char-displayable-p (string-to-char unicode)))
+                     (doom-modeline-propertize-text unicode face))
+                    ;; ASCII text
+                    (text
+                     (doom-modeline-propertize-text text face))
+                    ;; Fallback
+                    (t ""))))
+        (puthash key (copy-sequence icon) doom-modeline--icon-cache)
+        icon))))
 
 (defun doom-modeline-icon-for-buffer ()
   "Get the formatted icon for the current buffer."
