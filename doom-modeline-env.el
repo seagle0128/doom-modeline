@@ -80,8 +80,14 @@ Example: \\='doom-modeline-env--ruby")
 ;; Functions & Macros
 
 (defun doom-modeline-update-env ()
-  "Update environment info on mode-line."
-  (when (and doom-modeline-env-version
+  "Update environment info on mode-line.
+The version is resolved once per buffer: `doom-modeline-env--version'
+starts as nil, is set to `doom-modeline-env-load-string' while the query
+runs, and holds the parsed version once it finishes.  A non-nil value means
+the query already ran or is in flight, so repeated triggers from
+`find-file-hook' and focus changes do not fork the subprocess again."
+  (when (and (not doom-modeline-env--version)
+             doom-modeline-env-version
              doom-modeline-env--command
              (executable-find doom-modeline-env--command)
              doom-modeline-env--command-args
@@ -186,10 +192,20 @@ PARSER should be a function for parsing COMMAND's output line-by-line, to
            (when ,enable-var
              (when-let* ((command-list (funcall ,command-var))
                          (exe (executable-find (car command-list))))
-               (setq doom-modeline-env--command exe
-                     doom-modeline-env--command-args (cdr command-list)
-                     doom-modeline-env--parser ,parser-var)
-               (doom-modeline-update-env))))
+               (let ((args (cdr command-list)))
+                 ;; If the resolved command or arguments changed (e.g. the
+                 ;; user switched venv/pyenv/rbenv), invalidate the cached
+                 ;; version so the query below re-forks.  When the command is
+                 ;; unchanged the version is kept and `doom-modeline-update-env'
+                 ;; short-circuits on focus/find-file triggers.
+                 (when (and doom-modeline-env--version
+                            (or (not (equal doom-modeline-env--command exe))
+                                (not (equal doom-modeline-env--command-args args))))
+                   (setq doom-modeline-env--version nil))
+                 (setq doom-modeline-env--command exe
+                       doom-modeline-env--command-args args
+                       doom-modeline-env--parser ,parser-var)
+                 (doom-modeline-update-env)))))
          (format "Updates the %s version string in the modeline." ',name))
        (let ((hooks ',(eval hooks)))
          (dolist (hook (if (listp hooks) hooks (list hooks)))
