@@ -1938,58 +1938,95 @@ keeps filesystem I/O off the redisplay path on cold starts; fall back to
              (funcall doom-modeline-buffer-file-truename-function truename))
         truename)))
 
+(defvar-local doom-modeline--buffer-file-name-format-cache nil
+  "Cached result of `doom-modeline-buffer-file-name'.
+A cons of (KEY . STRING).  KEY lists every input the formatter reads, so
+the whole chain -- including `shrink-path' directory probing -- runs only
+when one of those inputs changes.  The cache is buffer-local because both
+the file name and the project root are buffer-specific.  Filesystem changes
+made behind Emacs' back (e.g. a symlink retargeted outside this session)
+are not covered; Emacs' own `buffer-file-truename' update is.")
+
 (defun doom-modeline-buffer-file-name ()
   "Propertize file name based on `doom-modeline-buffer-file-name-style'."
-  (let* ((buffer-file-name (doom-modeline--format-buffer-file-name))
-         (buffer-file-truename (doom-modeline--format-buffer-file-truename buffer-file-name))
-         (file-name
-          (pcase doom-modeline-buffer-file-name-style
-            ('auto
-             (if (doom-modeline-project-p)
-                 (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink 'shrink 'hide)
-               (propertize (buffer-name) 'face 'doom-modeline-buffer-file)))
-            ('truncate-upto-project
-             (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink))
-            ('truncate-from-project
-             (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename nil 'shrink))
-            ('truncate-with-project
-             (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink 'shrink 'hide))
-            ('truncate-except-project
-             (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink 'shrink))
-            ('truncate-upto-root
-             (doom-modeline--buffer-file-name-truncate buffer-file-name buffer-file-truename))
-            ('truncate-all
-             (doom-modeline--buffer-file-name-truncate buffer-file-name buffer-file-truename t))
-            ('truncate-nil
-             (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename))
-            ('relative-to-project
-             (doom-modeline--buffer-file-name-relative buffer-file-name buffer-file-truename))
-            ('relative-from-project
-             (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename nil nil 'hide))
-            ('file-name
-             (propertize (file-name-nondirectory buffer-file-name)
-                         'face 'doom-modeline-buffer-file))
-            ('file-name-with-project
-             (format "%s|%s"
-                     (propertize (file-name-nondirectory
-                                  (directory-file-name (file-local-name (doom-modeline-project-root))))
-                                 'face 'doom-modeline-project-dir)
-                     (propertize (file-name-nondirectory buffer-file-name)
-                                 'face 'doom-modeline-buffer-file)))
-            ('project
-             (propertize (file-name-nondirectory
-                          (directory-file-name (file-local-name (doom-modeline-project-root))))
-                         'face 'doom-modeline-project-dir))
-            ((or 'buffer-name _)
-             (propertize (buffer-name) 'face 'doom-modeline-buffer-file)))))
-    (propertize file-name
-                'mouse-face 'mode-line-highlight
-                'help-echo (concat buffer-file-truename
-                                   (unless (string= (file-name-nondirectory buffer-file-truename)
-                                                    (buffer-name))
-                                     (concat "\n" (buffer-name)))
-                                   "\nmouse-1: Previous buffer\nmouse-3: Next buffer")
-                'local-map mode-line-buffer-identification-keymap)))
+  (let* ((base (buffer-base-buffer))
+         ;; Resolve the root before building the key: the first call then
+         ;; caches the final root instead of nil, avoiding a second render
+         ;; on the next call.  Subsequent reads hit the root's own cache.
+         (project-root (doom-modeline--project-root))
+         (key (list (buffer-file-name base)
+                    ;; Emacs resolves this at find-file time.  Reading it is
+                    ;; O(1) and tracks renames without touching the disk.
+                    (buffer-local-value 'buffer-file-truename
+                                        (or base (current-buffer)))
+                    (buffer-name)
+                    default-directory
+                    doom-modeline-buffer-file-name-style
+                    doom-modeline-buffer-file-name-function
+                    doom-modeline-buffer-file-truename-function
+                    doom-modeline-buffer-file-true-name
+                    doom-modeline-project-detection
+                    project-root
+                    mode-line-buffer-identification-keymap))
+         (cached doom-modeline--buffer-file-name-format-cache))
+    (if (and cached (equal (car cached) key))
+        ;; Never hand out the cached string itself: callers may add faces to
+        ;; a mode-line string in place (the RHS measurement copies first,
+        ;; but this function is also public).
+        (copy-sequence (cdr cached))
+      (let* ((buffer-file-name (doom-modeline--format-buffer-file-name))
+             (buffer-file-truename
+              (doom-modeline--format-buffer-file-truename buffer-file-name))
+             (file-name
+              (pcase doom-modeline-buffer-file-name-style
+                ('auto
+                 (if (doom-modeline-project-p)
+                     (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink 'shrink 'hide)
+                   (propertize (buffer-name) 'face 'doom-modeline-buffer-file)))
+                ('truncate-upto-project
+                 (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink))
+                ('truncate-from-project
+                 (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename nil 'shrink))
+                ('truncate-with-project
+                 (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink 'shrink 'hide))
+                ('truncate-except-project
+                 (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename 'shrink 'shrink))
+                ('truncate-upto-root
+                 (doom-modeline--buffer-file-name-truncate buffer-file-name buffer-file-truename))
+                ('truncate-all
+                 (doom-modeline--buffer-file-name-truncate buffer-file-name buffer-file-truename t))
+                ('truncate-nil
+                 (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename))
+                ('relative-to-project
+                 (doom-modeline--buffer-file-name-relative buffer-file-name buffer-file-truename))
+                ('relative-from-project
+                 (doom-modeline--buffer-file-name buffer-file-name buffer-file-truename nil nil 'hide))
+                ('file-name
+                 (propertize (file-name-nondirectory buffer-file-name)
+                             'face 'doom-modeline-buffer-file))
+                ('file-name-with-project
+                 (format "%s|%s"
+                         (propertize (file-name-nondirectory
+                                      (directory-file-name (file-local-name (doom-modeline-project-root))))
+                                     'face 'doom-modeline-project-dir)
+                         (propertize (file-name-nondirectory buffer-file-name)
+                                     'face 'doom-modeline-buffer-file)))
+                ('project
+                 (propertize (file-name-nondirectory
+                              (directory-file-name (file-local-name (doom-modeline-project-root))))
+                             'face 'doom-modeline-project-dir))
+                ((or 'buffer-name _)
+                 (propertize (buffer-name) 'face 'doom-modeline-buffer-file))))
+             (result (propertize file-name
+                                 'mouse-face 'mode-line-highlight
+                                 'help-echo (concat buffer-file-truename
+                                                    (unless (string= (file-name-nondirectory buffer-file-truename)
+                                                                     (buffer-name))
+                                                      (concat "\n" (buffer-name)))
+                                                    "\nmouse-1: Previous buffer\nmouse-3: Next buffer")
+                                 'local-map mode-line-buffer-identification-keymap)))
+        (setq doom-modeline--buffer-file-name-format-cache (cons key result))
+        (copy-sequence result)))))
 
 (defun doom-modeline--buffer-file-name-truncate (file-path true-file-path &optional truncate-tail)
   "Propertize file name that truncates every dir along path.

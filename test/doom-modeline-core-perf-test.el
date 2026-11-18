@@ -272,5 +272,128 @@ so passing varying text could leak entries indefinitely."
     (should (<= (length doom-modeline--icon-cache-order)
                 doom-modeline-icon-cache-max))))
 
+(defmacro doom-modeline-core-perf--with-file-buffer (name file &rest body)
+  "Run BODY in a buffer named NAME visiting FILE with a primed root cache."
+  (declare (indent 2))
+  `(let ((doom-modeline--buffer-file-name-format-cache nil))
+     (with-temp-buffer
+       (rename-buffer ,name t)
+       (setq buffer-file-name ,file)
+       (setq buffer-file-truename ,file)
+       (setq-local doom-modeline--project-root "/tmp/project/")
+       ,@body)))
+
+(ert-deftest doom-modeline-buffer-file-name/cached-formatting-chain ()
+  "The whole formatting chain runs once until an input changes.
+`shrink-path' probes directories on the redisplay path; a second call with
+identical inputs must not probe again, and editing the buffer must not
+invalidate a path-only rendering."
+  (let ((doom-modeline-buffer-file-name-style 'truncate-upto-project)
+        (shrink-calls 0)
+        (shrink-after-cold nil)
+        (truename-calls 0))
+    (doom-modeline-core-perf--with-file-buffer
+     " *dm-file-name-cache*" "/tmp/project/src/dm.el"
+     (setq-local default-directory "/tmp/project/src/")
+     (cl-letf* (((symbol-function 'shrink-path--dirs-internal)
+                 (lambda (&rest _)
+                   (setq shrink-calls (1+ shrink-calls))
+                   "/p"))
+                ((symbol-function 'file-truename)
+                 (lambda (f)
+                   (setq truename-calls (1+ truename-calls))
+                   f)))
+       (let ((first (doom-modeline-buffer-file-name))
+             (second (doom-modeline-buffer-file-name)))
+         (should (equal first second))
+         ;; `truncate-upto-project' shrinks the root parent only.
+         (should (= shrink-calls 1))
+         (setq shrink-after-cold shrink-calls)
+         (doom-modeline-buffer-file-name)
+         (should (= shrink-calls shrink-after-cold))
+         ;; `buffer-file-truename' is set, so no fallback resolution at all.
+         (should (= truename-calls 0))
+         ;; Text edits do not change any path input.
+         (insert ";; edit\n")
+         (doom-modeline-buffer-file-name)
+         (should (= shrink-calls shrink-after-cold)))))))
+
+(ert-deftest doom-modeline-buffer-file-name/invalidates-on-input-change ()
+  "Every input the rendering reads invalidates the cache."
+  (let ((doom-modeline-buffer-file-name-style 'file-name)
+        (doom-modeline-buffer-file-name-function #'identity)
+        (calls 0))
+    (doom-modeline-core-perf--with-file-buffer
+     " *dm-file-name-invalid*" "/tmp/project/src/dm.el"
+     (cl-letf (((symbol-function 'doom-modeline--format-buffer-file-name)
+                (lambda () (setq calls (1+ calls)) "/tmp/project/src/dm.el")))
+       (doom-modeline-buffer-file-name)
+       (doom-modeline-buffer-file-name)
+       (should (= calls 1))
+       ;; Style changes take effect immediately.
+       (setq doom-modeline-buffer-file-name-style 'buffer-name)
+       (doom-modeline-buffer-file-name)
+       (should (= calls 2))
+       ;; A renamed buffer is a different rendering.
+       (rename-buffer " *dm-file-name-renamed*" t)
+       (doom-modeline-buffer-file-name)
+       (should (= calls 3))
+       ;; Visiting another file invalidates.
+       (setq buffer-file-name "/tmp/project/src/other.el")
+       (doom-modeline-buffer-file-name)
+       (should (= calls 4))
+       ;; A changed project root invalidates.
+       (setq-local doom-modeline--project-root "/tmp/other/")
+       (doom-modeline-buffer-file-name)
+       (should (= calls 5))
+       ;; A custom name function invalidates even with the same raw file.
+       (setq doom-modeline-buffer-file-name-function
+             (lambda (_) "/tmp/project/src/rewritten.el"))
+       (doom-modeline-buffer-file-name)
+       (should (= calls 6))))))
+
+(ert-deftest doom-modeline-buffer-file-name/cache-is-buffer-local ()
+  "Two buffers never share a cached rendering."
+  (let ((doom-modeline-buffer-file-name-style 'file-name))
+    (let ((a (generate-new-buffer " *dm-name-a*"))
+          (b (generate-new-buffer " *dm-name-b*")))
+      (unwind-protect
+          (progn
+            (with-current-buffer a
+              (setq buffer-file-name "/tmp/project/a.el"
+                    buffer-file-truename "/tmp/project/a.el")
+              (setq-local doom-modeline--project-root "/tmp/project/")
+              (doom-modeline-buffer-file-name))
+            (with-current-buffer b
+              (setq buffer-file-name "/tmp/project/b.el"
+                    buffer-file-truename "/tmp/project/b.el")
+              (setq-local doom-modeline--project-root "/tmp/project/")
+              (doom-modeline-buffer-file-name))
+            (let ((ca (buffer-local-value 'doom-modeline--buffer-file-name-format-cache a))
+                  (cb (buffer-local-value 'doom-modeline--buffer-file-name-format-cache b)))
+              (should (consp ca))
+              (should (consp cb))
+              (should-not (eq ca cb))
+              (should (string= "a.el" (substring-no-properties (cdr ca))))
+              (should (string= "b.el" (substring-no-properties (cdr cb))))))
+        (kill-buffer a)
+        (kill-buffer b)))))
+
+(ert-deftest doom-modeline-buffer-file-name/cache-returns-isolated-copy ()
+  "Mutating a returned string cannot corrupt later cache hits."
+  (let ((doom-modeline-buffer-file-name-style 'file-name))
+    (doom-modeline-core-perf--with-file-buffer
+     " *dm-file-name-copy*" "/tmp/project/src/dm.el"
+     (let ((a (doom-modeline-buffer-file-name))
+           (b (doom-modeline-buffer-file-name)))
+       (should-not (eq a b))
+       (should (equal a b))
+       (add-face-text-property 0 (length a) 'mode-line nil a)
+       (let ((faces (get-text-property 0 'face b)))
+         (should-not (memq 'mode-line (if (listp faces) faces (list faces)))))
+       (let* ((c (doom-modeline-buffer-file-name))
+              (faces (get-text-property 0 'face c)))
+         (should-not (memq 'mode-line (if (listp faces) faces (list faces)))))))))
+
 (provide 'doom-modeline-core-perf-test)
 ;;; doom-modeline-core-perf-test.el ends here
