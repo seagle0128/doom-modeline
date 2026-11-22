@@ -2290,10 +2290,10 @@ mouse-1: Display Line and Column Mode Menu")
         ;; Line within the current Org Babel source block
         (,src-line
          (:propertize ,src-line-text
-                      face ,face
-                      help-echo "Line within the current Org Babel source block"
-                      mouse-face ,mouse-face
-                      local-map ,local-map)
+          face ,face
+          help-echo "Line within the current Org Babel source block"
+          mouse-face ,mouse-face
+          local-map ,local-map)
          ,sep)
 
         ;; Visual position
