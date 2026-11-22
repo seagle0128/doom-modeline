@@ -89,7 +89,7 @@
 
 (doom-modeline-def-modeline 'main
   '(eldoc bar window-state workspace-name window-number modals matches follow buffer-info remote-host buffer-position word-count parrot selection-info)
-  '(compilation objed-state misc-info project-name persp-name battery grip irc mu4e gnus github debug repl lsp minor-modes input-method indent-info buffer-encoding major-mode process vcs check time))
+  '(compilation objed-state misc-info project-name persp-name battery grip irc mu4e gnus github debug repl lsp spell minor-modes input-method indent-info buffer-encoding major-mode process vcs check time))
 
 (doom-modeline-def-modeline 'minimal
   '(bar window-number modals matches buffer-info-simple)
@@ -148,7 +148,7 @@
   '(misc-info minor-modes major-mode process))
 
 (doom-modeline-def-modeline 'speedbar
-  '(bar " " major-mode)
+  '(bar speedbar-name)
   '(speedbar-info))
 
 

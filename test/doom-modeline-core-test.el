@@ -62,54 +62,89 @@
                (doom-modeline-icon 'octicon "nf-oct-smiley" "☻" ":)" :face 'success))
               ":)"))))
 
-(ert-deftest doom-modeline-project-root/auto ()
-  ;; The latest `project' requires Emacs >= 26.1
-  (skip-unless (>= emacs-major-version 26))
-  (let ((default-directory "/home/user/project/")
-        (doom-modeline-project-detection 'auto)
-        (doom-modeline--project-root nil))
-    (should (string= (doom-modeline-project-root) default-directory))))
+;; The latest `project' requires Emacs >= 26.1
+;; Old versions of project.el do not have `project-root'
+(when (>= emacs-major-version 26)
+  (ert-deftest doom-modeline-project-root/auto ()
+    (let ((default-directory "~/project/")
+          (doom-modeline-project-detection 'auto)
+          (doom-modeline--project-root nil))
+      (should (string= (doom-modeline-project-root) default-directory))))
 
-(ert-deftest doom-modeline-project-root/auto-old ()
-  ;; Old versions of project.el do not have `project-root'
-  (skip-unless (< emacs-major-version 26))
-  (let ((default-directory "/home/user/project-current/")
-        (doom-modeline-project-detection 'auto)
-        (doom-modeline--project-root nil))
-    (should (string= (doom-modeline-project-root) default-directory))))
+  (ert-deftest doom-modeline-project-root/auto-old ()
+    (let ((default-directory "~/project-current/")
+          (doom-modeline-project-detection 'auto)
+          (doom-modeline--project-root nil))
+      (should (string= (doom-modeline-project-root) default-directory))))
+
+  (ert-deftest doom-modeline-project-root/project ()
+    (let ((default-directory "~/project-current/")
+          (doom-modeline-project-detection 'project)
+          (doom-modeline--project-root nil))
+      (should (string= (doom-modeline-project-root) default-directory))))
+
+  (ert-deftest doom-modeline-project-root/project-old ()
+    (let ((default-directory "~/project-current/")
+          (doom-modeline-project-detection 'project)
+          (doom-modeline--project-root nil))
+      (should (string= (doom-modeline-project-root) default-directory))))
+  )
+
+;; The latest `projectile' requires Emacs >= 28.1
+(when (>= emacs-major-version 28)
+  (ert-deftest doom-modeline-project-root/projectile ()
+    (let ((default-directory "~/projectile/")
+          (doom-modeline-project-detection 'projectile)
+          (doom-modeline--project-root nil))
+      (cl-flet ((projectile-project-root () default-directory))
+        (should (string= (doom-modeline-project-root) default-directory)))))
+  )
 
 (ert-deftest doom-modeline-project-root/ffip ()
-  (let ((default-directory "/home/user/project-ffip/")
+  (let ((default-directory "~/project-ffip/")
         (doom-modeline-project-detection 'ffip)
         (doom-modeline--project-root nil))
     (cl-flet ((ffip-get-project-root-directory () default-directory))
       (should (string= (doom-modeline-project-root) default-directory)))))
 
-(ert-deftest doom-modeline-project-root/projectile ()
-  (let ((default-directory "/home/user/projectile/")
-        (doom-modeline-project-detection 'projectile)
-        (doom-modeline--project-root nil))
-    (cl-flet ((projectile-project-root () default-directory))
-      (should (string= (doom-modeline-project-root) default-directory)))))
-
-(ert-deftest doom-modeline-project-root/project ()
-  ;; The latest `project' requires Emacs >= 26.1
-  (skip-unless (>= emacs-major-version 26))
-  (let ((default-directory "/home/user/project-current/")
-        (doom-modeline-project-detection 'project)
-        (doom-modeline--project-root nil))
-    (should (string= (doom-modeline-project-root) default-directory))))
-
-(ert-deftest doom-modeline-project-root/project-old ()
-  ;; Old versions of project.el do not have `project-root'
-  (skip-unless (< emacs-major-version 26))
-  (let ((default-directory "/home/user/project-current/")
-        (doom-modeline-project-detection 'project)
-        (doom-modeline--project-root nil))
-    (should (string= (doom-modeline-project-root) default-directory))))
+;;; P1: changing project-detection must not revert visited buffers
+(ert-deftest doom-modeline-project-detection/watcher-invalidates-without-revert ()
+  "Changing `doom-modeline-project-detection' clears the per-buffer cache
+but never calls `revert-buffer'.  Reverting would re-read every visited file
+from disk and re-run major mode, which is unnecessary for a mode-line value."
+  (let ((reverts 0)
+        (orig-detection doom-modeline-project-detection)
+        (bufs nil))
+    (unwind-protect
+        (progn
+          ;; Two file-visiting buffers with populated caches.  Create them
+          ;; without `find-file' to avoid heavy major-mode hooks; setting
+          ;; `buffer-file-name' is enough for the watcher's old code path.
+          (dolist (name '("/tmp/dm-proj-a.txt" "/tmp/dm-proj-b.txt"))
+            (let ((buf (generate-new-buffer " *dm-proj-test*")))
+              (push buf bufs)
+              (with-current-buffer buf
+                (setq buffer-file-name name)
+                (setq doom-modeline--project-root "/fake/root"))))
+          (cl-letf (((symbol-function 'revert-buffer)
+                     (lambda (&rest _) (setq reverts (1+ reverts)))))
+            ;; Trigger the variable watcher via a real set.
+            (setq doom-modeline-project-detection 'project)
+            ;; No buffer may be reverted, even though both visit files.
+            (should (= reverts 0))
+            ;; Every buffer's cache is invalidated so it recomputes lazily.
+            (dolist (buf bufs)
+              (with-current-buffer buf
+                (should (null doom-modeline--project-root))))))
+      ;; Cleanup: restore detection (fires the watcher again, harmless) and
+      ;; kill the temporary buffers.
+      (setq doom-modeline-project-detection orig-detection)
+      (dolist (buf bufs)
+        (when (buffer-live-p buf)
+          (kill-buffer buf))))))
 
 (ert-deftest doom-modeline-project-root/default ()
-  (let ((default-directory "/home/user/project/")
+  (let ((default-directory "~/project/")
         (doom-modeline-project-detection nil))
     (should (string= (doom-modeline-project-root) default-directory))))
 
@@ -339,6 +374,83 @@
        (string= (substring-no-properties
                  (doom-modeline--buffer-file-name-relative file-path true-file-path 'include-project))
                 "project/relative/test.txt")))))
+
+;;
+;; Tests for `doom-modeline--format-buffer-file-truename' truename caching (P1')
+;;
+
+(ert-deftest doom-modeline-format-truename/uses-cache-no-io ()
+  "With the default name function, no `file-truename' call is made."
+  (let ((calls 0)
+        (doom-modeline-buffer-file-name-function #'identity)
+        (doom-modeline-buffer-file-truename-function #'identity))
+    (find-file "/etc/hosts")
+    (unwind-protect
+        (cl-letf (((symbol-function 'file-truename)
+                   (lambda (&rest _) (setq calls (1+ calls)) "SHOULD-NOT-BE-USED")))
+          (should (equal (doom-modeline--format-buffer-file-truename "/etc/hosts")
+                         (file-local-name buffer-file-truename)))
+          (should (= calls 0)))
+      (kill-buffer))))
+
+(ert-deftest doom-modeline-format-truename/fallback-when-no-cache ()
+  "Without a cached truename, fall back to a real `file-truename' call."
+  (let ((calls 0)
+        (doom-modeline-buffer-file-name-function #'identity)
+        (doom-modeline-buffer-file-truename-function #'identity)
+        (real (symbol-function 'file-truename)))
+    (with-temp-buffer
+      (setq buffer-file-name "/etc/hosts")
+      ;; No find-file: buffer-file-truename is nil for this buffer.
+      (should (null buffer-file-truename))
+      (cl-letf (((symbol-function 'file-truename)
+                 (lambda (&rest args) (setq calls (1+ calls)) (apply real args))))
+        (let ((got (doom-modeline--format-buffer-file-truename "/etc/hosts")))
+          ;; `file-truename' recurses internally, so count > 0 (not exactly 1).
+          (should (> calls 0))
+          (should (equal got (file-local-name (funcall real "/etc/hosts")))))))))
+
+(ert-deftest doom-modeline-format-truename/custom-name-function-falls-back ()
+  "A custom name function disables the cache to preserve semantics.
+When B-F-N may be rewritten, resolve it directly as the original code did."
+  (let ((calls 0)
+        (doom-modeline-buffer-file-name-function (lambda (n) (concat n "X")))
+        (doom-modeline-buffer-file-truename-function #'identity)
+        (real (symbol-function 'file-truename)))
+    (find-file "/etc/hosts")
+    (unwind-protect
+        (cl-letf (((symbol-function 'file-truename)
+                   (lambda (&rest args) (setq calls (1+ calls)) (apply real args))))
+          (doom-modeline--format-buffer-file-truename "/etc/hosts")
+          (should (> calls 0)))
+      (kill-buffer))))
+
+(ert-deftest doom-modeline-format-truename/indirect-buffer-uses-base ()
+  "An indirect buffer resolves truename from its base buffer."
+  (let ((doom-modeline-buffer-file-name-function #'identity)
+        (doom-modeline-buffer-file-truename-function #'identity))
+    (find-file "/etc/hosts")
+    (unwind-protect
+        (let ((ind (clone-indirect-buffer " *dm-p1-ind*" nil)))
+          (unwind-protect
+              (with-current-buffer ind
+                (should (null buffer-file-truename))
+                (should (equal (doom-modeline--format-buffer-file-truename "/etc/hosts")
+                               (file-local-name
+                                (buffer-local-value 'buffer-file-truename
+                                                    (buffer-base-buffer))))))
+            (kill-buffer ind)))
+      (kill-buffer))))
+
+(ert-deftest doom-modeline-format-truename/truename-function-applied ()
+  "The custom truename function still post-processes the result."
+  (let ((doom-modeline-buffer-file-name-function #'identity)
+        (doom-modeline-buffer-file-truename-function (lambda (s) (concat "<" s ">"))))
+    (find-file "/etc/hosts")
+    (unwind-protect
+        (should (equal (doom-modeline--format-buffer-file-truename "/etc/hosts")
+                       (concat "<" (file-local-name buffer-file-truename) ">")))
+      (kill-buffer))))
 
 (ert-deftest doom-modeline-enable-buffer-position/test ()
   "Test that `doom-modeline-enable-buffer-position' is defined correctly."
@@ -784,5 +896,145 @@
           (should (equal lhs '(buffer-info buffer-info-simple)))
           (should (equal rhs '(major-mode time)))))
     (setq doom-modeline-excluded-modelines nil)))
+
+(ert-deftest doom-modeline-buffer-encoding/undecided-eol ()
+  (with-temp-buffer
+    (setq buffer-file-coding-system 'utf-8)
+    (let ((doom-modeline-buffer-encoding t))
+      (should (vectorp (coding-system-eol-type buffer-file-coding-system)))
+      (should (equal (substring-no-properties
+                      (doom-modeline-segment--buffer-encoding))
+                     " UTF-8 ")))))
+
+(ert-deftest doom-modeline-buffer-encoding/undecided-eol-default-coding ()
+  (with-temp-buffer
+    (setq buffer-file-coding-system 'utf-8)
+    (let ((doom-modeline-buffer-encoding 'nondefault)
+          (doom-modeline-default-eol-type 0)
+          (doom-modeline-default-coding-system 'utf-8))
+      (should-not (doom-modeline-segment--buffer-encoding)))))
+
+(ert-deftest doom-modeline-buffer-encoding/undecided-eol-nondefault-coding ()
+  (with-temp-buffer
+    (setq buffer-file-coding-system 'utf-8)
+    (let ((doom-modeline-buffer-encoding 'nondefault)
+          (doom-modeline-default-eol-type 0)
+          (doom-modeline-default-coding-system 'iso-latin-1))
+      (should (equal (substring-no-properties
+                      (doom-modeline-segment--buffer-encoding))
+                     " UTF-8 ")))))
+
+(ert-deftest doom-modeline-buffer-encoding/known-eol-labels-and-properties ()
+  (with-temp-buffer
+    (let ((doom-modeline-buffer-encoding t))
+      (dolist (case '((utf-8-unix " LF UTF-8 ")
+                      (utf-8-dos " CRLF UTF-8 ")
+                      (utf-8-mac " CR UTF-8 ")))
+        (setq buffer-file-coding-system (car case))
+        (let* ((text (doom-modeline-segment--buffer-encoding))
+               (encoding-start (- (length text) 6)))
+          (should (equal (substring-no-properties text) (cadr case)))
+          (should (get-text-property 1 'face text))
+          (should (eq (lookup-key (get-text-property 1 'local-map text)
+                                  [mode-line mouse-1])
+                      #'mode-line-change-eol))
+          (should (eq (get-text-property encoding-start 'local-map text)
+                      mode-line-coding-system-map)))))))
+
+(ert-deftest doom-modeline-buffer-encoding/nondefault-field-combinations ()
+  (with-temp-buffer
+    (let ((doom-modeline-buffer-encoding 'nondefault)
+          (doom-modeline-default-eol-type 0)
+          (doom-modeline-default-coding-system 'utf-8))
+      (setq buffer-file-coding-system 'utf-8-unix)
+      (should-not (doom-modeline-segment--buffer-encoding))
+      (setq buffer-file-coding-system 'utf-8-dos)
+      (should (equal (substring-no-properties
+                      (doom-modeline-segment--buffer-encoding))
+                     " CRLF "))
+      (let ((doom-modeline-default-coding-system 'iso-latin-1))
+        (setq buffer-file-coding-system 'utf-8-unix)
+        (should (equal (substring-no-properties
+                        (doom-modeline-segment--buffer-encoding))
+                       " UTF-8 "))
+        (setq buffer-file-coding-system 'utf-8-dos)
+        (should (equal (substring-no-properties
+                        (doom-modeline-segment--buffer-encoding))
+                       " CRLF UTF-8 "))))))
+
+(ert-deftest doom-modeline-buffer-encoding/disabled ()
+  (with-temp-buffer
+    (setq buffer-file-coding-system 'utf-8)
+    (let ((doom-modeline-buffer-encoding nil))
+      (should-not (doom-modeline-segment--buffer-encoding)))))
+
+;;;
+;;; Eglot LSP state (issue #846)
+;;;
+
+(ert-deftest doom-modeline-eglot-face/state-transitions ()
+  "The eglot face follows the server state without re-running the hook."
+  (let ((managed t)
+        (pending 2)
+        (last-error nil)
+        (server '(mock-server)))
+    ;; `cl-letf' cannot bind a place whose function is void, and neither
+    ;; eglot nor jsonrpc is necessarily loaded in the test session.
+    (dolist (fn '(eglot-managed-p eglot-current-server eglot-project-nickname
+                  jsonrpc-last-error))
+      (unless (fboundp fn)
+        (fset fn #'ignore)))
+    (cl-letf (((symbol-function 'eglot-managed-p) (lambda () managed))
+              ((symbol-function 'eglot-current-server) (lambda () server))
+              ((symbol-function 'eglot-project-nickname) (lambda (_) "mock"))
+              ((symbol-function 'jsonrpc-last-error) (lambda (_) last-error))
+              ((symbol-function 'doom-modeline--eglot-pending-count)
+               (lambda (_) pending)))
+      ;; Requests are in flight when `eglot-managed-mode-hook' runs.
+      (should (eq (doom-modeline--eglot-face) 'doom-modeline-lsp-warning))
+      ;; They finish, but no hook runs: the segment must pick another face.
+      (setq pending 0)
+      (should (eq (doom-modeline--eglot-face) 'doom-modeline-lsp-success))
+      (setq last-error '(jsonrpc-error))
+      (should (eq (doom-modeline--eglot-face) 'doom-modeline-lsp-error))
+      (setq managed nil)
+      (should (eq (doom-modeline--eglot-face) 'doom-modeline-lsp-warning)))))
+
+;; `doom-modeline--eglot-icon' reads these eglot variables dynamically.  The
+;; bare `defvar' declarations in `doom-modeline-segments' are optimized away
+;; when that file is byte-compiled, so declare them here as well: otherwise
+;; the `let' below is a lexical binding and the icon builder gets a
+;; `void-variable' error under `lexical-binding'.
+(defvar eglot-menu-string)
+(defvar eglot-menu)
+(defvar eglot-server-menu)
+
+(ert-deftest doom-modeline-update-eglot/caches-all-faces ()
+  "Updating eglot caches an icon variant for every server state."
+  (let ((eglot-menu-string "E")
+        (eglot-menu #'ignore)
+        (eglot-server-menu #'ignore))
+    (dolist (fn '(eglot-managed-p eglot-current-server eglot-project-nickname
+                  eglot--server-info eglot--major-modes))
+      (unless (fboundp fn)
+        (fset fn #'ignore)))
+    ;; Stub the icon helper with its terminal fallback, which is what adds
+    ;; FACE to the string; this keeps the test independent of icon fonts.
+    (cl-letf (((symbol-function 'doom-modeline-lsp-icon)
+               (lambda (text face) (propertize text 'face face)))
+              ((symbol-function 'eglot-managed-p) (lambda () t))
+              ((symbol-function 'eglot-current-server) (lambda () 'mock-server))
+              ((symbol-function 'eglot-project-nickname) (lambda (_) "mock"))
+              ((symbol-function 'eglot--server-info)
+               (lambda (_) '(:name "mock-server")))
+              ((symbol-function 'eglot--major-modes) (lambda (_) "mock-mode")))
+      (with-temp-buffer
+        (doom-modeline-update-eglot)
+        (dolist (face '(doom-modeline-lsp-error
+                        doom-modeline-lsp-warning
+                        doom-modeline-lsp-success))
+          (should
+           (eq (get-text-property 0 'face (plist-get doom-modeline--eglot face))
+               face)))))))
 
 ;;; doom-modeline-core-test.el ends here

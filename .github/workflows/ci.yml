@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        emacs-version: [27.2, 28.2, 29.4, 30.2]
+        emacs-version: [29.4, 30.2, 31.1]
         experimental: [false]
         include:
           - os: ubuntu-latest
@@ -31,19 +31,17 @@ jobs:
         with:
           version: ${{ matrix.emacs-version }}
 
-      - uses: conao3/setup-cask@master
+      - uses: emacs-eask/setup-eask@master
         with:
-          version: snapshot
+          version: 'snapshot'
 
-      - name: install
-        run: cask install
+      - name: Run tests
+        run: |
+          eask package
+          eask install
+          eask test ert-runner
+          eask compile
 
-      - name: test
-        run: cask exec ert-runner
-
-      - name: build
-        run: cask build
-
-      - name: package
-        run: cask package
-
+      - name: Lint segment redisplay path
+        run: |
+          emacs -Q --batch -l scripts/lint-segments.el -- doom-modeline-segments.el

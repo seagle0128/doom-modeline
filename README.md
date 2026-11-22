@@ -56,6 +56,8 @@ The `doom-modeline` was designed for minimalism, and offers:
 - An indicator for party `parrot`
 - An indicator for PDF page number with `pdf-tools`
 - An indicator for markdown/org preview with `grip`
+- An indicator for [`keycast`](https://github.com/tarsius/keycast) events when `keycast-invisible-mode` is on.
+- An indicator for `minibuffer-depth` when > 1
 - Truncated file name, file icon, buffer state and project name in buffer
   information segment, which is compatible with `project`, `projectile` and
   `find-file-in-project`.
@@ -161,6 +163,13 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
 ;; Whether to use hud instead of default bar. It's only respected in GUI.
 (setq doom-modeline-hud nil)
+
+;; Width in pixels of the \"thumb\" hud. It's only respected in GUI.
+(setq doom-modeline-hud-width 8)
+
+;; Minimum height in pixels of the \"thumb\" of the hud.
+;; It's only respected in GUI."
+(setq doom-modeline-hud-min-height 2)
 
 ;; The limit of the window width.
 ;; If `window-width' is smaller than the limit, some information won't be
@@ -289,6 +298,10 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether display the buffer position information.
 (setq doom-modeline-enable-buffer-position t)
 
+;; Whether display the line number relative to the current Org Babel source block.
+;; When non-nil, "src:N" is shown next to the buffer position in Org buffers.
+(setq doom-modeline-enable-src-line nil)
+
 ;; Whether display the buffer encoding.
 (setq doom-modeline-buffer-encoding t)
 
@@ -329,14 +342,15 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; The maximum number displayed for notifications.
 (setq doom-modeline-number-limit 99)
 
-;; Whether display the project name. Non-nil to display in the mode-line.
-(setq doom-modeline-project-name t)
-
 ;; Whether display the workspace name. Non-nil to display in the mode-line.
-(setq doom-modeline-workspace-name t)
+(setq doom-modeline-workspace-name nil)
+
+;; Whether display the project name. Non-nil to display in the mode-line. When
+;; the value is `non-remote', show the project name only for local files."
+(setq doom-modeline-project-name 'non-remote)
 
 ;; Whether display the perspective name. Non-nil to display in the mode-line.
-(setq doom-modeline-persp-name t)
+(setq doom-modeline-persp-name nil)
 
 ;; If non nil the default perspective name is displayed in the mode-line.
 (setq doom-modeline-display-default-persp-name nil)
@@ -396,12 +410,18 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether display the time. It respects `display-time-mode'.
 (setq doom-modeline-time t)
 
+;; Whether display `doom-modeline-tab-bar-format-global' on the tab bar.
+(setq doom-modeline-display-tab-bar-string 'active)
+
 ;; Whether display the misc segment on all mode lines.
 ;; If nil, display only if the mode line is active.
 (setq doom-modeline-display-misc-in-all-mode-lines t)
 
 ;; Whether to display the remote host information.
 (setq doom-modeline-remote-host t)
+
+;; Whether to display spell information.
+(setq  doom-modeline-spell nil)
 
 ;; The function to handle `buffer-file-name'.
 (setq doom-modeline-buffer-file-name-function #'identity)
