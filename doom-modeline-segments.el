@@ -1391,9 +1391,7 @@ re-splitting and rewrapping the string each time is pure overhead."
 
 (defun doom-modeline-segments-count-words ()
   "Call `count-words' for the current buffer."
-  (if (fboundp 'timeout-throttle)
-      (timeout-throttle (count-words (point-min) (point-max)))
-    (count-words (point-min) (point-max))))
+  (count-words (point-min) (point-max)))
 
 (defvar-local doom-modeline--word-count nil
   "Cached word count of the current buffer, or nil when stale.
