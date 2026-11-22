@@ -298,6 +298,10 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; Whether display the buffer position information.
 (setq doom-modeline-enable-buffer-position t)
 
+;; Whether display the line number relative to the current Org Babel source block.
+;; When non-nil, "src:N" is shown next to the buffer position in Org buffers.
+(setq doom-modeline-enable-src-line nil)
+
 ;; Whether display the buffer encoding.
 (setq doom-modeline-buffer-encoding t)
 

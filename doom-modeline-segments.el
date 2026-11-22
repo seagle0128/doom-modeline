@@ -2200,18 +2200,62 @@ result is cached and invalidated by `after-change-functions'.")
 
 (add-hook 'after-change-functions #'doom-modeline--invalidate-total-lines)
 
+(declare-function org-babel-where-is-src-block-head "ob")
+
+(defvar-local doom-modeline--src-line-cache nil
+  "Cache of the point's line within the current Org Babel source block.
+A cons of (KEY . LINE).  KEY records the buffer state LINE was computed
+for, and LINE is the line number relative to the source block head (or
+nil when point is outside a source block).  Locating the block head and
+counting lines both scan the buffer, so they must not run on every
+redisplay.")
+
+(defun doom-modeline--src-line ()
+  "Return the line of point within the current Org Babel source block.
+The count is relative to the `#+begin_src' line, so 1 is the first line
+of code in the block.  Return nil when point is not inside a source
+block (including on its `#+begin_src' line), when the buffer is not Org,
+or when Org Babel is unavailable.
+
+The result is cached and recomputed only when point, the buffer text, the
+major mode or the narrowing changes; see `doom-modeline--src-line-cache'."
+  (when (and (derived-mode-p 'org-mode)
+             (fboundp 'org-babel-where-is-src-block-head))
+    (let* ((key (list (point) (buffer-modified-tick) major-mode
+                      (point-min) (point-max)))
+           (cache doom-modeline--src-line-cache))
+      (unless (and cache (equal (car cache) key))
+        (setq doom-modeline--src-line-cache
+              (cons key
+                    (save-match-data
+                      (save-excursion
+                        ;; Org's block lookup sets match-data and may fail on
+                        ;; malformed blocks; never break redisplay over it.
+                        (ignore-errors
+                          (let* ((head (org-babel-where-is-src-block-head))
+                                 (line (and head
+                                            (- (line-number-at-pos)
+                                               (line-number-at-pos head)))))
+                            ;; The `#+begin_src' line holds no code line.
+                            (when (and line (> line 0)) line))))))))
+      (cdr doom-modeline--src-line-cache))))
+
 (doom-modeline-def-segment buffer-position
   "The buffer position information.
-Respects `doom-modeline-enable-buffer-position'."
+Respects `doom-modeline-enable-buffer-position' and, for the line within
+the current Org Babel source block, `doom-modeline-enable-src-line'."
   (when doom-modeline-enable-buffer-position
-    (let ((visible (doom-modeline--segment-visible 'buffer-position))
-          (sep (doom-modeline-spc))
-          (wsep (doom-modeline-wspc))
-          (face (doom-modeline-face))
-          (help-echo "Buffer percentage\n\
+    (let* ((visible (doom-modeline--segment-visible 'buffer-position))
+           (sep (doom-modeline-spc))
+           (wsep (doom-modeline-wspc))
+           (face (doom-modeline-face))
+           (help-echo "Buffer percentage\n\
 mouse-1: Display Line and Column Mode Menu")
-          (mouse-face 'doom-modeline-highlight)
-          (local-map mode-line-column-line-number-mode-map))
+           (mouse-face 'doom-modeline-highlight)
+           (local-map mode-line-column-line-number-mode-map)
+           (src-line (and doom-modeline-enable-src-line
+                          (doom-modeline--src-line)))
+           (src-line-text (and src-line (format "src:%d" src-line))))
       `(,wsep
 
         ;; Line and column
@@ -2241,6 +2285,15 @@ mouse-1: Display Line and Column Mode Menu")
          local-map ,local-map)
 
         ((or line-number-mode column-number-mode)
+         ,sep)
+
+        ;; Line within the current Org Babel source block
+        (,src-line
+         (:propertize ,src-line-text
+                      face ,face
+                      help-echo "Line within the current Org Babel source block"
+                      mouse-face ,mouse-face
+                      local-map ,local-map)
          ,sep)
 
         ;; Visual position

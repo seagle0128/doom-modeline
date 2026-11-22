@@ -365,6 +365,17 @@ It respects `doom-modeline-enable-word-count'."
   :type 'boolean
   :group 'doom-modeline)
 
+(defcustom doom-modeline-enable-src-line nil
+  "Whether display the line number relative to the current Org Babel source block.
+
+When non-nil, the `buffer-position' segment shows \"src:N\" beside the
+buffer position, where N is the line of point relative to the beginning
+of the source block, matching the numbering Org Babel uses in error
+messages.  It has no effect outside `org-mode' buffers and requires
+`doom-modeline-enable-buffer-position' to be non-nil."
+  :type 'boolean
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-buffer-encoding t
   "Whether display the buffer encoding."
   :type '(choice (const :tag "Always" t)
