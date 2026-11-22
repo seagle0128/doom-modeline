@@ -29,6 +29,7 @@
 
 (require 'doom-modeline-core)
 (require 'doom-modeline-env)
+(require 'timeout)
 (eval-when-compile
   (require 'cl-lib)
   (require 'seq)
@@ -1387,6 +1388,10 @@ re-splitting and rewrapping the string each time is pure overhead."
 ;; Word Count
 ;;
 
+(defun doom-modeline-segments-count-words ()
+  "Call `count-words' for the current buffer."
+  (count-words (point-min) (point-max)))
+
 (defvar-local doom-modeline--word-count nil
   "Cached word count of the current buffer, or nil when stale.
 Computing `count-words' scans the whole buffer, so it must not run on
@@ -1406,7 +1411,8 @@ Respects `doom-modeline-enable-word-count'."
   (when (and doom-modeline-enable-word-count
              (member major-mode doom-modeline-continuous-word-count-modes))
     (unless doom-modeline--word-count
-      (setq doom-modeline--word-count (count-words (point-min) (point-max))))
+      (setq doom-modeline--word-count
+            (timeout-throttle #'doom-modeline-segments-count-words)))
     (propertize (format " %dW" doom-modeline--word-count)
                 'face (doom-modeline-face))))
 
@@ -2290,10 +2296,10 @@ mouse-1: Display Line and Column Mode Menu")
         ;; Line within the current Org Babel source block
         (,src-line
          (:propertize ,src-line-text
-                      face ,face
-                      help-echo "Line within the current Org Babel source block"
-                      mouse-face ,mouse-face
-                      local-map ,local-map)
+          face ,face
+          help-echo "Line within the current Org Babel source block"
+          mouse-face ,mouse-face
+          local-map ,local-map)
          ,sep)
 
         ;; Visual position
@@ -2727,7 +2733,7 @@ This is called whenever the `lsp' segment is displayed instead of when
 requests nor the last error has a hook, so caching the face would leave
 the icon in a stale state.  The lookups are the same ones that eglot's
 own `eglot--mode-line-format' performs on every redisplay, which
-doom-modeline hides."
+`doom-modeline' hides."
   (if-let* ((server (and (eglot-managed-p) (eglot-current-server))))
       (let ((pending (doom-modeline--eglot-pending-count server)))
         (cond ((jsonrpc-last-error server) 'doom-modeline-lsp-error)
