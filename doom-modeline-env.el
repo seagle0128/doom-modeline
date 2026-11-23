@@ -77,33 +77,111 @@ Example: \\='(\"--version\")")
 Example: \\='doom-modeline-env--ruby")
 
 
+(defconst doom-modeline-env-version-cache-max 64
+  "Maximum number of entries in `doom-modeline--env-version-cache'.
+The key includes the executable, its arguments and the project root, so a
+normal session needs only a handful of entries; the bound prevents slow
+growth when many projects are visited.")
+
+(defvar doom-modeline--env-version-cache (make-hash-table :test #'equal)
+  "Raw version output shared by buffers using the same interpreter.
+Keyed by (EXECUTABLE ARGS PROJECT-ROOT).  The raw line is stored, not the
+parsed version, because each buffer may use a different parser.  A line is
+only cached when some parser accepted it, preserving retry-on-failure.")
+
+(defvar doom-modeline--env-version-cache-order nil
+  "Keys of `doom-modeline--env-version-cache', newest first.
+Used by `doom-modeline--env-version-cache-put' for FIFO eviction.")
+
+(defvar doom-modeline--env-version-pending (make-hash-table :test #'equal)
+  "In-flight version queries, keyed as in `doom-modeline--env-version-cache'.
+Each value is the list of waiting buffers.  The list object is shared with
+the process callback and mutated in place, so buffers added while the query
+is running also receive the result.")
+
+(defun doom-modeline--env-version-cache-put (key raw)
+  "Store RAW under KEY, evicting the oldest entry at the capacity bound."
+  (let ((table doom-modeline--env-version-cache))
+    (unless (gethash key table)
+      (setq doom-modeline--env-version-cache-order
+            (cons key doom-modeline--env-version-cache-order))
+      (let ((n 0)
+            (kept nil))
+        (dolist (k doom-modeline--env-version-cache-order)
+          (setq n (1+ n))
+          (if (<= n doom-modeline-env-version-cache-max)
+              (push k kept)
+            (remhash k table)))
+        (setq doom-modeline--env-version-cache-order (nreverse kept))))
+    (puthash key raw table)))
+
+
 ;; Functions & Macros
 
 (defun doom-modeline-update-env ()
   "Update environment info on mode-line.
-The version is resolved once per buffer: `doom-modeline-env--version'
-starts as nil, is set to `doom-modeline-env-load-string' while the query
-runs, and holds the parsed version once it finishes.  A non-nil value means
-the query already ran or is in flight, so repeated triggers from
-`find-file-hook' and focus changes do not fork the subprocess again."
+`doom-modeline-env--version' is nil until a version is known,
+`doom-modeline-env-load-string' while a query is in flight, and the parsed
+version afterwards.  Buffers sharing the same executable, arguments and
+project root share one subprocess query via a global raw-output cache; a
+second buffer arriving while a query is running joins its waiters instead
+of forking again.  Each buffer still parses the output with its own
+`doom-modeline-env--parser'."
   (when (and (not doom-modeline-env--version)
              doom-modeline-env-version
              doom-modeline-env--command
-             (executable-find doom-modeline-env--command)
              doom-modeline-env--command-args
              doom-modeline-env--parser)
-    (let ((default-directory (doom-modeline-project-root))
-          (buffer (current-buffer)))
-      (run-hooks 'doom-modeline-before-update-env-hook)
-      (setq doom-modeline-env--version doom-modeline-env-load-string)
-      (doom-modeline-env--get
-       doom-modeline-env--command
-       doom-modeline-env--command-args
-       (lambda (prog-version)
-         (with-current-buffer buffer
-           (setq doom-modeline-env--version
-                 (funcall doom-modeline-env--parser prog-version))
-           (run-hooks 'doom-modeline-after-update-env-hook)))))))
+    (let* ((exe (executable-find doom-modeline-env--command))
+           (args doom-modeline-env--command-args)
+           (root (doom-modeline-project-root))
+           (key (list exe args root))
+           (cached (gethash key doom-modeline--env-version-cache))
+           (cached-version (and cached
+                                (funcall doom-modeline-env--parser cached)))
+           (buffer (current-buffer)))
+      (when exe
+        (cond
+         (cached-version
+          (setq doom-modeline-env--version cached-version)
+          (run-hooks 'doom-modeline-after-update-env-hook))
+         ((gethash key doom-modeline--env-version-pending)
+          ;; Join the in-flight query: no extra fork, no second before-hook.
+          ;; Mutate the shared list in place so the process callback sees it.
+          (setcdr (last (gethash key doom-modeline--env-version-pending))
+                  (list buffer))
+          (setq doom-modeline-env--version doom-modeline-env-load-string))
+         (t
+          (let ((waiters (list buffer))
+                (default-directory root))
+            (puthash key waiters doom-modeline--env-version-pending)
+            (run-hooks 'doom-modeline-before-update-env-hook)
+            (setq doom-modeline-env--version doom-modeline-env-load-string)
+            (let ((proc (doom-modeline-env--get
+                         exe args
+                         (lambda (prog-version)
+                           (let ((accepted nil))
+                             (dolist (buf waiters)
+                               (when (buffer-live-p buf)
+                                 (with-current-buffer buf
+                                   (let ((version
+                                          (funcall doom-modeline-env--parser
+                                                   prog-version)))
+                                     (setq doom-modeline-env--version version)
+                                     (run-hooks
+                                      'doom-modeline-after-update-env-hook)
+                                     (when version (setq accepted t))))))
+                             ;; Unparseable output is never cached: a later
+                             ;; trigger must be able to retry as before.
+                             (when accepted
+                               (doom-modeline--env-version-cache-put
+                                key prog-version))
+                             ;; `waiters' stays live for further filter
+                             ;; lines, but the pending slot is released.
+                             (remhash key doom-modeline--env-version-pending))))))
+              ;; A failed start leaves no callback to clear pending.
+              (unless (processp proc)
+                (remhash key doom-modeline--env-version-pending))))))))))
 
 (add-hook 'find-file-hook #'doom-modeline-update-env)
 (if (boundp 'after-focus-change-function)
@@ -133,10 +211,13 @@ Example:
                               (list "doom-modeline-env" nil prog)
                               args))))
               (parser callback))
-    (set-process-filter proc
-                        (lambda (_proc line)
-                          (ignore-errors
-                            (funcall parser line))))))
+    (progn
+      (set-process-filter proc
+                          (lambda (_proc line)
+                            (ignore-errors
+                              (funcall parser line))))
+      ;; Return the process so callers can detect a failed start.
+      proc)))
 
 (cl-defmacro doom-modeline-def-env (name &key hooks command parser)
   "Define a handler for updating & displaying a version string for a language.
