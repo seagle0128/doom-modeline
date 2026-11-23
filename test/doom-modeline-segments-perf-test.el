@@ -193,6 +193,81 @@ deterministic in batch mode across Emacs versions."
     (doom-modeline-update-buffer-file-state-icon)
     (should doom-modeline--buffer-state-icon-cache)))
 
+(ert-deftest doom-modeline-state-icon/remote-check-reuses-dir-cache ()
+  "The remote state icon takes its host from the shared directory cache."
+  (let ((calls 0)
+        (dir "/ssh:user@example.com:/home/user/"))
+    ;; Count only our direct `(file-remote-p DIR 'host)` lookups: TRAMP's
+    ;; handler recurses with extra args, and the ERT harness uses temp dirs.
+    (cl-letf* ((orig-remote (symbol-function 'file-remote-p))
+               ((symbol-function 'file-remote-p)
+                (lambda (&rest args)
+                  (when (and (= (length args) 2)
+                             (eq (cadr args) 'host)
+                             (string-prefix-p "/ssh:user@" (car args)))
+                    (setq calls (1+ calls)))
+                  (apply orig-remote args))))
+      (with-temp-buffer
+        (setq default-directory dir
+              doom-modeline--default-directory-cache nil
+              doom-modeline--buffer-state-icon-cache nil)
+        (doom-modeline-update-buffer-file-state-icon)
+        (should (= calls 1))
+        (should doom-modeline--buffer-state-icon-cache)
+        ;; A second post-command refresh must not re-parse the TRAMP prefix.
+        (doom-modeline-update-buffer-file-state-icon)
+        (should (= calls 1))
+        ;; A different directory invalidates the cache once, as before.
+        (setq default-directory "/ssh:user@other.example.com:/home/user/")
+        (doom-modeline-update-buffer-file-state-icon)
+        (should (= calls 2))))))
+
+(defun doom-modeline-test--count-file-call (symbol file counter)
+  "Return an ERT-friendly replacement for SYMBOL counting calls on FILE.
+The real definition is delegated to; only direct one-argument calls with
+exactly FILE are counted, excluding TRAMP handler recursion.  COUNTER is a
+one-element list used as a mutable cell (lexical binding safe)."
+  (let ((orig (symbol-function symbol)))
+    (lambda (&rest args)
+      (when (and (equal (car args) file) (= (length args) 1))
+        (setcar counter (1+ (car counter))))
+      (apply orig args))))
+
+(ert-deftest doom-modeline-refresh-state/remote-file-checked-once ()
+  "The idle state refresh asks `file-remote-p' once and skips remote I/O."
+  (let ((remote-calls (list 0))
+        (exists-calls (list 0))
+        (file "/ssh:user@example.com:/home/user/f.el"))
+    (cl-letf* (((symbol-function 'file-remote-p)
+                (doom-modeline-test--count-file-call
+                 'file-remote-p file remote-calls))
+               ((symbol-function 'file-exists-p)
+                (doom-modeline-test--count-file-call
+                 'file-exists-p file exists-calls)))
+      (with-temp-buffer
+        (setq buffer-file-name file)
+        (doom-mdeline-refresh-buffer-file-state)
+        (should (= (car remote-calls) 1))
+        (should (= (car exists-calls) 0))))))
+
+(ert-deftest doom-modeline-refresh-state/local-missing-file-detected ()
+  "Local files still get exactly one remote check and one existence check."
+  (let ((remote-calls (list 0))
+        (exists-calls (list 0))
+        (file "/nonexistent/doom-modeline-remote-p-test.el"))
+    (cl-letf* (((symbol-function 'file-remote-p)
+                (doom-modeline-test--count-file-call
+                 'file-remote-p file remote-calls))
+               ((symbol-function 'file-exists-p)
+                (doom-modeline-test--count-file-call
+                 'file-exists-p file exists-calls)))
+      (with-temp-buffer
+        (setq buffer-file-name file)
+        (doom-mdeline-refresh-buffer-file-state)
+        (should (= (car remote-calls) 1))
+        (should (= (car exists-calls) 1))
+        (should doom-modeline--buffer-file-state-icon)))))
+
 (ert-deftest doom-modeline-default-dir-info/cached-until-dir-change ()
   "Remote-host lookup and directory abbreviation run once per directory."
   (let ((calls 0))

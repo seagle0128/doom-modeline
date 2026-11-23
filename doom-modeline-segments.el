@@ -352,7 +352,12 @@ redisplay only reads a string instead of recomputing it."
               'doom-modeline-warning))
 
            ;; remote
-           (when (file-remote-p default-directory)
+           ;; PERF: reuse the directory-derived host from the shared cache;
+           ;; `file-remote-p' otherwise re-parses the TRAMP prefix on every
+           ;; post-command refresh.  Keep the stringp guard so a nil
+           ;; `default-directory' never reaches `file-remote-p'.
+           (when (and (stringp default-directory)
+                      (car (doom-modeline--default-directory-info)))
              (propertize
               (doom-modeline-buffer-file-state-icon
                "nf-md-remote_desktop" "@" "%1@"
@@ -363,7 +368,7 @@ redisplay only reads a string instead of recomputing it."
                                    (with-selected-window window
                                      (if (stringp default-directory)
                                          (concat
-                                          (if (file-remote-p default-directory)
+                                          (if (car (doom-modeline--default-directory-info))
                                               "Current directory is remote: "
                                             "Current directory is local: ")
                                           default-directory)
@@ -376,19 +381,23 @@ redisplay only reads a string instead of recomputing it."
 The files may be deleted or modified by outside applications."
   (setq doom-modeline--buffer-file-state-icon
         (when doom-modeline-buffer-state-icon
-          (cond ((and buffer-file-name
-                      ;; Avoid freezing while connection is lost
-                      (not (file-remote-p buffer-file-name))
-                      (not (file-exists-p buffer-file-name)))
-                 (doom-modeline-buffer-file-state-icon
-                  "nf-md-cancel" "🚫" "!"
-                  'doom-modeline-urgent))
-                ((not (or (and buffer-file-name
-                               (file-remote-p buffer-file-name))
-                          (verify-visited-file-modtime (current-buffer))))
-                 (doom-modeline-buffer-file-state-icon
-                  "nf-md-reload_alert" "⟳" "%1*"
-                  'doom-modeline-warning)))))
+          ;; PERF: both branches used to call `file-remote-p' on the same
+          ;; file.  Resolve it once; remote files still skip the synchronous
+          ;; `file-exists-p' check that can hang on a lost connection.
+          (let* ((file buffer-file-name)
+                 (remote (and file (file-remote-p file))))
+            (cond ((and file
+                        ;; Avoid freezing while connection is lost
+                        (not remote)
+                        (not (file-exists-p file)))
+                   (doom-modeline-buffer-file-state-icon
+                    "nf-md-cancel" "🚫" "!"
+                    'doom-modeline-urgent))
+                  ((not (or remote
+                            (verify-visited-file-modtime (current-buffer))))
+                   (doom-modeline-buffer-file-state-icon
+                    "nf-md-reload_alert" "⟳" "%1*"
+                    'doom-modeline-warning))))))
   (force-mode-line-update))
 
 (defvar doom-modeline--refresh-state-icon-timer nil)
