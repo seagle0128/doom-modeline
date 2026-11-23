@@ -125,7 +125,9 @@ from disk and re-run major mode, which is unnecessary for a mode-line value."
               (push buf bufs)
               (with-current-buffer buf
                 (setq buffer-file-name name)
-                (setq doom-modeline--project-root "/fake/root"))))
+                (setq doom-modeline--project-root "/fake/root"
+                      doom-modeline--project-root-abbrev-cache
+                      '("/fake/root" . "/fake/root")))))
           (cl-letf (((symbol-function 'revert-buffer)
                      (lambda (&rest _) (setq reverts (1+ reverts)))))
             ;; Trigger the variable watcher via a real set.
@@ -135,7 +137,8 @@ from disk and re-run major mode, which is unnecessary for a mode-line value."
             ;; Every buffer's cache is invalidated so it recomputes lazily.
             (dolist (buf bufs)
               (with-current-buffer buf
-                (should (null doom-modeline--project-root))))))
+                (should (null doom-modeline--project-root))
+                (should (null doom-modeline--project-root-abbrev-cache))))))
       ;; Cleanup: restore detection (fires the watcher again, harmless) and
       ;; kill the temporary buffers.
       (setq doom-modeline-project-detection orig-detection)
@@ -147,6 +150,46 @@ from disk and re-run major mode, which is unnecessary for a mode-line value."
   (let ((default-directory "~/project/")
         (doom-modeline-project-detection nil))
     (should (string= (doom-modeline-project-root) default-directory))))
+
+;;; P1: abbreviate-file-name must not run on every redisplay.
+(ert-deftest doom-modeline-project-root/abbrev-cached-until-input-changes ()
+  "Cache the abbreviated root until the path or any abbreviation input changes."
+  (let* ((default-directory "/tmp/project/")
+         (doom-modeline-project-detection nil)
+         (doom-modeline--project-root nil)
+         (doom-modeline--project-root-abbrev-cache nil)
+         (directory-abbrev-alist nil)
+         (abbreviated-home-dir nil)
+         (file-name-handler-alist (list (cons "\\`foo" 'ignore)))
+         (calls 0))
+    (cl-letf (((symbol-function 'abbreviate-file-name)
+               (lambda (file)
+                 (setq calls (1+ calls))
+                 (concat "<" file ">"))))
+      ;; Warm hit: the same path is abbreviated only once.
+      (should (string= (doom-modeline-project-root) "</tmp/project/>"))
+      (should (string= (doom-modeline-project-root) "</tmp/project/>"))
+      (should (= calls 1))
+      ;; No project root: default-directory is part of the key.
+      (setq default-directory "/tmp/other/")
+      (should (string= (doom-modeline-project-root) "</tmp/other/>"))
+      (should (= calls 2))
+      ;; A project root replaces default-directory in the key.
+      (setq doom-modeline--project-root "/tmp/proj2/")
+      (should (string= (doom-modeline-project-root) "</tmp/proj2/>"))
+      (should (= calls 3))
+      ;; directory-abbrev-alist changes invalidate the cache.
+      (setq directory-abbrev-alist '(("^/tmp" . "/t")))
+      (should (string= (doom-modeline-project-root) "</tmp/proj2/>"))
+      (should (= calls 4))
+      ;; abbreviated-home-dir changes invalidate the cache.
+      (setq abbreviated-home-dir "\\`/Users/[^/]+")
+      (should (string= (doom-modeline-project-root) "</tmp/proj2/>"))
+      (should (= calls 5))
+      ;; Replacing the handler table (as TRAMP does) invalidates the cache.
+      (setq file-name-handler-alist (list (cons "\\`bar" 'ignore)))
+      (should (string= (doom-modeline-project-root) "</tmp/proj2/>"))
+      (should (= calls 6)))))
 
 (ert-deftest doom-modeline-buffer-file-name/invalid ()
   :expected-result :failed

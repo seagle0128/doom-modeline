@@ -1213,6 +1213,12 @@ Which are not explicitly listed in `doom-modeline-vcs-state-faces-alist'."
 (declare-function project-root "project")
 (declare-function projectile-project-root "ext:projectile")
 
+;; Emacs globals read by `abbreviate-file-name'; declaring them keeps the
+;; byte compiler quiet without changing their values.
+(defvar abbreviated-home-dir)
+(defvar directory-abbrev-alist)
+(defvar file-name-handler-alist)
+
 
 ;;
 ;; Utilities
@@ -1872,6 +1878,22 @@ respectively."
 (add-hook 'window-size-change-functions #'doom-modeline-window-size-change)
 
 (defvar-local doom-modeline--project-root nil)
+(defvar-local doom-modeline--project-root-abbrev-cache nil
+  "Cache of the abbreviated project root for the current buffer.
+Cons of (KEY . ABBREV), where KEY is
+(PATH DIRECTORY-ABBREV-ALIST ABBREVIATED-HOME-DIR FILE-NAME-HANDLER-ALIST).
+`abbreviate-file-name' depends on all four values, so a mismatch
+invalidates the cache without any hook.  `file-name-handler-alist' is
+compared with `eq' because handlers are registered by replacing the
+variable with a new list, not by mutating the list in place.")
+
+(defsubst doom-modeline--project-root-abbrev-cache-key-p (a b)
+  "Return non-nil when abbreviation cache keys A and B are equivalent."
+  (and (equal (nth 0 a) (nth 0 b))
+       (equal (nth 1 a) (nth 1 b))
+       (equal (nth 2 a) (nth 2 b))
+       (eq (nth 3 a) (nth 3 b))))
+
 (defun doom-modeline--project-root ()
   "Get the path to the project root.
 Return nil if no project was found."
@@ -1907,7 +1929,8 @@ Return nil if no project was found."
      ;; a mode-line value.
      (dolist (buf (buffer-list))
        (with-current-buffer buf
-         (setq doom-modeline--project-root nil))))))
+         (setq doom-modeline--project-root nil
+               doom-modeline--project-root-abbrev-cache nil))))))
 
 (defun doom-modeline-project-p ()
   "Check if the file is in a project."
@@ -1915,9 +1938,25 @@ Return nil if no project was found."
 
 (defun doom-modeline-project-root ()
   "Get the path to the root of your project.
-Return `default-directory' if no project was found."
-  (abbreviate-file-name
-   (or (doom-modeline--project-root) default-directory)))
+Return `default-directory' if no project was found.
+
+The result of `abbreviate-file-name' is cached per buffer.  The cache
+key includes the path and every global value the abbreviation depends
+on, so changing the project root, the current directory, the abbrev
+table, the home-dir abbreviation or the file-name handler table
+automatically invalidates it."
+  (let* ((path (or (doom-modeline--project-root) default-directory))
+         (key (list path
+                    directory-abbrev-alist
+                    abbreviated-home-dir
+                    file-name-handler-alist))
+         (cached doom-modeline--project-root-abbrev-cache))
+    (if (and cached
+             (doom-modeline--project-root-abbrev-cache-key-p (car cached) key))
+        (cdr cached)
+      (let ((abbrev (abbreviate-file-name path)))
+        (setq doom-modeline--project-root-abbrev-cache (cons key abbrev))
+        abbrev))))
 
 (defun doom-modeline--format-buffer-file-name ()
   "Get and format the buffer file name."
