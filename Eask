@@ -16,6 +16,7 @@
 (depends-on "compat")
 (depends-on "nerd-icons")
 (depends-on "shrink-path")
+(depends-on "timeout")
 
 (development
  (depends-on "project")

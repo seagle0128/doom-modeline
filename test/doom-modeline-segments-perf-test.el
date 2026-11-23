@@ -83,10 +83,13 @@ result live in that closure, not in a buffer-local variable."
         (should (= doom-modeline--word-count 0))))))
 
 (ert-deftest doom-modeline-word-count/rescans-after-interval ()
-  "Once the throttle interval elapses, the next render rescans."
+  "A new throttle window rescans and adopts the fresh count.
+The expiry of the timer is owned by `timeout-throttle'; simulate it by
+rebuilding the advice instead of relying on wall-clock time, which is not
+deterministic in batch mode across Emacs versions."
   (let ((doom-modeline-enable-word-count t)
         (doom-modeline-continuous-word-count-modes '(text-mode))
-        (doom-modeline-word-count-throttle 0.01)
+        (doom-modeline-word-count-throttle 100.0)
         (calls 0))
     (doom-modeline-test--reset-word-count-throttle)
     (with-temp-buffer
@@ -100,9 +103,12 @@ result live in that closure, not in a buffer-local variable."
                     (apply orig args))))
         (doom-modeline-segment--word-count)
         (should (= calls 1))
-        ;; Let the throttle timer fire, then edit and render again.
-        (sleep-for 0.05)
+        ;; Still inside the window: an edit does not trigger a rescan.
         (insert " three")
+        (doom-modeline-segment--word-count)
+        (should (= calls 1))
+        ;; A fresh window rescans and adopts the new count.
+        (doom-modeline-test--reset-word-count-throttle)
         (doom-modeline-segment--word-count)
         (should (= calls 2))
         (should (= doom-modeline--word-count 3))))))
