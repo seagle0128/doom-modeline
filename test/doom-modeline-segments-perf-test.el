@@ -9,10 +9,12 @@
 
 ;;; Commentary:
 ;;
-;;  Regression tests for the caching of segments whose data is expensive to
-;;  compute (`word-count', the total-line count of `buffer-position', and the
-;;  buffer state icon).  The contract under test: the expensive computation
-;;  runs at most once per buffer change, and redisplay only reads the cache.
+;;  Regression tests for the caching / throttling of segments whose data is
+;;  expensive to compute (`word-count', the total-line count of
+;;  `buffer-position', and the buffer state icon).  The contract under test:
+;;  the expensive computation is bounded on the redisplay path -- either by
+;;  a change-keyed cache, or by a time throttle when every edit invalidates
+;;  the result (`word-count').
 ;;
 ;;  Run with:
 ;;    emacs -Q --batch -L . -l test/doom-modeline-segments-perf-test.el \
@@ -24,11 +26,21 @@
 (require 'doom-modeline-core)
 (require 'doom-modeline-segments)
 
-(ert-deftest doom-modeline-word-count/cached-until-change ()
-  "The full-buffer `count-words' scan runs once until the buffer changes."
+(defun doom-modeline-test--reset-word-count-throttle ()
+  "Reset the shared `timeout-throttle' state on the scan helper.
+Each test must start with a fresh advice closure: the timer and cached
+result live in that closure, not in a buffer-local variable."
+  (advice-remove #'doom-modeline--scan-word-count 'throttle)
+  (timeout-throttle #'doom-modeline--scan-word-count
+                    'doom-modeline-word-count-throttle))
+
+(ert-deftest doom-modeline-word-count/throttled-across-edits ()
+  "Continuous edits reuse the last count until the throttle interval elapses."
   (let ((doom-modeline-enable-word-count t)
         (doom-modeline-continuous-word-count-modes '(text-mode))
+        (doom-modeline-word-count-throttle 100.0)
         (calls 0))
+    (doom-modeline-test--reset-word-count-throttle)
     (with-temp-buffer
       (text-mode)
       (insert "one two three four five")
@@ -38,22 +50,25 @@
                   (lambda (&rest args)
                     (setq calls (1+ calls))
                     (apply orig args))))
-        ;; Two redisplays with no intervening change: one scan.
-        (doom-modeline-segment--word-count)
+        ;; First render scans.
         (doom-modeline-segment--word-count)
         (should (= calls 1))
         (should (= doom-modeline--word-count 5))
-        ;; An edit invalidates the cache; the next render recomputes once.
+        ;; Edits inside the throttle window do not trigger another scan.
         (insert " six")
         (doom-modeline-segment--word-count)
-        (should (= calls 2))
-        (should (= doom-modeline--word-count 6))))))
+        (insert " seven")
+        (doom-modeline-segment--word-count)
+        (should (= calls 1))
+        (should (= doom-modeline--word-count 5))))))
 
-(ert-deftest doom-modeline-word-count/zero-is-cached ()
-  "A zero word count is a valid cached value, not a permanent miss."
+(ert-deftest doom-modeline-word-count/zero-is-throttled ()
+  "A zero word count is a valid throttled value, not a permanent miss."
   (let ((doom-modeline-enable-word-count t)
         (doom-modeline-continuous-word-count-modes '(text-mode))
+        (doom-modeline-word-count-throttle 100.0)
         (calls 0))
+    (doom-modeline-test--reset-word-count-throttle)
     (with-temp-buffer
       (text-mode)
       (setq doom-modeline--word-count nil)
@@ -66,6 +81,70 @@
         (doom-modeline-segment--word-count)
         (should (= calls 1))
         (should (= doom-modeline--word-count 0))))))
+
+(ert-deftest doom-modeline-word-count/rescans-after-interval ()
+  "Once the throttle interval elapses, the next render rescans."
+  (let ((doom-modeline-enable-word-count t)
+        (doom-modeline-continuous-word-count-modes '(text-mode))
+        (doom-modeline-word-count-throttle 0.01)
+        (calls 0))
+    (doom-modeline-test--reset-word-count-throttle)
+    (with-temp-buffer
+      (text-mode)
+      (insert "one two")
+      (setq doom-modeline--word-count nil)
+      (cl-letf* ((orig (symbol-function 'count-words))
+                 ((symbol-function 'count-words)
+                  (lambda (&rest args)
+                    (setq calls (1+ calls))
+                    (apply orig args))))
+        (doom-modeline-segment--word-count)
+        (should (= calls 1))
+        ;; Let the throttle timer fire, then edit and render again.
+        (sleep-for 0.05)
+        (insert " three")
+        (doom-modeline-segment--word-count)
+        (should (= calls 2))
+        (should (= doom-modeline--word-count 3))))))
+
+(ert-deftest doom-modeline-word-count/no-cross-buffer-leak ()
+  "A cached result from another buffer is never used for this buffer."
+  (let ((doom-modeline-enable-word-count t)
+        (doom-modeline-continuous-word-count-modes '(text-mode))
+        (doom-modeline-word-count-throttle 100.0)
+        (calls 0))
+    (doom-modeline-test--reset-word-count-throttle)
+    (cl-letf* ((orig (symbol-function 'count-words))
+               ((symbol-function 'count-words)
+                (lambda (&rest args)
+                  (setq calls (1+ calls))
+                  (apply orig args))))
+      (let ((buf-a (generate-new-buffer " *dm-wc-a*"))
+            (buf-b (generate-new-buffer " *dm-wc-b*")))
+        (unwind-protect
+            (progn
+              (with-current-buffer buf-a
+                (text-mode)
+                (insert "one two three four five")
+                (setq doom-modeline--word-count nil)
+                (doom-modeline-segment--word-count)
+                (should (= doom-modeline--word-count 5)))
+              ;; Buffer B renders inside the same throttle window.  The
+              ;; cached result belongs to A, so B must scan once on its own
+              ;; first render rather than inheriting 5.
+              (with-current-buffer buf-b
+                (text-mode)
+                (insert "x y")
+                (setq doom-modeline--word-count nil)
+                (doom-modeline-segment--word-count)
+                (should (= doom-modeline--word-count 2))
+                ;; Still inside the window: reuse B's own value, no new scan.
+                (insert " z")
+                (doom-modeline-segment--word-count)
+                (should (= doom-modeline--word-count 2))
+                (should (= calls 2)))
+          (kill-buffer buf-a)
+          (kill-buffer buf-b)))))))
 
 (ert-deftest doom-modeline-total-lines/cached-until-change ()
   "The full-buffer `line-number-at-pos' scan runs once until a change."

@@ -29,6 +29,7 @@
 
 (require 'doom-modeline-core)
 (require 'doom-modeline-env)
+(require 'timeout)
 (eval-when-compile
   (require 'cl-lib)
   (require 'seq)
@@ -1388,16 +1389,46 @@ re-splitting and rewrapping the string each time is pure overhead."
 ;;
 
 (defvar-local doom-modeline--word-count nil
-  "Cached word count of the current buffer, or nil when stale.
-Computing `count-words' scans the whole buffer, so it must not run on
-every redisplay.  It is invalidated by `after-change-functions' and computed
-lazily when the segment is next rendered.")
+  "Last word count of the current buffer, or nil before the first scan.
+This is throttle state, not a per-edit cache: continuous editing never
+invalidates it, so a full-buffer `count-words' scan can run at most once
+per `doom-modeline-word-count-throttle' seconds.
 
-(defun doom-modeline--invalidate-word-count (&rest _)
-  "Mark the cached word count of the current buffer as stale."
-  (setq doom-modeline--word-count nil))
+The value is per-buffer because `timeout-throttle' caches the result of the
+throttled function globally; a shared count would leak between buffers.")
 
-(add-hook 'after-change-functions #'doom-modeline--invalidate-word-count)
+(defun doom-modeline--count-words-now ()
+  "Scan the whole buffer unconditionally and return the word count."
+  (count-words (point-min) (point-max)))
+
+(defun doom-modeline--scan-word-count ()
+  "Return (BUFFER . COUNT) for the current buffer.
+Tagging the result with BUFFER lets the caller reject a cached result that
+`timeout-throttle' returns on behalf of a different buffer."
+  (cons (current-buffer) (doom-modeline--count-words-now)))
+
+;; Throttle the expensive scan once, at load time.  Passing the option symbol
+;; lets `timeout-throttle' read the current value at each scheduling, so
+;; changing `doom-modeline-word-count-throttle' takes effect without reload.
+;; The advice closure keeps a single global result/timer; per-buffer state is
+;; maintained in `doom-modeline--word-count' instead.
+(timeout-throttle #'doom-modeline--scan-word-count
+                  'doom-modeline-word-count-throttle)
+
+(defun doom-modeline--word-count ()
+  "Return the word count of the current buffer, throttling full scans.
+A throttled `count-words' scan runs at most once per
+`doom-modeline-word-count-throttle' seconds.  When the cached result was
+computed for another buffer, this buffer reuses its own last value, or does
+one unthrottled scan on its first render."
+  (pcase-let ((`(,buffer . ,count) (doom-modeline--scan-word-count)))
+    (if (eq buffer (current-buffer))
+        (setq doom-modeline--word-count count)
+      ;; The throttle returned another buffer's result.  On the first render
+      ;; of this buffer, scan once so we never display a bogus 0.
+      (unless doom-modeline--word-count
+        (setq doom-modeline--word-count (doom-modeline--count-words-now)))))
+  (or doom-modeline--word-count 0))
 
 (doom-modeline-def-segment word-count
   "The buffer word count.
@@ -1405,9 +1436,7 @@ Displayed when in a major mode in `doom-modeline-continuous-word-count-modes'.
 Respects `doom-modeline-enable-word-count'."
   (when (and doom-modeline-enable-word-count
              (member major-mode doom-modeline-continuous-word-count-modes))
-    (unless doom-modeline--word-count
-      (setq doom-modeline--word-count (count-words (point-min) (point-max))))
-    (propertize (format " %dW" doom-modeline--word-count)
+    (propertize (format " %dW" (doom-modeline--word-count))
                 'face (doom-modeline-face))))
 
 

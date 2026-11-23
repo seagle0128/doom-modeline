@@ -291,9 +291,12 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 
 ;; Major modes in which to display word count continuously.
 ;; Also applies to any derived modes. Respects `doom-modeline-enable-word-count'.
-;; If it brings the sluggish issue, disable `doom-modeline-enable-word-count' or
-;; remove the modes from `doom-modeline-continuous-word-count-modes'.
 (setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mode org-mode))
+
+;; Minimum seconds between full-buffer word-count scans during editing.
+;; Counting is throttled via the `timeout' package (GNU ELPA), so typing in a
+;; large buffer never scans on every keystroke. Set to 0 to disable throttling.
+(setq doom-modeline-word-count-throttle 1.0)
 
 ;; Whether display the buffer position information.
 (setq doom-modeline-enable-buffer-position t)
