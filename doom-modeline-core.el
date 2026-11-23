@@ -360,6 +360,15 @@ It respects `doom-modeline-enable-word-count'."
   :type '(repeat (symbol :tag "Major-Mode") )
   :group 'doom-modeline)
 
+(defcustom doom-modeline-word-count-throttle 1.0
+  "Minimum seconds between two full-buffer word-count scans.
+While the buffer keeps changing, the previously computed count is shown
+until this interval elapses, so continuous editing on a large buffer can
+never trigger a `count-words' scan on every keystroke.  Set to 0 to scan on
+every render (the old behavior)."
+  :type 'number
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-enable-buffer-position t
   "Whether display the buffer position information."
   :type 'boolean
