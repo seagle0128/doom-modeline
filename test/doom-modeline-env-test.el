@@ -347,4 +347,74 @@ cached ones, the version must be cleared so a fresh query is forked."
           (doom-modeline-update-env)))
       (should (= spawns 2)))))
 
+;;; P2: the resolved command must be reused without re-resolving it
+
+(ert-deftest doom-modeline-env/no-redundant-executable-find ()
+  "A query reuses `doom-modeline-env--command' without calling `executable-find'.
+`doom-modeline-def-env' resolves the executable to an absolute path before
+storing it, so re-resolving it on every focus/find-file is wasted work."
+  (let ((doom-modeline-env-version t)
+        (doom-modeline-env--command "/usr/bin/python3")
+        (doom-modeline-env--command-args '("--version" "no-refind"))
+        (doom-modeline-env--parser #'identity)
+        (doom-modeline-env--version nil)
+        (doom-modeline--env-version-cache (make-hash-table :test 'equal))
+        (doom-modeline--env-version-cache-order nil)
+        (doom-modeline--env-version-pending (make-hash-table :test 'equal))
+        (find-calls 0)
+        (spawns 0))
+    (cl-letf* (((symbol-function 'executable-find)
+                (lambda (&rest _) (setq find-calls (1+ find-calls))
+                  "/usr/bin/python3"))
+               ((symbol-function 'doom-modeline-project-root)
+                (lambda () default-directory))
+               ((symbol-function 'doom-modeline-env--get)
+                (lambda (_cmd _args cb)
+                  (setq spawns (1+ spawns))
+                  (funcall cb "Python 3.11.4")
+                  nil)))
+      ;; Several fresh queries in one buffer.
+      (dotimes (_ 3)
+        (setq doom-modeline-env--version nil)
+        (doom-modeline-update-env))
+      ;; Two more buffers sharing the same resolved command.
+      (dotimes (_ 2)
+        (with-temp-buffer
+          (setq doom-modeline-env--version nil
+                doom-modeline-env--command "/usr/bin/python3"
+                doom-modeline-env--command-args '("--version" "no-refind")
+                doom-modeline-env--parser #'identity)
+          (doom-modeline-update-env)))
+      (should (= find-calls 0))
+      ;; Cache-key reuse still holds: only one real fork for all five.
+      (should (= spawns 1)))))
+
+(ert-deftest doom-modeline-env/cache-key-uses-resolved-command ()
+  "The global cache key uses the resolved command, preserving sharing.
+A basename kept in `doom-modeline-env--command' must not fragment the
+cache into per-spelling keys."
+  (let ((doom-modeline--env-version-cache (make-hash-table :test 'equal))
+        (doom-modeline--env-version-cache-order nil)
+        (doom-modeline--env-version-pending (make-hash-table :test 'equal))
+        (doom-modeline-env-version t)
+        (doom-modeline-env--command-args '("--version" "key-resolved"))
+        (doom-modeline-env--parser #'doom-modeline-env--python-parse)
+        (spawns 0))
+    (cl-letf* (((symbol-function 'executable-find)
+                (lambda (&rest _) (error "executable-find must not be called")))
+               ((symbol-function 'doom-modeline-project-root)
+                (lambda () "/tmp/dm-env-key-test/"))
+               ((symbol-function 'doom-modeline-env--get)
+                (lambda (_cmd _args cb)
+                  (setq spawns (1+ spawns))
+                  (funcall cb "Python 3.11.4")
+                  nil)))
+      (dolist (cmd '("/usr/bin/python3" "/usr/bin/python3"))
+        (with-temp-buffer
+          (setq doom-modeline-env--version nil
+                doom-modeline-env--command cmd)
+          (doom-modeline-update-env)
+          (should (equal doom-modeline-env--version "3.11.4"))))
+      (should (= spawns 1)))))
+
 ;;; doom-modeline-env-test.el ends here

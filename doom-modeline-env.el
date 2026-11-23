@@ -132,7 +132,12 @@ of forking again.  Each buffer still parses the output with its own
              doom-modeline-env--command
              doom-modeline-env--command-args
              doom-modeline-env--parser)
-    (let* ((exe (executable-find doom-modeline-env--command))
+    ;; `doom-modeline-env--command' is already the resolved absolute path:
+    ;; `doom-modeline-def-env' calls `executable-find' before storing it.
+    ;; Re-resolving here repeats that lookup on every focus/find-file for no
+    ;; benefit (and the raw command may be a basename only in manual setups,
+    ;; which `start-process' still resolves via `exec-path' on its own).
+    (let* ((exe doom-modeline-env--command)
            (args doom-modeline-env--command-args)
            (root (doom-modeline-project-root))
            (key (list exe args root))
