@@ -829,8 +829,14 @@ ICON-SET is the nerd-icons set ICON belongs to, `devicon' by default."
         doom-modeline--in-git-worktree-p nil)
 
   (when (and vc-mode buffer-file-name)
-    (let* ((backend (vc-backend buffer-file-name))
-           (state (vc-state buffer-file-name backend))
+    ;; PERF: `vc-backend' and `vc-state' probe the working tree and can block
+    ;; on a slow or lost TRAMP connection.  By default remote buffers keep
+    ;; the branch name from `vc-mode' and skip the live state query.
+    (let* ((remote (and (not doom-modeline-vcs-remote-state-check)
+                        (file-remote-p buffer-file-name)))
+           (backend (unless remote (vc-backend buffer-file-name)))
+           (state (if remote 'up-to-date
+                    (vc-state buffer-file-name backend)))
            (icon (cond ((memq state '(edited added))
                         (doom-modeline-vcs-icon "nf-dev-git_compare" "🔃" "*" 'doom-modeline-info))
                        ((eq state 'needs-merge)
@@ -852,8 +858,8 @@ ICON-SET is the nerd-icons set ICON belongs to, `devicon' by default."
                                   doom-modeline-ellipsis)
                                str)
                              'face face)))
-      ;; Check whether in git worktree
-      (when (eq backend 'Git)
+      ;; Check whether in git worktree (also guarded against TRAMP hangs)
+      (when (and (not remote) (eq backend 'Git))
         (setq doom-modeline--in-git-worktree-p (doom-modeline--in-git-worktree-p)))
       ;; Set VCS state
       (setq doom-modeline--vcs `((icon . ,icon) (text . ,text))))))

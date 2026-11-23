@@ -323,6 +323,11 @@ Run `M-x customize-group RET doom-modeline RET` or set the variables.
 ;; The function to display the branch name.
 (setq doom-modeline-vcs-display-function #'doom-modeline-vcs-name)
 
+;; Whether query `vc-state' for remote files. When nil (default), remote
+;; buffers show the branch name from `vc-mode' with a neutral state and
+;; avoid synchronous TRAMP I/O that may hang on a lost connection.
+(setq doom-modeline-vcs-remote-state-check nil)
+
 ;; Alist mapping VCS states to their corresponding faces.
 ;; See `vc-state' for possible values of the state.
 ;; For states not explicitly listed, the `doom-modeline-vcs-default' face is used.

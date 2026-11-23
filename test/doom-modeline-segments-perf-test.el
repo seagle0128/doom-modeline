@@ -352,5 +352,64 @@ one-element list used as a mutable cell (lexical binding safe)."
         (should (keymapp (doom-modeline--workspace-keymap 'tab-bar)))
         (should (= calls 2))))))
 
+(ert-deftest doom-modeline-vcs/remote-skips-vc-io ()
+  "Remote buffers keep the branch name without probing the working tree."
+  (let ((doom-modeline-vcs-remote-state-check nil)
+        (backend-calls 0)
+        (state-calls 0))
+    (cl-letf* ((orig-backend (symbol-function 'vc-backend))
+               ((symbol-function 'vc-backend)
+                (lambda (&rest args)
+                  (setq backend-calls (1+ backend-calls))
+                  (apply orig-backend args)))
+               (orig-state (symbol-function 'vc-state))
+               ((symbol-function 'vc-state)
+                (lambda (&rest args)
+                  (setq state-calls (1+ state-calls))
+                  (apply orig-state args))))
+      (with-temp-buffer
+        (setq-local vc-mode "Git:main")
+        (setq buffer-file-name "/ssh:user@example.com:/home/user/f.el")
+        (doom-modeline-update-vcs)
+        (should (= backend-calls 0))
+        (should (= state-calls 0))
+        (should doom-modeline--vcs)
+        (should (equal (substring-no-properties
+                        (alist-get 'text doom-modeline--vcs))
+                       "main"))))))
+
+(ert-deftest doom-modeline-vcs/local-still-queries-state ()
+  "Local buffers keep the original live VCS state lookup."
+  (let ((backend-calls 0)
+        (state-calls 0))
+    (cl-letf* (((symbol-function 'vc-backend)
+                (lambda (&rest _) (setq backend-calls (1+ backend-calls)) 'Git))
+               ((symbol-function 'vc-state)
+                (lambda (&rest _) (setq state-calls (1+ state-calls)) 'edited))
+               ((symbol-function 'locate-dominating-file)
+                (lambda (&rest _) nil)))
+      (with-temp-buffer
+        (setq-local vc-mode "Git:main")
+        (setq buffer-file-name "/tmp/doom-modeline-vcs-test.el")
+        (doom-modeline-update-vcs)
+        (should (= backend-calls 1))
+        (should (= state-calls 1))
+        (should doom-modeline--vcs)))))
+
+(ert-deftest doom-modeline-vcs/opt-in-restores-remote-query ()
+  "Setting `doom-modeline-vcs-remote-state-check' restores live state."
+  (let ((doom-modeline-vcs-remote-state-check t)
+        (state-calls 0))
+    (cl-letf* (((symbol-function 'vc-backend) (lambda (&rest _) 'Git))
+               ((symbol-function 'vc-state)
+                (lambda (&rest _) (setq state-calls (1+ state-calls)) 'edited))
+               ((symbol-function 'locate-dominating-file)
+                (lambda (&rest _) nil)))
+      (with-temp-buffer
+        (setq-local vc-mode "Git:main")
+        (setq buffer-file-name "/ssh:user@example.com:/home/user/f.el")
+        (doom-modeline-update-vcs)
+        (should (= state-calls 1))))))
+
 (provide 'doom-modeline-segments-perf-test)
 ;;; doom-modeline-segments-perf-test.el ends here

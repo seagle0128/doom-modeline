@@ -595,6 +595,16 @@ It respects option `doom-modeline-icon'."
   :type 'function
   :group 'doom-modeline)
 
+(defcustom doom-modeline-vcs-remote-state-check nil
+  "Whether to query `vc-state' for remote files.
+
+When nil (the default), remote buffers show the branch name from `vc-mode'
+with a neutral state.  `vc-backend' and `vc-state' probe the working tree
+and can perform synchronous TRAMP I/O, stalling Emacs on a slow or lost
+connection.  Set this to non-nil to restore live state at that cost."
+  :type 'boolean
+  :group 'doom-modeline)
+
 (defcustom doom-modeline-vcs-state-faces-alist
   '((needs-update . (doom-modeline-warning bold))
     (removed . (doom-modeline-urgent bold))
