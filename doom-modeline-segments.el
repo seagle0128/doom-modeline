@@ -1475,7 +1475,9 @@ word-count option invalidates the cache.")
 (defun doom-modeline--selection-stats (beg end want-words)
   "Return (LINES CHARS . WORDS) for the region BEG..END, cached.
 WANT-WORDS is `doom-modeline-enable-word-count'; WORDS is nil when false."
-  (let ((cache doom-modeline--selection-cache)
+  (let ((beg (if (markerp beg) (marker-position beg) beg))
+        (end (if (markerp end) (marker-position end) end))
+        (cache doom-modeline--selection-cache)
         (tick (buffer-modified-tick)))
     (unless (and cache
                  (= (plist-get cache :beg) beg)
