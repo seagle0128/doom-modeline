@@ -325,6 +325,78 @@ one-element list used as a mutable cell (lexical binding safe)."
           (doom-modeline--selection-stats beg (point-max) t)
           (should (= word-calls 3)))))))
 
+(ert-deftest doom-modeline-selection-stats/narrowing-invalidates-cache ()
+  "Narrowing and widening invalidate the cache even when bounds and tick do not.
+`count-lines' clamps to `point-max', so the narrowing bounds must be part of
+the cache key."
+  (let ((line-calls 0))
+    (cl-letf* ((orig-lines (symbol-function 'count-lines))
+               ((symbol-function 'count-lines)
+                (lambda (&rest args)
+                  (setq line-calls (1+ line-calls))
+                  (apply orig-lines args))))
+      (with-temp-buffer
+        (dotimes (_ 8) (insert "alpha beta gamma\n"))
+        (setq doom-modeline--selection-cache nil)
+        (let ((beg (point-min))
+              (end (1- (point-max))))
+          ;; Warm the cache in the wide buffer.
+          (doom-modeline--selection-stats beg end nil)
+          (should (= line-calls 1))
+          (doom-modeline--selection-stats beg end nil)
+          (should (= line-calls 1))
+          ;; Narrowing changes point-max but not beg/end or the tick.
+          (narrow-to-region (point-min) 30)
+          (doom-modeline--selection-stats beg end nil)
+          (should (= line-calls 2))
+          ;; Widen restores the original accessible portion: rescan again.
+          (widen)
+          (doom-modeline--selection-stats beg end nil)
+          (should (= line-calls 3))
+          ;; Stable narrowing still hits the cache.
+          (doom-modeline--selection-stats beg end nil)
+          (should (= line-calls 3)))))))
+
+(ert-deftest doom-modeline-selection-stats/marker-bounds-with-narrowing ()
+  "Marker bounds and narrowing together invalidate the cache correctly."
+  (with-temp-buffer
+    (dotimes (_ 8) (insert "alpha beta gamma\n"))
+    (goto-char (point-min))
+    (let ((b (point-marker))
+          (e (copy-marker (point-max))))
+      (setq doom-modeline--selection-cache nil)
+      (let ((wide (doom-modeline--selection-stats b e t)))
+        (narrow-to-region (point-min) 30)
+        (let ((narrow (doom-modeline--selection-stats b e t)))
+          ;; chars/words stay the same, line count must reflect the narrowing.
+          (should (< (car narrow) (car wide)))
+          (should (= (cadr narrow) (cadr wide)))
+          (should (= (cddr narrow) (cddr wide))))))))
+
+(ert-deftest doom-modeline-selection-info/evil-narrowing-updates-lines ()
+  "The selection-info segment shows fresh line counts after narrowing in evil.
+Evil's visual bounds are plain buffer-local values that narrowing does not
+clamp, so the narrowing bounds must participate in the cache key."
+  (let ((doom-modeline-selection-info t)
+        (doom-modeline-enable-word-count nil))
+    (cl-letf (((symbol-function 'doom-modeline--active) (lambda () t)))
+      (with-temp-buffer
+        (dotimes (_ 8) (insert "alpha beta gamma\n"))
+        (setq-local evil-local-mode t)
+        (setq-local evil-state 'visual)
+        (setq-local evil-visual-selection 'line)
+        (setq-local evil-visual-beginning (point-min))
+        (setq-local evil-visual-end (1- (point-max)))
+        (setq doom-modeline--selection-cache nil)
+        (let ((wide (substring-no-properties
+                     (doom-modeline-segment--selection-info))))
+          (narrow-to-region (point-min) 30)
+          (let ((narrow (substring-no-properties
+                         (doom-modeline-segment--selection-info))))
+            (should (string-match-p "L" wide))
+            (should (string-match-p "L" narrow))
+            (should-not (string= wide narrow))))))))
+
 (ert-deftest doom-modeline-selection-stats/returns-lines-chars-words ()
   "The stats tuple carries lines, chars and words in the documented shape."
   (with-temp-buffer

@@ -1466,27 +1466,35 @@ Respects `doom-modeline-enable-word-count'."
 
 (defvar-local doom-modeline--selection-cache nil
   "Cache of selection statistics for the current buffer.
-A plist of :beg, :end, :tick, :count-words and :lines/:chars/:words.
+A plist of :beg, :end, :tick, :count-words, :min/:max and :lines/:chars/:words.
 Selection statistics (`count-lines' and `count-words') scan the region and
 must not be recomputed on every redisplay while the region is unchanged; a
-mismatch on the region bounds, the buffer's modification tick, or the
-word-count option invalidates the cache.")
+mismatch on the region bounds, the buffer's modification tick, the word-count
+option, or the narrowing bounds invalidates the cache.  Narrowing must be part
+of the key because `count-lines' clamps its end to `point-max': with evil the
+region bounds are plain buffer-local values that narrowing does not clamp, so
+the cached line count would otherwise stay stale.")
 
 (defun doom-modeline--selection-stats (beg end want-words)
   "Return (LINES CHARS . WORDS) for the region BEG..END, cached.
 WANT-WORDS is `doom-modeline-enable-word-count'; WORDS is nil when false."
-  (let ((beg (if (markerp beg) (marker-position beg) beg))
-        (end (if (markerp end) (marker-position end) end))
-        (cache doom-modeline--selection-cache)
-        (tick (buffer-modified-tick)))
+  (let* ((beg (if (markerp beg) (marker-position beg) beg))
+         (end (if (markerp end) (marker-position end) end))
+         (cache doom-modeline--selection-cache)
+         (tick (buffer-modified-tick))
+         (pmin (point-min))
+         (pmax (point-max)))
     (unless (and cache
                  (= (plist-get cache :beg) beg)
                  (= (plist-get cache :end) end)
                  (= (plist-get cache :tick) tick)
-                 (eq (plist-get cache :count-words) want-words))
+                 (eq (plist-get cache :count-words) want-words)
+                 (= (plist-get cache :min) pmin)
+                 (= (plist-get cache :max) pmax))
       (setq doom-modeline--selection-cache
             (list :beg beg :end end :tick tick :count-words want-words
-                  :lines (count-lines beg (min end (point-max)))
+                  :min pmin :max pmax
+                  :lines (count-lines beg (min end pmax))
                   :chars (- end beg)
                   :words (when want-words (count-words beg end)))))
     (let ((cache doom-modeline--selection-cache))
