@@ -1465,19 +1465,51 @@ Respects `doom-modeline-enable-word-count'."
                   (current-column)))
 
 (defvar-local doom-modeline--selection-cache nil
-  "Cache of selection statistics for the current buffer.
-A plist of :beg, :end, :tick, :count-words, :min/:max and :lines/:chars/:words.
-Selection statistics (`count-lines' and `count-words') scan the region and
-must not be recomputed on every redisplay while the region is unchanged; a
-mismatch on the region bounds, the buffer's modification tick, the word-count
-option, or the narrowing bounds invalidates the cache.  Narrowing must be part
-of the key because `count-lines' clamps its end to `point-max': with evil the
-region bounds are plain buffer-local values that narrowing does not clamp, so
-the cached line count would otherwise stay stale.")
+  "Cache of selection lines and chars for the current buffer.
+A plist of :beg, :end, :tick, :min/:max and :lines/:chars.  Word count is
+NOT cached here: it is throttled separately (see
+`doom-modeline--selection-words'), so a throttled value is never frozen into
+this change-keyed cache.  `count-lines' scans the region and must not run on
+every redisplay while the region is unchanged; a mismatch on the region
+bounds, the buffer's modification tick, or the narrowing bounds invalidates
+the cache.  Narrowing must be part of the key because `count-lines' clamps
+its end to `point-max': with evil the region bounds are plain buffer-local
+values that narrowing does not clamp, so the cached line count would
+otherwise stay stale.")
+
+(defvar-local doom-modeline--selection-word-count nil
+  "Last throttled word count of the active selection, or nil before the first scan.")
+
+(defun doom-modeline--scan-selection-words (beg end)
+  "Return (BUFFER . COUNT) for the region BEG..END.
+Tagging the result with BUFFER lets the caller reject a result that
+`timeout-throttle' cached on behalf of a different buffer."
+  (cons (current-buffer) (count-words beg end)))
+
+;; Throttle the expensive full-buffer scan once, at load time, sharing the
+;; word-count interval: both are `count-words' calls of comparable cost.
+;; Passing the option as a symbol lets `timeout-throttle' read its current
+;; value at each scheduling, so changing the option needs no reload.
+(timeout-throttle #'doom-modeline--scan-selection-words
+                  'doom-modeline-word-count-throttle)
+
+(defun doom-modeline--selection-words (beg end)
+  "Return the word count of the region BEG..END, throttling full scans.
+A `count-words' scan runs at most once per `doom-modeline-word-count-throttle'
+seconds.  When the throttle returns another buffer's result, this buffer
+reuses its own last value, or scans once on its first render."
+  (pcase-let ((`(,buffer . ,count) (doom-modeline--scan-selection-words beg end)))
+    (if (eq buffer (current-buffer))
+        (setq doom-modeline--selection-word-count count)
+      (unless doom-modeline--selection-word-count
+        (setq doom-modeline--selection-word-count (count-words beg end))))
+    (or doom-modeline--selection-word-count 0)))
 
 (defun doom-modeline--selection-stats (beg end want-words)
-  "Return (LINES CHARS . WORDS) for the region BEG..END, cached.
-WANT-WORDS is `doom-modeline-enable-word-count'; WORDS is nil when false."
+  "Return (LINES CHARS . WORDS) for the region BEG..END.
+LINES and CHARS are cached by region/narrowing; WORDS is throttled by time and
+may lag by up to `doom-modeline-word-count-throttle' seconds.  WORDS is nil
+when WANT-WORDS (i.e. `doom-modeline-enable-word-count') is false."
   (let* ((beg (if (markerp beg) (marker-position beg) beg))
          (end (if (markerp end) (marker-position end) end))
          (cache doom-modeline--selection-cache)
@@ -1488,18 +1520,16 @@ WANT-WORDS is `doom-modeline-enable-word-count'; WORDS is nil when false."
                  (= (plist-get cache :beg) beg)
                  (= (plist-get cache :end) end)
                  (= (plist-get cache :tick) tick)
-                 (eq (plist-get cache :count-words) want-words)
                  (= (plist-get cache :min) pmin)
                  (= (plist-get cache :max) pmax))
       (setq doom-modeline--selection-cache
-            (list :beg beg :end end :tick tick :count-words want-words
-                  :min pmin :max pmax
+            (list :beg beg :end end :tick tick :min pmin :max pmax
                   :lines (count-lines beg (min end pmax))
-                  :chars (- end beg)
-                  :words (when want-words (count-words beg end)))))
+                  :chars (- end beg))))
     (let ((cache doom-modeline--selection-cache))
       (cons (plist-get cache :lines)
-            (cons (plist-get cache :chars) (plist-get cache :words))))))
+            (cons (plist-get cache :chars)
+                  (when want-words (doom-modeline--selection-words beg end)))))))
 
 (doom-modeline-def-segment selection-info
   "Information about the current selection.

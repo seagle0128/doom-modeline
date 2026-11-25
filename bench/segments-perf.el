@@ -131,7 +131,8 @@ the before/after measurement setup identical."
                doom-modeline--total-lines
                doom-modeline--buffer-state-icon-cache
                doom-modeline--default-directory-cache
-               doom-modeline--selection-cache))
+               doom-modeline--selection-cache
+               doom-modeline--selection-word-count))
     (when (and (boundp v) (local-variable-p v))
       (set (make-local-variable v) nil)))
   (when (boundp 'doom-modeline--workspace-keymap-cache)

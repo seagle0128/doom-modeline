@@ -27,11 +27,16 @@
 (require 'doom-modeline-segments)
 
 (defun doom-modeline-test--reset-word-count-throttle ()
-  "Reset the shared `timeout-throttle' state on the scan helper.
+  "Reset the shared `timeout-throttle' state on the scan helpers.
 Each test must start with a fresh advice closure: the timer and cached
-result live in that closure, not in a buffer-local variable."
+result live in that closure, not in a buffer-local variable.  Both
+`word-count' and selection word counting share the same interval option
+but have independent advice closures."
   (advice-remove #'doom-modeline--scan-word-count 'throttle)
+  (advice-remove #'doom-modeline--scan-selection-words 'throttle)
   (timeout-throttle #'doom-modeline--scan-word-count
+                    'doom-modeline-word-count-throttle)
+  (timeout-throttle #'doom-modeline--scan-selection-words
                     'doom-modeline-word-count-throttle))
 
 (ert-deftest doom-modeline-word-count/throttled-across-edits ()
@@ -295,35 +300,90 @@ one-element list used as a mutable cell (lexical binding safe)."
       (should (null (car info)))
       (should (stringp (cdr info))))))
 
-(ert-deftest doom-modeline-selection-stats/cached-until-region-change ()
-  "Region scans run at most once per distinct region and word-count option."
-  (let ((word-calls 0))
+(ert-deftest doom-modeline-selection-stats/lines-cached-by-region ()
+  "`count-lines' runs at most once per distinct region/narrowing/tick.
+Word count is intentionally excluded from this cache and throttled
+separately, so it must not cause a cache miss here."
+  (let ((line-calls 0))
+    (cl-letf* ((orig-lines (symbol-function 'count-lines))
+               ((symbol-function 'count-lines)
+                (lambda (&rest args)
+                  (setq line-calls (1+ line-calls))
+                  (apply orig-lines args))))
+      (let ((doom-modeline-word-count-throttle 100.0))
+        (doom-modeline-test--reset-word-count-throttle)
+        (with-temp-buffer
+          (insert "alpha beta gamma\ndelta epsilon\n")
+          (setq doom-modeline--selection-cache nil
+                doom-modeline--selection-word-count nil)
+          (let ((beg (point-min))
+                (end (point-max)))
+            (doom-modeline--selection-stats beg end t)
+            (doom-modeline--selection-stats beg end t)
+            (should (= line-calls 1))
+            ;; Region bounds changed: one rescan of lines.
+            (doom-modeline--selection-stats beg (1- end) t)
+            (should (= line-calls 2))
+            ;; Toggling the word-count option alone does not rescan lines.
+            (doom-modeline--selection-stats beg (1- end) nil)
+            (should (= line-calls 2))
+            ;; Same bounds but content changed: the tick invalidates lines.
+            (goto-char (point-max))
+            (insert "!")
+            (doom-modeline--selection-stats beg (1- end) nil)
+            (should (= line-calls 3))))))))
+
+(ert-deftest doom-modeline-selection-stats/words-throttled-across-region-changes ()
+  "Full-buffer word scans are throttled even as the region keeps changing.
+This is the evil + marker case: every cursor move changes the region bounds,
+which would otherwise trigger a full `count-words' scan on every redisplay."
+  (let ((doom-modeline-word-count-throttle 100.0)
+        (calls 0))
+    (doom-modeline-test--reset-word-count-throttle)
     (cl-letf* ((orig-words (symbol-function 'count-words))
                ((symbol-function 'count-words)
                 (lambda (&rest args)
-                  (setq word-calls (1+ word-calls))
+                  (setq calls (1+ calls))
                   (apply orig-words args))))
       (with-temp-buffer
-        (insert "alpha beta gamma\ndelta epsilon\n")
-        (setq doom-modeline--selection-cache nil)
-        (let ((beg (point-min))
-              (end (point-max)))
-          (doom-modeline--selection-stats beg end t)
-          (doom-modeline--selection-stats beg end t)
-          (should (= word-calls 1))
-          ;; Region bounds changed: recompute once.
-          (doom-modeline--selection-stats beg (1- end) t)
-          (should (= word-calls 2))
-          ;; Word-count option changed: recompute once (and skip scan when nil).
-          (doom-modeline--selection-stats beg (1- end) nil)
-          (should (= word-calls 2))
-          ;; Same bounds but buffer content changed: the tick invalidates.
-          (goto-char (point-max))
-          (insert "!")
-          (doom-modeline--selection-stats beg (1- end) nil)
-          (should (= word-calls 2))             ; nil option: no word scan
-          (doom-modeline--selection-stats beg (point-max) t)
-          (should (= word-calls 3)))))))
+        (dotimes (_ 1000) (insert "alpha beta gamma\n"))
+        (setq doom-modeline--selection-cache nil
+              doom-modeline--selection-word-count nil)
+        (let ((end (point-max)))
+          ;; First render scans once.
+          (doom-modeline--selection-stats 1 end t)
+          (should (= calls 1))
+          ;; Moving the region boundary 20 times must not rescan.
+          (dotimes (i 20)
+            (doom-modeline--selection-stats (1+ (* i 40)) end t))
+          (should (= calls 1))
+          ;; words=nil skips the scan entirely.
+          (doom-modeline--selection-stats 500 end nil)
+          (should (= calls 1)))))))
+
+(ert-deftest doom-modeline-selection-stats/words-no-cross-buffer-leak ()
+  "A throttled word count from another buffer is never used for this buffer."
+  (let ((doom-modeline-word-count-throttle 100.0))
+    (doom-modeline-test--reset-word-count-throttle)
+    (let ((buf-a (generate-new-buffer " *dm-sel-wc-a*"))
+          (buf-b (generate-new-buffer " *dm-sel-wc-b*")))
+      (unwind-protect
+          (progn
+            (with-current-buffer buf-a
+              (insert "one two three four five")
+              (setq doom-modeline--selection-cache nil
+                    doom-modeline--selection-word-count nil)
+              (should (= (cddr (doom-modeline--selection-stats
+                                (point-min) (point-max) t)) 5)))
+            ;; B renders inside the same throttle window: it must not show 5.
+            (with-current-buffer buf-b
+              (insert "x")
+              (setq doom-modeline--selection-cache nil
+                    doom-modeline--selection-word-count nil)
+              (should (= (cddr (doom-modeline--selection-stats
+                                (point-min) (point-max) t)) 1))))
+        (kill-buffer buf-a)
+        (kill-buffer buf-b)))))
 
 (ert-deftest doom-modeline-selection-stats/narrowing-invalidates-cache ()
   "Narrowing and widening invalidate the cache even when bounds and tick do not.
@@ -359,19 +419,22 @@ the cache key."
 
 (ert-deftest doom-modeline-selection-stats/marker-bounds-with-narrowing ()
   "Marker bounds and narrowing together invalidate the cache correctly."
-  (with-temp-buffer
-    (dotimes (_ 8) (insert "alpha beta gamma\n"))
-    (goto-char (point-min))
-    (let ((b (point-marker))
-          (e (copy-marker (point-max))))
-      (setq doom-modeline--selection-cache nil)
-      (let ((wide (doom-modeline--selection-stats b e t)))
-        (narrow-to-region (point-min) 30)
-        (let ((narrow (doom-modeline--selection-stats b e t)))
-          ;; chars/words stay the same, line count must reflect the narrowing.
-          (should (< (car narrow) (car wide)))
-          (should (= (cadr narrow) (cadr wide)))
-          (should (= (cddr narrow) (cddr wide))))))))
+  (let ((doom-modeline-word-count-throttle 100.0))
+    (doom-modeline-test--reset-word-count-throttle)
+    (with-temp-buffer
+      (dotimes (_ 8) (insert "alpha beta gamma\n"))
+      (goto-char (point-min))
+      (let ((b (point-marker))
+            (e (copy-marker (point-max))))
+        (setq doom-modeline--selection-cache nil
+              doom-modeline--selection-word-count nil)
+        (let ((wide (doom-modeline--selection-stats b e t)))
+          (narrow-to-region (point-min) 30)
+          (let ((narrow (doom-modeline--selection-stats b e t)))
+            ;; chars/words stay the same, line count must reflect the narrowing.
+            (should (< (car narrow) (car wide)))
+            (should (= (cadr narrow) (cadr wide)))
+            (should (= (cddr narrow) (cddr wide)))))))))
 
 (ert-deftest doom-modeline-selection-info/evil-narrowing-updates-lines ()
   "The selection-info segment shows fresh line counts after narrowing in evil.
@@ -399,13 +462,16 @@ clamp, so the narrowing bounds must participate in the cache key."
 
 (ert-deftest doom-modeline-selection-stats/returns-lines-chars-words ()
   "The stats tuple carries lines, chars and words in the documented shape."
-  (with-temp-buffer
-    (insert "one two\nthree")
-    (setq doom-modeline--selection-cache nil)
-    (let* ((stats (doom-modeline--selection-stats (point-min) (point-max) t)))
-      (should (= (car stats) 2))        ; lines
-      (should (= (cadr stats) 13))      ; chars: "one two\nthree" = 13
-      (should (= (cddr stats) 3)))))    ; words
+  (let ((doom-modeline-word-count-throttle 100.0))
+    (doom-modeline-test--reset-word-count-throttle)
+    (with-temp-buffer
+      (insert "one two\nthree")
+      (setq doom-modeline--selection-cache nil
+            doom-modeline--selection-word-count nil)
+      (let* ((stats (doom-modeline--selection-stats (point-min) (point-max) t)))
+        (should (= (car stats) 2))        ; lines
+        (should (= (cadr stats) 13))      ; chars: "one two\nthree" = 13
+        (should (= (cddr stats) 3))))))   ; words
 
 (ert-deftest doom-modeline-workspace-keymap/cached-per-backend ()
   "The workspace keymap is built once per backend and reused."
